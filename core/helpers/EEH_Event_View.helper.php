@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\domain\entities\custom_post_types\EspressoPostType;
+
 /**
  * EEH_Event_View Helper
  *
@@ -9,10 +11,7 @@
  */
 class EEH_Event_View extends EEH_Base
 {
-    /**
-     * @var EE_Event $_event
-     */
-    private static $_event = null;
+    private static ?EE_Event $_event = null;
 
 
     /**
@@ -28,7 +27,7 @@ class EEH_Event_View extends EEH_Base
     {
         // international newspaper?
         global $post;
-        $EVT_ID = $EVT_ID instanceof WP_Post && $EVT_ID->post_type === 'espresso_events'
+        $EVT_ID = $EVT_ID instanceof WP_Post && $EVT_ID->post_type === EspressoPostType::EVENTS
             ? $EVT_ID->ID
             : absint($EVT_ID);
         // do we already have the Event  you are looking for?
@@ -45,7 +44,7 @@ class EEH_Event_View extends EEH_Base
         // then let's just use that cached event on the $post object.
         if (
             $post instanceof WP_Post
-            && $post->post_type === 'espresso_events'
+            && $post->post_type === EspressoPostType::EVENTS
             && isset($post->EE_Event)
             && (
                 $EVT_ID === 0
@@ -626,7 +625,7 @@ class EEH_Event_View extends EEH_Base
                         admin_url()
                     );
                 // get edit CPT text
-                $post_type_obj = get_post_type_object('espresso_events');
+                $post_type_obj = get_post_type_object(EspressoPostType::EVENTS);
                 // build final link html
                 $link = '<a class="post-edit-link" href="' . $url . '" ';
                 $link .= ' title="' . esc_attr($post_type_obj->labels->edit_item) . '"';
@@ -645,6 +644,6 @@ class EEH_Event_View extends EEH_Base
      */
     public static function event_archive_url()
     {
-        return get_post_type_archive_link('espresso_events');
+        return get_post_type_archive_link(EspressoPostType::EVENTS);
     }
 }

@@ -53,7 +53,7 @@ abstract class PayPalApi
      * @param array  $request_parameters
      * @return Object|array
      */
-    public function response(string $endpoint, array $request_parameters)
+    public function request(string $endpoint, array $request_parameters)
     {
         // Sent the API request.
         $response = wp_remote_request($endpoint, $request_parameters);

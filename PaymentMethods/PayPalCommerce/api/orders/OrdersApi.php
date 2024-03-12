@@ -25,6 +25,11 @@ abstract class OrdersApi
      */
     protected string $request_url;
 
+    /**
+     * @var string
+     */
+    protected string $order_id;
+
 
     /**
      * Orders API constructor.

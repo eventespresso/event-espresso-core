@@ -3,52 +3,12 @@
 /**
  * Price Type Model
  *
- * @package             Event Espresso
- * @subpackage          includes/models/
- * @author              Brent Christensen
- * ------------------------------------------------------------------------
+ * @package     Event Espresso
+ * @subpackage  includes/models/
+ * @author      Brent Christensen
  */
 class EEM_Price_Type extends EEM_Soft_Delete_Base
 {
-    // private instance of the Price Type object
-    protected static $_instance = null;
-
-    // An array of the price type objects
-    public $type = null;
-
-    /**
-     *   Price Base types
-     *
-     * @access private
-     * @var int
-     */
-    public $base_types = null;
-
-
-    /**
-     * return an array of Base types. Keys are INTs which are used in the database,
-     * values are text-representations of the base type.
-     *
-     * @return array
-     */
-    public function get_base_types()
-    {
-        return $this->base_types;
-    }
-
-
-    /**
-     * Gets the name of the base
-     *
-     * @param type $base_type_int
-     * @return type
-     */
-    public function get_base_type_name($base_type_int)
-    {
-        return $this->base_types[ $base_type_int ];
-    }
-
-
     /**
      * constants for price base types. In the DB, we decided to store the price base type
      * as an integer. So, to avoid just having magic numbers everwhere (eg, querying for
@@ -67,6 +27,45 @@ class EEM_Price_Type extends EEM_Soft_Delete_Base
     const base_type_surcharge  = 3;
 
     const base_type_tax        = 4;
+
+
+    protected static ?EEM_Price_Type $_instance = null;
+
+    /**
+     * keys are one of the base_type_* constants above, and values are the text-representation of the base type.
+     *
+     * @var string[]
+     */
+    public array $base_types;
+
+    /**
+     * An array of the price type objects
+     */
+    public ?array $type = null;
+
+
+    /**
+     * return an array of Base types. Keys are INTs which are used in the database,
+     * values are text-representations of the base type.
+     *
+     * @return array
+     */
+    public function get_base_types(): array
+    {
+        return $this->base_types;
+    }
+
+
+    /**
+     * Gets the name of the base
+     *
+     * @param int $base_type_int
+     * @return string
+     */
+    public function get_base_type_name(int $base_type_int): string
+    {
+        return $this->base_types[ $base_type_int ];
+    }
 
 
     /**
@@ -158,12 +157,13 @@ class EEM_Price_Type extends EEM_Soft_Delete_Base
 
 
     /**
-     *      instantiate a new price type object with blank/empty properties
+     * instantiate a new price type object with blank/empty properties
      *
-     * @access     public
-     * @return     mixed       array on success, FALSE on fail
+     * @return EE_Price_Type
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function get_new_price_type()
+    public function get_new_price_type(): EE_Price_Type
     {
         return EE_Price_Type::new_instance();
     }

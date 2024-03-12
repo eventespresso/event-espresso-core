@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\domain\entities\custom_post_types\EspressoPostType;
+
 /**
  * EEH_Venue_View Helper
  *
@@ -53,7 +55,7 @@ class EEH_Venue_View extends EEH_Base
                 // if this is being called from an EE_Venue post,
                 // and the EE_Venue post corresponds to the EE_Venue that is being asked for,
                 // then we can try to just grab the attached EE_Venue object
-                case 'espresso_venues':
+                case EspressoPostType::VENUES:
                     // the post already contains the related EE_Venue object AND one of the following is TRUE:
                     // the requested Venue ID matches the post ID OR...
                     // there was no specific Venue ID requested
@@ -69,7 +71,7 @@ class EEH_Venue_View extends EEH_Base
                     }
                     break;
 
-                case 'espresso_events':
+                case EspressoPostType::EVENTS:
                     if ($look_in_event) {
                         // grab the events related venues
                         $venues = EEH_Venue_View::get_event_venues();
@@ -150,7 +152,7 @@ class EEH_Venue_View extends EEH_Base
     public static function get_event_venues()
     {
         global $post;
-        if ($post->post_type == 'espresso_events') {
+        if ($post->post_type == EspressoPostType::EVENTS) {
             if (isset($post->EE_Event) && $post->EE_Event instanceof EE_Event) {
                 return $post->EE_Event->venue();
             }
@@ -468,9 +470,9 @@ class EEH_Venue_View extends EEH_Base
 
         $venue = EEH_Venue_View::get_venue($VNU_ID);
         if ($venue instanceof EE_Venue) {
-            // check for global espresso_events post and use it's ID if no map_ID is set
+            // check for global espresso_events post and use its ID if no map_ID is set
             global $post;
-            $map_ID = empty($map_ID) && $post->post_type == 'espresso_events' ? $post->ID : $map_ID;
+            $map_ID = empty($map_ID) && $post->post_type == EspressoPostType::EVENTS ? $post->ID : $map_ID;
             // grab map settings
             $map_cfg = EE_Registry::instance()->CFG->map_settings;
             // are maps enabled ?
@@ -623,7 +625,7 @@ class EEH_Venue_View extends EEH_Base
                         admin_url('admin.php')
                     );
                 // get edit CPT text
-                $post_type_obj = get_post_type_object('espresso_venues');
+                $post_type_obj = get_post_type_object(EspressoPostType::VENUES);
                 // build final link html
                 $link =
                     '<a class="post-edit-link" href="' . $url . '" title="' . esc_attr(

@@ -10,8 +10,7 @@
  */
 class EEM_Datetime_Ticket extends EEM_Base
 {
-    // private instance of the EEM_Datetime_Ticket object
-    protected static $_instance = null;
+    protected static ?EEM_Datetime_Ticket $_instance = null;
 
 
     /**

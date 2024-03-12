@@ -5,21 +5,20 @@
  *
  * Static class for helping in creating exports
  *
- * @package         Event Espresso
+ * @package     Event Espresso
  * @subpackage  /helpers/
- * @author              Brent Christensen
- *
- * ------------------------------------------------------------------------
+ * @author      Brent Christensen
  */
 class EEH_Export
 {
     /**
      * Gets the 'normal' column named for fields
+     *
      * @param EE_Model_Field_Base $field
      * @return string
      * @throws EE_Error
      */
-    public static function get_column_name_for_field(EE_Model_Field_Base $field)
+    public static function get_column_name_for_field(EE_Model_Field_Base $field): string
     {
         $column_name = wp_specialchars_decode($field->get_nicename(), ENT_QUOTES);
         if (
@@ -42,18 +41,20 @@ class EEH_Export
      * Writes $data to the csv file open in $filehandle. uses the array indices of $data for column headers
      *
      * @param string $filepath
-     * @param array  $data                  2D array,first numerically-indexed,
-     *                                      and next-level-down preferably indexed by string
-     * @param bool   $write_column_headers  whether or not we should add the keys in the bottom-most array
-     *                                      as a row for headers in the CSV.
-     *                                      Eg, if $data looked like:
-     *                                          array(
+     * @param array  $data                          2D array,first numerically-indexed,
+     *                                              and next-level-down preferably indexed by string
+     * @param bool   $write_column_headers          whether or not we should add the keys in the bottom-most array
+     *                                              as a row for headers in the CSV.
+     *                                              Eg, if $data looked like:
+     *                                              array(
      *                                              0=>array('EVT_ID'=>1,'EVT_name'=>'monkey'...),
      *                                              1=>array(...,...)
-     *                                          )
-     * @param bool   $headers_only          if true then we won't print any data, just headers. defaults to false
+     *                                              )
+     * @param bool   $headers_only                  if true then we won't print any data, just headers. defaults to
+     *                                              false
      * @return boolean                      if we successfully wrote to the CSV or not. If there's no $data,
-     *                                      we consider that a success (because we wrote everything there was...nothing)
+     *                                              we consider that a success (because we wrote everything there
+     *                                              was...nothing)
      * @throws EE_Error
      */
     public static function write_data_array_to_csv(
@@ -61,20 +62,28 @@ class EEH_Export
         array $data,
         bool $write_column_headers = true,
         bool $headers_only = false
-    ) {
+    ): bool {
         // determine if $data is actually a 2d array
-        if ($data && is_array($data) && is_array(EEH_Array::get_one_item_from_array($data))) {
+        if ($data && is_array(EEH_Array::get_one_item_from_array($data))) {
             // make sure top level is numerically indexed,
             if (EEH_Array::is_associative_array($data)) {
-                throw new EE_Error(sprintf(esc_html__("top-level array must be numerically indexed. Does these look like numbers to you? %s", "event_espresso"), implode(",", array_keys($data))));
+                throw new EE_Error(
+                    sprintf(
+                        esc_html__(
+                            "top-level array must be numerically indexed. Does these look like numbers to you? %s",
+                            "event_espresso"
+                        ),
+                        implode(",", array_keys($data))
+                    )
+                );
             }
-            $new_file_contents = '';
+            $new_file_contents       = '';
             $item_in_top_level_array = EEH_Array::get_one_item_from_array($data);
             // now, is the last item in the top-level array of $data an associative or numeric array?
             if ($write_column_headers && EEH_Array::is_associative_array($item_in_top_level_array)) {
                 // its associative, so we want to output its keys as column headers
-                $keys = array_keys($item_in_top_level_array);
-                $new_file_contents .=  EEH_Export::get_csv_row($keys);
+                $keys              = array_keys($item_in_top_level_array);
+                $new_file_contents .= EEH_Export::get_csv_row($keys);
                 if ($headers_only) {
                     return EEH_File::write_to_file(
                         $filepath,
@@ -84,7 +93,7 @@ class EEH_Export
             }
             // start writing data
             foreach ($data as $data_row) {
-                $new_row = EEH_Export::get_csv_row($data_row);
+                $new_row           = EEH_Export::get_csv_row($data_row);
                 $new_file_contents .= $new_row ?: '';
             }
             return EEH_File::write_to_file($filepath, EEH_File::get_file_contents($filepath) . $new_file_contents);
@@ -94,18 +103,22 @@ class EEH_Export
     }
 
 
-
-     /**
-      *
+    /**
+     *
      *  Writes a row to the csv file
-     *  @param array $row - individual row of csv data
-     *  @param string $delimiter - csv delimiter
-     *  @param string $enclosure - csv enclosure
-     *  @param bool $mysql_null - allows php NULL to be overridden with MySQl's insertable NULL value
-     *  @return string of text for teh csv file
+     *
+     * @param array  $row        - individual row of csv data
+     * @param string $delimiter  - csv delimiter
+     * @param string $enclosure  - csv enclosure
+     * @param bool   $mysql_null - allows php NULL to be overridden with MySQl's insertable NULL value
+     * @return string of text for teh csv file
      */
-    public static function get_csv_row(array $row, $delimiter = ',', $enclosure = '"', $mysql_null = false)
-    {
+    public static function get_csv_row(
+        array $row,
+        string $delimiter = ',',
+        string $enclosure = '"',
+        bool $mysql_null = false
+    ): string {
         // Allow user to filter the csv delimiter and enclosure for other countries csv standards
         $delimiter = apply_filters('FHEE__EE_CSV__fputcsv2__delimiter', $delimiter);
         $enclosure = apply_filters('FHEE__EE_CSV__fputcsv2__enclosure', $enclosure);
@@ -113,7 +126,7 @@ class EEH_Export
         $delimiter_esc = preg_quote($delimiter, '/');
         $enclosure_esc = preg_quote($enclosure, '/');
 
-        $output = array();
+        $output = [];
         foreach ($row as $field_value) {
             if (is_object($field_value) || is_array($field_value)) {
                 $field_value = serialize($field_value);
@@ -123,61 +136,74 @@ class EEH_Export
                 continue;
             }
 
-            $output[] = $field_value && preg_match("/(?:${delimiter_esc}|${enclosure_esc}|\s)/", $field_value)
-                ? ( $enclosure . str_replace($enclosure, $enclosure . $enclosure, $field_value) . $enclosure )
+            $output[] = $field_value && preg_match("/(?:$delimiter_esc|$enclosure_esc|\s)/", $field_value)
+                ? ($enclosure . str_replace($enclosure, $enclosure . $enclosure, $field_value) . $enclosure)
                 : $field_value;
         }
 
-        return  implode($delimiter, $output) . PHP_EOL;
+        return implode($delimiter, $output) . PHP_EOL;
     }
-
 
 
     /**
      * Shortcut for preparing a database result for display
-     * @param EEM_Base $model
-     * @param string $field_name
-     * @param string $raw_db_value
-     * @param boolean|string $pretty_schema true to display pretty, a string to use a specific "Schema", or false to NOT display pretty
+     *
+     * @param EEM_Base         $model
+     * @param string           $field_name
+     * @param int|float|string $raw_db_value
+     * @param boolean|string $pretty_schema   true to display pretty,
+     *                                        a string to use a specific "Schema",
+     *                                        or false to NOT display pretty
      * @return string
+     * @throws EE_Error
      */
-    public static function prepare_value_from_db_for_display($model, $field_name, $raw_db_value, $pretty_schema = true)
-    {
-        $field_obj = $model->field_settings_for($field_name);
+    public static function prepare_value_from_db_for_display(
+        EEM_Base $model,
+        string $field_name,
+        $raw_db_value,
+        $pretty_schema = true
+    ): string {
+        $field_obj          = $model->field_settings_for($field_name);
         $value_on_model_obj = $field_obj->prepare_for_set_from_db($raw_db_value);
         if ($field_obj instanceof EE_Datetime_Field) {
-            $field_obj->set_date_format(EEH_Export::get_date_format_for_export($field_obj->get_date_format($pretty_schema)), $pretty_schema);
-            $field_obj->set_time_format(EEH_Export::get_time_format_for_export($field_obj->get_time_format($pretty_schema)), $pretty_schema);
+            $field_obj->set_date_format(
+                EEH_Export::get_date_format_for_export($field_obj->get_date_format($pretty_schema)),
+                $pretty_schema
+            );
+            $field_obj->set_time_format(
+                EEH_Export::get_time_format_for_export($field_obj->get_time_format($pretty_schema)),
+                $pretty_schema
+            );
         }
         if ($pretty_schema === true) {
             return $field_obj->prepare_for_pretty_echoing($value_on_model_obj);
-        } elseif (is_string($pretty_schema)) {
-            return $field_obj->prepare_for_pretty_echoing($value_on_model_obj, $pretty_schema);
-        } else {
-            return $field_obj->prepare_for_get($value_on_model_obj);
         }
+        if (is_string($pretty_schema)) {
+            return $field_obj->prepare_for_pretty_echoing($value_on_model_obj, $pretty_schema);
+        }
+        return $field_obj->prepare_for_get($value_on_model_obj);
     }
-
 
 
     /**
      * Gets the date format to use in exports. filterable
-     * @param string $current_format
+     *
+     * @param string|null $current_format
      * @return string
      */
-    public static function get_date_format_for_export($current_format = null)
+    public static function get_date_format_for_export(?string $current_format = null): string
     {
         return apply_filters('FHEE__EE_CSV__get_date_format_for_csv__format', 'Y-m-d', $current_format);
     }
 
 
-
     /**
      * Gets the time format we want to use in exports. Filterable
-     * @param string $current_format
+     *
+     * @param string|null $current_format
      * @return string
      */
-    public static function get_time_format_for_export($current_format = null)
+    public static function get_time_format_for_export(?string $current_format = null): string
     {
         return apply_filters('FHEE__EE_CSV__get_time_format_for_csv__format', 'H:i:s', $current_format);
     }

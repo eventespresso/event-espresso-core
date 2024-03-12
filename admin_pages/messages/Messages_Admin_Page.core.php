@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\services\assets\EspressoLegacyAdminAssetManager;
 use EventEspresso\core\domain\services\messages\MessageTemplateManager;
 use EventEspresso\core\domain\services\messages\MessageTemplateRequestData;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
@@ -725,8 +726,18 @@ class Messages_Admin_Page extends EE_Admin_Page
 
     public function load_scripts_styles()
     {
-        wp_register_style('espresso_ee_msg', EE_MSG_ASSETS_URL . 'ee_message_admin.css', [], EVENT_ESPRESSO_VERSION);
-        wp_enqueue_style('espresso_ee_msg');
+        wp_enqueue_style(
+            'espresso_ee_msg',
+            EE_MSG_ASSETS_URL . 'ee_message_admin.css',
+            [EspressoLegacyAdminAssetManager::CSS_HANDLE_EE_ADMIN],
+            EVENT_ESPRESSO_VERSION
+        );
+        wp_enqueue_style(
+            'ee_message_shortcodes',
+            EE_MSG_ASSETS_URL . 'ee_message_shortcodes.css',
+            [EspressoLegacyAdminAssetManager::CSS_HANDLE_EE_ADMIN],
+            EVENT_ESPRESSO_VERSION
+        );
 
         wp_register_script(
             'ee-messages-settings',

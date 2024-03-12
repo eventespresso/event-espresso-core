@@ -1145,29 +1145,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                 $args['admin_page'] = $this;
             }
 
-            try {
-                call_user_func_array($route_callback, $args);
-            } catch (Throwable $throwable) {
-                $nice_args = [];
-                foreach ($args as $key => $arg) {
-                    $nice_args[ $key ] = is_object($arg) ? get_class($arg) : $key;
-                }
-                new ExceptionStackTraceDisplay(
-                    new RuntimeException(
-                        sprintf(
-                            esc_html__(
-                                'Page route "%1$s" with the supplied arguments (%2$s) threw the following exception: %3$s',
-                                'event_espresso'
-                            ),
-                            $method,
-                            implode(', ', $nice_args),
-                            $throwable->getMessage()
-                        ),
-                        $throwable->getCode(),
-                        $throwable
-                    )
-                );
-            }
+            call_user_func_array($route_callback, $args);
         }
         // if we've routed and this route has a no headers route AND a sent_headers_route,
         // then we need to reset the routing properties to the new route.

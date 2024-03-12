@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\entities\custom_post_types\EspressoPostType;
 use EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions;
 use EventEspresso\core\domain\entities\notifications\PersistentAdminNotice;
 use EventEspresso\core\domain\services\database\DbStatus;
@@ -420,7 +421,7 @@ final class EE_Admin implements InterminableInterface
         if (! $post = get_post($id)) {
             return $link;
         }
-        if ($post->post_type === 'espresso_attendees') {
+        if ($post->post_type === EspressoPostType::ATTENDEES) {
             $query_args = [
                 'action' => 'edit_attendee',
                 'post'   => $id,
@@ -496,7 +497,7 @@ final class EE_Admin implements InterminableInterface
     {
         $menuitems[] = [
             'title'       => esc_html__('Event List', 'event_espresso'),
-            'url'         => get_post_type_archive_link('espresso_events'),
+            'url'         => get_post_type_archive_link(EspressoPostType::EVENTS),
             'description' => esc_html__('Archive page for all events.', 'event_espresso'),
         ];
         return apply_filters('FHEE__EE_Admin__get_extra_nav_menu_pages_items', $menuitems);

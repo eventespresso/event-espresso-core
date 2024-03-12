@@ -22,10 +22,8 @@ class EEM_Payment_Method extends EEM_Base
 
     const scope_api   = 'API';
 
-    /**
-     * @type EEM_Payment_Method
-     */
-    protected static $_instance = null;
+
+    protected static ?EEM_Payment_Method $_instance = null;
 
 
     /**

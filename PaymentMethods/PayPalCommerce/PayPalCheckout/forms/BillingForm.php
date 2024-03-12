@@ -492,25 +492,25 @@ class BillingForm extends EE_Billing_Attendee_Info_Form
 
 
     /**
-     * Get PayPal order ID if already created for this transaction.
+     * Get PayPal order if already created for this transaction and saved.
      *
      * @param string $transaction_id
-     * @return string
+     * @return array
      */
-    public function getPpOrderId(string $transaction_id): string
+    public function getPpOrder(string $transaction_id): array
     {
         try {
             $pp_order        = PayPalExtraMetaManager::getPmOption($this->paypal_pmt, Domain::META_KEY_LAST_ORDER);
             $pp_order_txn_id = $pp_order['ee_txn_id'] ?? false;
-            if ($pp_order_txn_id != $transaction_id) {
+            if ($pp_order_txn_id !== $transaction_id) {
                 // Old order data, delete it.
                 PayPalExtraMetaManager::deletePmOption($this->paypal_pmt, Domain::META_KEY_LAST_ORDER);
-                return '';
+                return [];
             }
         } catch (Exception $exception) {
-            return '';
+            return [];
         }
-        return $pp_order['id'] ?? '';
+        return (array) $pp_order;
     }
 
 
@@ -535,7 +535,6 @@ class BillingForm extends EE_Billing_Attendee_Info_Form
                 'pm_slug' => $payment_method->slug(),
             ];
         }
-
         // Convert money for a display format.
         $decimal_places = CurrencyManager::getDecimalPlaces();
         $org_country    = isset(EE_Registry::instance()->CFG->organization)
@@ -544,12 +543,16 @@ class BillingForm extends EE_Billing_Attendee_Info_Form
             : 'US';
         $transaction_id = $this->transaction instanceof EE_Transaction ? $this->transaction->ID() : 0;
         $currency_code  = CurrencyManager::currencyCode();
+        $paypal_order   = empty($transaction_id) ? [] : $this->getPpOrder($transaction_id);
+        $order_amount   = $paypal_order['purchase_units'][0]['payments']['captures'][0]['amount']['value'] ?? '';
         return [
             'pm_versions'            => $pm_versions,
             'payment_currency'       => $currency_code,
             'checkout_type'          => $this->checkout_type,
             'currency_sign'          => EE_Registry::instance()->CFG->currency->sign,
-            'pp_order_id'            => $this->getPpOrderId($transaction_id),
+            'pp_order_id'            => $paypal_order['id'] ?? '',
+            'pp_order_status'        => $paypal_order['status'] ?? 'ORDER_STATUS_UNKNOWN',
+            'pp_order_amount'        => $order_amount,
             'pp_order_nonce'         => wp_create_nonce(Domain::CAPTURE_ORDER_NONCE_NAME),
             // The transaction ID is only used for logging errors.
             'txn_id'                 => $transaction_id,

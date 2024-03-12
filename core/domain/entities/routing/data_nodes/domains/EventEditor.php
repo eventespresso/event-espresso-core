@@ -3,6 +3,7 @@
 namespace EventEspresso\core\domain\entities\routing\data_nodes\domains;
 
 use EE_Error;
+use EventEspresso\core\domain\entities\custom_post_types\EspressoPostType;
 use EventEspresso\core\domain\services\admin\events\editor\EventEditorGraphQLData;
 use EventEspresso\core\services\json\JsonDataNode;
 use EventEspresso\core\services\json\JsonDataNodeValidator;
@@ -55,7 +56,7 @@ class EventEditor extends JsonDataNode
         global $post;
         $eventId = isset($_REQUEST['post']) ? absint($_REQUEST['post']) : 0;
         // if there's no event ID but there IS a WP Post... then use the Post ID
-        $use_post_id = $eventId === 0 && $post instanceof WP_Post && $post->post_type === 'espresso_events';
+        $use_post_id = $eventId === 0 && $post instanceof WP_Post && $post->post_type === EspressoPostType::EVENTS;
         $eventId = $use_post_id ? $post->ID : $eventId;
         $related_data = apply_filters(
             'FHEE__EventEspresso_core_domain_entities_routing_data_nodes_domains_EventEditor__initialize__related_data',

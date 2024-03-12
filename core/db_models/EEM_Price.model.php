@@ -12,13 +12,7 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
  */
 class EEM_Price extends EEM_Soft_Delete_Base
 {
-
-    /**
-     * private instance of the EEM_Price object
-     *
-     * @var EEM_Price $_instance
-     */
-    protected static $_instance;
+    protected static ?EEM_Price $_instance = null;
 
 
     /**

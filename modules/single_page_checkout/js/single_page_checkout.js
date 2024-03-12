@@ -830,9 +830,11 @@ jQuery(document).ready( function($) {
 				},
 
 				success: function( response ){
-					//SPCO.console_log( 'submit_reg_form : step', step, true );
-					//SPCO.console_log( 'submit_reg_form : next_step', next_step, false );
-					//SPCO.console_log_object( 'submit_reg_form : response', response, 0 );
+                    "use strict";
+                    if (typeof response !== "object") {
+                        console.error("invalid AJAX response", response);
+                        return SPCO.ajax_request_server_error();
+                    }
 					SPCO.process_response( next_step, response );
 				},
 
@@ -877,6 +879,11 @@ jQuery(document).ready( function($) {
 					SPCO.do_before_sending_ajax();
 				},
 				success: function( response ){
+                    "use strict";
+                    if (typeof response !== 'object') {
+                        console.error( "invalid AJAX response", response );
+                        return SPCO.ajax_request_server_error();
+                    }
                     if ( typeof prev_response.success !== 'undefined' ) {
                         if ( typeof response.return_data === 'undefined' ) {
                             response.return_data = {};

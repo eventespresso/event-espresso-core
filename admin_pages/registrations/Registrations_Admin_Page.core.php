@@ -2,6 +2,7 @@
 
 use EventEspresso\core\domain\Domain;
 use EventEspresso\core\domain\entities\contexts\Context;
+use EventEspresso\core\domain\entities\custom_post_types\EspressoPostType;
 use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidFormSubmissionException;
@@ -205,7 +206,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     {
         // gotta make sure this only happens on this route
         $post_type = get_post_type($comment->comment_post_ID);
-        if ($post_type === 'espresso_attendees') {
+        if ($post_type === EspressoPostType::ATTENDEES) {
             return '#commentsdiv';
         }
         return $link;
@@ -2572,7 +2573,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @throws RuntimeException
      * @throws UnexpectedEntityException
      */
-    protected function _trash_or_restore_registrations($trash = true)
+    protected function _trash_or_restore_registrations(bool $trash = true)
     {
         // if empty _REG_ID then get out because there's nothing to do
         $REG_IDs = $this->request->getRequestParam('_REG_ID', [], 'int', true);
@@ -2598,27 +2599,29 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         // cycle thru checkboxes
         foreach ($REG_IDs as $REG_ID) {
             /** @var EE_Registration $REG */
-            $REG      = $this->getRegistrationModel()->get_one_by_ID($REG_ID);
-            $payments = $REG->registration_payments();
-            if (! empty($payments)) {
-                $name           = $REG->attendee() instanceof EE_Attendee
-                    ? $REG->attendee()->full_name()
-                    : esc_html__('Unknown Attendee', 'event_espresso');
-                $overwrite_msgs = true;
-                EE_Error::add_error(
-                    sprintf(
-                        esc_html__(
-                            'The registration for %s could not be trashed because it has payments attached to the related transaction.  If you wish to trash this registration you must first delete the payments on the related transaction.',
-                            'event_espresso'
+            $REG = $this->getRegistrationModel()->get_one_by_ID($REG_ID);
+            if ($trash) {
+                $payments = $REG->registration_payments();
+                if (! empty($payments)) {
+                    $name           = $REG->attendee() instanceof EE_Attendee
+                        ? $REG->attendee()->full_name()
+                        : esc_html__('Unknown Attendee', 'event_espresso');
+                    $overwrite_msgs = true;
+                    EE_Error::add_error(
+                        sprintf(
+                            esc_html__(
+                                'The registration for %s could not be trashed because it has payments attached to the related transaction.  If you wish to trash this registration you must first delete the payments on the related transaction.',
+                                'event_espresso'
+                            ),
+                            $name
                         ),
-                        $name
-                    ),
-                    __FILE__,
-                    __FUNCTION__,
-                    __LINE__
-                );
-                // can't trash this registration because it has payments.
-                continue;
+                        __FILE__,
+                        __FUNCTION__,
+                        __LINE__
+                    );
+                    // can't trash this registration because it has payments.
+                    continue;
+                }
             }
             $updated = $trash ? $REG->delete() : $REG->restore();
             if ($updated) {
@@ -2648,7 +2651,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * 3. Deleting permanently any related Line items but only if the above conditions are met.
      * 4. Removing relationships between all tickets and the related registrations
      * 5. Deleting permanently any related Answers (and the answers for other related registrations that were deleted.)
-     * 6. Deleting permanently any related Checkins.
+     * 6. Deleting permanently any related Check-ins.
      *
      * @return void
      * @throws EE_Error
@@ -3255,7 +3258,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      *                                                     the query parameters from the request
      * @return void ends the request with a redirect or download
      */
-    public function _registrations_report_base($method_name_for_getting_query_params)
+    public function _registrations_report_base(string $method_name_for_getting_query_params)
     {
         $EVT_ID = $this->request->requestParamIsSet('EVT_ID')
             ? $this->request->getRequestParam('EVT_ID', 0, DataType::INT)
@@ -3425,7 +3428,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     protected function _insert_update_cpt_item($post_id, $post)
     {
         $success  = true;
-        $attendee = $post instanceof WP_Post && $post->post_type === 'espresso_attendees'
+        $attendee = $post instanceof WP_Post && $post->post_type === EspressoPostType::ATTENDEES
             ? $this->getAttendeeModel()->get_one_by_ID($post_id)
             : null;
         // for attendee updates
@@ -3519,7 +3522,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             'normal'
         );
         remove_meta_box('commentstatusdiv', $this->_cpt_routes[ $this->_req_action ], 'normal');
-        if (post_type_supports('espresso_attendees', 'excerpt')) {
+        if (post_type_supports(EspressoPostType::ATTENDEES, 'excerpt')) {
             $this->addMetaBox(
                 'postexcerpt',
                 esc_html__('Short Biography', 'event_espresso'),
@@ -3527,7 +3530,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 $this->_cpt_routes[ $this->_req_action ]
             );
         }
-        if (post_type_supports('espresso_attendees', 'comments')) {
+        if (post_type_supports(EspressoPostType::ATTENDEES, 'comments')) {
             $this->addMetaBox(
                 'commentsdiv',
                 esc_html__('Notes on the Contact', 'event_espresso'),
@@ -3693,7 +3696,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      */
     public function after_title_form_fields($post)
     {
-        if ($post->post_type === 'espresso_attendees') {
+        if ($post->post_type === EspressoPostType::ATTENDEES) {
             $template                  = REG_TEMPLATE_PATH . 'attendee_details_after_title_form_fields.template.php';
             $template_args['attendee'] = $this->_cpt_model_obj;
             EEH_Template::display_template($template, $template_args);

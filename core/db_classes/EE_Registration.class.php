@@ -1244,6 +1244,11 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * pretty_final_price
      *  final price as formatted string, with correct decimal places and currency symbol
      *
+     * @param string|null $schema
+     *      Schemas:
+     *      'localized_float': "3,023.00"
+     *      'no_currency_code': "$3,023.00"
+     *      null: "$3,023.00<span>USD</span>"
      * @return string
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -1251,9 +1256,9 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function pretty_final_price()
+    public function pretty_final_price(?string $schema = null)
     {
-        return $this->get_pretty('REG_final_price');
+        return $this->get_pretty('REG_final_price', $schema);
     }
 
 
@@ -1276,6 +1281,11 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     /**
      * pretty_paid
      *
+     * @param string|null $schema
+     *      Schemas:
+     *      'localized_float': "3,023.00"
+     *      'no_currency_code': "$3,023.00"
+     *      null: "$3,023.00<span>USD</span>"
      * @return float
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -1283,9 +1293,9 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function pretty_paid()
+    public function pretty_paid(?string $schema = null)
     {
-        return $this->get_pretty('REG_paid');
+        return $this->get_pretty('REG_paid', $schema);
     }
 
 
@@ -1301,14 +1311,14 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function owes_monies_and_can_pay($requires_payment = [])
+    public function owes_monies_and_can_pay(array $requires_payment = []): bool
     {
         // these reg statuses require payment (if event is not free)
         $requires_payment = ! empty($requires_payment)
             ? $requires_payment
             : EEM_Registration::reg_statuses_that_allow_payment();
         if (
-            $this->final_price() !== 0 &&
+            $this->final_price() !== 0.0 &&
             $this->final_price() !== $this->paid() &&
             in_array($this->status_ID(), $requires_payment)
         ) {

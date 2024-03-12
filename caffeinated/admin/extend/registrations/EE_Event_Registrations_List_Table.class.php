@@ -15,7 +15,7 @@ use EventEspresso\ui\browser\checkins\entities\CheckinStatusDashicon;
  *
  * @package       Event Espresso
  */
-class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
+class EE_Event_Registrations_List_Table extends EE_Registrations_List_Table
 {
     /**
      * @var Extend_Registrations_Admin_Page
@@ -117,14 +117,14 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
         $columns             = [];
 
         $this->_columns = [
-            '_REG_att_checked_in' => '<span class="dashicons dashicons-yes ee-icon-size-18"></span>',
+            '_REG_att_checked_in' => '<span class="dashicons dashicons-yes-alt"></span>',
             'ATT_name'            => esc_html__('Registrant', 'event_espresso'),
             'ATT_email'           => esc_html__('Email Address', 'event_espresso'),
             'Event'               => esc_html__('Event', 'event_espresso'),
-            'PRC_name'            => esc_html__('TKT Option', 'event_espresso'),
+            'REG_ticket'          => esc_html__('Ticket', 'event_espresso'),
             '_REG_final_price'    => esc_html__('Price', 'event_espresso'),
-            'TXN_paid'            => esc_html__('Paid', 'event_espresso'),
-            'TXN_total'           => esc_html__('Total', 'event_espresso'),
+            '_REG_paid'           => esc_html__('REG Paid', 'event_espresso'),
+            'TXN_total'           => esc_html__('TXN Paid/Total', 'event_espresso'),
         ];
         // Add/remove columns when an event has been selected
         if (! empty($this->event_id)) {
@@ -133,14 +133,13 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
             $this->_has_checkbox_column = true;
             // Remove the 'Event' column
             unset($this->_columns['Event']);
-            $this->setBottomButtons();
         }
         $this->_columns        = array_merge($columns, $this->_columns);
         $this->_primary_column = '_REG_att_checked_in';
 
         $csv_report = RegistrationsCsvReportParams::getRequestParams(
             $this->getReturnUrl(),
-            $this->_req_data,
+            $this->_admin_page->get_request_data(),
             $this->event_id,
             $this->datetime_id
         );
@@ -405,14 +404,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
         $attributes     = ' onClick="return false"';
         $button_class   = 'button button--secondary button--icon-only ee-aria-tooltip ee-aria-tooltip--big-box';
 
-        if (
-            $DTT_ID
-            && EE_Registry::instance()->CAP->current_user_can(
-                'ee_edit_checkin',
-                'espresso_registrations_toggle_checkin_status',
-                $registration->ID()
-            )
-        ) {
+        if ($DTT_ID && $this->caps_handler->userCanEditRegistrationCheckin($registration)) {
             // overwrite the disabled attribute with data attributes for performing checkin
             $attributes   = 'data-_regid="' . $registration->ID() . '"';
             $attributes   .= ' data-dttid="' . $DTT_ID . '"';
@@ -450,16 +442,15 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
             <span class="ee-status-dot ee-status-bg--' . esc_attr($registration->status_ID()) . ' ee-aria-tooltip"
             aria-label="' . EEH_Template::pretty_status($registration->status_ID(), false, 'sentence') . '">
             </span>';
-        $name_link    .= EE_Registry::instance()->CAP->current_user_can(
-            'ee_edit_contacts',
-            'espresso_registrations_edit_attendee'
-        )
-            ? '<a class="ee-aria-tooltip" href="' . $edit_lnk_url . '" aria-label="' . esc_attr__(
-                'View Registration Details',
-                'event_espresso'
-            ) . '">'
-              . $registration->attendee()->full_name()
-              . '</a>'
+        $status        = esc_attr($registration->status_ID());
+        $name_link    .= $this->caps_handler->userCanEditContacts()
+            ? '
+            <a class="ee-aria-tooltip ee-status-color--' . $status . '"
+               href="' . $edit_lnk_url . '"
+               aria-label="' . esc_attr__('View Registration Details', 'event_espresso') . '"
+            >
+                ' . $registration->attendee()->full_name() . '
+            </a>'
             : $registration->attendee()->full_name();
         $name_link    .= $registration->count() === 1
             ? '&nbsp;<sup><div class="dashicons dashicons-star-filled gold-icon"></div></sup>	'
@@ -476,11 +467,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
             REG_ADMIN_URL
         );
         $name_link .= '<br>';
-        $name_link .= EE_Registry::instance()->instance()->CAP->current_user_can(
-            'ee_read_registration',
-            'view_registration',
-            $registration->ID()
-        )
+        $name_link .= $this->caps_handler->userCanReadRegistration($registration)
             ? '<a class="ee-aria-tooltip" href="' . $link . '" aria-label="' . esc_attr__(
                 'View Registration Details',
                 'event_espresso'
@@ -490,13 +477,7 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
             : $registration->reg_code();
 
         $actions = [];
-        if (
-            $this->datetime_id
-            && EE_Registry::instance()->CAP->current_user_can(
-                'ee_read_checkins',
-                'espresso_registrations_registration_checkins'
-            )
-        ) {
+        if ($this->datetime_id && $this->caps_handler->userCanReadRegistrationCheckins()) {
             $checkin_list_url = EE_Admin_Page::add_query_args_and_nonce(
                 ['action' => 'registration_checkins', '_REG_ID' => $registration->ID(), 'DTT_ID' => $this->datetime_id],
                 REG_ADMIN_URL
@@ -522,24 +503,9 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
             }
         }
         $content = (! empty($this->datetime_id) && ! empty($checkins))
-            ? sprintf('%1$s %2$s', $name_link, $this->row_actions($actions, true))
+            ? $name_link . $this->row_actions($actions, true)
             : $name_link;
         return $this->columnContent('ATT_name', $content);
-    }
-
-
-    /**
-     * @param EE_Registration $registration
-     * @return string
-     * @throws EE_Error
-     * @throws EE_Error
-     * @throws ReflectionException
-     */
-    public function column_ATT_email(EE_Registration $registration): string
-    {
-        $attendee = $registration->attendee();
-        $content  = $attendee instanceof EE_Attendee ? $attendee->email() : '';
-        return $this->columnContent('ATT_email', $content);
     }
 
 
@@ -557,12 +523,10 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
                 ['action' => 'event_registrations', 'event_id' => $event->ID()],
                 REG_ADMIN_URL
             );
-            $content          = EE_Registry::instance()->CAP->current_user_can(
-                'ee_read_checkins',
-                'espresso_registrations_registration_checkins'
-            ) ? '<a class="ee-aria-tooltip" href="' . $checkin_link_url . '" aria-label="'
+            $content          = $this->caps_handler->userCanReadRegistrationCheckins()
+                ? '<a class="ee-aria-tooltip" href="' . $checkin_link_url . '" aria-label="'
                 . esc_attr__(
-                    'View Checkins for this Event',
+                    'View Check-ins for this Event',
                     'event_espresso'
                 ) . '">' . $event->name() . '</a>' : $event->name();
         } catch (EntityNotFoundException $e) {
@@ -580,105 +544,6 @@ class EE_Event_Registrations_List_Table extends EE_Admin_List_Table
      */
     public function column_PRC_name(EE_Registration $registration): string
     {
-        $content = $registration->ticket() instanceof EE_Ticket
-            ? $registration->ticket()->name()
-              . '<span class="ee-entity--id">(ID:' . $registration->ticket()->ID() . ')</span>'
-            : esc_html__(
-                "Unknown",
-                "event_espresso"
-            );
-        return $this->columnContent('PRC_name', $content);
-    }
-
-
-    /**
-     * column_REG_final_price
-     *
-     * @param EE_Registration $registration
-     * @return string
-     * @throws EE_Error
-     * @throws ReflectionException
-     */
-    public function column__REG_final_price(EE_Registration $registration): string
-    {
-        return $this->columnContent('_REG_final_price', $registration->pretty_final_price(), 'end');
-    }
-
-
-    /**
-     * column_TXN_paid
-     *
-     * @param EE_Registration $registration
-     * @return string
-     * @throws EE_Error
-     * @throws ReflectionException
-     */
-    public function column_TXN_paid(EE_Registration $registration): string
-    {
-        $content = '';
-        if ($registration->count() === 1) {
-            if ($registration->transaction()->paid() >= $registration->transaction()->total()) {
-                return '<div class="dashicons dashicons-yes green-icon"></div>';
-            } else {
-                $view_txn_lnk_url = EE_Admin_Page::add_query_args_and_nonce(
-                    ['action' => 'view_transaction', 'TXN_ID' => $registration->transaction_ID()],
-                    TXN_ADMIN_URL
-                );
-                $content          = EE_Registry::instance()->CAP->current_user_can(
-                    'ee_read_transaction',
-                    'espresso_transactions_view_transaction'
-                ) ? '
-				<a class="ee-aria-tooltip ee-status-color--'
-                    . $registration->transaction()->status_ID()
-                    . '" href="'
-                    . $view_txn_lnk_url
-                    . '"  aria-label="'
-                    . esc_attr__('View Transaction', 'event_espresso')
-                    . '">
-						'
-                    . $registration->transaction()->pretty_paid()
-                    . '
-					</a>
-				' : $registration->transaction()->pretty_paid();
-            }
-        }
-        return $this->columnContent('TXN_paid', $content, 'end');
-    }
-
-
-    /**
-     *        column_TXN_total
-     *
-     * @param EE_Registration $registration
-     * @return string
-     * @throws EE_Error
-     * @throws ReflectionException
-     */
-    public function column_TXN_total(EE_Registration $registration): string
-    {
-        $content      = '';
-        $txn          = $registration->transaction();
-        $view_txn_url = add_query_arg(['action' => 'view_transaction', 'TXN_ID' => $txn->ID()], TXN_ADMIN_URL);
-        if ($registration->get('REG_count') === 1) {
-            $line_total_obj = $txn->total_line_item();
-            $txn_total      = $line_total_obj instanceof EE_Line_Item
-                ? $line_total_obj->get_pretty('LIN_total')
-                : esc_html__(
-                    'View Transaction',
-                    'event_espresso'
-                );
-            $content        = EE_Registry::instance()->CAP->current_user_can(
-                'ee_read_transaction',
-                'espresso_transactions_view_transaction'
-            ) ? '<a class="ee-aria-tooltip" href="'
-                . $view_txn_url
-                . '" aria-label="'
-                . esc_attr__('View Transaction', 'event_espresso')
-                . '">'
-                . $txn_total
-                . '</a>'
-                : $txn_total;
-        }
-        return $this->columnContent('TXN_total', $content, 'end');
+        return $this->column_REG_ticket($registration);
     }
 }

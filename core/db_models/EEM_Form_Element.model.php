@@ -26,20 +26,11 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 class EEM_Form_Element extends EEM_Base
 {
-    /**
-     * @var EEM_Form_Element
-     */
-    protected static $_instance;
+    protected static ?EEM_Form_Element $_instance = null;
 
-    /**
-     * @var RequestInterface
-     */
-    private $request;
+    private RequestInterface $request;
 
-    /**
-     * @var InputTypes
-     */
-    private $input_types;
+    private InputTypes $input_types;
 
 
     /**

@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\entities\custom_post_types\EspressoPostType;
 use EventEspresso\core\services\request\sanitizers\AllowedTags;
 use EventEspresso\widgets\EspressoWidget;
 
@@ -332,7 +333,7 @@ class EEW_Upcoming_Events extends EspressoWidget
             $after_widget  = '';
             // but NOT an events archives page, cuz that would be like two event lists on the same page
             $show_everywhere = ! isset($instance['show_everywhere']) || absint($instance['show_everywhere']);
-            if ($show_everywhere || ! ($post->post_type == 'espresso_events' && is_archive())) {
+            if ($show_everywhere || ! ($post->post_type == EspressoPostType::EVENTS && is_archive())) {
                 // let's use some of the event helper functions'
                 // make separate vars out of attributes
                 extract($args);
@@ -539,7 +540,7 @@ class EEW_Upcoming_Events extends EspressoWidget
             if ($event instanceof EE_Event && (! is_single() || $post->ID != $event->ID())) {
                 $event_url = $this->eventUrl($event);
                 $list_items .= '
-                <li id="ee-upcoming-events-widget-li-' . absint($event->ID()) . '" 
+                <li id="ee-upcoming-events-widget-li-' . absint($event->ID()) . '"
                     class="ee-upcoming-events-widget-li"
                 >
                     <h5 class="ee-upcoming-events-widget-title-h5">

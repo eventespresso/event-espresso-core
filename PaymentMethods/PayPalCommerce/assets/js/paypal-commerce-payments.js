@@ -29,6 +29,8 @@ jQuery(document).ready(function ($) {
      * 	currency_sign: string,
      * 	pp_order_id: string,
      * 	pp_order_nonce: string,
+     * 	pp_order_status: string,
+     * 	pp_order_amount: string,
      * 	txn_id: int,
      * 	org_country: string,
      * 	decimal_places: int,
@@ -74,18 +76,18 @@ jQuery(document).ready(function ($) {
                 return false;
             }
             // Prevent loading on registration page.
-            if (! this.billing_form.length) {
+            if (!this.billing_form.length) {
                 return false;
             }
             // PayPal components will require re-setup even if PM already initialized.
             if (this.initialized) {
                 // PayPal buttons or Hosted Fields ?
-                    if (eeaPPCommerceParameters.checkout_type !== 'express_checkout') {
-                        this.setupHostedFields();
-                    }
-                    if (eeaPPCommerceParameters.checkout_type !== 'ppcp') {
-                        this.setupPayPalButtons();
-                    }
+                if (eeaPPCommerceParameters.checkout_type !== 'express_checkout') {
+                    this.setupHostedFields();
+                }
+                if (eeaPPCommerceParameters.checkout_type !== 'ppcp') {
+                    this.setupPayPalButtons();
+                }
                 this.disableSubmitButtons();
                 return true;
             }
@@ -102,10 +104,13 @@ jQuery(document).ready(function ($) {
          * @return boolean
          */
         this.initializeObjects = function () {
+            this.pp_order_id = this.pp_order_status = this.pp_order_amount = '';
             this.pp_order_nonce = eeaPPCommerceParameters.pp_order_nonce;
             // Don't override possibly already saved order ID.
-            if (! this.pp_order_id || this.pp_order_id.length < 1) {
+            if (!this.pp_order_id || this.pp_order_id.length < 1) {
                 this.pp_order_id = eeaPPCommerceParameters.pp_order_id;
+                this.pp_order_status = eeaPPCommerceParameters.pp_order_status;
+                this.pp_order_amount = eeaPPCommerceParameters.pp_order_amount;
             }
             this.button_container_id = '#eep-' + pm_slug + '-payment-buttons';
             this.payment_method_selector = $('#ee-available-payment-method-inputs');
@@ -327,11 +332,22 @@ jQuery(document).ready(function ($) {
                             bill_state = eeaPPCommerceParameters.active_states[key];
                         }
                     }
-
                     let bill_address_2 = this.bill_address_2.val();
                     if (!bill_address_2) {
                         bill_address_2 = '';
                     }
+                    // Make sure that we don't already have a Complete order. In which case we don't want to make PP re-capture this order.
+                    if (this_pm.pp_order_id && this_pm.pp_order_status && this_pm.pp_order_status === 'COMPLETED') {
+                        // Just complete the payment.
+                        const response_data = {
+                            pp_order_id: this_pm.pp_order_id,
+                            pp_order_nonce: this_pm.pp_order_nonce,
+                            pp_order_status: this_pm.pp_order_status,
+                            pp_order_amount: this_pm.pp_order_amount
+                        };
+                        return this_pm.completePayment(response_data, this_pm);
+                    }
+                    // Submit the card form to PP for processing the order.
                     cardFields.submit({
                         // Cardholder's first and last name
                         cardholderName: $(this_pm.card_holder_name_input_id).val(),
@@ -385,7 +401,7 @@ jQuery(document).ready(function ($) {
             const this_pm = this;
             const request_data = new FormData();
             request_data.append('action', 'eeaPPCCreateOrder');
-            request_data.append('txn_id', eeaPPCommerceParameters.txn_id);
+            request_data.append('txn_id', this_pm.transaction['TXN_ID']);
             request_data.append('payment_method', this.slug);
             request_data.append('billing_info', JSON.stringify(billing_info));
             // Do a request to create an Order.
@@ -432,7 +448,7 @@ jQuery(document).ready(function ($) {
             }
             request_data.append('action', 'eeaPPCCaptureOrder');
             request_data.append('payment_method', this.slug);
-            request_data.append('txn_id', eeaPPCommerceParameters.txn_id);
+            request_data.append('txn_id', this_pm.transaction['TXN_ID']);
             request_data.append('order_id', order_id);
 
             // Do a request to capture the Order.
@@ -456,14 +472,7 @@ jQuery(document).ready(function ($) {
                     }
                     // All seems to be good if we got here. Submit the form with some order data.
                     this_pm.saveOrderData(response_data);
-                    // Hide any return to cart buttons, etc.
-                    $('.hide-me-after-successful-payment-js').hide();
-                    // Trigger click event on SPCO "Proceed to Next Step" button.
-                    this_pm.spco.enable_submit_buttons();
-                    this_pm.order_nonce_input.parents('form:first').find('.spco-next-step-btn').trigger('click');
-                    console.log('-- captureOrder return response_data:', response_data);
-                    this_pm.spco.end_ajax();
-                    return response_data;
+                    return this_pm.completePayment(response_data, this_pm);
                 });
         };
 
@@ -494,13 +503,13 @@ jQuery(document).ready(function ($) {
             SPCO.remove_previous_validation_rules();
             // Send additional POST data with the form submit
             SPCO.additional_post_data += '&eep_ppc_skip_form_validation=true';
-            $.each(bill_fields, function(index, field) {
+            $.each(bill_fields, function (index, field) {
                     field.parent().hide();
                     field.removeAttr('required');
                 }
             );
             // Hide card fields as well.
-            $.each(card_fields, function(index, field) {
+            $.each(card_fields, function (index, field) {
                     field.hide();
                 }
             );
@@ -521,12 +530,30 @@ jQuery(document).ready(function ($) {
                 this.pp_order_nonce = order_data.pp_order_nonce;
             }
             if (typeof order_data.pp_order_status !== 'undefined' && order_data.pp_order_status) {
+                this.pp_order_status = order_data.pp_order_status;
                 this.order_status_input.val(order_data.pp_order_status);
             }
             if (typeof order_data.pp_order_amount !== 'undefined' && order_data.pp_order_amount) {
+                this.pp_order_amount = order_data.pp_order_amount;
                 this.order_amount_input.val(order_data.pp_order_amount);
             }
             this.saveOrderInDom();
+        };
+
+
+        /**
+         * Complete the payment. Do required last steps to submit this payment.
+         * @function
+         */
+        this.completePayment = function (response_data, this_pm) {
+            // Hide any return to cart buttons, etc.
+            $('.hide-me-after-successful-payment-js').hide();
+            // Trigger click event on SPCO "Proceed to Next Step" button.
+            this_pm.spco.enable_submit_buttons();
+            this_pm.order_nonce_input.parents('form:first').find('.spco-next-step-btn').trigger('click');
+            console.log('-- captureOrder return response_data:', response_data);
+            this_pm.spco.end_ajax();
+            return response_data
         };
 
 

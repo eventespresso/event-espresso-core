@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\entities\custom_post_types\EspressoPostType;
 use EventEspresso\core\domain\services\capabilities\PublicCapabilities;
 use EventEspresso\core\domain\services\commands\registration\CreateRegistrationCommand;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
@@ -1538,7 +1539,7 @@ class EED_Single_Page_Checkout extends EED_Module
                                                 'event_espresso'
                                             ),
                                             '<a href="'
-                                            . get_post_type_archive_link('espresso_events')
+                                            . get_post_type_archive_link(EspressoPostType::EVENTS)
                                             . '" title="',
                                             '">',
                                             '</a>'
@@ -1727,7 +1728,7 @@ class EED_Single_Page_Checkout extends EED_Module
             '</h4>',
             '<br />',
             '<p>',
-            '<a href="' . get_post_type_archive_link('espresso_events') . '" title="',
+            '<a href="' . get_post_type_archive_link(EspressoPostType::EVENTS) . '" title="',
             '">',
             '</a>',
             '</p>'

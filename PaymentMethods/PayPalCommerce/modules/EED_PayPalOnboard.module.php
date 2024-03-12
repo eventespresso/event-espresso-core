@@ -629,27 +629,25 @@ class EED_PayPalOnboard extends EED_Module
      */
     public static function adminNotice()
     {
-        // A notice to re-connect if still connected through the first party integration.
+        // Show the notice if PayPal Commerce PM is active but merchant is not onboard.
         $pp_commerce = EEM_Payment_Method::instance()->get_one_by_slug('paypalcheckout');
-        // Show the notice only if PayPal Commerce is active.
-        if (! $pp_commerce instanceof EE_Payment_Method
-            || ! EED_PayPalOnboard::isOnboard($pp_commerce)
-            || EED_PayPalCommerce::isThirdParty($pp_commerce)
+        if ($pp_commerce instanceof EE_Payment_Method
+            && $pp_commerce->active()
+            && ! EED_PayPalOnboard::isOnboard($pp_commerce)
         ) {
-            return;
+            add_action('admin_notices', [__CLASS__, 'notOnboardNotice']);
         }
-        add_action('admin_notices', [__CLASS__, 'reConnectNotice']);
     }
 
 
     /**
-     * Re-connect notice contents.
+     * Contents of the not onboard admin notice.
      *
      * @return void
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public static function reConnectNotice()
+    public static function notOnboardNotice()
     {
         $open_anchor = $close_anchor = '';
         $pp_commerce = EEM_Payment_Method::instance()->get_one_by_slug('paypalcheckout');
@@ -668,14 +666,14 @@ class EED_PayPalOnboard extends EED_Module
         echo '<div class="error"><p>'
         . sprintf(
             esc_html__(
-                '%1$sPayPal Commerce%2$s has updated the API integration type to allow more flexibility with payments. Please disconnect and re-Connect on the %3$sPayment Methods admin%4$s page to update the credentials and allow advanced payment type options.',
+                '%1$sPayPal Commerce%2$s payment method was activated but is not connected to PayPal. Please %3$sfinish setting up%4$s this payment method.',
                 'event_espresso'
             ),
             '<strong>',
             '</strong>',
             $open_anchor,
             $close_anchor
-         )
-         . '</p></div>';
+        )
+        . '</p></div>';
     }
 }

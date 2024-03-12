@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\entities\custom_post_types\EspressoPostType;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 
@@ -31,26 +32,11 @@ class EEM_Event extends EEM_CPT_Base
     const cancelled = 'cancelled';
 
 
-    /**
-     * @var string
-     */
-    protected static $_default_reg_status;
+    protected static string $_default_reg_status;
 
+    protected static int $_default_additional_limit = 10;
 
-    /**
-     * This is the default for the additional limit field.
-     *
-     * @var int
-     */
-    protected static $_default_additional_limit = 10;
-
-
-    /**
-     * private instance of the Event object
-     *
-     * @var EEM_Event
-     */
-    protected static $_instance;
+    protected static ?EEM_Event $_instance = null;
 
 
     /**
@@ -154,7 +140,7 @@ class EEM_Event extends EEM_CPT_Base
                     false,
                     1
                 ),
-                'post_type'      => new EE_WP_Post_Type_Field('espresso_events'),
+                'post_type'      => new EE_WP_Post_Type_Field(EspressoPostType::EVENTS),
                 // EE_Plain_Text_Field( 'post_type', esc_html__( 'Event Post Type', 'event_espresso' ), FALSE, 'espresso_events' ),
                 'status'         => new EE_WP_Post_Status_Field(
                     'post_status',

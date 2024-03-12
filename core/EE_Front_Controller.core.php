@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\entities\custom_post_types\EspressoPostType;
 use EventEspresso\core\domain\services\event\FilterNextPreviousEventPostQuery;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -286,7 +287,7 @@ final class EE_Front_Controller
             add_action('wp_enqueue_scripts', array($this, 'enqueueScripts'), 10);
         }
 
-        if (is_singular('espresso_events')) {
+        if (is_singular(EspressoPostType::EVENTS)) {
             new FilterNextPreviousEventPostQuery();
         }
     }
@@ -373,7 +374,7 @@ final class EE_Front_Controller
         if (
             isset($post->EE_Event)
             && $post->EE_Event instanceof EE_Event
-            && get_post_type() === 'espresso_events'
+            && get_post_type() === EspressoPostType::EVENTS
             && is_singular()
         ) {
             EEH_Schema::add_json_linked_data_for_event($post->EE_Event);

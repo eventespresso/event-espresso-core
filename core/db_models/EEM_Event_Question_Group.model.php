@@ -24,8 +24,8 @@ class EEM_Event_Question_Group extends EEM_Base
      */
     const ADDITIONAL = 'EQG_additional';
 
-    // private instance of the Event_Question_Group object
-    protected static $_instance = null;
+
+    protected static ?EEM_Event_Question_Group $_instance = null;
 
 
     /**

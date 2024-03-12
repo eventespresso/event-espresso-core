@@ -1,7 +1,6 @@
 <?php
 
-use EventEspresso\core\exceptions\InvalidDataTypeException;
-use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\domain\entities\custom_post_types\EspressoPostType;
 
 /**
  * class EEM_Term
@@ -9,12 +8,10 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
  * @package               Event Espresso
  * @subpackage            includes/models/
  * @author                Michael Nelson
- *                        ------------------------------------------------------------------------
  */
 class EEM_Term extends EEM_Base
 {
-    // private instance of the Attendee object
-    protected static $_instance = null;
+    protected static ?EEM_Term $_instance = null;
 
 
     /**
@@ -93,7 +90,9 @@ class EEM_Term extends EEM_Base
      *
      * @access public
      * @param bool $show_uncategorized
-     * @return \EE_Base_Class[]
+     * @return EE_Base_Class[]
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_all_ee_categories($show_uncategorized = false)
     {
@@ -119,16 +118,18 @@ class EEM_Term extends EEM_Base
      * @access public
      * @param string $post_type
      * @return array
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_all_CPT_post_tags($post_type = '')
     {
         switch ($post_type) {
-            case 'espresso_events':
+            case EspressoPostType::EVENTS:
                 return $this->get_all_event_post_tags();
-                break;
-            case 'espresso_venues':
+
+            case EspressoPostType::VENUES:
                 return $this->get_all_venue_post_tags();
-                break;
+
             default:
                 $event_tags = $this->get_all_event_post_tags();
                 $venue_tags = $this->get_all_venue_post_tags();
@@ -144,9 +145,7 @@ class EEM_Term extends EEM_Base
      * @param string $tag
      * @return EE_Term|null
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function get_post_tag_for_event_or_venue($tag)
     {
@@ -156,8 +155,8 @@ class EEM_Term extends EEM_Base
                     'slug'                   => $tag,
                     'Term_Taxonomy.taxonomy' => 'post_tag',
                     'OR'                     => [
-                        'Term_Taxonomy.Venue.post_type' => 'espresso_venues',
-                        'Term_Taxonomy.Event.post_type' => 'espresso_events',
+                        'Term_Taxonomy.Venue.post_type' => EspressoPostType::VENUES,
+                        'Term_Taxonomy.Event.post_type' => EspressoPostType::EVENTS,
                     ],
                 ],
                 'default_where_conditions' => 'none',
@@ -178,9 +177,9 @@ class EEM_Term extends EEM_Base
 
         $post_types = [];
         foreach ((array) $post_tag_results as $row) {
-            if ($row['event_post_type'] === 'espresso_events') {
+            if ($row['event_post_type'] === EspressoPostType::EVENTS) {
                 $post_types[] = EEM_Event::instance()->post_type();
-            } elseif ($row['venue_post_type'] === 'espresso_venues') {
+            } elseif ($row['venue_post_type'] === EspressoPostType::VENUES) {
                 $post_types[] = EEM_Venue::instance()->post_type();
             }
         }
@@ -202,6 +201,8 @@ class EEM_Term extends EEM_Base
      * get_all_event_post_tags
      *
      * @return EE_Base_Class[]
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_all_event_post_tags()
     {
@@ -209,7 +210,7 @@ class EEM_Term extends EEM_Base
             [
                 [
                     'Term_Taxonomy.taxonomy'        => 'post_tag',
-                    'Term_Taxonomy.Event.post_type' => 'espresso_events',
+                    'Term_Taxonomy.Event.post_type' => EspressoPostType::EVENTS,
                 ],
                 'order_by'   => ['name' => 'ASC'],
                 'force_join' => ['Term_Taxonomy.Event'],
@@ -219,7 +220,7 @@ class EEM_Term extends EEM_Base
             if (! isset($post_tags[ $key ]->post_type)) {
                 $post_tags[ $key ]->post_type = [];
             }
-            $post_tags[ $key ]->post_type[] = 'espresso_events';
+            $post_tags[ $key ]->post_type[] = EspressoPostType::EVENTS;
         }
         return $post_tags;
     }
@@ -229,6 +230,8 @@ class EEM_Term extends EEM_Base
      * get_all_venue_post_tags
      *
      * @return EE_Base_Class[]
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_all_venue_post_tags()
     {
@@ -236,7 +239,7 @@ class EEM_Term extends EEM_Base
             [
                 [
                     'Term_Taxonomy.taxonomy'        => 'post_tag',
-                    'Term_Taxonomy.Venue.post_type' => 'espresso_venues',
+                    'Term_Taxonomy.Venue.post_type' => EspressoPostType::VENUES,
                 ],
                 'order_by'   => ['name' => 'ASC'],
                 'force_join' => ['Term_Taxonomy'],
@@ -246,7 +249,7 @@ class EEM_Term extends EEM_Base
             if (! isset($post_tags[ $key ]->post_type)) {
                 $post_tags[ $key ]->post_type = [];
             }
-            $post_tags[ $key ]->post_type[] = 'espresso_venues';
+            $post_tags[ $key ]->post_type[] = EspressoPostType::VENUES;
         }
         return $post_tags;
     }
@@ -260,6 +263,8 @@ class EEM_Term extends EEM_Base
      * @param array    $querystring_query_params
      * @param EEM_Base $model
      * @return array
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function rest_api_query_params($model_query_params, $querystring_query_params, $model)
     {

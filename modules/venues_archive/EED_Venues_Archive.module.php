@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\entities\custom_post_types\EspressoPostType;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
@@ -53,7 +54,7 @@ class EED_Venues_Archive extends EED_Module
         );
         $custom_post_types = $custom_post_type_definitions->getDefinitions();
         EE_Config::register_route(
-            $custom_post_types['espresso_venues']['plural_slug'],
+            $custom_post_types[EspressoPostType::VENUES]['plural_slug'],
             'Venues_Archive',
             'run'
         );
@@ -136,7 +137,7 @@ class EED_Venues_Archive extends EED_Module
     {
         global $post;
         if (
-            $post->post_type == 'espresso_venues'
+            $post->post_type == EspressoPostType::VENUES
             && ! post_password_required()
         ) {
             // since the 'content-espresso_venues-details.php' template might be used directly from within a theme,

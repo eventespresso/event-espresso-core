@@ -12,8 +12,7 @@
  */
 class EEM_Registration_Payment extends EEM_Base
 {
-    // private instance
-    protected static $_instance = null;
+    protected static ?EEM_Registration_Payment $_instance = null;
 
 
     /**

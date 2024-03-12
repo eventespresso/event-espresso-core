@@ -18,15 +18,19 @@
 
 
 .espresso-admin .wp-list-table .column-event_name,
-.espresso-admin .wp-list-table .column-DTT_EVT_start {
+.espresso-admin .wp-list-table .column-DTT_EVT_start,
+.espresso-admin .wp-list-table .column-REG_ticket {
     width: clamp(6rem, 8rem, 20rem);
 }
 
-.espresso-admin .wp-list-table .column-_REG_date,
-.espresso-admin .wp-list-table #ATT_email,
+.espresso-admin .wp-list-table .column-_REG_date {
+    width: clamp(4rem, 6rem, 16rem);
+}
+
+.espresso-admin .wp-list-table .ATT_email,
 .espresso-admin .wp-list-table th #ee-responsive-table-cell-ATT_email,
 .espresso-admin .wp-list-table td #ee-responsive-table-cell-ATT_email {
-    width: clamp(4rem, 6rem, 16rem);
+    width: clamp(9rem, 12rem, 16rem);
 }
 
 .espresso-admin .wp-list-table th.column-primary.column-_REG_att_checked_in,
@@ -35,20 +39,43 @@
     padding-inline-end: .25rem;
 }
 
+.espresso-admin .wp-list-table th.column-primary.column-_REG_att_checked_in .dashicons-yes-alt {
+    font-size: var(--ee-font-size-2xl) !important;
+}
 
-@media only screen and (min-width: 1366px) {
-    .espresso-admin .wp-list-table .column-_REG_date {
-        width: clamp(8rem, 12rem, 16rem);
+
+@media screen and (min-width: 1600px) {
+    .espresso-admin .wp-list-table.registrants .column-actions,
+    .espresso-admin .wp-list-table.registrations .column-actions {
+        width: clamp(7rem, 10.5rem, 14rem);
     }
-    .espresso-admin .wp-list-table .column-event_name,
+}
+
+.espresso-admin .wp-list-table.registrants tr:not(.is-expanded) .TXN_total .ee-responsive-table-cell--end > .ee-layout-stack,
+.espresso-admin .wp-list-table.registrants tr:not(.is-expanded) ._REG_paid .ee-responsive-table-cell--end > .ee-layout-stack,
+.espresso-admin .wp-list-table.registrations tr:not(.is-expanded) .TXN_total .ee-responsive-table-cell--end > .ee-layout-stack,
+.espresso-admin .wp-list-table.registrations tr:not(.is-expanded) ._REG_paid .ee-responsive-table-cell--end > .ee-layout-stack {
+    align-items: flex-end;
+}
+
+
+@media only screen and (min-width: 1600px) {
+    .espresso-admin .wp-list-table .column-event_name {
+        width: clamp(16rem, 18rem, 20rem);
+    }
     .espresso-admin .wp-list-table .column-DTT_EVT_start {
         width: clamp(12rem, 16rem, 20rem);
     }
 
-    .espresso-admin .wp-list-table #ATT_email,
+    .espresso-admin .wp-list-table .column-_REG_date,
+    .espresso-admin .wp-list-table .column-REG_ticket {
+        width: 12rem;
+    }
+
+    .espresso-admin .wp-list-table .ATT_email,
     .espresso-admin .wp-list-table th #ee-responsive-table-cell-ATT_email,
     .espresso-admin .wp-list-table td #ee-responsive-table-cell-ATT_email {
-        width: clamp(8rem, 12rem, 16rem);
+        width: clamp(12rem, 16rem, 20rem);
     }
 
     .espresso-admin .wp-list-table th.column-primary.column-_REG_att_checked_in,
@@ -56,6 +83,10 @@
         padding-inline-start: .75rem;
         padding-inline-end: .75rem;
         width: 5rem !important;
+    }
+    .espresso-admin .wp-list-table.registrants .TXN_total .ee-responsive-table-cell--end > .ee-layout-stack,
+    .espresso-admin .wp-list-table.registrations .TXN_total .ee-responsive-table-cell--end > .ee-layout-stack {
+        width: 9rem;
     }
 }
 
@@ -87,8 +118,20 @@
     margin-inline-end: var(--ee-margin-nano);
 }
 
+.espresso-admin .wp-list-table ._REG_paid .dashicons-yes,
+.espresso-admin .wp-list-table .TXN_paid .dashicons-yes {
+    height: var(--ee-font-size-2xl);
+    width: var(--ee-font-size-2xl);
+}
+.espresso-admin .wp-list-table ._REG_paid .dashicons-yes:before,
 .espresso-admin .wp-list-table .TXN_paid .dashicons-yes:before {
-    font-size: var(--ee-font-size-4xl);
+    font-size: var(--ee-font-size-2xl);
+    position: relative;
+    top: -2px;
+}
+
+.espresso-admin .wp-list-table .TXN_total .row-actions {
+    justify-content: flex-end;
 }
 
 .espresso-admin #espresso-default-admin.registrations h2 .ee-event-name {
@@ -570,17 +613,14 @@
 
 /** REGISTRATION LIST TABLE EVENT-DATE COLUMNS **/
 
+.ee-reg-list-dates-list-date,
+.ee-registration-event-datetimes-container,
+.ee-registration-event-datetimes-container__control,
 .espresso-admin .ee-responsive-table-cell__content > .ee-reg-list-dates-list-date,
 .espresso-admin .ee-responsive-table-cell__content > .ee-reg-list-dates-list-date > a {
-    width: clamp(4rem, 6rem, 8rem);
+    width: clamp(6rem, 8rem, 16rem);
 }
 
-@media only screen and (min-width: 1366px) {
-    .espresso-admin .ee-responsive-table-cell__content > .ee-reg-list-dates-list-date,
-    .espresso-admin .ee-responsive-table-cell__content > .ee-reg-list-dates-list-date > a {
-        width: clamp(10rem, 14rem, 18rem);
-    }
-}
 
 .espresso-admin .ee-responsive-table-cell__content > .ee-reg-list-dates-list-date .row-actions {
     width: unset;
@@ -589,20 +629,26 @@
 .ee-registration-event-datetimes-container-wrap {
     box-sizing: border-box;
     display: flex;
+    flex-flow: column nowrap;
     padding: 0;
     width: 100%;
 }
 
+
 .ee-registration-event-datetimes-container {
     display: none;
-    flex-flow: column nowrap;
 }
 
 .ee-reg-list-dates-list-date {
     display: flex;
     flex-flow: row nowrap;
     justify-content: space-between;
-    width: clamp(10rem, 14rem, 18rem);
+}
+.ee-reg-list-dates-list-date .row-actions {
+    padding-block-start: 0 !important;
+}
+.ee-reg-list-dates-list-date .row-actions .separator {
+    padding-block-start: 2px;
 }
 
 .espresso-admin.wp-core-ui .wp-list-table .ee-reg-list-dates-list-date > a {
@@ -623,10 +669,7 @@
     border: none !important;
     border-radius: 100%;
     box-shadow: none !important;
-    margin: 0;
-    position: absolute;
-    inset-block-start: .75rem;
-    inset-inline-end: .75rem;
+    margin: 0 !important;
 }
 
 .espresso-admin .wp-list-table .ee-more-datetimes-toggle > .dashicons,
@@ -636,15 +679,28 @@
     width: var(--ee-font-size-4xl);
 }
 
-.ee-more-datetimes-toggle > .dashicons {
+.ee-more-datetimes-toggle > .dashicons-admin-collapse {
+    color: var(--ee-font-color-light);
     transition: transform 250ms ease-in-out;
+    transform: rotate(-180deg);
 }
-
-.ee-more-datetimes-toggle.open > .dashicons {
+.ee-more-datetimes-toggle.open > .dashicons-admin-collapse {
     transform: rotate(-90deg);
 }
+
 .espresso-admin .ee-event-filter-link .dashicons.dashicons--small:before {
     top: -2px;
+}
+
+
+@media only screen and (min-width: 1600px) {
+    .ee-reg-list-dates-list-date,
+    .ee-registration-event-datetimes-container,
+    .ee-registration-event-datetimes-container__control,
+    .espresso-admin .ee-responsive-table-cell__content > .ee-reg-list-dates-list-date,
+    .espresso-admin .ee-responsive-table-cell__content > .ee-reg-list-dates-list-date > a {
+        width: 16rem;
+    }
 }
 
 /** Add a bit of style to tickets details table **/
@@ -696,6 +752,9 @@
     height: fit-content;
     background-image: none;
 }
+#espresso-default-admin .description.ee-status-outline.ee-status-bg--info {
+    white-space: normal;
+}
 
 .csv-report-notice__wrapper {
     align-items: center;
@@ -712,6 +771,14 @@
     font-size: var(--ee-font-size-3xl);
     height: var(--ee-font-size-3xl);
     margin-inline-end: .5rem;
-    /* top: 1px; */
     width: var(--ee-font-size-3xl);
+}
+
+
+.ee-reg-list-txn-link {
+    align-items: center;
+    display: flex;
+}
+.ee-reg-list-txn-link .dashicons {
+    margin-inline-end: .5rem;
 }

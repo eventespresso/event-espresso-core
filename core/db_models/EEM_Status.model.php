@@ -10,8 +10,7 @@
  */
 class EEM_Status extends EEM_Base
 {
-    // private instance of the Attendee object
-    protected static $_instance = null;
+    protected static ?EEM_Status $_instance = null;
 
 
     /**

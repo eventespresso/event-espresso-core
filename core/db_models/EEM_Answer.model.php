@@ -9,12 +9,7 @@
  */
 class EEM_Answer extends EEM_Base
 {
-    /**
-     * private instance of the EEM_Answer object
-     *
-     * @type EEM_Answer
-     */
-    protected static $_instance = null;
+    protected static ?EEM_Answer $_instance = null;
 
     /**
      * Mapping from system question ids to attendee field names

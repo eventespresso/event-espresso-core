@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\domain\entities\custom_post_types\EspressoPostType;
+
 /**
  * migrates 3.1 attendee rows into 4.1 registrations, attendees, transactions, line items, payments
  * 3.1 Attendee table definition:
@@ -395,7 +397,7 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table
             ),// ATT_modified
             'post_author'   => 0,// ATT_author
             'post_parent'   => 0,// ATT_parent
-            'post_type'     => 'espresso_attendees',// post_type
+            'post_type'     => EspressoPostType::ATTENDEES,
             'post_status'   => 'publish',// status
         ];
         $data_types    = [

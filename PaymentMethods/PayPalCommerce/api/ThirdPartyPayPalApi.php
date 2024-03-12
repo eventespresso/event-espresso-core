@@ -76,7 +76,7 @@ class ThirdPartyPayPalApi extends PayPalApi
     public function sendRequest(array $body_parameters, string $endpoint, string $method = 'POST', array $headers = [])
     {
         $request_parameters = $this->getRequestParameters($body_parameters, $method, $headers);
-        return $this->response($endpoint, $request_parameters);
+        return $this->request($endpoint, $request_parameters);
     }
 
 

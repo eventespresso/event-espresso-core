@@ -18,8 +18,7 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 class EEM_Transaction extends EEM_Base
 {
-    // private instance of the Transaction object
-    protected static $_instance;
+    protected static ?EEM_Transaction $_instance = null;
 
     /**
      * Status ID(STS_ID on esp_status table) to indicate the transaction is complete,

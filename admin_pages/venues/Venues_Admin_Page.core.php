@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\entities\custom_post_types\EspressoPostType;
 use EventEspresso\core\services\request\DataType;
 
 /**
@@ -517,7 +518,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
     {
         do_action('AHEE_log', __FILE__, __FUNCTION__, '');
         $this->_template_args['after_list_table'] = EEH_Template::get_button_or_link(
-            get_post_type_archive_link('espresso_venues'),
+            get_post_type_archive_link(EspressoPostType::VENUES),
             esc_html__("View Venue Archive Page", "event_espresso"),
             'button'
         );

@@ -3,6 +3,7 @@
 namespace EventEspresso\core\domain\services\wp_queries;
 
 use EEH_Event_Query;
+use EventEspresso\core\domain\entities\custom_post_types\EspressoPostType;
 use WP_Query;
 
 /**
@@ -153,7 +154,7 @@ class EventListQuery extends WP_Query
         return array_merge(
             $args,
             array(
-                'post_type'              => 'espresso_events',
+                'post_type'              => EspressoPostType::EVENTS,
                 'posts_per_page'         => $this->limit,
                 'update_post_term_cache' => false,
                 'update_post_meta_cache' => false,

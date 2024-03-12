@@ -2,6 +2,7 @@
 
 use EventEspresso\caffeinated\core\domain\services\pue\Stats;
 use EventEspresso\caffeinated\core\services\licensing\LicenseService;
+use EventEspresso\core\domain\entities\custom_post_types\EspressoPostType;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\interfaces\InterminableInterface;
@@ -810,7 +811,7 @@ class EE_Event_List_Query extends WP_Query
         $args = array_merge(
             $args,
             [
-                'post_type'              => 'espresso_events',
+                'post_type'              => EspressoPostType::EVENTS,
                 'posts_per_page'         => $limit,
                 'update_post_term_cache' => false,
                 'update_post_meta_cache' => false,

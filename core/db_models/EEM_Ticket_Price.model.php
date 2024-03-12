@@ -6,12 +6,10 @@
  * @package         Event Espresso
  * @subpackage      includes/models/EEM_Ticket_Price.model.php
  * @author          Darren Ethier
- * ------------------------------------------------------------------------
  */
 class EEM_Ticket_Price extends EEM_Base
 {
-    // private instance of the EEM_Ticket_Price object
-    protected static $_instance = null;
+    protected static ?EEM_Ticket_Price $_instance = null;
 
 
     /**

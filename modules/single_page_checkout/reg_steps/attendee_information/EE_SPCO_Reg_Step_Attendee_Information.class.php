@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\entities\custom_post_types\EspressoPostType;
 use EventEspresso\core\domain\services\registration\form\v1\CountryOptions;
 use EventEspresso\core\domain\services\registration\form\v1\RegForm;
 use EventEspresso\core\domain\services\registration\form\v1\RegFormDependencyHandler;
@@ -798,7 +799,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
                 '(line break)This can sometimes happen if too much time has been taken to complete the registration process.(line break)Please return to the (link)Event List(end link) and reselect your tickets. If the problem continues, please contact the site administrator.',
                 'event_espresso'
             ),
-            '<a href="' . get_post_type_archive_link('espresso_events') . '" >',
+            '<a href="' . get_post_type_archive_link(EspressoPostType::EVENTS) . '" >',
             '</a>',
             '<br />'
         );

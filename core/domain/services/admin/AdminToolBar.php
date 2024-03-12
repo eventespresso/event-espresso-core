@@ -5,6 +5,7 @@ namespace EventEspresso\core\domain\services\admin;
 use EE_Capabilities;
 use EEH_URL;
 use EEM_Registration;
+use EventEspresso\core\domain\entities\custom_post_types\EspressoPostType;
 use EventEspresso\core\domain\services\database\MaintenanceStatus;
 use WP_Admin_Bar;
 
@@ -216,7 +217,7 @@ class AdminToolBar
      */
     private function addEventsEditCurrentEvent()
     {
-        if (is_single() && (get_post_type() === 'espresso_events')) {
+        if (is_single() && (get_post_type() === EspressoPostType::EVENTS)) {
             // Current post
             global $post;
             if (

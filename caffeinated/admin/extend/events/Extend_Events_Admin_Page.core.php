@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\entities\custom_post_types\EspressoPostType;
 use EventEspresso\core\domain\services\admin\events\editor\ui\DuplicateEventButton;
 use EventEspresso\core\domain\services\admin\events\editor\ui\TicketSelectorShortcodeButton;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
@@ -486,7 +487,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
                 sanitize_title($orig_event->name()),
                 0,
                 'publish',
-                'espresso_events',
+                EspressoPostType::EVENTS,
                 0
             )
         );

@@ -206,12 +206,7 @@ class PayPalExtraMetaManager
                 // Don't want to try saving data that doesn't exist.
                 continue;
             }
-            try {
-                $api_credentials[ $api_key ] = $response[ $api_key ];
-            } catch (Exception $exception) {
-                PayPalLogger::errorLog($exception->getMessage(), $response, $paypal_pm);
-                return false;
-            }
+            $api_credentials[ $api_key ] = $response[ $api_key ];
         }
         return self::savePmOptions($paypal_pm, $api_credentials);
     }

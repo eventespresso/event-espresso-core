@@ -5,6 +5,7 @@ namespace EventEspresso\core\libraries\iframe_display;
 use EE_Registry;
 use EEH_HTML;
 use EEH_Inflector;
+use EventEspresso\core\domain\entities\custom_post_types\EspressoPostType;
 use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 /**
@@ -108,7 +109,7 @@ abstract class IframeEmbedButton
         if (! empty($id)) {
             $post = get_post($id);
             // if NOT event then let's get out.
-            if ($post->post_type !== 'espresso_events') {
+            if ($post->post_type !== EspressoPostType::EVENTS) {
                 return $permalink_string;
             }
             $permalink_string .= $this->embedButtonHtml([$this->slug => $id]);

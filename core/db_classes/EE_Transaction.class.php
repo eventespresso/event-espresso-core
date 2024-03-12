@@ -291,6 +291,11 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
 
 
     /**
+     * @param string|null $schema
+     *     Schemas:
+     *     'localized_float': "3,023.00"
+     *     'no_currency_code': "$3,023.00"
+     *     null: "$3,023.00<span>USD</span>"
      * @return string of transaction's total cost, with currency symbol and decimal
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -298,15 +303,20 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function pretty_total()
+    public function pretty_total(?string $schema = null)
     {
-        return $this->get_pretty('TXN_total');
+        return $this->get_pretty('TXN_total', $schema);
     }
 
 
     /**
      * Gets the amount paid in a pretty string (formatted and with currency symbol)
      *
+     * @param string|null $schema
+     *     Schemas:
+     *     'localized_float': "3,023.00"
+     *     'no_currency_code': "$3,023.00"
+     *     null: "$3,023.00<span>USD</span>"
      * @return string
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -314,9 +324,9 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function pretty_paid()
+    public function pretty_paid(?string $schema = null)
     {
-        return $this->get_pretty('TXN_paid');
+        return $this->get_pretty('TXN_paid', $schema);
     }
 
 

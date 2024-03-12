@@ -49,12 +49,7 @@ class EEM_Ticket extends EEM_Soft_Delete_Base
      */
     private $ticket_visibility;
 
-    /**
-     * private instance of the EEM_Ticket object
-     *
-     * @var EEM_Ticket $_instance
-     */
-    protected static $_instance;
+    protected static ?EEM_Ticket $_instance = null;
 
 
     /**

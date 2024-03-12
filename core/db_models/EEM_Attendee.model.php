@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\entities\custom_post_types\EspressoPostType;
 use EventEspresso\core\services\loaders\Loader;
 use EventEspresso\core\services\orm\ModelFieldFactory;
 
@@ -12,8 +13,7 @@ use EventEspresso\core\services\orm\ModelFieldFactory;
  */
 class EEM_Attendee extends EEM_CPT_Base
 {
-    // private instance of the Attendee object
-    protected static $_instance = null;
+    protected static ?EEM_Attendee $_instance = null;
 
     /**
      * QST_system for questions are strings not integers now,
@@ -189,7 +189,7 @@ class EEM_Attendee extends EEM_CPT_Base
                     false,
                     0
                 ),
-                'post_type'     => $model_field_factory->createWpPostTypeField('espresso_attendees'),
+                'post_type'     => $model_field_factory->createWpPostTypeField(EspressoPostType::ATTENDEES),
                 'status'        => $model_field_factory->createWpPostStatusField(
                     'post_status',
                     esc_html__('Attendee Status', 'event_espresso'),

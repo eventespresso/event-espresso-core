@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\domain\entities\custom_post_types\EspressoPostType;
+
 /**
  *EE_CPT_Event_Strategy
  *
@@ -19,17 +21,17 @@ class EE_CPT_Event_Strategy
 
     /**
      * @param array|WP_Query|null $wp_query
-     * @param array         $CPT
+     * @param array               $CPT
      */
     public function __construct($wp_query, array $CPT = [])
     {
-        if ($wp_query instanceof WP_Query) {
-            $WP_Query  = $wp_query;
-            $this->CPT = $CPT;
+        if (is_array($wp_query) && $wp_query['WP_Query'] instanceof WP_Query) {
+            $this->CPT = $wp_query['CPT'] ?? $CPT;
+            $wp_query  = $wp_query['WP_Query'];
         } else {
-            $WP_Query  = $wp_query['WP_Query'] ?? null;
-            $this->CPT = $wp_query['CPT'] ?? null;
+            $this->CPT = $CPT;
         }
+
         // !!!!!!!!!!  IMPORTANT !!!!!!!!!!!!
         // here's the list of available filters in the WP_Query object
         // 'posts_where'
@@ -42,12 +44,14 @@ class EE_CPT_Event_Strategy
         // 'posts_fields'
         // 'posts_join'
         $this->_add_filters();
-        if ($WP_Query instanceof WP_Query) {
-            $WP_Query->is_espresso_event_single   = is_singular()
-                                                    && isset($WP_Query->query->post_type)
-                                                    && $WP_Query->query->post_type === 'espresso_events';
-            $WP_Query->is_espresso_event_archive  = is_post_type_archive('espresso_events');
-            $WP_Query->is_espresso_event_taxonomy = is_tax('espresso_event_categories');
+        if ($wp_query instanceof WP_Query) {
+            $wp_query->is_espresso_event_single   = is_singular()
+                && (
+                    (isset($wp_query->query->post_type) && $wp_query->query->post_type === EspressoPostType::EVENTS)
+                    || (isset($wp_query->query['post_type']) && $wp_query->query['post_type'] === EspressoPostType::EVENTS)
+                );
+            $wp_query->is_espresso_event_archive  = is_post_type_archive(EspressoPostType::EVENTS);
+            $wp_query->is_espresso_event_taxonomy = is_tax('espresso_event_categories');
         }
     }
 
@@ -65,7 +69,6 @@ class EE_CPT_Event_Strategy
         // add_filter( 'the_posts', array( $this, 'the_posts' ), 1, 2 );
         add_filter('posts_orderby', [$this, 'posts_orderby'], 1, 2);
         add_filter('posts_groupby', [$this, 'posts_groupby'], 1, 2);
-        add_action('posts_selection', [$this, 'remove_filters']);
     }
 
 
@@ -76,24 +79,6 @@ class EE_CPT_Event_Strategy
      */
     public function remove_filters()
     {
-        $this->_remove_filters();
-    }
-
-
-    /**
-     * Should eb called when the last filter or hook is fired for this CPT strategy.
-     * This is to avoid applying this CPT strategy for other posts or CPTs (eg,
-     * we don't want to join to the datetime table when querying for venues, do we!?)
-     */
-    protected function _remove_filters()
-    {
-        remove_filter('posts_fields', [$this, 'posts_fields'], 1);
-        remove_filter('posts_join', [$this, 'posts_join'], 1);
-        remove_filter('posts_where', [$this, 'posts_where']);
-        // remove_filter( 'the_posts', array( $this, 'the_posts' ), 1 );
-        remove_filter('posts_orderby', [$this, 'posts_orderby'], 1);
-        remove_filter('posts_groupby', [$this, 'posts_groupby'], 1);
-        remove_action('posts_selection', [$this, 'remove_filters']);
     }
 
 
@@ -102,9 +87,14 @@ class EE_CPT_Event_Strategy
      * @param WP_Query|null $wp_query
      * @return    string
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function posts_fields(string $SQL, ?WP_Query $wp_query): string
     {
+        if (EE_CPT_Strategy::instance()->wpQueryPostType($wp_query) !== EspressoPostType::EVENTS) {
+            return $SQL;
+        }
+
         if (
             $wp_query instanceof WP_Query
             && (
@@ -122,6 +112,7 @@ class EE_CPT_Event_Strategy
                 // to WP Query SELECT statement
                 $SQL .= ', MIN( ' . EEM_Datetime::instance()->table() . '.DTT_EVT_start ) as event_start_date ';
             }
+            remove_filter('posts_fields', [$this, 'posts_fields'], 1);
         }
         return $SQL;
     }
@@ -132,9 +123,13 @@ class EE_CPT_Event_Strategy
      * @param WP_Query|null $wp_query
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function posts_join(string $SQL, ?WP_Query $wp_query): string
     {
+        if (EE_CPT_Strategy::instance()->wpQueryPostType($wp_query) !== EspressoPostType::EVENTS) {
+            return $SQL;
+        }
         if (
             $wp_query instanceof WP_Query
             && (
@@ -147,8 +142,9 @@ class EE_CPT_Event_Strategy
             // " LEFT JOIN wp_esp_datetime ON ( wp_esp_datetime.EVT_ID = wp_posts.ID ) "
             // to WP Query JOIN statement
             $SQL .= ' INNER JOIN ' . EEM_Datetime::instance()->table() . ' ON ( ' . EEM_Event::instance()->table()
-                    . '.ID = ' . EEM_Datetime::instance()->table() . '.'
-                    . EEM_Event::instance()->primary_key_name() . ' ) ';
+                . '.ID = ' . EEM_Datetime::instance()->table() . '.'
+                . EEM_Event::instance()->primary_key_name() . ' ) ';
+            remove_filter('posts_join', [$this, 'posts_join'], 1);
         }
         return $SQL;
     }
@@ -159,9 +155,13 @@ class EE_CPT_Event_Strategy
      * @param WP_Query|null $wp_query
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function posts_where(string $SQL, ?WP_Query $wp_query): string
     {
+        if (EE_CPT_Strategy::instance()->wpQueryPostType($wp_query) !== EspressoPostType::EVENTS) {
+            return $SQL;
+        }
         if (
             $wp_query instanceof WP_Query
             && (
@@ -175,10 +175,11 @@ class EE_CPT_Event_Strategy
                 || ! EE_Registry::instance()->CFG->template_settings->EED_Events_Archive->display_expired_events
             ) {
                 $SQL .= ' AND ' . EEM_Datetime::instance()->table() . ".DTT_EVT_end > '"
-                        . current_time('mysql', true) . "' ";
+                    . current_time('mysql', true) . "' ";
             }
             // exclude trashed datetimes
             $SQL .= ' AND ' . EEM_Datetime::instance()->table() . '.DTT_deleted = 0';
+            remove_filter('posts_where', [$this, 'posts_where']);
         }
         return $SQL;
     }
@@ -191,6 +192,10 @@ class EE_CPT_Event_Strategy
      */
     public function posts_orderby(string $SQL, ?WP_Query $wp_query): string
     {
+        if (EE_CPT_Strategy::instance()->wpQueryPostType($wp_query) !== EspressoPostType::EVENTS) {
+            return $SQL;
+        }
+
         if (
             $wp_query instanceof WP_Query
             && (
@@ -199,6 +204,7 @@ class EE_CPT_Event_Strategy
             )
         ) {
             $SQL = ' event_start_date ASC ';
+            remove_filter('posts_orderby', [$this, 'posts_orderby'], 1);
         }
         return $SQL;
     }
@@ -211,6 +217,9 @@ class EE_CPT_Event_Strategy
      */
     public function posts_groupby(string $SQL, ?WP_Query $wp_query): string
     {
+        if (EE_CPT_Strategy::instance()->wpQueryPostType($wp_query) !== EspressoPostType::EVENTS) {
+            return $SQL;
+        }
         if (
             $wp_query instanceof WP_Query
             && (
@@ -224,6 +233,7 @@ class EE_CPT_Event_Strategy
             // (whereas if we didn't group them by the post's ID, then we would end up with many repeats)
             global $wpdb;
             $SQL = $wpdb->posts . '.ID ';
+            remove_filter('posts_groupby', [$this, 'posts_groupby'], 1);
         }
         return $SQL;
     }
@@ -237,18 +247,5 @@ class EE_CPT_Event_Strategy
     public function the_posts(array $posts, ?WP_Query $wp_query): array
     {
         return $posts;
-    }
-
-
-    /**
-     * @param mixed           $meta_value
-     * @param int|string      $post_id
-     * @param int|string      $meta_key
-     * @param bool|int|string $single
-     * @return mixed
-     */
-    public function get_EE_post_type_metadata($meta_value, $post_id, $meta_key, $single)
-    {
-        return $meta_value;
     }
 }

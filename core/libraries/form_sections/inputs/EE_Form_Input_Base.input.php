@@ -169,6 +169,9 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     protected $disabled = false;
 
 
+    protected bool $_no_label = false; // if true, then no hrml label will be displayed for this input
+
+
     /**
      * @param array                         $input_args       {
      * @type string                         $html_name        the html name for the input
@@ -276,7 +279,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     public function _construct_finalize($parent_form_section, $name)
     {
         parent::_construct_finalize($parent_form_section, $name);
-        if ($this->_html_label === null && $this->_html_label_text === null) {
+        if ($this->_html_label === null && $this->_html_label_text === null && ! $this->_no_label) {
             $this->_html_label_text = ucwords(str_replace("_", " ", $name));
         }
         do_action('AHEE__EE_Form_Input_Base___construct_finalize__end', $this, $parent_form_section, $name);

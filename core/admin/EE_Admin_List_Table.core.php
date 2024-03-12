@@ -720,7 +720,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table
     /**
      * @return array
      */
-    public function get_hidden_columns()
+    public function get_hidden_columns(): array
     {
         $user_id     = get_current_user_id();
         $has_default = get_user_option('default' . $this->screen->id . 'columnshidden', $user_id);
@@ -928,21 +928,27 @@ abstract class EE_Admin_List_Table extends WP_List_Table
      * @param string $id
      * @param string $content
      * @param string $align     start (default), center, end
+     * @param string $layout    row (default) or stack
      * @return string
      * @since   5.0.0.p
      */
-    protected function columnContent($id, $content, $align = 'start')
-    {
+    protected function columnContent(
+        string $id,
+        string $content,
+        string $align = 'start',
+        string $layout = 'row'
+    ): string {
         if (! isset($this->_columns[ $id ])) {
             throw new DomainException('missing column id');
         }
         $heading = $id !== 'cb' ? $this->_columns[ $id ] : '';
         $align = in_array($align, ['start', 'center', 'end']) ? $align : 'start';
-        $align = "ee-responsive-table-cell--{$align}";
+        $align = "ee-responsive-table-cell--$align";
+        $layout = $layout === 'row' ? 'ee-layout-row' : 'ee-layout-stack';
 
-        $html = "<div class='ee-responsive-table-cell ee-responsive-table-cell--column-{$id} {$align} ee-layout-row'>";
-        $html .= "<div class='ee-responsive-table-cell__heading'>{$heading}</div>";
-        $html .= "<div class='ee-responsive-table-cell__content ee-layout-row'>{$content}</div>";
+        $html = "<div class='ee-responsive-table-cell ee-responsive-table-cell--column-$id $align $layout'>";
+        $html .= "<div class='ee-responsive-table-cell__heading'>$heading</div>";
+        $html .= "<div class='ee-responsive-table-cell__content $layout'>$content</div>";
         $html .= "</div>";
         return $html;
     }

@@ -9,8 +9,7 @@
  */
 class EEM_Question_Option extends EEM_Soft_Delete_Base
 {
-    // private instance of the Attendee object
-    protected static $_instance = null;
+    protected static ?EEM_Question_Option $_instance = null;
 
 
     /**

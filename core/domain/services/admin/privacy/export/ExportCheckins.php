@@ -120,7 +120,7 @@ class ExportCheckins implements PersonalDataExporterInterface
      */
     public function name()
     {
-        return esc_html__('Event Espresso Checkins Exporter', 'event_espresso');
+        return esc_html__('Event Espresso Check-ins Exporter', 'event_espresso');
     }
 }
 // End of file ExportCheckins.php

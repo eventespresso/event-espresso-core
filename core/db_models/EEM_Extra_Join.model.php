@@ -19,8 +19,7 @@
  */
 class EEM_Extra_Join extends EEM_Base
 {
-    // private instance of the Extra Join object
-    protected static $_instance = null;
+    protected static ?EEM_Extra_Join $_instance = null;
 
 
     /**

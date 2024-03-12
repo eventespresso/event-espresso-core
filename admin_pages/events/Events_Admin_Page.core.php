@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\entities\custom_post_types\EspressoPostType;
 use EventEspresso\core\domain\services\admin\events\default_settings\AdvancedEditorAdminFormSection;
 use EventEspresso\core\domain\services\admin\events\editor\ui\TicketSelectorShortcodeButton;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
@@ -968,7 +969,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         $links_html       .= EEH_HTML::h3(esc_html__('Links', 'event_espresso'));
         $links_html       .= EEH_HTML::div(
             EEH_Template::get_button_or_link(
-                get_post_type_archive_link('espresso_events'),
+                get_post_type_archive_link(EspressoPostType::EVENTS),
                 esc_html__('View Event Archive Page', 'event_espresso'),
                 'button button--small button--secondary'
             ),
@@ -1034,7 +1035,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      */
     protected function _insert_update_cpt_item($post_id, $post)
     {
-        if ($post instanceof WP_Post && $post->post_type !== 'espresso_events') {
+        if ($post instanceof WP_Post && $post->post_type !== EspressoPostType::EVENTS) {
             // get out we're not processing an event save.
             return;
         }

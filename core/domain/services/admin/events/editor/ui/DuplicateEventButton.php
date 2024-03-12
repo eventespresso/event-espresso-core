@@ -3,6 +3,7 @@
 namespace EventEspresso\core\domain\services\admin\events\editor\ui;
 
 use EEH_URL;
+use EventEspresso\core\domain\entities\custom_post_types\EspressoPostType;
 
 /**
  * Class DuplicateEventButton
@@ -22,7 +23,7 @@ class DuplicateEventButton extends PermalinkHtmlHook
         }
         $post = get_post($post_id);
         // make sure this is EE event
-        if (! $post || $post->post_type !== 'espresso_events') {
+        if (! $post || $post->post_type !== EspressoPostType::EVENTS) {
             return $html;
         }
         $href  = EEH_URL::add_query_args_and_nonce(

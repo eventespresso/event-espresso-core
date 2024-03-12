@@ -6,12 +6,10 @@
  * @package     Event Espresso
  * @subpackage  includes/models/EEM_Message_Template.model.php
  * @author      Darren Ethier
- * ------------------------------------------------------------------------
  */
 class EEM_Message_Template extends EEM_Base
 {
-    // private instance of the EEM_Message_Template object
-    protected static $_instance = null;
+    protected static ?EEM_Message_Template $_instance = null;
 
 
     /**

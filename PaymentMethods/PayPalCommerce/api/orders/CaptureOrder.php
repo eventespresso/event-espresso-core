@@ -46,6 +46,7 @@ class CaptureOrder extends OrdersApi
     {
         parent::__construct($api);
         $this->transaction   = $transaction;
+        $this->order_id      = $order_id;
         $this->currency_code = CurrencyManager::currencyCode();
         $this->request_url   = $this->request_url . $order_id . '/capture';
     }
@@ -69,12 +70,29 @@ class CaptureOrder extends OrdersApi
      *
      * @param $response
      * @return array
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function validateOrder($response): array
     {
+        $message = esc_html__('Validating Order Capture:', 'event_espresso');
+        PayPalLogger::errorLog($message, [$this->request_url, $response], $this->transaction->payment_method());
+        // We got a direct error response. Not valid. Return that error.
         if (! empty($response['error'])) {
             return $response;
         }
+        // This also could be a retry capture, so consider this valid, if order already captured.
+        if (! empty($response['message']['details']['issue'])
+            && $response['message']['details']['issue'] === 'ORDER_ALREADY_CAPTURED'
+        ) {
+            // Need to make sure we pass on the order ID.
+            if (empty($response['id'])) {
+                $response['id'] = $this->order_id;
+            }
+            $response['status'] = 'ORDER_ALREADY_CAPTURED';
+            return $response;
+        }
+        // A success capture should return the order ID.
         if (! isset($response['id'])) {
             $message = esc_html__('Unexpected response. No order returned.', 'event_espresso');
             try {

@@ -17,6 +17,7 @@ use EEH_Template;
 use EEH_URL;
 use EEM_Event;
 use EEM_Ticket;
+use EventEspresso\core\domain\entities\custom_post_types\EspressoPostType;
 use EventEspresso\core\domain\entities\users\CurrentUser;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -161,7 +162,7 @@ class DisplayTicketSelector
         } elseif ($event instanceof WP_Post) {
             if (isset($event->EE_Event) && $event->EE_Event instanceof EE_Event) {
                 $this->event = $event->EE_Event;
-            } elseif ($event->post_type === 'espresso_events') {
+            } elseif (isset($event->post_type) && $event->post_type === EspressoPostType::EVENTS) {
                 $event->EE_Event = EEM_Event::instance()->instantiate_class_from_post_object($event);
                 $this->event     = $event->EE_Event;
             }

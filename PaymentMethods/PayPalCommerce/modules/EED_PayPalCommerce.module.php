@@ -44,7 +44,26 @@ class EED_PayPalCommerce extends EED_Module
 
 
     /**
-     * For hooking into EE Admin Core and other modules.
+     * For hooking into EE Core and other modules.
+     *
+     * @return void
+     */
+    public static function set_hooks(): void
+    {
+        if (DbStatus::isOnline()) {
+            // Don't load PM on the front-end if not Connected.
+            add_filter(
+                'FHEE__EEM_Payment_Method__get_all_for_transaction__payment_methods',
+                [__CLASS__, 'filterPaymentMethods'],
+                100,
+                3
+            );
+        }
+    }
+
+
+    /**
+     * For hooking into EE Core and other modules Admin.
      *
      * @return void
      */
@@ -60,11 +79,11 @@ class EED_PayPalCommerce extends EED_Module
             // Log errors from the JS side.
             add_action('wp_ajax_eeaPPCommerceLogError', [__CLASS__, 'logJsError']);
             add_action('wp_ajax_nopriv_eeaPPCommerceLogError', [__CLASS__, 'logJsError']);
-            // Don't load PM on the front-end if not Connected.
+            // Don't load PM in the admin if not Connected.
             add_filter(
                 'FHEE__EEM_Payment_Method__get_all_for_transaction__payment_methods',
                 [__CLASS__, 'filterPaymentMethods'],
-                10,
+                100,
                 3
             );
         }
@@ -94,7 +113,7 @@ class EED_PayPalCommerce extends EED_Module
         $billing_info = $post_params['billing_info'] ?? [];
         if ($billing_info) {
             $billing_info_decoded = json_decode(stripslashes($billing_info), true);
-            $billing_info = is_array($billing_info_decoded) ? $billing_info_decoded : [];
+            $billing_info         = is_array($billing_info_decoded) ? $billing_info_decoded : [];
         }
         if (! $transaction) {
             PayPalLogger::errorLogAndExit(
@@ -149,8 +168,8 @@ class EED_PayPalCommerce extends EED_Module
      * @throws ReflectionException
      */
     public static function createOrder(
-        EE_Transaction $transaction,
-        array $billing_info,
+        EE_Transaction    $transaction,
+        array             $billing_info,
         EE_Payment_Method $paypal_pm
     ): array {
         $create_order_api = EED_PayPalCommerce::getCreateOrderApi($transaction, $billing_info, $paypal_pm);
@@ -182,9 +201,9 @@ class EED_PayPalCommerce extends EED_Module
      * @return array
      */
     public static function captureOrder(
-        EE_Transaction $transaction,
+        EE_Transaction    $transaction,
         EE_Payment_Method $paypal_pm,
-        string $order_id
+        string            $order_id
     ): array {
         $capture_order_api = EED_PayPalCommerce::getCaptureOrderApi($transaction, $paypal_pm, $order_id);
         if (! $capture_order_api instanceof CaptureOrder) {
@@ -203,14 +222,28 @@ class EED_PayPalCommerce extends EED_Module
         } catch (Exception $e) {
             // Just don't set the txn id.
         }
+        // If this was a capture request on an already Captured order, try using the initial capture data (if any saved)
+        // that has more information on the order than this retry capture response.
+        if ($order['status'] === 'ORDER_ALREADY_CAPTURED'
+            || empty($order['purchase_units'][0]['payments']['captures'][0]['amount']['value'])
+        ) {
+            // Get the previous order. Maybe it's the same order but will hold a bit more information.
+            $previous_order = PayPalExtraMetaManager::getPmOption($paypal_pm, Domain::META_KEY_LAST_ORDER);
+            if ($previous_order['id'] === $order['id']
+                && ! empty($previous_order['purchase_units'][0]['payments']['captures'][0]['amount']['value'])
+            ) {
+                // Can use the initially captured order information.
+                $order = $previous_order;
+            }
+        }
         // Save this order details.
         PayPalExtraMetaManager::savePmOption($paypal_pm, Domain::META_KEY_LAST_ORDER, $order);
         $nonce = wp_create_nonce(Domain::CAPTURE_ORDER_NONCE_NAME);
         return [
-            'pp_order_nonce'         => $nonce,
-            'pp_order_id'            => $order['id'],
-            'pp_order_status'        => $order['status'],
-            'pp_order_amount'        => $order['purchase_units'][0]['payments']['captures'][0]['amount']['value'],
+            'pp_order_nonce'  => $nonce,
+            'pp_order_id'     => $order['id'],
+            'pp_order_status' => $order['status'] ?? 'ORDER_STATUS_UNKNOWN',
+            'pp_order_amount' => $order['purchase_units'][0]['payments']['captures'][0]['amount']['value'] ?? '',
         ];
     }
 
@@ -224,8 +257,8 @@ class EED_PayPalCommerce extends EED_Module
      * @return CreateOrder|null
      */
     public static function getCreateOrderApi(
-        EE_Transaction $transaction,
-        array $billing_info,
+        EE_Transaction    $transaction,
+        array             $billing_info,
         EE_Payment_Method $paypal_pm
     ): ?CreateOrder {
         $paypal_api = EED_PayPalCommerce::getPayPalApi($paypal_pm);
@@ -245,9 +278,9 @@ class EED_PayPalCommerce extends EED_Module
      * @return CaptureOrder|null
      */
     public static function getCaptureOrderApi(
-        EE_Transaction $transaction,
+        EE_Transaction    $transaction,
         EE_Payment_Method $paypal_pm,
-        string $order_id
+        string            $order_id
     ): ?CaptureOrder {
         $paypal_api = EED_PayPalCommerce::getPayPalApi($paypal_pm);
         if (! $paypal_api instanceof PayPalApi) {
@@ -281,7 +314,9 @@ class EED_PayPalCommerce extends EED_Module
         }
         $partner_client_id = PayPalExtraMetaManager::getPmOption($paypal_pm, Domain::META_KEY_PARTNER_CLIENT_ID) ?: '';
         $payer_id          = PayPalExtraMetaManager::getPmOption($paypal_pm, Domain::META_KEY_SELLER_MERCHANT_ID) ?: '';
-        return new ThirdPartyPayPalApi($access_token, $bn_code, $partner_client_id, $payer_id, $paypal_pm->debug_mode());
+        return new ThirdPartyPayPalApi(
+            $access_token, $bn_code, $partner_client_id, $payer_id, $paypal_pm->debug_mode()
+        );
     }
 
 
@@ -293,8 +328,8 @@ class EED_PayPalCommerce extends EED_Module
      */
     public static function requestClientToken(EE_Payment_Method $paypal_pm): array
     {
-        $error = [
-            'error' => 'GET_CLIENT_TOKEN_FAULT'
+        $error      = [
+            'error' => 'GET_CLIENT_TOKEN_FAULT',
         ];
         $paypal_api = EED_PayPalCommerce::getPayPalApi($paypal_pm);
         if (! $paypal_api instanceof PayPalApi) {
@@ -302,7 +337,7 @@ class EED_PayPalCommerce extends EED_Module
             return $error;
         }
         $client_token_api = new ClientToken($paypal_api, $paypal_pm->debug_mode());
-        $client_token = $client_token_api->getToken();
+        $client_token     = $client_token_api->getToken();
         if (isset($client_token['error'])) {
             return $client_token;
         }
@@ -348,7 +383,7 @@ class EED_PayPalCommerce extends EED_Module
     {
         $pp_meta_data = PayPalExtraMetaManager::getAllData($paypal_pm);
         return ! empty($pp_meta_data[ Domain::META_KEY_SELLER_MERCHANT_ID ])
-            && ! empty($pp_meta_data[ Domain::META_KEY_ACCESS_TOKEN ]);
+               && ! empty($pp_meta_data[ Domain::META_KEY_ACCESS_TOKEN ]);
     }
 
 
@@ -402,9 +437,14 @@ class EED_PayPalCommerce extends EED_Module
      * @param EE_Transaction      $transaction
      * @param string              $scope @see EEM_Payment_Method::get_all_for_events
      * @return array
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public static function filterPaymentMethods(array $payment_methods, $transaction, $scope): array
-    {
+    public static function filterPaymentMethods(
+        array          $payment_methods,
+        EE_Transaction $transaction,
+        string         $scope
+    ): array {
         // Don't allow this PM on the checkout page if not Connected.
         foreach ($payment_methods as $key => $pm) {
             // It is a PayPal Commerce payment method. Check if it's connected. If not - remove from the list.

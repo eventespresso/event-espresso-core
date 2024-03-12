@@ -545,13 +545,17 @@ class EEH_Debug_Tools
      */
     protected static function pre_span($var)
     {
-        ob_start();
-        var_dump($var);
-        $var = ob_get_clean();
+        $var = var_export($var, true);
         if (EEH_Debug_Tools::plainOutput()) {
             return str_replace("\n", '', $var);
         }
-        return '<pre style="color: #9C3; display: inline-block; padding:.4em .6em; background: #334">' . $var . '</pre>';
+        $style =[
+            'background: #334',
+            'color: #9C3',
+            'display: inline-block',
+            'padding: .4em .6em',
+        ];
+        return '<pre style="' . implode('; ', $style) . '">' . $var . '</pre>';
     }
 
 

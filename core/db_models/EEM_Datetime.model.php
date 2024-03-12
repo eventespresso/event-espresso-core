@@ -16,10 +16,7 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
  */
 class EEM_Datetime extends EEM_Soft_Delete_Base
 {
-    /**
-     * @var EEM_Datetime $_instance
-     */
-    protected static $_instance;
+    protected static ?EEM_Datetime $_instance = null;
 
 
     /**

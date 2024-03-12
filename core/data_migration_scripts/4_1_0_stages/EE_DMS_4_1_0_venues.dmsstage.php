@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\domain\entities\custom_post_types\EspressoPostType;
+
 /**
  * Converts old venues to Venue Custom Post Types.
  * Must be run after state and country default values have been added
@@ -199,7 +201,7 @@ class EE_DMS_4_1_0_venues extends EE_Data_Migration_Script_Stage
             // parent
             'menu_order'        => 0,
             // VNU_order
-            'post_type'         => 'espresso_venues',
+            'post_type'         => EspressoPostType::VENUES,
             // post_type
         ];
         $data_types_array = [

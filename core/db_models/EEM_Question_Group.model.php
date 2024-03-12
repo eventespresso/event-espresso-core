@@ -13,12 +13,8 @@ class EEM_Question_Group extends EEM_Soft_Delete_Base
 
     const system_address  = 2;
 
-    /**
-     * private instance of the EEM_Question_Group object
-     *
-     * @var EEM_Question_Group
-     */
-    protected static $_instance = null;
+
+    protected static ?EEM_Question_Group $_instance = null;
 
 
     /**

@@ -249,9 +249,13 @@ class CreateOrder extends OrdersApi
      * @param $response
      * @param $parameters
      * @return array
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function validateOrder($response, $parameters): array
     {
+        $message = esc_html__('Validating Order Create:', 'event_espresso');
+        PayPalLogger::errorLog($message, [$this->request_url, $response], $this->transaction->payment_method());
         if (! empty($response['error'])) {
             return $response;
         }

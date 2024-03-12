@@ -14,12 +14,10 @@
  * @package               Event Espresso
  * @subpackage            includes/models/
  * @author                Michael Nelson
- * ------------------------------------------------------------------------
  */
 class EEM_Post_Meta extends EEM_Base
 {
-    // private instance of the EE_Post_Meta object
-    protected static $_instance = null;
+    protected static ?EEM_Post_Meta $_instance = null;
 
 
     /**

@@ -10,10 +10,7 @@
  */
 class EEM_Term_Taxonomy extends EEM_Base
 {
-    /**
-     * @var EEM_Term_Taxonomy
-     */
-    protected static $_instance = null;
+    protected static ?EEM_Term_Taxonomy $_instance = null;
 
 
     /**

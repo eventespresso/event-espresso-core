@@ -11,15 +11,9 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 class EEM_Form_Submission extends EEM_Base
 {
-    /**
-     * @var EEM_Form_Submission
-     */
-    protected static $_instance;
+    protected static ?EEM_Form_Submission $_instance = null;
 
-    /**
-     * @var RequestInterface
-     */
-    private $request;
+    private RequestInterface $request;
 
 
     /**

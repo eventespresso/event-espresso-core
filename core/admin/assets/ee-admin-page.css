@@ -18,7 +18,7 @@
 .ee-status-color--PFL,
 .ee-status-color--RNA,
 .ee-status-color--TOP {
-    color: var(--ee-status-color-orange) !important;
+    color: var(--ee-status-color-orange-high-contrast) !important;
 }
 
 /* txn abandoned, reg incomplete, dtt sold out */
@@ -26,7 +26,9 @@
 .ee-status-color--MRS,
 .ee-status-color--RIC,
 .ee-status-color--TAB {
-    color: var(--ee-status-color-yellow) !important;
+    color: var(--ee-text-on-status-color-yellow) !important;
+    font-weight: 400 !important;
+    text-shadow: -1px 0 var(--ee-status-color-yellow), 0 1px var(--ee-status-color-yellow), 1px 0 var(--ee-status-color-yellow), 0 -1px var(--ee-status-color-yellow);
 }
 
 /* txn complete, payment approved, reg approved, dtt active*/
@@ -39,7 +41,8 @@
 .ee-status-color--RAP,
 .ee-status-color--TCM,
 .ee-status-color--TKO {
-    color: var(--ee-status-color-green) !important;
+    color: var(--ee-status-color-green-high-contrast) !important;
+    font-weight: 600 !important;
 }
 
 /* txn open, payment pending, reg pending payment, dtt upcoming */
@@ -52,7 +55,7 @@
 .ee-status-color--RPP,
 .ee-status-color--TIN,
 .ee-status-color--TKP {
-    color: var(--ee-status-color-blue) !important;
+    color: var(--ee-status-color-blue-high-contrast) !important;
 }
 
 /* dtt postponed */
@@ -425,13 +428,17 @@
 
 .ee-modal-close-btn,
 .ee-mini-modal-close-btn {
-    border: none !important;
     background: none !important;
+    border: none !important;
+    box-sizing: border-box;
     color: hsla(207, 5%, 10%, .5);
     cursor: pointer;
     font-size: var(--ee-font-size-xl);
+    height: var(--ee-font-size-bigger);
+    padding: 0;
     position: absolute;
     transition: all 150ms;
+    width: var(--ee-font-size-bigger);
 }
 .ee-modal-close-btn {
     inset-block-start: calc(.60 * var(--ee-base-ui-scale));
@@ -460,23 +467,23 @@
 @media screen and (min-width: 782px) {
     .ee-modal,
     .ee-mini-modal {
-        min-height: min(100%, 150px);
-        min-width: min(100%, 300px);
+        min-height: max(100%, 150px);
+        min-width: max(100%, 300px);
         width: fit-content;
     }
     .ee-modal {
         height: auto;
         max-height: min(90vh, 1024px);
         max-width: min(100%, 768px);
-        min-height: min(60vh, 427px);
-        min-width: min(100%, 320px);
+        min-height: max(60vh, 427px);
+        min-width: max(100%, 320px);
         padding: var(--ee-padding-bigger);
         width: 80vw;
     }
     .ee-mini-modal {
-        max-height: max(100%, 300px);
-        min-height: min(100%, 150px);
-        min-width: min(100%, 300px);
+        max-height: min(100%, 300px);
+        min-height: max(100%, 150px);
+        min-width: max(100%, 300px);
         padding: var(--ee-base-ui-scale) !important;
         width: fit-content;
     }
@@ -579,7 +586,7 @@ div.espresso-admin a:not(.ee-link):not(.ee-text-link):not(.nav-tab):not(.button)
     font-weight: 600;
     outline: none !important;
     padding-block: calc(var(--ee-padding-pico) / 8);
-    padding-inline: var(--ee-padding-nano);
+    padding-inline: var(--ee-padding-pico);
     text-decoration: none;
     word-break: break-word;
     width: fit-content;
@@ -5731,7 +5738,7 @@ body.espresso-admin #contextual-help-wrap strong {
     }
 
     .espresso-admin .wp-list-table .column-actions > div {
-        min-width: calc(((var(--ee-button-height) + var(--ee-margin-tiny)) * 3));
+        min-width: calc(((var(--ee-button-height) + var(--ee-margin-nano) + 2px) * 3));
     }
 }
 
@@ -5756,13 +5763,16 @@ body.espresso-admin #contextual-help-wrap strong {
     margin-inline-start: var(--ee-margin-micro);
 }
 
+.espresso-admin.wp-core-ui .dashicons {
+    margin-inline-end: 2px;
+}
 
 .espresso-admin.wp-core-ui .dashicons.dashicons--small,
 .espresso-admin.wp-core-ui .dashicons.dashicons--small:before {
+    align-items: center;
+    display: inline-flex;
     font-size: var(--ee-font-size-bigger);
     height: var(--ee-font-size-bigger);
-    position: relative;
-    top: 1px;
     width: var(--ee-font-size-bigger);
 }
 
@@ -6135,6 +6145,9 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin .wp-list-table .ee-responsive-table-cell--end > .ee-layout-stack {
     justify-content: flex-end;
     text-align: end;
+}
+.espresso-admin .wp-list-table .ee-responsive-table-cell--end > .ee-layout-row {
+    align-items: center;
 }
 
 .espresso-admin .wp-list-table .ee-responsive-table-cell--end .ee-entity-id + .show-on-mobile-view-only {

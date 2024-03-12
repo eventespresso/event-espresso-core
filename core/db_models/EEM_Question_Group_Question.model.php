@@ -13,8 +13,7 @@
  */
 class EEM_Question_Group_Question extends EEM_Base
 {
-    // private instance of the Attendee object
-    protected static $_instance = null;
+    protected static ?EEM_Question_Group_Question $_instance = null;
 
 
     /**

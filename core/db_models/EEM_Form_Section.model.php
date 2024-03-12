@@ -28,20 +28,11 @@ class EEM_Form_Section extends EEM_Base
 
     public const APPLIES_TO_REGISTRANTS = 'registrants';
 
-    /**
-     * @var EEM_Form_Section
-     */
-    protected static $_instance;
+    protected static ?EEM_Form_Section $_instance = null;
 
-    /**
-     * @var RequestInterface
-     */
-    private $request;
+    private RequestInterface $request;
 
-    /**
-     * @var array
-     */
-    private $valid_applies_to_options;
+    private array $valid_applies_to_options;
 
 
     /**

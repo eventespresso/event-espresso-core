@@ -41,13 +41,8 @@ class EEM_Change_Log extends EEM_Base
      */
     const type_gateway = 'gateway';
 
-    /**
-     * private instance of the EEM_Change_Log object
-     *
-     * @access private
-     * @var EEM_Change_Log $_instance
-     */
-    protected static $_instance = null;
+
+    protected static ?EEM_Change_Log $_instance = null;
 
 
     /**

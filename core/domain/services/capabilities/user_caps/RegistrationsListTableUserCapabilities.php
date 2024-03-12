@@ -131,7 +131,7 @@ class RegistrationsListTableUserCapabilities extends UserCapabilities
 
     public function userCanReadRegistrationCheckins(): bool
     {
-        return $this->hasGlobalCap('ee_read_registration', 'espresso_registrations_registration_checkins');
+        return $this->hasGlobalCap('ee_read_checkins', 'espresso_registrations_registration_checkins');
     }
 
 
@@ -142,8 +142,22 @@ class RegistrationsListTableUserCapabilities extends UserCapabilities
     public function userCanReadRegistrationCheckin(EE_Registration $registration): bool
     {
         return $this->hasEntityCap(
-            'ee_read_checkins',
+            'ee_read_checkin',
             'espresso_registrations_registration_checkins',
+            $registration->ID()
+        );
+    }
+
+
+    /**
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function userCanEditRegistrationCheckin(EE_Registration $registration): bool
+    {
+        return $this->hasEntityCap(
+            'ee_edit_checkin',
+            'espresso_registrations_toggle_checkin_status',
             $registration->ID()
         );
     }

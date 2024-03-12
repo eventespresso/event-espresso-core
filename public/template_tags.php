@@ -20,15 +20,15 @@ defined('EVENT_ESPRESSO_VERSION') || exit();
  * @throws EE_Error
  * @throws ReflectionException
  */
-function is_espresso_event($event = null)
+function is_espresso_event($event = null): bool
 {
-    if (can_use_espresso_conditionals(__FUNCTION__)) {
-        // extract EE_Event object from passed param regardless of what it is (within reason of course)
-        $event = EEH_Event_View::get_event($event);
-        // do we have a valid event ?
-        return $event instanceof EE_Event;
+    if (! can_use_espresso_conditionals(__FUNCTION__)) {
+        return false;
     }
-    return false;
+    // extract EE_Event object from passed param regardless of what it is (within reason of course)
+    $event = EEH_Event_View::get_event($event);
+    // do we have a valid event ?
+    return $event instanceof EE_Event;
 }
 
 /**
@@ -37,14 +37,16 @@ function is_espresso_event($event = null)
  *
  * @return bool
  */
-function is_espresso_event_single()
+function is_espresso_event_single(): bool
 {
-    if (can_use_espresso_conditionals(__FUNCTION__)) {
-        global $wp_query;
-        // return conditionals set by CPTs
-        return $wp_query instanceof WP_Query ? $wp_query->is_espresso_event_single : false;
+    if (! can_use_espresso_conditionals(__FUNCTION__)) {
+        return false;
     }
-    return false;
+    global $wp_query;
+    // return conditionals set by CPTs
+    return $wp_query instanceof WP_Query
+        && isset($wp_query->is_espresso_event_single)
+        && $wp_query->is_espresso_event_single;
 }
 
 /**
@@ -53,13 +55,15 @@ function is_espresso_event_single()
  *
  * @return bool
  */
-function is_espresso_event_archive()
+function is_espresso_event_archive(): bool
 {
-    if (can_use_espresso_conditionals(__FUNCTION__)) {
-        global $wp_query;
-        return $wp_query instanceof WP_Query ? $wp_query->is_espresso_event_archive : false;
+    if (! can_use_espresso_conditionals(__FUNCTION__)) {
+        return false;
     }
-    return false;
+    global $wp_query;
+    return $wp_query instanceof WP_Query
+        && isset($wp_query->is_espresso_event_archive)
+        && $wp_query->is_espresso_event_archive;
 }
 
 /**
@@ -68,13 +72,15 @@ function is_espresso_event_archive()
  *
  * @return bool
  */
-function is_espresso_event_taxonomy()
+function is_espresso_event_taxonomy(): bool
 {
-    if (can_use_espresso_conditionals(__FUNCTION__)) {
-        global $wp_query;
-        return $wp_query instanceof WP_Query ? $wp_query->is_espresso_event_taxonomy : false;
+    if (! can_use_espresso_conditionals(__FUNCTION__)) {
+        return false;
     }
-    return false;
+    global $wp_query;
+    return $wp_query instanceof WP_Query
+        && isset($wp_query->is_espresso_event_taxonomy)
+        && $wp_query->is_espresso_event_taxonomy;
 }
 
 /**
@@ -86,15 +92,15 @@ function is_espresso_event_taxonomy()
  * @throws EE_Error
  * @throws ReflectionException
  */
-function is_espresso_venue($venue = null)
+function is_espresso_venue($venue = null): bool
 {
-    if (can_use_espresso_conditionals(__FUNCTION__)) {
-        // extract EE_Venue object from passed param regardless of what it is (within reason of course)
-        $venue = EEH_Venue_View::get_venue($venue, false);
-        // do we have a valid event ?
-        return $venue instanceof EE_Venue;
+    if (! can_use_espresso_conditionals(__FUNCTION__)) {
+        return false;
     }
-    return false;
+    // extract EE_Venue object from passed param regardless of what it is (within reason of course)
+    $venue = EEH_Venue_View::get_venue($venue, false);
+    // do we have a valid event ?
+    return $venue instanceof EE_Venue;
 }
 
 /**
@@ -103,13 +109,15 @@ function is_espresso_venue($venue = null)
  *
  * @return bool
  */
-function is_espresso_venue_single()
+function is_espresso_venue_single(): bool
 {
-    if (can_use_espresso_conditionals(__FUNCTION__)) {
-        global $wp_query;
-        return $wp_query instanceof WP_Query ? $wp_query->is_espresso_venue_single : false;
+    if (! can_use_espresso_conditionals(__FUNCTION__)) {
+        return false;
     }
-    return false;
+    global $wp_query;
+    return $wp_query instanceof WP_Query
+        && isset($wp_query->is_espresso_venue_single)
+        && $wp_query->is_espresso_venue_single;
 }
 
 /**
@@ -118,13 +126,15 @@ function is_espresso_venue_single()
  *
  * @return bool
  */
-function is_espresso_venue_archive()
+function is_espresso_venue_archive(): bool
 {
-    if (can_use_espresso_conditionals(__FUNCTION__)) {
-        global $wp_query;
-        return $wp_query instanceof WP_Query ? $wp_query->is_espresso_venue_archive : false;
+    if (! can_use_espresso_conditionals(__FUNCTION__)) {
+        return false;
     }
-    return false;
+    global $wp_query;
+    return $wp_query instanceof WP_Query
+        && isset($wp_query->is_espresso_venue_archive)
+        && $wp_query->is_espresso_venue_archive;
 }
 
 /**
@@ -133,13 +143,15 @@ function is_espresso_venue_archive()
  *
  * @return bool
  */
-function is_espresso_venue_taxonomy()
+function is_espresso_venue_taxonomy(): bool
 {
-    if (can_use_espresso_conditionals(__FUNCTION__)) {
-        global $wp_query;
-        return $wp_query instanceof WP_Query ? $wp_query->is_espresso_venue_taxonomy : false;
+    if (! can_use_espresso_conditionals(__FUNCTION__)) {
+        return false;
     }
-    return false;
+    global $wp_query;
+    return $wp_query instanceof WP_Query
+        && isset($wp_query->is_espresso_venue_taxonomy)
+        && $wp_query->is_espresso_venue_taxonomy;
 }
 
 /**
@@ -149,7 +161,7 @@ function is_espresso_venue_taxonomy()
  * @param $conditional_tag
  * @return bool
  */
-function can_use_espresso_conditionals($conditional_tag)
+function can_use_espresso_conditionals($conditional_tag): bool
 {
     if (! did_action('AHEE__EE_System__initialize')) {
         EE_Error::doing_it_wrong(

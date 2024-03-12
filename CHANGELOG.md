@@ -6,6 +6,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Releases
 
+### [5.0.18]
+
+#### Added
+ - [PPC. Add not onboard validation and notice (#1130)](https://github.com/eventespresso/cafe/pull/1130)
+
+#### Fixed
+ - [PPC. Fix payment inconsistencies (#1113)](https://github.com/eventespresso/cafe/pull/1113)
+ - [Fix Batch Message  Modal Shortcodes (#1129)](https://github.com/eventespresso/cafe/pull/1129)
+ - [Refactor RequestTypeContextDetector to Handle Permalink Prefix (#1037)](https://github.com/eventespresso/cafe/pull/1037)
+ - [Fix Non-Code Promotions (#1112)](https://github.com/eventespresso/cafe/pull/1112)
+ - [PPC. Dont accept failed transactions as successful (#1142)](https://github.com/eventespresso/cafe/pull/1142)
+
+#### Changed
+ - [BuildMachine 5.0.17 Changes. (#1103)](https://github.com/eventespresso/cafe/pull/1103)
+ - [Dont Block Restore Registration Action if Payments Exist (#1110)](https://github.com/eventespresso/cafe/pull/1110)
+ - [Refactor Feature Flags and Add New Flags (#1116)](https://github.com/eventespresso/cafe/pull/1116)
+ - [Improve AJAX Response Handling in SPCO (#1119)](https://github.com/eventespresso/cafe/pull/1119)
+ - [Refactor Reg Admin List Table Columns (#1099)](https://github.com/eventespresso/cafe/pull/1099)
+ - [Remove TAB Transaction Registrations from Reg Report CSV (#1093)](https://github.com/eventespresso/cafe/pull/1093)
+ - [Improve Custom Post Type Defense Against Hostile Themes  - MOD Plugins (#1136)](https://github.com/eventespresso/cafe/pull/1136)
+
+
 ### [5.0.17]
 
 #### Fixed

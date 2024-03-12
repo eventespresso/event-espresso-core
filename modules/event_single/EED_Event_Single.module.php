@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\entities\custom_post_types\EspressoPostType;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
@@ -57,7 +58,7 @@ class EED_Event_Single extends EED_Module
         );
         $custom_post_types = $custom_post_type_definitions->getDefinitions();
         EE_Config::register_route(
-            $custom_post_types['espresso_events']['singular_slug'],
+            $custom_post_types[EspressoPostType::EVENTS]['singular_slug'],
             'Event_Single',
             'run'
         );
@@ -271,7 +272,7 @@ class EED_Event_Single extends EED_Module
         static $current_post_ID = 0;
         if (
             $current_post_ID !== $post->ID
-            && $post->post_type === 'espresso_events'
+            && $post->post_type === EspressoPostType::EVENTS
             && ! EED_Event_Single::$using_get_the_excerpt
             && ! post_password_required()
         ) {

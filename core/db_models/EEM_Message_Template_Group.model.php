@@ -13,8 +13,7 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 class EEM_Message_Template_Group extends EEM_Soft_Delete_Base
 {
-    // private instance of the EEM_Message_Template_Group object
-    protected static $_instance = null;
+    protected static ?EEM_Message_Template_Group $_instance = null;
 
 
     /**

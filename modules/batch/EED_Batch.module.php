@@ -109,6 +109,7 @@ class EED_Batch extends EED_Module
      */
     public static function set_hooks_admin()
     {
+        add_action('load-admin_page_espresso_batch', [self::instance(), 'setPageTitle']);
         add_action('admin_menu', [self::instance(), 'register_admin_pages']);
         add_action('admin_enqueue_scripts', [self::instance(), 'enqueue_scripts']);
 
@@ -314,18 +315,35 @@ class EED_Batch extends EED_Module
     public function register_admin_pages()
     {
         add_submenu_page(
-            '',
             // parent slug. we don't want this to actually appear in the menu
-            esc_html__('Batch Job', 'event_espresso'),
+            '',
             // page title
-            'n/a',
+            esc_html__('Batch Job', 'event_espresso'),
             // menu title
-            'read',
+            'n/a',
             // we want this page to actually be accessible to anyone,
-            EED_Batch::PAGE_SLUG,
+            'read',
             // menu slug
+            EED_Batch::PAGE_SLUG,
+            // callback
             [self::instance(), 'show_admin_page']
         );
+    }
+
+
+    /**
+     * prevents the following notice from appearing in the error log:
+     * PHP Deprecated:  strip_tags():
+     * Passing null to parameter #1 ($string) of type string is deprecated
+     * in /wp-admin/admin-header.php on line 36
+     *
+     * @return void
+     * @since $VID:$
+     */
+    public function setPageTitle()
+    {
+        global $title;
+        $title = esc_html__('Batch Job', 'event_espresso');
     }
 
 

@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\domain\entities\custom_post_types\EspressoPostType;
+
 /**
  * Venue Model
  *
@@ -10,8 +12,7 @@
  */
 class EEM_Venue extends EEM_CPT_Base
 {
-    // private instance of the Attendee object
-    protected static $_instance = null;
+    protected static ?EEM_Venue $_instance = null;
 
 
     /**
@@ -82,7 +83,7 @@ class EEM_Venue extends EEM_CPT_Base
                     false,
                     1
                 ),
-                'post_type'      => new EE_WP_Post_Type_Field('espresso_venues'),
+                'post_type'      => new EE_WP_Post_Type_Field(EspressoPostType::VENUES),
                 'password'       => new EE_Password_Field(
                     'post_password',
                     esc_html__('Password', 'event_espresso'),

@@ -23,7 +23,7 @@ jQuery(document).ready(function($) {
 
 
 	$('#entries-per-page-slct').change( function() {
-		var per_page = $(this).val();
+		const per_page = $(this).val();
 		$('#per_page').val( per_page );
 		$('#registrations-overview-frm').submit();
 	});
@@ -35,7 +35,9 @@ jQuery(document).ready(function($) {
 		$(this).find('textarea').prop( 'disabled', true );
 	});
 
-	$('#reg-admin-attendee-questions-frm').on( 'click', '.reg-admin-edit-attendee-question-lnk', function(e) {
+    const $regAdminAttendeeQuestionsFrm = $('#reg-admin-attendee-questions-frm');
+
+    $regAdminAttendeeQuestionsFrm.on( 'click', '.reg-admin-edit-attendee-question-lnk', function(e) {
 		e.preventDefault();
 		$(this).closest('table.question-group-questions').find('td, .reg-admin-attendee-questions-input-td' ).each(function() {//also select deprecated .reg-admin-attendee-questions-input-td
 			$(this).removeClass('disabled-input');
@@ -46,9 +48,9 @@ jQuery(document).ready(function($) {
 		$('#reg-admin-attendee-questions-submit').prop( 'disabled', false );
 	});
 
-	$('#reg-admin-attendee-questions-frm').on( 'change', '.editable-input', function(e) {
+    $regAdminAttendeeQuestionsFrm.on( 'change', '.editable-input', function() {
 		$(this).removeClass('editable-input').addClass('edited-input');
-		var edit_lnk = $(this).closest('table').find('.reg-admin-edit-attendee-question-td' ).html();
+		let edit_lnk = $(this).closest('table').find('.reg-admin-edit-attendee-question-td' ).html();
 		edit_lnk = '<span class="reminder-spn">' + eei18n.update_att_qstns + '<span><span class="hidden">' + edit_lnk + '<span>';
 		$(this).closest('table').find('.reg-admin-edit-attendee-question-td' ).html( edit_lnk );
 	});
@@ -57,7 +59,7 @@ jQuery(document).ready(function($) {
 	$('#wpcontent').on('click', '.ee-more-datetimes-toggle', function(e){
 	    e.preventDefault();
 		$(this).toggleClass('open');
-		$(this).next('.more-items').toggleClass('hidden').slideToggle();
+		$(this).parent().next('.more-items').slideToggle()
     });
 
 
@@ -112,7 +114,7 @@ jQuery(document).ready(function($) {
 	//validation
 	try {
 		$('#post').validate({
-			invalidHandler: function( event, validator ) {
+			invalidHandler: function() {
 				//toggle the wpjs indicators
 				$('.spinner').hide();
 				$('#publish').removeClass('button--primary-disabled');

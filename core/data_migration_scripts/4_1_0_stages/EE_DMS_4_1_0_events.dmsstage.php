@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\domain\entities\custom_post_types\EspressoPostType;
+
 /**
  * migrates old 3.1 events, and start_end entries to 4.1 event CPTs, tickets (although doesn't assign them any prices,
  * only datetimes; also this is run BEFORE migrating prices), and datetimes.
@@ -350,7 +352,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage
         string $new_post_status = 'publish'
     ): string {
         $original_name = $event_name ? sanitize_title($event_name) : $old_identifier;
-        return wp_unique_post_slug($original_name, 0, $new_post_status, 'espresso_events', 0);
+        return wp_unique_post_slug($original_name, 0, $new_post_status, EspressoPostType::EVENTS, 0);
     }
 
 
@@ -433,7 +435,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage
             'post_author'       => $old_event['wp_user'],// EVT_wp_user
             'post_parent'       => 0,// parent maybe get this from some REM field?
             'menu_order'        => 0,// EVT_order
-            'post_type'         => 'espresso_events',// post_type
+            'post_type'         => EspressoPostType::EVENTS,// post_type
             'post_status'       => $post_status,// status
         ];
         $cols_n_values_with_no_invalid_text = [];
@@ -698,7 +700,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage
             'post_author'       => $old_event['wp_user'],// VNU_wp_user
             'post_parent'       => 0,// parent
             'menu_order'        => 0,// VNU_order
-            'post_type'         => 'espresso_venues',// post_type
+            'post_type'         => EspressoPostType::VENUES,// post_type
         ];
         $data_types_array = [
             '%s',// VNU_name

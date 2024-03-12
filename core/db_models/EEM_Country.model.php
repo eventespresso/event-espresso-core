@@ -10,14 +10,13 @@
  */
 class EEM_Country extends EEM_Base
 {
-    // private instance of the Attendee object
-    protected static $_instance = null;
+    protected static ?EEM_Country $_instance = null;
 
     // array of all countries
-    private static $_all_countries = false;
+    private static ?array $_all_countries = null;
 
     // array of all active countries
-    private static $_active_countries = false;
+    private static ?array $_active_countries = null;
 
 
     /**

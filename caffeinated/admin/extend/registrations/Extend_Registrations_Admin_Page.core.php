@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\services\assets\EspressoLegacyAdminAssetManager;
 use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -182,6 +183,12 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
         parent::load_scripts_styles();
         // if newsletter message type is active then let's add filter and load js for it.
         if (EEH_MSG_Template::is_mt_active('newsletter')) {
+            wp_enqueue_style(
+                'ee_message_shortcodes',
+                EE_MSG_ASSETS_URL . 'ee_message_shortcodes.css',
+                [EspressoLegacyAdminAssetManager::CSS_HANDLE_EE_ADMIN],
+                EVENT_ESPRESSO_VERSION
+            );
             // enqueue newsletter js
             wp_enqueue_script(
                 'ee-newsletter-trigger',
@@ -430,13 +437,14 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
             'attendee',
             false
         );
+
         foreach ($shortcodes as $field => $shortcode_array) {
             $available_shortcodes = [];
             foreach ($shortcode_array as $shortcode => $shortcode_details) {
                 $field_id               = $field === '[NEWSLETTER_CONTENT]'
                     ? 'content'
-                    : $field;
-                $field_id               = 'batch-message-' . strtolower($field_id);
+                    : strtolower($field);
+                $field_id               = "batch-message-$field_id";
                 $available_shortcodes[] = '
                 <span class="js-shortcode-selection"
                       data-value="' . $shortcode . '"
@@ -445,20 +453,21 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
             }
             $codes[ $field ] = '<ul><li>' . implode('</li><li>', $available_shortcodes) . '</li></ul>';
         }
-        $shortcodes         = $codes;
-        $form_template      = REG_CAF_TEMPLATE_PATH . 'newsletter-send-form.template.php';
-        $form_template_args = [
-            'form_action'       => admin_url('admin.php?page=espresso_registrations'),
-            'form_route'        => 'newsletter_selected_send',
-            'form_nonce_name'   => 'newsletter_selected_send_nonce',
-            'form_nonce'        => wp_create_nonce('newsletter_selected_send_nonce'),
-            'redirect_back_to'  => $this->_req_action,
-            'ajax_nonce'        => wp_create_nonce('get_newsletter_form_content_nonce'),
-            'template_selector' => EEH_Form_Fields::select_input('newsletter_mtp_selected', $values),
-            'shortcodes'        => $shortcodes,
-            'id_type'           => $list_table instanceof EE_Attendee_Contact_List_Table ? 'contact' : 'registration',
-        ];
-        EEH_Template::display_template($form_template, $form_template_args);
+
+        EEH_Template::display_template(
+            REG_CAF_TEMPLATE_PATH . 'newsletter-send-form.template.php',
+            [
+                'form_action'       => admin_url('admin.php?page=espresso_registrations'),
+                'form_route'        => 'newsletter_selected_send',
+                'form_nonce_name'   => 'newsletter_selected_send_nonce',
+                'form_nonce'        => wp_create_nonce('newsletter_selected_send_nonce'),
+                'redirect_back_to'  => $this->_req_action,
+                'ajax_nonce'        => wp_create_nonce('get_newsletter_form_content_nonce'),
+                'template_selector' => EEH_Form_Fields::select_input('newsletter_mtp_selected', $values),
+                'shortcodes'        => $codes,
+                'id_type'           => $list_table instanceof EE_Attendee_Contact_List_Table ? 'contact' : 'registration',
+            ]
+        );
     }
 
 
@@ -1226,12 +1235,12 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
         // column represents
         if (! $datetime instanceof EE_Datetime) {
             $this->_template_args['before_list_table'] .= '
-                <div class="description ee-status-outline ee-status-bg--info">'
-                    . esc_html__(
+                <div class="description ee-status-outline ee-status-bg--info" style="white-space: normal;">
+                    <h2 style="margin: 1rem; padding: 0;">' . esc_html__(
                         'In this view, the check-in status represents the latest check-in record for the registration in that row.',
                         'event_espresso'
-                    ) . '
-                </div><br />';
+                    ) . '</h2>
+                </div>';
         }
         $this->display_admin_list_table_page_with_no_sidebar();
     }

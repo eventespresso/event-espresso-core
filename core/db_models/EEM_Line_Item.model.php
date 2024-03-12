@@ -110,10 +110,8 @@ class EEM_Line_Item extends EEM_Base
 
     const OBJ_TYPE_TRANSACTION = 'Transaction';
 
-    /**
-     * @var EEM_Line_Item $_instance
-     */
-    protected static $_instance;
+
+    protected static ?EEM_Line_Item $_instance = null;
 
 
     /**

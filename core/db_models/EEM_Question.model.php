@@ -60,23 +60,18 @@ class EEM_Question extends EEM_Soft_Delete_Base
     // constant used to indicate that the question type is a YEAR
     const QST_type_year = 'YEAR';
 
+
+    protected static ?EEM_Question $_instance = null;
+
     /**
      * lists all the question types which should be allowed. Ideally, this will be extensible.
-     *
-     * @var array $_allowed_question_types
      */
-    protected $_allowed_question_types = [];
-
-
-    // private instance of the Attendee object
-    protected static $_instance = null;
+    protected array $_allowed_question_types;
 
     /**
      * brief descriptions for all the question types
-     *
-     * @var EEM_Question $_instance
      */
-    protected $_question_descriptions;
+    protected array $_question_descriptions;
 
     /**
      * Question types that are interchangeable, even after answers have been provided for them.
@@ -89,15 +84,12 @@ class EEM_Question extends EEM_Soft_Delete_Base
      * @type string $multi                     -answer-enum
      *                                         }
      */
-    protected $_question_type_categories = [];
-
+    protected array $_question_type_categories;
 
     /**
      * Question types that should have an admin-defined max input length
-     *
-     * @var array
      */
-    protected $question_types_with_max_length;
+    protected array $question_types_with_max_length;
 
 
     /**
@@ -110,7 +102,7 @@ class EEM_Question extends EEM_Soft_Delete_Base
     {
         $this->singular_item                  = esc_html__('Question', 'event_espresso');
         $this->plural_item                    = esc_html__('Questions', 'event_espresso');
-        $this->_allowed_question_types        = apply_filters(
+        $this->_allowed_question_types        = (array) apply_filters(
             'FHEE__EEM_Question__construct__allowed_question_types',
             [
                 EEM_Question::QST_type_checkbox      => esc_html__('Checkboxes', 'event_espresso'),
@@ -132,7 +124,7 @@ class EEM_Question extends EEM_Soft_Delete_Base
                 EEM_Question::QST_type_year          => esc_html__('Year', 'event_espresso'),
             ]
         );
-        $this->_question_descriptions         = apply_filters(
+        $this->_question_descriptions         = (array) apply_filters(
             'FHEE__EEM_Question__construct__question_descriptions',
             [
                 EEM_Question::QST_type_checkbox      => esc_html__(
@@ -231,7 +223,7 @@ class EEM_Question extends EEM_Soft_Delete_Base
                 ],
             ]
         );
-        $this->question_types_with_max_length = apply_filters(
+        $this->question_types_with_max_length = (array) apply_filters(
             'FHEE__EEM_Question___construct__question_types_with_max_length',
             [
                 EEM_Question::QST_type_html_textarea,

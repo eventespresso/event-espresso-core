@@ -1,0 +1,162 @@
+#ee-msg-edit-frm .admin-primary-mbox-dv > ul,
+#ee-msg-edit-frm .admin-primary-mbox-dv >ul > li {
+    margin: 0;
+    padding: 0;
+    padding-block: 1px;
+}
+#ee-msg-edit-frm .admin-primary-mbox-dv >ul {
+    margin-block-start: var(--ee-base-ui-scale);
+}
+#ee-msg-edit-frm .admin-primary-mbox-dv >ul > li {
+    margin-block-end: calc(3 * var(--ee-base-ui-scale));
+}
+
+
+.ee-messages-shortcodes-chooser-wrap {
+    float: right;
+    padding: calc(.125 * var(--ee-base-ui-scale));
+    position: relative;
+}
+
+.ee-messages-shortcodes-chooser {
+    margin-top: 0;
+    font-size: var(--ee-font-size-lg);
+    cursor: pointer;
+}
+
+.wp-core-ui .button.ee-messages-shortcodes-chooser {
+    align-items: center;
+    display: inline-flex;
+    height: 30px;
+    justify-content: center;
+    padding: 0;
+    width: 30px;
+}
+.wp-core-ui .button.ee-messages-shortcodes-chooser .dashicons {
+    margin: 0;
+    top: unset;
+}
+
+.ee-messages-shortcodes-close-btn {
+    border: none !important;
+    background: none !important;
+    color: hsla(207, 5%, 10%, .5);
+    cursor: pointer;
+    font-size: var(--ee-font-size-xl);
+    position: absolute;
+    inset-block-start: calc(.25 * var(--ee-base-ui-scale));
+    inset-inline-end: 0;
+    transition: all 150ms;
+}
+.ee-messages-shortcodes-close-btn:hover {
+    color: hsla(207, 5%, 10%, 1);
+}
+
+
+h4 + .ee-messages-shortcodes-chooser-wrap {
+    top: 8px;
+}
+
+.ee-shortcode-chooser-open {
+    position:absolute;
+    left: -250px;
+}
+
+.ee_shortcode_chooser_container {
+    background-color: var(--ee-color-white);
+    border: 2px solid var(--ee-status-color-blue);
+    border-radius: calc(.25 * var(--ee-base-ui-scale));
+    box-shadow: 0 3px 6px -1px hsla(0, 0%, 0%, .75), 0 0 20px -2px hsla(0, 0%, 0%, .15);
+    font-size: var(--ee-font-size-small);
+    font-weight: 600;
+    height: auto;
+    margin: 0;
+    max-height: 340px;
+    min-height: 150px;
+    min-width: 340px;
+    overflow: scroll;
+    padding: var(--ee-base-ui-scale) !important;
+    text-align: left;
+    width: fit-content;
+    white-space: nowrap;
+    z-index: 4000;
+}
+
+#ee-msg-edit-frm #titlediv {
+    margin-block-end: var(--ee-base-ui-scale);
+}
+
+#ee-msg-edit-frm .admin-primary-mbox-dv .ee_shortcode_chooser_container h6 {
+    color: var(--ee-font-color-light);
+    font-size: var(--ee-font-size-small);
+    font-weight: 800;
+    line-height: 1.25;
+    margin: 0;
+    margin-block-end: var(--ee-base-ui-scale);
+}
+
+#ee-msg-edit-frm .admin-primary-mbox-dv .ee_shortcode_chooser_container h4 {
+    color: var(--ee-border-color);
+    font-size: var(--ee-font-size-4xl);
+    font-weight: 800;
+    line-height: 1;
+    margin: 0;
+    margin-block-end: calc(1.75 * var(--ee-base-ui-scale));
+}
+
+
+
+
+
+#ee-msg-edit-frm .admin-primary-mbox-dv .ee_shortcode_chooser_container ul,
+#ee-msg-edit-frm .admin-primary-mbox-dv .ee_shortcode_chooser_container li {
+    margin: 0;
+    padding: 0;
+    padding-block: 1px;
+}
+#ee-msg-edit-frm .admin-primary-mbox-dv .ee_shortcode_chooser_container li {
+    margin-block-end: calc(.5 * var(--ee-base-ui-scale));
+}
+
+#ee-msg-edit-frm .admin-primary-mbox-dv .ee_shortcode_chooser_container .js-shortcode-selection {
+    cursor: pointer;
+    display: inline-block;
+    padding: calc(.25 * var(--ee-base-ui-scale)) calc(.5 * var(--ee-base-ui-scale));
+    transition: all 150ms;
+}
+
+#ee-msg-edit-frm .admin-primary-mbox-dv .ee_shortcode_chooser_container .js-shortcode-selection:not(.ee-shortcode-selected):hover {
+    background-color: var(--ee-status-color-pale-blue);
+    color: var(--ee-font-color-dark);
+}
+#ee-msg-edit-frm .admin-primary-mbox-dv .ee_shortcode_chooser_container .js-shortcode-selection.ee-shortcode-selected {
+    color: var(--ee-border-color);
+    cursor: not-allowed;
+}
+
+#ee-msg-edit-frm .admin-primary-mbox-dv .ee_shortcode_chooser_container li:last-of-type {
+    margin-bottom: 0;
+}
+
+
+#ee-msg-edit-frm .admin-primary-mbox-dv input.large-text,
+#ee-msg-edit-frm .admin-primary-mbox-dv textarea.large-text {
+    margin-inline: 0;
+    width: 100%;
+    max-width: 100%;
+}
+
+#ee-msg-edit-frm .admin-primary-mbox-dv li .wp-editor-wrap,
+#ee-msg-edit-frm .admin-primary-mbox-dv li input.large-text,
+#ee-msg-edit-frm .admin-primary-mbox-dv li textarea.large-text {
+    margin-inline: 0;
+    max-width: 100%;
+    width: calc(100% - 2rem - var(--ee-button-height));
+}
+#ee-msg-edit-frm .admin-primary-mbox-dv li .wp-editor-wrap {
+    background: var(--ee-color-almost-white);
+    border-radius: calc(.5 * var(--ee-base-ui-scale));
+    margin-block-start: calc(.5 * var(--ee-base-ui-scale));
+    padding: var(--ee-base-ui-scale);
+    width: calc(100% - (5rem - 4px) - var(--ee-button-height));
+}

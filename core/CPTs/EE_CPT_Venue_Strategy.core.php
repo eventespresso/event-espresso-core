@@ -1,57 +1,59 @@
 <?php
 
+use EventEspresso\core\domain\entities\custom_post_types\EspressoPostType;
+
 /**
  * EE_CPT_Venue_Strategy
  *
- * @package               Event Espresso
- * @subpackage            /core/
- * @author                Brent Christensen
- *
- * ------------------------------------------------------------------------
+ * @package     Event Espresso
+ * @subpackage  /core/
+ * @author      Brent Christensen
  */
 class EE_CPT_Venue_Strategy
 {
     /**
      * $CPT - the current page, if it utilizes CPTs
      *
-     * @var    array
-     * @access    protected
+     * @var array|null
      */
-    protected $CPT = null;
+    protected ?array $CPT = null;
 
 
     /**
-     *    class constructor
-     *
-     * @access    public
-     * @param    array $arguments
-     * @return \EE_CPT_Venue_Strategy
+     * @param array|WP_Query|null $wp_query
+     * @param array               $CPT
      */
-    public function __construct($arguments = array())
+    public function __construct($wp_query, array $CPT = [])
     {
-        $this->CPT = isset($arguments['CPT']) ? $arguments['CPT'] : null;
-        $WP_Query = isset($arguments['WP_Query']) ? $arguments['WP_Query'] : null;
-        if ($WP_Query instanceof WP_Query && ! $WP_Query->is_tag) {
-            $WP_Query->is_espresso_venue_single = is_singular()
-                                                  && isset($WP_Query->query->post_type)
-                                                  && $WP_Query->query->post_type == 'espresso_venues';
-            $WP_Query->is_espresso_venue_archive = is_post_type_archive('espresso_venues') ? true : false;
-            $WP_Query->is_espresso_venue_taxonomy = is_tax('espresso_venue_categories') ? true : false;
+        if (is_array($wp_query) && $wp_query['WP_Query'] instanceof WP_Query) {
+            $this->CPT = $wp_query['CPT'] ?? $CPT;
+            $wp_query  = $wp_query['WP_Query'];
+        } else {
+            $this->CPT = $CPT;
         }
-        add_filter('the_posts', array($this, 'the_posts'), 1, 2);
+        if ($wp_query instanceof WP_Query && ! $wp_query->is_tag) {
+            $wp_query->is_espresso_venue_single   = is_singular()
+                && (
+                    (isset($wp_query->query->post_type) && $wp_query->query->post_type === EspressoPostType::VENUES)
+                    || (isset($wp_query->query['post_type']) && $wp_query->query['post_type'] === EspressoPostType::VENUES)
+                );
+            $wp_query->is_espresso_venue_archive  = is_post_type_archive(EspressoPostType::VENUES);
+            $wp_query->is_espresso_venue_taxonomy = is_tax('espresso_venue_categories');
+        }
+        add_filter('the_posts', [$this, 'the_posts'], 1, 2);
     }
 
 
     /**
-     *    the_posts
-     *
-     * @access    public
-     * @param          $posts
+     * @param array    $posts
      * @param WP_Query $wp_query
-     * @return    void
+     * @return array
      */
-    public function the_posts($posts, WP_Query $wp_query)
+    public function the_posts(array $posts, WP_Query $wp_query): array
     {
+        if (EE_CPT_Strategy::instance()->wpQueryPostType($wp_query) !== EspressoPostType::VENUES) {
+            return $posts;
+        }
         // automagically load the EEH_Venue_View helper so that it's functions are available
         if (
             isset(EE_Registry::instance()->CFG->map_settings->use_google_maps)
@@ -59,7 +61,7 @@ class EE_CPT_Venue_Strategy
         ) {
             EEH_Maps::espresso_google_map_js();
         }
-        remove_filter('the_posts', array($this, 'the_posts'), 1, 2);
+        remove_filter('the_posts', [$this, 'the_posts'], 1);
         return $posts;
     }
 }

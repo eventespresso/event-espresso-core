@@ -79,10 +79,15 @@ class EEG_PayPalCheckout extends EE_Onsite_Gateway
                 $exception->getMessage()
             );
         }
-        $order_id      = $request->getRequestParam('pp_order_id', '', DataType::STRING);
-        $order_invalid = $this->orderInvalid($order_id, $order);
-        if ($order_invalid) {
-            return $this->setPaymentFailure($payment, $failed_status, [$order, $request->postParams()], $order_invalid);
+        $order_id       = $request->getRequestParam('pp_order_id', '', DataType::STRING);
+        $is_order_valid = $this->isOrderValid($order_id, $order);
+        if (! $is_order_valid['valid']) {
+            return $this->setPaymentFailure(
+                $payment,
+                $failed_status,
+                [$order, $request->postParams()],
+                $is_order_valid['message']
+            );
         }
 
         // Remove the saved order data.
@@ -134,24 +139,32 @@ class EEG_PayPalCheckout extends EE_Onsite_Gateway
      *
      * @param string $provided_order_id
      * @param        $order
-     * @return string string if error and empty if valid.
+     * @return array [valid => {boolean}, message => {string}]
      */
-    public function orderInvalid(string $provided_order_id, $order): string
+    public function isOrderValid(string $provided_order_id, $order): array
     {
-        // Check the provided order ID.
+        $conclusion = [
+            'valid'   => false,
+            'message' => esc_html__('Could not validate this Order.', 'event_espresso'),
+        ];
+        // Check the provided Order and order ID.
         if (! $provided_order_id) {
-            return esc_html__('Invalid Order ID provided !', 'event_espresso');
+            $conclusion['message'] = esc_html__('Invalid Order ID provided !', 'event_espresso');
+        } elseif (! $order || ! is_array($order)) {
+            $conclusion['message'] = esc_html__('Order data in wrong format.', 'event_espresso');
+        } elseif ($order['id'] !== $provided_order_id) {
+            $conclusion['message'] = esc_html__('Order ID mismatch.', 'event_espresso');
+        } elseif (empty($order['status'])
+            || $order['status'] !== 'COMPLETED'
+            || empty($order['purchase_units'][0]['payments']['captures'][0]['status'])
+            || $order['purchase_units'][0]['payments']['captures'][0]['status'] !== 'COMPLETED'
+        ) {
+            $conclusion['message'] = esc_html__('Order not completed.', 'event_espresso');
+        } else {
+            // If we didn't fail on the above, the Order should be considered valid.
+            $conclusion['valid'] = true;
         }
-        if (! $order || ! is_array($order)) {
-            return esc_html__('Order data in wrong format.', 'event_espresso');
-        }
-        if ($order['id'] !== $provided_order_id) {
-            return esc_html__('Order ID mismatch.', 'event_espresso');
-        }
-        if ($order['status'] !== 'COMPLETED') {
-            return esc_html__('Order not completed.', 'event_espresso');
-        }
-        return '';
+        return $conclusion;
     }
 
 
@@ -172,8 +185,16 @@ class EEG_PayPalCheckout extends EE_Onsite_Gateway
         string     $err_message = ''
     ): EE_Payment {
         $this->log(['Error request data:' => $response_data], $payment);
+        $err_message = $err_message ?: sprintf(
+            esc_html__(
+                'Your payment could not be processed successfully due to a technical issue.%sPlease try again or contact %s for assistance.',
+                'event_espresso'
+            ),
+            '<br/>',
+            EE_Registry::instance()->CFG->organization->get_pretty('email')
+        );
         $payment->set_status($status);
-        $payment->set_details('error');
+        $payment->set_details($err_message);
         $payment->set_gateway_response($err_message);
         return $payment;
     }
@@ -191,11 +212,13 @@ class EEG_PayPalCheckout extends EE_Onsite_Gateway
     public function setPaymentSuccess(EE_Payment $payment, EE_Transaction $transaction, array $order): EE_Payment
     {
         $amount = $order['purchase_units'][0]['payments']['captures'][0]['amount']['value'] ?? 0;
+        // Don't set the amount if there is no info on that with this order.
         if (! $amount) {
             $this->log(['Success order but amount is 0 !' => $order], $payment);
+        } else {
+            $payment->set_amount((float) $amount);
         }
         $payment->set_status(EEM_Payment::status_id_approved);
-        $payment->set_amount((float) $amount);
         $payment->set_txn_id_chq_nmbr($order['purchase_units'][0]['payments']['captures'][0]['id'] ?? $order['id']);
         $payment->set_gateway_response($order['status'] ?? 'success');
         $this->saveBillingDetails($payment, $transaction, $order);

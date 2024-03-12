@@ -74,22 +74,7 @@ class RegistrationsReport extends JobHandlerFile
             $query_params = maybe_unserialize($job_parameters->request_datum('filters', []));
         } else {
             $query_params = [
-                [
-                    'OR'                 => [
-                        // don't include registrations from failed or abandoned transactions...
-                        'Transaction.STS_ID' => [
-                            'NOT IN',
-                            [
-                                EEM_Transaction::failed_status_code,
-                                EEM_Transaction::abandoned_status_code,
-                            ],
-                        ],
-                        // unless the registration is approved,
-                        // in which case include it regardless of transaction status
-                        'STS_ID'             => EEM_Registration::status_id_approved,
-                    ],
-                    'Ticket.TKT_deleted' => ['IN', [true, false]],
-                ],
+                [ 'Ticket.TKT_deleted' => ['IN', [true, false]] ],
                 'order_by'   => ['Transaction.TXN_ID' => 'asc', 'REG_count' => 'asc'],
                 'force_join' => ['Transaction', 'Ticket', 'Attendee'],
                 'caps'       => EEM_Base::caps_read_admin,
@@ -99,6 +84,23 @@ class RegistrationsReport extends JobHandlerFile
             } else {
                 $query_params['force_join'][] = 'Event';
             }
+        }
+        // unless the query params already include a status,
+        // we want to exclude registrations from failed or abandoned transactions
+        if (! isset($query_params[0]['Transaction.STS_ID'])) {
+            $query_params[0]['OR'] = [
+                // don't include registrations from failed or abandoned transactions...
+                'Transaction.STS_ID' => [
+                    'NOT IN',
+                    [
+                        EEM_Transaction::failed_status_code,
+                        EEM_Transaction::abandoned_status_code,
+                    ],
+                ],
+                // unless the registration is approved,
+                // in which case include it regardless of transaction status
+                'STS_ID' => EEM_Registration::status_id_approved,
+            ];
         }
 
         if (! isset($query_params['force_join'])) {
@@ -146,7 +148,7 @@ class RegistrationsReport extends JobHandlerFile
             $DTT_ID
         );
         // but we don't want to write any actual data yet...
-        // so let's blank out all of the values for that first row
+        // so let's blank out all the values for that first row
         array_walk(
             $csv_data_for_row[0],
             function (&$value) {

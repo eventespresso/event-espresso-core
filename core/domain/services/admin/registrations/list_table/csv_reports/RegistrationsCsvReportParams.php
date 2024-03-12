@@ -54,11 +54,12 @@ class RegistrationsCsvReportParams
         }
         // detect views (status) or searches (s) and set "use_filters" to true
         if (
-            isset($request_params['status'])
-            || isset($request_params['s'])
-            || isset($request_params['ticket_id'])
+            isset($request_params['_reg_status'])
             || isset($request_params['datetime_id'])
-            || isset($request_params['_reg_status'])
+            || isset($request_params['event_id'])
+            || isset($request_params['s'])
+            || isset($request_params['status'])
+            || isset($request_params['ticket_id'])
         ) {
             $request_params['use_filters'] = true;
             $route_details['extra_request']['use_filters'] = true;
@@ -75,6 +76,7 @@ class RegistrationsCsvReportParams
                     'default_nonce' => '',
                 ]
             );
+            unset($route_details['extra_request']['filters']['use_filters']);
         }
         return $route_details;
     }

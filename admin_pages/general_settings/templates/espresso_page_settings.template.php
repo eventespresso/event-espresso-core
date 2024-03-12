@@ -9,6 +9,9 @@
  * @var int     $cancel_page_id
  * @var WP_Post $cancel_page_obj
  */
+
+use EventEspresso\core\domain\entities\custom_post_types\EspressoPostType;
+
 ?>
 
 <div class="padding">
@@ -214,7 +217,7 @@
                         </strong>
                         <?php echo EEH_Template::get_help_tab_link('event_list_cpt_info'); // already escaped ?>
                         <br />
-                        <a href='<?php echo esc_url_raw(get_post_type_archive_link('espresso_events')); ?>'>
+                        <a href='<?php echo esc_url_raw(get_post_type_archive_link(EspressoPostType::EVENTS)); ?>'>
                             <?php esc_html_e('View', 'event_espresso'); ?>
                         </a>
                     </label>
@@ -248,7 +251,7 @@
                         </strong>
                         <?php echo EEH_Template::get_help_tab_link('venue_list_cpt_info'); // already escaped ?>
                         <br />
-                        <a href='<?php echo esc_url_raw(get_post_type_archive_link('espresso_venues')); ?>'>
+                        <a href='<?php echo esc_url_raw(get_post_type_archive_link(EspressoPostType::VENUES)); ?>'>
                             <?php esc_html_e('View', 'event_espresso'); ?>
                         </a>
                     </label>

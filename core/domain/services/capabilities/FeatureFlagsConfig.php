@@ -23,48 +23,13 @@ class FeatureFlagsConfig extends JsonDataWordpressOption
     private const OPTION_NAME = 'ee_feature_flags';
 
     /**
-     * Whether to use the New Event Editor (EDTR) or continue using the legacy Event Editor
-     * deafult: Enabled for Caffeinated sites, disabled for Decaf or Multisite installs
+     * use FeatureFlag::USE_EVENT_EDITOR_BULK_EDIT instead
+     * this hasn't been deleted because it's used in the REM add-on
+     *
+     * @deprecated $VID:$
      */
-    public const  USE_ADVANCED_EVENT_EDITOR = 'ee_advanced_event_editor';
+    public const  USE_EVENT_EDITOR_BULK_EDIT = FeatureFlag::USE_EVENT_EDITOR_BULK_EDIT;
 
-    /**
-     * Whether to enable the Bulk Edit feature in the Advanced Event Editor (EDTR)
-     * default: Enabled for Caffeinated sites, disabled for Decaf or Multisite installs
-     */
-    public const  USE_EVENT_EDITOR_BULK_EDIT = 'ee_event_editor_bulk_edit';
-
-    /**
-     * Whether to enable the new Default Ticket Manager in the EDTR
-     * default: Enabled
-     */
-    public const  USE_DEFAULT_TICKET_MANAGER = 'use_default_ticket_manager';
-
-    /**
-     * Whether to enable the Rich Text Editor for the Event Description field in the EDTR or use tinymce
-     * default: Disabled
-     */
-    public const  USE_EVENT_DESCRIPTION_RTE = 'use_event_description_rte';
-
-    /**
-     * Whether to enable the Rich Text Editor for all other RTE fields in the EDTR
-     * default: Disabled
-     */
-    public const  USE_EXPERIMENTAL_RTE = 'use_experimental_rte';
-
-    /**
-     * Whether to enable the new Registration Form Builder in the EDTR
-     * or continue using the legacy Question Groups and Registration Form admin pages
-     * default: Disabled
-     */
-    public const  USE_REG_FORM_BUILDER = 'use_reg_form_builder';
-
-    /**
-     * Whether to enable the new Registration Options meta box in the EDTR
-     * or continue using the legacy Event Registration Options
-     * default: Disabled
-     */
-    public const  USE_REG_OPTIONS_META_BOX = 'use_reg_options_meta_box';
 
 
     protected Domain $domain;
@@ -78,20 +43,23 @@ class FeatureFlagsConfig extends JsonDataWordpressOption
 
 
     /**
-     * see the FeatureFlagsConfig::USE_* constants for descriptions of each feature flag and their default values
+     * see the FeatureFlag::USE_* constants for descriptions of each feature flag and their default values
      *
      * @return stdClass
      */
     public function getDefaultFeatureFlagOptions(): stdClass
     {
         return (object) [
-            self::USE_ADVANCED_EVENT_EDITOR  => $this->domain->isCaffeinated() && ! $this->domain->isMultiSite(),
-            self::USE_EVENT_EDITOR_BULK_EDIT => $this->domain->isCaffeinated() && ! $this->domain->isMultiSite(),
-            self::USE_DEFAULT_TICKET_MANAGER => true,
-            self::USE_EVENT_DESCRIPTION_RTE  => false,
-            self::USE_EXPERIMENTAL_RTE       => false,
-            self::USE_REG_FORM_BUILDER       => false,
-            self::USE_REG_OPTIONS_META_BOX   => false,
+            FeatureFlag::USE_ADVANCED_EVENT_EDITOR     => $this->domain->isCaffeinated() && ! $this->domain->isMultiSite(),
+            FeatureFlag::USE_DEFAULT_TICKET_MANAGER    => true,
+            FeatureFlag::USE_EDD_PLUGIN_LICENSING      => defined('EE_USE_EDD_PLUGIN_LICENSING') && EE_USE_EDD_PLUGIN_LICENSING,
+            FeatureFlag::USE_EVENT_DESCRIPTION_RTE     => false,
+            FeatureFlag::USE_EVENT_EDITOR_BULK_EDIT    => $this->domain->isCaffeinated() && ! $this->domain->isMultiSite(),
+            FeatureFlag::USE_EXPERIMENTAL_RTE          => false,
+            FeatureFlag::USE_REG_FORM_BUILDER          => false,
+            FeatureFlag::USE_REG_FORM_TICKET_QUESTIONS => false,
+            FeatureFlag::USE_REG_OPTIONS_META_BOX      => false,
+            FeatureFlag::USE_SPCO_FORM_REFACTOR        => false,
         ];
     }
 
@@ -101,10 +69,19 @@ class FeatureFlagsConfig extends JsonDataWordpressOption
      */
     public function getFeatureFlags(): stdClass
     {
+        $default_options = $this->getDefaultFeatureFlagOptions();
         if (apply_filters('FHEE__FeatureFlagsConfig__getFeatureFlags__use_default_feature_flags', true)) {
-            return $this->getDefaultFeatureFlagOptions();
+            return $default_options;
         }
-        return $this->getAll() ?: $this->getDefaultFeatureFlagOptions();
+        $feature_flags = $this->getAll();
+        // ensure that all feature flags are set
+        foreach ($default_options as $key => $value) {
+            // if the feature flag is not set, use the default value
+            if (!isset($feature_flags->$key)) {
+                $feature_flags->$key = $value;
+            }
+        }
+        return $feature_flags;
     }
 
 
@@ -116,21 +93,25 @@ class FeatureFlagsConfig extends JsonDataWordpressOption
 
     /**
      * enables a feature flag, ex:
-     * $this->enableFeatureFlag(FeatureFlagsConfig::USE_ADVANCED_EVENT_EDITOR);
+     * $this->enableFeatureFlag(FeatureFlag::USE_ADVANCED_EVENT_EDITOR);
      *
-     * @param string $feature_flag the feature flag to enable. One of the FeatureFlagsConfig::USE_* constants
+     * @param string $feature_flag the feature flag to enable. One of the FeatureFlag::USE_* constants
+     * @param bool   $add_if_missing
      * @return int
      */
-    public function enableFeatureFlag(string $feature_flag): int
+    public function enableFeatureFlag(string $feature_flag, bool $add_if_missing = false): int
     {
         $feature_flags = $this->getFeatureFlags();
-        if (! property_exists($feature_flags, $feature_flag)) {
-            return WordPressOption::UPDATE_ERROR;
+        if (! property_exists($feature_flags, $feature_flag) && ! $add_if_missing) {
+                return WordPressOption::UPDATE_ERROR;
         }
         $feature_flags->{$feature_flag} = true;
         // if feature flag is the advanced event editor or bulk edit options
         // then only enabled if the site is Caffeinated and not MultiSite
-        if ($feature_flag === self::USE_ADVANCED_EVENT_EDITOR || $feature_flag === self::USE_EVENT_EDITOR_BULK_EDIT) {
+        if (
+            $feature_flag === FeatureFlag::USE_ADVANCED_EVENT_EDITOR
+            || $feature_flag === FeatureFlag::USE_EVENT_EDITOR_BULK_EDIT
+        ) {
             $feature_flags->{$feature_flag} = $this->domain->isCaffeinated() && ! $this->domain->isMultiSite();
         }
         return $this->saveFeatureFlagsConfig($feature_flags);
@@ -139,9 +120,9 @@ class FeatureFlagsConfig extends JsonDataWordpressOption
 
     /**
      * disables a feature flag, ex:
-     * $this->disableFeatureFlag(FeatureFlagsConfig::USE_ADVANCED_EVENT_EDITOR);
+     * $this->disableFeatureFlag(FeatureFlag::USE_ADVANCED_EVENT_EDITOR);
      *
-     * @param string $feature_flag the feature flag to disable. One of the FeatureFlagsConfig::USE_* constants
+     * @param string $feature_flag the feature flag to disable. One of the FeatureFlag::USE_* constants
      * @return int
      */
     public function disableFeatureFlag(string $feature_flag): int
@@ -152,5 +133,11 @@ class FeatureFlagsConfig extends JsonDataWordpressOption
         }
         $feature_flags->{$feature_flag} = false;
         return $this->saveFeatureFlagsConfig($feature_flags);
+    }
+
+
+    public function getFeatureFlagsFormOptions(): ?array
+    {
+        return FeatureFlag::getFormOptions();
     }
 }

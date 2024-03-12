@@ -30,7 +30,7 @@ class EE_DMS_4_1_0_checkins extends EE_Data_Migration_Script_Stage_Table
     public function __construct()
     {
         global $wpdb;
-        $this->_pretty_name      = esc_html__('Checkins', 'event_espresso');
+        $this->_pretty_name      = esc_html__('Check-ins', 'event_espresso');
         $this->_old_table        = $wpdb->prefix . "events_attendee";
         $this->select_expression = 'att.*, e.event_status';
         $this->_extra_where_sql  = 'AS att

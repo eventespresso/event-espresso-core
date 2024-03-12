@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\entities\custom_post_types\EspressoPostType;
 use EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -77,7 +78,7 @@ class EED_Events_Archive extends EED_Module
         $custom_post_type_definitions = LoaderFactory::getLoader()->getShared(CustomPostTypeDefinitions::class);
         $custom_post_types            = $custom_post_type_definitions->getDefinitions();
         EE_Config::register_route(
-            $custom_post_types['espresso_events']['plural_slug'],
+            $custom_post_types[EspressoPostType::EVENTS]['plural_slug'],
             'Events_Archive',
             'run'
         );
@@ -373,7 +374,7 @@ class EED_Events_Archive extends EED_Module
         static $current_post_ID = 0;
         if (
             $current_post_ID !== $post->ID
-            && $post->post_type === 'espresso_events'
+            && $post->post_type === EspressoPostType::EVENTS
             && ! EED_Events_Archive::$using_get_the_excerpt
             && ! post_password_required()
             && (

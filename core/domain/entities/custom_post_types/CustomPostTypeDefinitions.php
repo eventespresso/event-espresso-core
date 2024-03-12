@@ -67,7 +67,7 @@ class CustomPostTypeDefinitions
             apply_filters(
                 'FHEE__EE_Register_CPTs__get_CPTs__cpts',
                 [
-                    'espresso_events'    => [
+                    EspressoPostType::EVENTS => [
                         'singular_name' => esc_html__('Event', 'event_espresso'),
                         'plural_name'   => esc_html__('Events', 'event_espresso'),
                         'singular_slug' => esc_html__('event', 'event_espresso'),
@@ -104,7 +104,7 @@ class CustomPostTypeDefinitions
                             'page_templates'      => true,
                         ],
                     ],
-                    'espresso_venues'    => [
+                    EspressoPostType::VENUES => [
                         'singular_name' => esc_html__('Venue', 'event_espresso'),
                         'plural_name'   => esc_html__('Venues', 'event_espresso'),
                         'singular_slug' => esc_html__('venue', 'event_espresso'),
@@ -140,7 +140,7 @@ class CustomPostTypeDefinitions
                             'page_templates'      => true,
                         ],
                     ],
-                    'espresso_attendees' => [
+                    EspressoPostType::ATTENDEES => [
                         'singular_name' => esc_html__('Contact', 'event_espresso'),
                         'plural_name'   => esc_html__('Contacts', 'event_espresso'),
                         'singular_slug' => esc_html__('contact', 'event_espresso'),

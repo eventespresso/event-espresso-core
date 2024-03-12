@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\domain\services\custom_post_types;
 
+use EventEspresso\core\domain\entities\custom_post_types\EspressoPostType;
 use EventEspresso\core\domain\entities\custom_post_types\CustomTaxonomyTerm;
 use WP_Post;
 
@@ -50,7 +51,7 @@ class RegisterCustomTaxonomyTerms
         $this->registerCustomTaxonomyTerm(
             'espresso_event_type',
             'single-event',
-            array('espresso_events')
+            [EspressoPostType::EVENTS]
         );
     }
 

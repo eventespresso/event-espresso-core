@@ -1,18 +1,20 @@
 <?php
 
+use EventEspresso\core\domain\entities\custom_post_types\EspressoPostType;
+
 /**
  * Event List
  *
  * @package        Event Espresso
  * @subpackage     /modules/feeds/
  * @author         Brent Christensen
- *
- * ------------------------------------------------------------------------
  */
 class EED_Feeds extends EED_Module
 {
     /**
      * @return EED_Feeds
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function instance()
     {
@@ -23,21 +25,20 @@ class EED_Feeds extends EED_Module
     /**
      *    set_hooks - for hooking into EE Core, other modules, etc
      *
-     * @access    public
      * @return    void
      */
     public static function set_hooks()
     {
-        add_action('parse_request', array('EED_Feeds', 'parse_request'), 10);
-        add_filter('default_feed', array('EED_Feeds', 'default_feed'), 10, 1);
-        add_filter('comment_feed_join', array('EED_Feeds', 'comment_feed_join'), 10, 2);
-        add_filter('comment_feed_where', array('EED_Feeds', 'comment_feed_where'), 10, 2);
+        add_action('parse_request', ['EED_Feeds', 'parse_request']);
+        add_filter('default_feed', ['EED_Feeds', 'default_feed']);
+        add_filter('comment_feed_join', ['EED_Feeds', 'comment_feed_join'], 10, 2);
+        add_filter('comment_feed_where', ['EED_Feeds', 'comment_feed_where'], 10, 2);
     }
+
 
     /**
      *    set_hooks_admin - for hooking into EE Admin Core, other modules, etc
      *
-     * @access    public
      * @return    void
      */
     public static function set_hooks_admin()
@@ -48,7 +49,6 @@ class EED_Feeds extends EED_Module
     /**
      *    run - initial module setup
      *
-     * @access    public
      * @return    void
      */
     public function run($WP)
@@ -59,8 +59,7 @@ class EED_Feeds extends EED_Module
     /**
      *    default_feed
      *
-     * @access    public
-     * @param    type    rss2, atom, rss, rdf, rssjs
+     * @param type    rss2, atom, rss, rdf, rssjs
      * @return    string
      */
     public static function default_feed($type = 'rss2')
@@ -74,32 +73,32 @@ class EED_Feeds extends EED_Module
     /**
      *    parse_request
      *
-     * @access    public
      * @return    void
      */
     public static function parse_request()
     {
         $request = self::getRequest();
-        if ($request->requestParamIsSet('post_type')) {
-            // define path to templates
-            define('RSS_FEEDS_TEMPLATES_PATH', str_replace('\\', '/', plugin_dir_path(__FILE__)) . 'templates/');
-            // what kinda post_type are we dealing with ?
-            switch ($request->getRequestParam('post_type')) {
-                case 'espresso_events':
-                    // for rss2, atom, rss, rdf
-                    add_filter('the_excerpt_rss', array('EED_Feeds', 'the_event_feed'), 10, 1);
-                    add_filter('the_content_feed', array('EED_Feeds', 'the_event_feed'), 10, 1);
-                    // for json ( also uses the above filter )
-                    add_filter('rssjs_feed_item', array('EED_Feeds', 'the_event_rssjs_feed'), 10, 1);
-                    break;
-                case 'espresso_venues':
-                    // for rss2, atom, rss, rdf
-                    add_filter('the_excerpt_rss', array('EED_Feeds', 'the_venue_feed'), 10, 1);
-                    add_filter('the_content_feed', array('EED_Feeds', 'the_venue_feed'), 10, 1);
-                    // for json ( also uses the above filter )
-                    add_filter('rssjs_feed_item', array('EED_Feeds', 'the_venue_rssjs_feed'), 10, 1);
-                    break;
-            }
+        if (! $request->requestParamIsSet('post_type')) {
+            return;
+        }
+        // define path to templates
+        define('RSS_FEEDS_TEMPLATES_PATH', str_replace('\\', '/', plugin_dir_path(__FILE__)) . 'templates/');
+        // what kinda post_type are we dealing with ?
+        switch ($request->getRequestParam('post_type')) {
+            case EspressoPostType::EVENTS:
+                // for rss2, atom, rss, rdf
+                add_filter('the_excerpt_rss', ['EED_Feeds', 'the_event_feed']);
+                add_filter('the_content_feed', ['EED_Feeds', 'the_event_feed']);
+                // for json ( also uses the above filter )
+                add_filter('rssjs_feed_item', ['EED_Feeds', 'the_event_rssjs_feed']);
+                break;
+            case EspressoPostType::VENUES:
+                // for rss2, atom, rss, rdf
+                add_filter('the_excerpt_rss', ['EED_Feeds', 'the_venue_feed']);
+                add_filter('the_content_feed', ['EED_Feeds', 'the_venue_feed']);
+                // for json ( also uses the above filter )
+                add_filter('rssjs_feed_item', ['EED_Feeds', 'the_venue_rssjs_feed']);
+                break;
         }
     }
 
@@ -110,9 +109,8 @@ class EED_Feeds extends EED_Module
      *    so this little snippet of SQL taps into the comment feed query and removes comments for the
      *    espresso_attendees post_type
      *
-     * @access    public
-     * @param    string $SQL the JOIN clause for the comment feed query
-     * @return    void
+     * @param string $SQL the JOIN clause for the comment feed query
+     * @return string
      */
     public static function comment_feed_join($SQL)
     {
@@ -131,15 +129,14 @@ class EED_Feeds extends EED_Module
      *    so this little snippet of SQL taps into the comment feed query and removes comments for the
      *    espresso_attendees post_type
      *
-     * @access    public
-     * @param    string $SQL the WHERE clause for the comment feed query
-     * @return    void
+     * @param string $SQL the WHERE clause for the comment feed query
+     * @return string
      */
     public static function comment_feed_where($SQL)
     {
         global $wp_query, $wpdb;
         if ($wp_query->is_comment_feed && apply_filters('EED_Feeds__comment_feed_where__espresso_attendees', false)) {
-            $SQL .= " AND $wpdb->posts.post_type != 'espresso_attendees'";
+            $SQL .= " AND $wpdb->posts.post_type != " . EspressoPostType::ATTENDEES;
         }
         return $SQL;
     }
@@ -148,19 +145,18 @@ class EED_Feeds extends EED_Module
     /**
      *    the_event_feed
      *
-     * @access    public
-     * @param    string $content
-     * @return    void
+     * @param string $content
+     * @return string
      */
     public static function the_event_feed($content)
     {
         if (is_feed() && is_readable(RSS_FEEDS_TEMPLATES_PATH . 'espresso_events_feed.template.php')) {
             global $post;
-            $template_args = array(
+            $template_args = [
                 'EVT_ID'            => $post->ID,
                 'event_description' => get_option('rss_use_excerpt') ? $post->post_excerpt : $post->post_content,
-            );
-            $content = EEH_Template::display_template(
+            ];
+            $content       = EEH_Template::display_template(
                 RSS_FEEDS_TEMPLATES_PATH . 'espresso_events_feed.template.php',
                 $template_args,
                 true
@@ -173,9 +169,8 @@ class EED_Feeds extends EED_Module
     /**
      *    the_event_rssjs_feed
      *
-     * @access    public
-     * @param    object $item
-     * @return    void
+     * @param object $item
+     * @return object
      */
     public static function the_event_rssjs_feed($item)
     {
@@ -189,19 +184,18 @@ class EED_Feeds extends EED_Module
     /**
      *    the_venue_feed
      *
-     * @access    public
-     * @param    string $content
-     * @return    void
+     * @param string $content
+     * @return string
      */
     public static function the_venue_feed($content)
     {
         if (is_feed() && is_readable(RSS_FEEDS_TEMPLATES_PATH . 'espresso_venues_feed.template.php')) {
             global $post;
-            $template_args = array(
+            $template_args = [
                 'VNU_ID'            => $post->ID,
                 'venue_description' => get_option('rss_use_excerpt') ? $post->post_excerpt : $post->post_content,
-            );
-            $content = EEH_Template::display_template(
+            ];
+            $content       = EEH_Template::display_template(
                 RSS_FEEDS_TEMPLATES_PATH . 'espresso_venues_feed.template.php',
                 $template_args,
                 true
@@ -214,9 +208,8 @@ class EED_Feeds extends EED_Module
     /**
      *    the_venue_rssjs_feed
      *
-     * @access    public
-     * @param    object $item
-     * @return    void
+     * @param object $item
+     * @return object
      */
     public static function the_venue_rssjs_feed($item)
     {

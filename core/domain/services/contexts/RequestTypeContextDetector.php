@@ -18,25 +18,15 @@ use InvalidArgumentException;
  */
 class RequestTypeContextDetector
 {
-    /**
-     * @var GraphQLEndpoint $gql_endpoint
-     */
-    private $gql_endpoint;
+    private GraphQLEndpoint $gql_endpoint;
 
-    /**
-     * @var RequestTypeContextFactoryInterface $factory
-     */
-    private $factory;
+    private RequestTypeContextFactoryInterface $factory;
 
-    /**
-     * @var RequestInterface $request
-     */
-    private $request;
+    private RequestInterface $request;
 
-    /**
-     * @var array $globalRouteConditions
-     */
-    private $globalRouteConditions;
+    private array $globalRouteConditions;
+
+    private string $permalink_prefix;
 
 
     /**
@@ -60,6 +50,8 @@ class RequestTypeContextDetector
         $this->request = $request;
         $this->factory = $factory;
         $this->globalRouteConditions = $globalRouteConditions;
+        $permalink_structure = ltrim((string) get_option( 'permalink_structure' ), '/');
+        $this->permalink_prefix = strpos($permalink_structure, 'index.php') === 0 ? '/index.php/' : '';
     }
 
 
@@ -68,7 +60,7 @@ class RequestTypeContextDetector
      * @param mixed  $default
      * @return mixed
      */
-    private function getGlobalRouteCondition(string $globalRouteCondition, $default)
+    private function getGlobalRouteCondition(string $globalRouteCondition, $default = false)
     {
         return $this->globalRouteConditions[ $globalRouteCondition ] ?? $default;
     }
@@ -101,7 +93,7 @@ class RequestTypeContextDetector
             return $this->factory->create(RequestTypeContext::GQL);
         }
         // Detect AJAX
-        if ($this->getGlobalRouteCondition('DOING_AJAX', false)) {
+        if ($this->getGlobalRouteCondition('DOING_AJAX')) {
             return $this->isAjaxRequest();
         }
         // Detect WP_Cron
@@ -109,11 +101,11 @@ class RequestTypeContextDetector
             return $this->factory->create(RequestTypeContext::CRON);
         }
         // Detect command line requests
-        if ($this->getGlobalRouteCondition('WP_CLI', false)) {
+        if ($this->getGlobalRouteCondition('WP_CLI')) {
             return $this->factory->create(RequestTypeContext::CLI);
         }
         // detect WordPress admin (ie: "Dashboard")
-        if ($this->getGlobalRouteCondition('is_admin', false)) {
+        if ($this->getGlobalRouteCondition('is_admin')) {
             return $this->factory->create(RequestTypeContext::ADMIN);
         }
         // Detect iFrames
@@ -187,6 +179,7 @@ class RequestTypeContextDetector
     {
         $action = $this->request->getRequestParam('action');
         $plugins_page_actions = [
+            'true',
             'activate',
             'activate-multi',
             'activate-selected',
@@ -198,8 +191,7 @@ class RequestTypeContextDetector
             'enable-auto-update-selected',
             'update-selected',
         ];
-        return $this->uriPathMatches('wp-admin/plugins.php')
-               && ($action === 'true' || in_array($action, $plugins_page_actions, true));
+        return $this->uriPathMatches('wp-admin/plugins.php') && in_array($action, $plugins_page_actions, true);
     }
 
 
@@ -281,6 +273,10 @@ class RequestTypeContextDetector
     private function uriPathMatches(string $component): bool
     {
         $request_uri = $this->request->requestUri(true);
+        // remove permalink /index.php/ prefix if present
+        if (substr($request_uri, 0, strlen($this->permalink_prefix)) === $this->permalink_prefix) {
+            $request_uri = substr($request_uri, strlen($this->permalink_prefix));
+        }
         $parts = explode('?', $request_uri);
         $path = trim(reset($parts), '/');
         return strpos($path, $component) === 0;

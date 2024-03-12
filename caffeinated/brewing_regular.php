@@ -7,6 +7,7 @@
  */
 
 use EventEspresso\caffeinated\core\domain\entities\routing\handlers\admin\PueRequests;
+use EventEspresso\core\domain\entities\custom_post_types\EspressoPostType;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\interfaces\InterminableInterface;
@@ -352,7 +353,7 @@ class EE_Brewing_Regular extends EE_BASE implements InterminableInterface
      */
     public function filter_cpts(array $cpt_array): array
     {
-        $cpt_array['espresso_venues']['args']['show_in_nav_menus'] = true;
+        $cpt_array[EspressoPostType::VENUES]['args']['show_in_nav_menus'] = true;
         return $cpt_array;
     }
 
@@ -365,7 +366,7 @@ class EE_Brewing_Regular extends EE_BASE implements InterminableInterface
     {
         $menu_items[] = [
             'title'       => esc_html__('Venue List', 'event_espresso'),
-            'url'         => get_post_type_archive_link('espresso_venues'),
+            'url'         => get_post_type_archive_link(EspressoPostType::VENUES),
             'description' => esc_html__('Archive page for all venues.', 'event_espresso'),
         ];
         return $menu_items;

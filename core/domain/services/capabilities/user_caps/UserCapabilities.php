@@ -6,16 +6,9 @@ use EE_Capabilities;
 
 abstract class UserCapabilities
 {
-    /**
-     * @var EE_Capabilities
-     */
-    private $capabilities;
+    private EE_Capabilities $capabilities;
 
-
-    /**
-     * @var array
-     */
-    private $caps = [];
+    private array $caps = [];
 
 
     /**

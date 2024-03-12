@@ -2,12 +2,10 @@
 
 /**
  * Class EE_CPT_Default_Strategy
- * Description
  *
  * @package       Event Espresso
  * @subpackage    core
  * @author        Brent Christensen
- *
  */
 class EE_CPT_Default_Strategy
 {
@@ -15,66 +13,59 @@ class EE_CPT_Default_Strategy
      * $CPT - the current page, if it utilizes CPTs
      *
      * @var    object
-     * @access    protected
      */
     protected $CPT = null;
 
 
     /**
-     *    class constructor
-     *
-     * @access    private
-     * @param    array $arguments
-     * @return    \EE_CPT_Default_Strategy
+     * @param array $arguments
      */
-    public function __construct($arguments = array())
+    public function __construct(array $arguments = [])
     {
-        $this->CPT = isset($arguments['CPT']) ? $arguments['CPT'] : null;
+        $this->CPT = $arguments['CPT'] ?? null;
     }
 
 
     /**
      *    pre_get_posts
      *
-     * @access    public
-     * @param    \WP_Query $WP_Query
-     * @return    \WP_Query
+     * @param WP_Query $wp_query
+     * @return    WP_Query
      */
-    public function pre_get_posts(WP_Query $WP_Query)
+    public function pre_get_posts(WP_Query $wp_query): WP_Query
     {
-        if (! $WP_Query->is_main_query() && ! $WP_Query->is_archive()) {
-            return $WP_Query;
-        }
-        return $WP_Query;
+        return $wp_query;
     }
 
 
     /**
      *    wp
      *
-     * @access    public
-     * @param    \WP_Post[] $posts
-     * @param    \WP_Query  $WP_Query
-     * @return    \WP_Post[]
+     * @param WP_Post[] $posts
+     * @param WP_Query  $wp_query
+     * @return    WP_Post[]
      */
-    public function the_posts($posts, WP_Query $WP_Query)
+    public function the_posts(array $posts, WP_Query $wp_query): array
     {
         return $posts;
     }
 
 
     /**
-     *    get_EE_post_type_metadata
-     *
-     * @access    public
-     * @param mixed     $meta_value
-     * @param    int    $post_id
-     * @param    string $meta_key
-     * @param    string $single
-     * @return    mixed
+     * @param mixed  $meta_value
+     * @param int    $object_id
+     * @param string $meta_key
+     * @param bool   $single
+     * @param string $meta_type
+     * @return mixed
      */
-    public function get_EE_post_type_metadata($meta_value = null, $post_id, $meta_key, $single)
-    {
+    public function get_EE_post_type_metadata(
+        $meta_value,
+        int $object_id,
+        string $meta_key,
+        bool $single,
+        string $meta_type
+    ) {
         return $meta_value;
     }
 }

@@ -171,25 +171,22 @@ abstract class EE_Form_Section_Layout_Base
      */
     public function display_label($input)
     {
-        if ($input->get_display_strategy() instanceof EE_Hidden_Display_Strategy) {
+        $label_text = $input->html_label_text();
+        if (! $label_text || $input->get_display_strategy() instanceof EE_Hidden_Display_Strategy) {
             return '';
         }
         $class = $input->required()
             ? 'ee-required-label ' . $input->html_label_class()
             : $input->html_label_class();
-        $label_text = $input->required()
-            ? $input->html_label_text() . '<span class="ee-asterisk">*</span>'
-            : $input->html_label_text();
-        return '<label id="'
-               . $input->html_label_id()
-               . '" class="'
-               . $class
-               . '" style="'
-               . $input->html_label_style()
-               . '" for="' . $input->html_id()
-               . '">'
-               . $label_text
-               . '</label>';
+        $label_text .= $input->required() ? '<span class="ee-asterisk">*</span>' : '';
+        return '
+        <label id="' . $input->html_label_id() . '"
+               class="' . $class . '"
+               style="' . $input->html_label_style() . '"
+               for="' . $input->html_id() . '"
+        >
+            ' . $label_text . '
+        </label>';
     }
 
 

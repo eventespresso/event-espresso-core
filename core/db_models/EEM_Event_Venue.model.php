@@ -9,8 +9,7 @@
  */
 class EEM_Event_Venue extends EEM_Base
 {
-    // private instance of the Attendee object
-    protected static $_instance = null;
+    protected static ?EEM_Event_Venue $_instance = null;
 
 
     /**

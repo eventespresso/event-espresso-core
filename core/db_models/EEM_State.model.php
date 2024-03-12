@@ -6,18 +6,16 @@
  * @package             Event Espresso
  * @subpackage          includes/models/
  * @author              Brent Christensen
- * ------------------------------------------------------------------------
  */
 class EEM_State extends EEM_Base
 {
-    // private instance of the Attendee object
-    protected static $_instance = null;
+    protected static ?EEM_State $_instance = null;
 
     // array of all states
-    private static $_all_states = false;
+    private static ?array $_all_states = null;
 
     // array of all active states
-    private static $_active_states = false;
+    private static ?array $_active_states = null;
 
 
     /**
