@@ -6,7 +6,7 @@ namespace EventEspresso\core\domain\services\capabilities;
  * class FeatureFlag
  * defines the Feature Flags used to enable/disable new features in Event Espresso
  *
- * @since $VID:$
+ * @since 5.0.18.p
  */
 class FeatureFlag
 {
@@ -59,7 +59,7 @@ class FeatureFlag
      * Whether to enable the new Single Page Checkout form refactor changes
      * default: Disabled
      *
-     * @since $VID:$
+     * @since 5.0.18.p
      */
     public const  USE_SPCO_FORM_REFACTOR = 'use_spco_form_refactor';
 

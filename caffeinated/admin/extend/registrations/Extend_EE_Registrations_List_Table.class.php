@@ -96,7 +96,7 @@ class Extend_EE_Registrations_List_Table extends EE_Registrations_List_Table
      * @return string
      * @throws EE_Error
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 5.0.18.p
      */
     protected function datetimeFilterLink(EE_Registration $registration, EE_Datetime $datetime): string
     {
@@ -127,7 +127,7 @@ class Extend_EE_Registrations_List_Table extends EE_Registrations_List_Table
      * @return string
      * @throws EE_Error
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 5.0.18.p
      */
     private function viewCheckinsLink(
         EE_Registration $registration,

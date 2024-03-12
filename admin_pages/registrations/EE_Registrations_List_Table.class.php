@@ -967,7 +967,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
      * @return string
      * @throws EE_Error
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 5.0.18.p
      */
     protected function viewTransactionLink(EE_Transaction $transaction, string $link_text = ''): string
     {
@@ -1202,7 +1202,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
      * @return string
      * @throws EE_Error
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 5.0.18.p
      */
     protected function ticketName(EE_Ticket $ticket): string
     {
@@ -1215,7 +1215,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
      * @return string
      * @throws EE_Error
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 5.0.18.p
      */
     protected function ticketFilterLink(EE_Ticket $ticket): string
     {
@@ -1239,7 +1239,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
      * @return string
      * @throws EE_Error
      * @throws ReflectionException
-     * @deprecated $VID:$
+     * @deprecated 5.0.18.p
      */
     public function column_TXN_paid(EE_Registration $registration): string
     {
@@ -1258,7 +1258,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
      * @return string
      * @throws EE_Error
      * @throws ReflectionException
-     * @deprecated $VID:$
+     * @deprecated 5.0.18.p
      */
     public function column_PRC_amount(EE_Registration $registration): string
     {

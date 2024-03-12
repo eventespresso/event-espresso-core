@@ -26,7 +26,7 @@ class FeatureFlagsConfig extends JsonDataWordpressOption
      * use FeatureFlag::USE_EVENT_EDITOR_BULK_EDIT instead
      * this hasn't been deleted because it's used in the REM add-on
      *
-     * @deprecated $VID:$
+     * @deprecated 5.0.18.p
      */
     public const  USE_EVENT_EDITOR_BULK_EDIT = FeatureFlag::USE_EVENT_EDITOR_BULK_EDIT;
 

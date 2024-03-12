@@ -338,7 +338,7 @@ class EED_Batch extends EED_Module
      * in /wp-admin/admin-header.php on line 36
      *
      * @return void
-     * @since $VID:$
+     * @since 5.0.18.p
      */
     public function setPageTitle()
     {
