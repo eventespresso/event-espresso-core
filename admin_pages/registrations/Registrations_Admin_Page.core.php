@@ -3308,7 +3308,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      *
      * @param array $query_params
      * @return array
-     * @since $VID:$
+     * @since 5.0.19.p
      */
     private function convertDatetimeObjectsToStrings(array $query_params): array
     {

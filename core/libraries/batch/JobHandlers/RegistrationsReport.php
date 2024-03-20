@@ -612,7 +612,7 @@ class RegistrationsReport extends JobHandlerFile
      * @param DateTimeZone $utc_timezone
      * @return array
      * @throws Exception
-     * @since $VID:$
+     * @since 5.0.19.p
      */
     private function convertDateStringsToObjects(
         array $query_params,
