@@ -18,7 +18,7 @@ class StatusChangeNotice extends WordPressOption
 {
     public function __construct()
     {
-        parent::__construct('ee_hide_status_change_notices_for_users', [], false);
+        parent::__construct('ee_hide_status_change_notices_for_users', []);
     }
 
 

@@ -74,6 +74,7 @@
     margin: 0 .25rem 1rem;
     position: relative;
     transition: max-height 0.4s ease;
+    white-space: normal !important;
 }
 
 .espresso-events-page .ee-status-message,

@@ -3,15 +3,14 @@
 /**
  * EE_Term class
  *
- * @package               Event Espresso
- * @subpackage            includes/classes/EE_Term.class.php
- * @author                Mike Nelson
- *
- * ------------------------------------------------------------------------
+ * @package     Event Espresso
+ * @subpackage  includes/classes/EE_Term.class.php
+ * @author      Mike Nelson
  */
 class EE_Term extends EE_Base_Class
 {
-    public $post_type;
+    public array $post_type = [];
+
 
     /**
      * Sets some dynamic defaults
@@ -19,8 +18,10 @@ class EE_Term extends EE_Base_Class
      * @param array  $fieldValues
      * @param bool   $bydb
      * @param string $timezone
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    protected function __construct($fieldValues = array(), $bydb = false, $timezone = '')
+    protected function __construct($fieldValues = [], $bydb = false, $timezone = '')
     {
         if (! isset($fieldValues['slug'])) {
             $fieldValues['slug'] = $fieldValues['name'];
@@ -31,20 +32,24 @@ class EE_Term extends EE_Base_Class
 
     /**
      * @param array $props_n_values
-     * @return EE_Term|mixed
+     * @return EE_Term|null
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public static function new_instance($props_n_values = array())
+    public static function new_instance(array $props_n_values = []): ?EE_Term
     {
         $has_object = parent::_check_for_object($props_n_values, __CLASS__);
-        return $has_object ? $has_object : new self($props_n_values);
+        return $has_object ?: new self($props_n_values);
     }
 
 
     /**
      * @param array $props_n_values
-     * @return EE_Term
+     * @return EE_Term|null
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public static function new_instance_from_db($props_n_values = array())
+    public static function new_instance_from_db(array $props_n_values = []): ?EE_Term
     {
         return new self($props_n_values, true);
     }
@@ -54,10 +59,12 @@ class EE_Term extends EE_Base_Class
      * Gets name
      *
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function name()
+    public function name(): string
     {
-        return $this->get('name');
+        return (string) $this->get('name');
     }
 
 
@@ -65,9 +72,10 @@ class EE_Term extends EE_Base_Class
      * Sets name
      *
      * @param string $name
-     * @return boolean
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function set_name($name)
+    public function set_name(string $name)
     {
         $this->set('name', $name);
     }
@@ -77,10 +85,12 @@ class EE_Term extends EE_Base_Class
      * Gets slug
      *
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function slug()
+    public function slug(): string
     {
-        return $this->get('slug');
+        return (string) $this->get('slug');
     }
 
 
@@ -88,9 +98,10 @@ class EE_Term extends EE_Base_Class
      * Sets slug
      *
      * @param string $slug
-     * @return boolean
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function set_slug($slug)
+    public function set_slug(string $slug)
     {
         $this->set('slug', $slug);
     }

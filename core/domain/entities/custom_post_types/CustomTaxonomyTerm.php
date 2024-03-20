@@ -12,59 +12,34 @@ namespace EventEspresso\core\domain\entities\custom_post_types;
  */
 class CustomTaxonomyTerm
 {
-    /**
-     * @var string $taxonomy_slug
-     */
-    public $taxonomy_slug;
+    public string $taxonomy_slug;
 
-    /**
-     * @var string $term_slug
-     */
-    public $term_slug;
+    public string $term_slug;
 
-    /**
-     * @var array $custom_post_type_slugs
-     */
-    public $custom_post_type_slugs;
+    public array $custom_post_type_slugs;
 
 
-    /**
-     * CustomTaxonomyTerm constructor.
-     *
-     * @param string $taxonomy_slug
-     * @param string $term_slug
-     * @param array  $custom_post_type_slugs
-     */
-    public function __construct($taxonomy_slug, $term_slug, array $custom_post_type_slugs = array())
+    public function __construct(string $taxonomy_slug, string $term_slug, array $custom_post_type_slugs = [])
     {
-        $this->taxonomy_slug = $taxonomy_slug;
-        $this->term_slug = $term_slug;
+        $this->taxonomy_slug          = $taxonomy_slug;
+        $this->term_slug              = $term_slug;
         $this->custom_post_type_slugs = $custom_post_type_slugs;
     }
 
 
-    /**
-     * @return string
-     */
-    public function taxonomySlug()
+    public function taxonomySlug(): string
     {
         return $this->taxonomy_slug;
     }
 
 
-    /**
-     * @return string
-     */
-    public function termSlug()
+    public function termSlug(): string
     {
         return $this->term_slug;
     }
 
 
-    /**
-     * @return array
-     */
-    public function customPostTypeSlugs()
+    public function customPostTypeSlugs(): array
     {
         return $this->custom_post_type_slugs;
     }

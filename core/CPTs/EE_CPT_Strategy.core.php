@@ -115,8 +115,11 @@ class EE_CPT_Strategy extends EE_Base
     }
 
 
-    public function wpQueryPostType(WP_Query $wp_query): string
+    public function wpQueryPostType(?WP_Query $wp_query): string
     {
+        if (! $wp_query instanceof WP_Query) {
+            return '';
+        }
         $post_type = $wp_query->query->post_type ?? '';
         $post_type = $post_type === '' && isset($wp_query->query['post_type']) ? $wp_query->query['post_type'] : '';
         return is_array($post_type) ? (string) reset($post_type) : (string) $post_type;
@@ -142,10 +145,6 @@ class EE_CPT_Strategy extends EE_Base
      */
     public function pre_get_posts(WP_Query $wp_query)
     {
-        // check that post-type is one of ours
-        if (! $this->isEspressoPostType($wp_query)) {
-            return;
-        }
         // add our conditionals
         $this->_set_EE_tags_on_WP_Query($wp_query);
         // check for terms
@@ -210,10 +209,10 @@ class EE_CPT_Strategy extends EE_Base
         if (! $term instanceof EE_Term) {
             return;
         }
-        $term->post_type = array_merge(['post', 'page'], (array) $term->post_type);
-        $term->post_type = apply_filters(
+        // set post_type from term
+        $term->post_type = (array) apply_filters(
             'FHEE__EE_CPT_Strategy___set_post_type_for_terms__term_post_type',
-            $term->post_type,
+            array_merge(['post', 'page'], $term->post_type),
             $term
         );
         // if a post type is already set
@@ -328,7 +327,10 @@ class EE_CPT_Strategy extends EE_Base
      */
     protected function _generate_CptQueryModifier(WP_Query $wp_query, string $post_type)
     {
-        if ($this->query_modifier[ $post_type ] instanceof CptQueryModifier) {
+        if (
+            isset($this->query_modifier[ $post_type ])
+            && $this->query_modifier[ $post_type ] instanceof CptQueryModifier
+        ) {
             return;
         }
         $this->query_modifier[ $post_type ] = LoaderFactory::getLoader()->getShared(

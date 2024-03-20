@@ -30,7 +30,7 @@ class Domain
     public const META_KEY_SANDBOX_MODE = 'sandbox_mode';
 
     /**
-     * Name of the extra meta that stores the PayPal Access Token that is used get onboarding URL.
+     * Name of the extra meta that stores the Access Token that is used to auth in API requests to PayPal.
      */
     public const META_KEY_ACCESS_TOKEN = 'access_token';
 
@@ -55,9 +55,9 @@ class Domain
     public const META_KEY_CLIENT_SECRET = 'client_secret';
 
     /**
-     * Name of the extra meta that stores the expiration date of the client ID.
+     * Name of the extra meta that stores the expiration date of the Access Token.
      */
-    public const META_KEY_EXPIRES_IN = 'expires_in';
+    public const META_KEY_TOKEN_EXPIRES_IN = 'expires_in';
 
     /**
      * Name of the extra meta that holds the partner client ID.

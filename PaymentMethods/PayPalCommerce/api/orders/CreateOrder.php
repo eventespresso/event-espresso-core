@@ -139,7 +139,7 @@ class CreateOrder extends OrdersApi
                     'description' => substr(wp_strip_all_tags($description), 0, 125),
                     'items'       => $this->getLineItems(),
                     'amount'      => [
-                        'value'         => $this->transaction->total(),
+                        'value'         => $this->transaction->remaining(),
                         'currency_code' => $this->currency_code,
                         'breakdown'     => $this->getBreakdown(),
                     ],
@@ -174,7 +174,10 @@ class CreateOrder extends OrdersApi
         $event_line_items = $this->transaction->items_purchased();
         // List actual line items.
         foreach ($event_line_items as $line_item) {
-            if ($line_item instanceof EE_Line_Item && $line_item->OBJ_type() !== 'Promotion') {
+            if ($line_item instanceof EE_Line_Item
+                && $line_item->OBJ_type() !== 'Promotion'
+                && $line_item->quantity() > 0
+            ) {
                 $item_money     = $line_item->unit_price();
                 $li_description = $line_item->desc() ?? esc_html__('Event Ticket', 'event_espresso');
                 $line_items [] = [
@@ -189,7 +192,7 @@ class CreateOrder extends OrdersApi
                 ];
                 // Line item total.
                 $this->items_total += $line_item->pretaxTotal();
-            } elseif ($line_item->OBJ_type() === 'Promotion') {
+            } elseif ($line_item->OBJ_type() === 'Promotion' && $line_item->quantity() > 0) {
                 // Promotions total.
                 $this->promos_total += $line_item->total();
             }
@@ -197,6 +200,10 @@ class CreateOrder extends OrdersApi
         // Make sure we have an absolute number with only two decimal laces.
         $this->items_total  = CurrencyManager::normalizeValue($this->items_total);
         $this->promos_total = CurrencyManager::normalizeValue($this->promos_total);
+        // If this is a partial payment, apply the paid amount as a promo.
+        if ($this->transaction->paid() > 0) {
+            $this->promos_total += CurrencyManager::normalizeValue($this->transaction->paid());
+        }
         $this->countTaxTotal();
         return $line_items;
     }
@@ -255,7 +262,13 @@ class CreateOrder extends OrdersApi
     public function validateOrder($response, $parameters): array
     {
         $message = esc_html__('Validating Order Create:', 'event_espresso');
-        PayPalLogger::errorLog($message, [$this->request_url, $response], $this->transaction->payment_method());
+        PayPalLogger::errorLog(
+            $message,
+            [$this->request_url, $response],
+            $this->transaction->payment_method(),
+            false,
+            $this->transaction
+        );
         if (! empty($response['error'])) {
             return $response;
         }

@@ -356,6 +356,8 @@ jQuery(document).ready(function ($) {
                     if (is_valid && typeof callback !== 'undefined' && callback) {
                         // Run the callback if there are no errors.
                         callback(this_pm, response);
+                    } else {
+                        this_pm.processing_icon.fadeOut('fast');
                     }
                     if (update_ui) {
                         this_pm.updateOnboardingUI(this_pm, false);

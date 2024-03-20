@@ -37,6 +37,8 @@ class PayPalExtraMeta
      * Class constructor.
      *
      * @param EE_Payment_Method $pm_instance
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function __construct(EE_Payment_Method $pm_instance)
     {
@@ -89,9 +91,9 @@ class PayPalExtraMeta
      * Get PM metadata.
      * Return the metadata array if all good. False otherwise.
      *
-     * @return array|bool
+     * @return array
      */
-    public function getMetaData()
+    public function getMetaData(): array
     {
         try {
             return $this->pm->get_extra_meta($this->metadata_key, true, []);
@@ -101,7 +103,7 @@ class PayPalExtraMeta
                 $e->getMessage()
             );
             PayPalLogger::errorLog($err_msg, [], $this->pm);
-            return false;
+            return [];
         }
     }
 
@@ -119,7 +121,6 @@ class PayPalExtraMeta
         if (! $meta_data) {
             $meta_data = [];
         }
-
         $meta_data[ $name ] = $value;
         return $this->saveMetaData($meta_data);
     }

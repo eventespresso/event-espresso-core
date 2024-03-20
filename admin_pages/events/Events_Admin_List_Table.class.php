@@ -8,21 +8,14 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
  * Class for preparing the table listing all the events
  * note: anywhere there are no php docs it is because the docs are available in the parent class.
  *
- * @package         Events_Admin_List_Table
- * @subpackage      includes/core/admin/events/Events_Admin_List_Table.class.php
- * @author          Darren Ethier
+ * @package     Events_Admin_List_Table
+ * @subpackage  includes/core/admin/events/Events_Admin_List_Table.class.php
+ * @author      Darren Ethier
+ * @property    Events_Admin_Page $_admin_page
  */
 class Events_Admin_List_Table extends EE_Admin_List_Table
 {
-    /**
-     * @var Events_Admin_Page
-     */
-    protected EE_Admin_Page $_admin_page;
-
-    /**
-     * @var EE_Datetime
-     */
-    private $_dtt;
+    private ?EE_Datetime $_dtt = null;
 
 
     /**
@@ -97,8 +90,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
      * @throws EE_Error
-     * @throws EE_Error
-     * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _add_view_counts()
     {

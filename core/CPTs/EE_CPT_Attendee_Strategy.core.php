@@ -12,18 +12,18 @@ class EE_CPT_Attendee_Strategy
     /**
      * $CPT - the current page, if it utilizes CPTs
      *
-     * @var    array
-     * @access    protected
+     * @var array
      */
-    protected $CPT = null;
+    protected array $CPT;
 
 
     /**
-     * @param array $arguments
+     * @param WP_Query $wp_query
+     * @param array    $CPT
      */
-    public function __construct(array $arguments = [])
+    public function __construct(WP_Query $wp_query, array $CPT = [])
     {
-        $this->CPT = $arguments['CPT'] ?? null;
+        $this->CPT = $CPT;
     }
 
 

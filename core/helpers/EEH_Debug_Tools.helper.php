@@ -545,7 +545,9 @@ class EEH_Debug_Tools
      */
     protected static function pre_span($var)
     {
-        $var = var_export($var, true);
+        ob_start();
+        var_dump($var);
+        $var = ob_get_clean();
         if (EEH_Debug_Tools::plainOutput()) {
             return str_replace("\n", '', $var);
         }

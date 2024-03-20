@@ -6,6 +6,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Releases
 
+### [5.0.19]
+
+#### Fixed
+ - [PPC. Fix instantiating wrong extra metadata (#1150)](https://github.com/eventespresso/cafe/pull/1150)
+ - [Fix Status Codes Notice Container (#1156)](https://github.com/eventespresso/cafe/pull/1156)
+ - [Fix People Admin List Table Filters (#1139)](https://github.com/eventespresso/cafe/pull/1139)
+ - [Espresso Custom Post Type Fixes (#1163)](https://github.com/eventespresso/cafe/pull/1163)
+ - [PPC. Fix partial payments (#1134)](https://github.com/eventespresso/cafe/pull/1134)
+
+#### Changed
+ - [Build Machine 5.0.18.p changes (#1146)](https://github.com/eventespresso/cafe/pull/1146)
+ - [PPC. Add transaction to the logs (#1158)](https://github.com/eventespresso/cafe/pull/1158)
+ - [PPC. Update order status/error messages (#1162)](https://github.com/eventespresso/cafe/pull/1162)
+ - [Prevent fatal error from get_edit_post_link returning null (#1166)](https://github.com/eventespresso/cafe/pull/1166)
+ - [Remove Serialized Objects from Registration Report Requests (#1154)](https://github.com/eventespresso/cafe/pull/1154)
+
+
 ### [5.0.18]
 
 #### Added
@@ -25,7 +42,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - [Improve AJAX Response Handling in SPCO (#1119)](https://github.com/eventespresso/cafe/pull/1119)
  - [Refactor Reg Admin List Table Columns (#1099)](https://github.com/eventespresso/cafe/pull/1099)
  - [Remove TAB Transaction Registrations from Reg Report CSV (#1093)](https://github.com/eventespresso/cafe/pull/1093)
- - [Improve Custom Post Type Defense Against Hostile Themes  - MOD Plugins (#1136)](https://github.com/eventespresso/cafe/pull/1136)
+ - [Improve Custom Post Type Defense Against Hostile Themes  - [Build Machine 5.0.18.p changes (#1146)](https://github.com/eventespresso/cafe/pull/1146)
+ - [PPC. Add transaction to the logs (#1158)](https://github.com/eventespresso/cafe/pull/1158)
+ - [PPC. Update order status/error messages (#1162)](https://github.com/eventespresso/cafe/pull/1162)
+ - [Prevent fatal error from get_edit_post_link returning null (#1166)](https://github.com/eventespresso/cafe/pull/1166)
+ - [Remove Serialized Objects from Registration Report Requests (#1154)](https://github.com/eventespresso/cafe/pull/1154)
+ - MOD Plugins (#1136)](https://github.com/eventespresso/cafe/pull/1136)
 
 
 ### [5.0.17]

@@ -95,7 +95,7 @@ class CptQueryModifier
         $this->setWpQuery($wp_query);
         $this->setPostType($post_type);
         $this->setCptDetails($cpt_details);
-        $this->init($wp_query);
+        $this->init();
     }
 
 
@@ -371,15 +371,9 @@ class CptQueryModifier
         // creates classname like:  CPT_Event_Strategy
         $CPT_Strategy_class_name = 'EE_CPT_' . $model_name . '_Strategy';
         // load and instantiate
-        $CPT_Strategy = $this->loader->getShared(
-            $CPT_Strategy_class_name,
-            ['WP_Query' => $this->wp_query, 'CPT' => $this->cpt_details]
-        );
+        $CPT_Strategy = $this->loader->getShared($CPT_Strategy_class_name, [$this->wp_query, $this->cpt_details]);
         if ($CPT_Strategy === null) {
-            $CPT_Strategy = $this->loader->getShared(
-                'EE_CPT_Default_Strategy',
-                ['WP_Query' => $this->wp_query, 'CPT' => $this->cpt_details]
-            );
+            $CPT_Strategy = $this->loader->getShared('EE_CPT_Default_Strategy', [$this->wp_query, $this->cpt_details]);
         }
         return $CPT_Strategy;
     }
@@ -456,11 +450,11 @@ class CptQueryModifier
 
 
     /**
-     * @param string $url
+     * @param string|null $url
      * @param int    $ID
-     * @return string
+     * @return null|string
      */
-    public function getEditPostLink(string $url, int $ID): string
+    public function getEditPostLink(?string $url, int $ID): ?string
     {
         // need to make sure we only edit links if our cpt
         global $post;

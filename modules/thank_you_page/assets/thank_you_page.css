@@ -1,0 +1,39 @@
+.ee-table {
+    width: 100%;
+}
+
+.ee-table th,
+.ee-table td {
+    padding: .5rem;
+    text-align: start;
+}
+.ee-table.ee-registrations-list td {
+    padding-block-end: 1rem;
+}
+.ee-table th:first-child,
+.ee-table td:first-child {
+    padding-inline-start: 0;
+}
+.ee-table th:last-child,
+.ee-table td:last-child {
+    padding-inline-end: 0;
+}
+
+.ee-registrations-list td > span{
+    align-items: center;
+    display: inline-flex;
+    flex-flow: row nowrap;
+}
+
+.ee-registrations-list td:first-child > span {
+     align-items: flex-start;
+     display: inline-flex;
+     flex-flow: column nowrap;
+ }
+
+.ee-registrations-list td > span span {
+    align-items: center;
+    display: inline-flex;
+    flex-flow: row nowrap;
+    white-space: nowrap;
+}

@@ -79,17 +79,16 @@ class EEG_PayPalCheckout extends EE_Onsite_Gateway
                 $exception->getMessage()
             );
         }
-        $order_id       = $request->getRequestParam('pp_order_id', '', DataType::STRING);
-        $is_order_valid = $this->isOrderValid($order_id, $order);
-        if (! $is_order_valid['valid']) {
+        $order_id     = $request->getRequestParam('pp_order_id', '', DataType::STRING);
+        $order_status = $this->isOrderCompleted($order_id, $order);
+        if (! $order_status['completed']) {
             return $this->setPaymentFailure(
                 $payment,
                 $failed_status,
                 [$order, $request->postParams()],
-                $is_order_valid['message']
+                $order_status['message']
             );
         }
-
         // Remove the saved order data.
         PayPalExtraMetaManager::deletePmOption($payment_method, Domain::META_KEY_LAST_ORDER);
         // Looks like all is good. Do a payment success.
@@ -139,30 +138,47 @@ class EEG_PayPalCheckout extends EE_Onsite_Gateway
      *
      * @param string $provided_order_id
      * @param        $order
-     * @return array [valid => {boolean}, message => {string}]
+     * @return array ['completed' => {boolean}, 'message' => {string}]
      */
-    public function isOrderValid(string $provided_order_id, $order): array
+    public function isOrderCompleted(string $provided_order_id, $order): array
     {
         $conclusion = [
-            'valid'   => false,
-            'message' => esc_html__('Could not validate this Order.', 'event_espresso'),
+            'completed' => false,
+            'message'   => esc_html__('Could not validate this Order.', 'event_espresso'),
         ];
         // Check the provided Order and order ID.
         if (! $provided_order_id) {
-            $conclusion['message'] = esc_html__('Invalid Order ID provided !', 'event_espresso');
+            $conclusion['message'] = esc_html__(
+                'Invalid Order ID provided! Not able to confirm the order',
+                'event_espresso'
+            );
         } elseif (! $order || ! is_array($order)) {
-            $conclusion['message'] = esc_html__('Order data in wrong format.', 'event_espresso');
+            $conclusion['message'] = esc_html__('Order data is in wrong format.', 'event_espresso');
         } elseif ($order['id'] !== $provided_order_id) {
             $conclusion['message'] = esc_html__('Order ID mismatch.', 'event_espresso');
-        } elseif (empty($order['status'])
-            || $order['status'] !== 'COMPLETED'
-            || empty($order['purchase_units'][0]['payments']['captures'][0]['status'])
-            || $order['purchase_units'][0]['payments']['captures'][0]['status'] !== 'COMPLETED'
-        ) {
-            $conclusion['message'] = esc_html__('Order not completed.', 'event_espresso');
+        } elseif (empty($order['status'])) {
+            $conclusion['message'] = esc_html__(
+                'There was an error with this payment. The status of the Order could not be determined.',
+                'event_espresso'
+            );
+        } elseif ($order['status'] !== 'COMPLETED') {
+            $conclusion['message'] = esc_html__(
+                'There was an error with this payment. Order was not approved.',
+                'event_espresso'
+            );
+        } elseif (empty($order['purchase_units'][0]['payments']['captures'][0]['status'])) {
+            $conclusion['message'] = esc_html__(
+                'There was an error with this payment. The status of the Payment could not be determined.',
+                'event_espresso'
+            );
+        } elseif ($order['purchase_units'][0]['payments']['captures'][0]['status'] !== 'COMPLETED') {
+            $conclusion['message'] = esc_html__(
+                'This payment was declined or failed validation. Please check the billing information you provided.',
+                'event_espresso'
+            );
         } else {
             // If we didn't fail on the above, the Order should be considered valid.
-            $conclusion['valid'] = true;
+            $conclusion['completed'] = true;
         }
         return $conclusion;
     }

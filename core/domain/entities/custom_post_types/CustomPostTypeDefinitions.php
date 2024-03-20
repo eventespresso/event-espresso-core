@@ -16,33 +16,18 @@ use EventEspresso\core\services\loaders\LoaderInterface;
  */
 class CustomPostTypeDefinitions
 {
-    /**
-     * @var string $namespace The graphql namespace/prefix.
-     */
-    protected $namespace = 'Espresso';
+    public EE_Core_Config $core_config;
+
+    private array $custom_post_types;
+
+    private LoaderInterface $loader;
 
     /**
-     * @var EE_Core_Config
+     * The graphql namespace/prefix.
      */
-    public $core_config;
-
-    /**
-     * @var array $custom_post_types
-     */
-    private $custom_post_types;
-
-    /**
-     * @var LoaderInterface $loader
-     */
-    private $loader;
+    protected string $namespace = 'Espresso';
 
 
-    /**
-     * EspressoCustomPostTypeDefinitions constructor.
-     *
-     * @param EE_Core_Config  $core_config
-     * @param LoaderInterface $loader
-     */
     public function __construct(EE_Core_Config $core_config, LoaderInterface $loader)
     {
         $this->core_config = $core_config;
@@ -184,31 +169,25 @@ class CustomPostTypeDefinitions
     }
 
 
-    /**
-     * @return array
-     */
-    public function getDefinitions()
+    public function getDefinitions(): array
     {
         return $this->custom_post_types;
     }
 
 
-    /**
-     * @return array
-     */
-    public function getCustomPostTypeSlugs()
+    public function getCustomPostTypeSlugs(): array
     {
         return array_keys($this->getDefinitions());
     }
 
 
     /**
-     * This basically goes through the CPT array and returns only CPT's
+     * This basically goes through the CPT array and returns only CPTs
      * that have the ['args']['public'] option set as false
      *
      * @return array
      */
-    public function getPrivateCustomPostTypes()
+    public function getPrivateCustomPostTypes(): array
     {
         $private_CPTs = [];
         foreach ($this->getDefinitions() as $CPT => $details) {
@@ -230,7 +209,7 @@ class CustomPostTypeDefinitions
      * @return array                    Empty array if no matching model names for the given slug
      *                                  or an array of model names indexed by post type slug.
      */
-    public function getCustomPostTypeModelNames($post_type_slug = '')
+    public function getCustomPostTypeModelNames(string $post_type_slug = ''): array
     {
         $cpts = $this->getDefinitions();
         // first if slug passed in...
@@ -260,12 +239,7 @@ class CustomPostTypeDefinitions
     }
 
 
-    /**
-     * @param       $post_type_slug
-     * @param array $cpt
-     * @return array
-     */
-    private function getCustomPostTypeModelName($post_type_slug, array $cpt)
+    private function getCustomPostTypeModelName(string $post_type_slug, array $cpt): array
     {
         if (! empty($cpt['model_name'])) {
             return [$post_type_slug => $cpt['model_name']];
@@ -279,11 +253,7 @@ class CustomPostTypeDefinitions
     }
 
 
-    /**
-     * @param string $class_name
-     * @return string
-     */
-    private function deriveCptModelNameFromClassName($class_name)
+    private function deriveCptModelNameFromClassName(string $class_name): string
     {
         return str_replace('EE', 'EEM', $class_name);
     }
@@ -299,7 +269,7 @@ class CustomPostTypeDefinitions
      *                               EEM models indexed by post slug.
      * @since 4.6.16.rc.000
      */
-    public function getCustomPostTypeModels($post_type_slug = '')
+    public function getCustomPostTypeModels(string $post_type_slug = ''): array
     {
         $cpt_model_names = $this->getCustomPostTypeModelNames($post_type_slug);
         $instantiated = [];

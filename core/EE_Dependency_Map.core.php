@@ -882,6 +882,11 @@ class EE_Dependency_Map
             'EventEspresso\core\services\request\sanitizers\RequestSanitizer'                                                    => [
                 'EventEspresso\core\domain\services\validation\email\strategies\Basic' => EE_Dependency_Map::load_from_cache,
             ],
+            'EE_CPT_Event_Strategy'                                                    => [
+                null,
+                null,
+                'EE_Template_Config' => EE_Dependency_Map::load_from_cache,
+            ],
         ];
     }
 

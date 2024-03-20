@@ -82,7 +82,7 @@ class PayPalExtraMetaManager
      * @return bool
      */
     public static function deletePmOption(EE_Payment_Method $paypal_pm, string $option_name): bool
-    {
+        {
         $pp_meta_data = self::extraMeta($paypal_pm);
         return $pp_meta_data->deleteOption($option_name);
     }
@@ -129,7 +129,7 @@ class PayPalExtraMetaManager
             && $paypal_pm->debug_mode() !== (bool) $request_data['sandbox_mode']
         ) {
             try {
-                $paypal_pm->save(['PMD_debug_mode' => $request_data['sandbox_mode']]);
+                $paypal_pm->save(['PMD_debug_mode' => (bool) $request_data['sandbox_mode']]);
             } catch (EE_Error $e) {
                 $err_msg = sprintf(
                     esc_html__('Note, debug mode not saved ! %1$s', 'event_espresso'),
@@ -156,7 +156,7 @@ class PayPalExtraMetaManager
         $paypal_data         = [];
         $expected_parameters = [
             Domain::META_KEY_ACCESS_TOKEN,
-            Domain::META_KEY_EXPIRES_IN,
+            Domain::META_KEY_TOKEN_EXPIRES_IN,
             Domain::META_KEY_APP_ID,
             Domain::META_KEY_PARTNER_CLIENT_ID,
             Domain::META_KEY_PARTNER_MERCHANT_ID,
@@ -173,7 +173,7 @@ class PayPalExtraMetaManager
                     case Domain::META_KEY_PARTNER_MERCHANT_ID:
                         $paypal_data[ $api_key ] = self::encryptString($response[ $api_key ], $paypal_pm);
                         break;
-                    case Domain::META_KEY_EXPIRES_IN:
+                    case Domain::META_KEY_TOKEN_EXPIRES_IN:
                         $paypal_data[ $api_key ] = time() + (int) sanitize_key($response[ $api_key ]);
                         break;
                     default:
@@ -253,10 +253,12 @@ class PayPalExtraMetaManager
      *
      * @param EE_Payment_Method $paypal_pm
      * @return PayPalExtraMeta
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function extraMeta(EE_Payment_Method $paypal_pm): PayPalExtraMeta
     {
-        return LoaderFactory::getLoader()->getShared(PayPalExtraMeta::class, [$paypal_pm]);
+        return new PayPalExtraMeta($paypal_pm);
     }
 
 
@@ -266,6 +268,8 @@ class PayPalExtraMetaManager
      * @param string            $text
      * @param EE_Payment_Method $paypal_pm
      * @return string|null
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function encryptString(string $text, EE_Payment_Method $paypal_pm): ?string
     {

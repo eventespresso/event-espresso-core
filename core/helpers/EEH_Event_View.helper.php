@@ -23,7 +23,7 @@ class EEH_Event_View extends EEH_Base
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public static function get_event($EVT_ID = 0)
+    public static function get_event($EVT_ID = 0): ?EE_Event
     {
         // international newspaper?
         global $post;
@@ -57,6 +57,19 @@ class EEH_Event_View extends EEH_Base
         // If the event we have isn't an event but we do have an EVT_ID, let's try getting the event using the ID.
         if (! EEH_Event_View::$_event instanceof EE_Event && $EVT_ID) {
             EEH_Event_View::$_event = EEM_Event::instance()->get_one_by_ID($EVT_ID);
+        }
+        // no? ok let's try getting the event using the ID.
+        if (! EEH_Event_View::$_event instanceof EE_Event && $post->ID) {
+            $maybe_an_event = EEM_Event::instance()->get_one_by_ID($post->ID);
+            EEH_Event_View::$_event = $maybe_an_event instanceof EE_Event ? $maybe_an_event : EEH_Event_View::$_event;
+        }
+        // ensure Event object is added to WP post object
+        if (
+            $post instanceof WP_Post
+            && $post->post_type === EspressoPostType::EVENTS
+            && EEH_Event_View::$_event instanceof EE_Event
+        ) {
+            $post->EE_Event = EEH_Event_View::$_event;
         }
         return EEH_Event_View::$_event;
     }

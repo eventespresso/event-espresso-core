@@ -331,15 +331,19 @@ class EED_Thank_You_Page extends EED_Module
      */
     public function load_js()
     {
-        wp_register_script(
+        wp_enqueue_script(
             'thank_you_page',
             THANK_YOU_ASSETS_URL . 'thank_you_page.js',
             array('espresso_core', 'heartbeat'),
             EVENT_ESPRESSO_VERSION,
             true
         );
-        wp_enqueue_script('thank_you_page');
-        wp_enqueue_style('espresso_default');
+        wp_enqueue_style(
+            'thank_you_page_css',
+            THANK_YOU_ASSETS_URL . 'thank_you_page.css',
+            ['espresso_default'],
+            EVENT_ESPRESSO_VERSION
+        );
     }
 
 

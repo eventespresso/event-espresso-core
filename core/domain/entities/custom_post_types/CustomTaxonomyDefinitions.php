@@ -14,97 +14,88 @@ use EEH_URL;
  */
 class CustomTaxonomyDefinitions
 {
-    /**
-     * @var array $taxonomies
-     */
-    private $taxonomies;
+    private array $taxonomies = [];
 
 
-    /**
-     * EspressoCustomPostTypeDefinitions constructor.
-     */
     public function __construct()
     {
         $this->setTaxonomies();
-        add_filter('pre_term_description', array($this, 'filterCustomTermDescription'), 1, 2);
+        add_filter('pre_term_description', [$this, 'filterCustomTermDescription'], 1, 2);
     }
 
 
     private function setTaxonomies()
     {
-        $this->taxonomies = array(
-            'espresso_event_categories' => array(
+        $this->taxonomies = [
+            'espresso_event_categories' => [
                 'singular_name' => esc_html__('Event Category', 'event_espresso'),
                 'plural_name'   => esc_html__('Event Categories', 'event_espresso'),
-                'args'          => array(
+                'args'          => [
                     'public'            => true,
                     'show_in_nav_menus' => true,
                     'show_in_rest'      => true,
-                    'capabilities'      => array(
+                    'capabilities'      => [
                         'manage_terms' => 'ee_manage_event_categories',
                         'edit_terms'   => 'ee_edit_event_category',
                         'delete_terms' => 'ee_delete_event_category',
                         'assign_terms' => 'ee_assign_event_category',
-                    ),
-                    'rewrite'           => array(
+                    ],
+                    'rewrite'           => [
                         'slug' => EEH_URL::slugify(
                             esc_html__('event-category', 'event_espresso'),
                             'event-category'
-                        )
-                    ),
-                ),
-            ),
-            'espresso_venue_categories' => array(
+                        ),
+                    ],
+                ],
+            ],
+            'espresso_venue_categories' => [
                 'singular_name' => esc_html__('Venue Category', 'event_espresso'),
                 'plural_name'   => esc_html__('Venue Categories', 'event_espresso'),
-                'args'          => array(
+                'args'          => [
                     'public'            => true,
                     'show_in_nav_menus' => false, // by default this doesn't show for decaf
                     'show_in_rest'      => true,
-                    'capabilities'      => array(
+                    'capabilities'      => [
                         'manage_terms' => 'ee_manage_venue_categories',
                         'edit_terms'   => 'ee_edit_venue_category',
                         'delete_terms' => 'ee_delete_venue_category',
                         'assign_terms' => 'ee_assign_venue_category',
-                    ),
-                    'rewrite'           => array(
+                    ],
+                    'rewrite'           => [
                         'slug' => EEH_URL::slugify(
                             esc_html__('venue-category', 'event_espresso'),
                             'venue-category'
-                        )
-                    ),
-                ),
-            ),
-            'espresso_event_type'       => array(
+                        ),
+                    ],
+                ],
+            ],
+            'espresso_event_type'       => [
                 'singular_name' => esc_html__('Event Type', 'event_espresso'),
                 'plural_name'   => esc_html__('Event Types', 'event_espresso'),
-                'args'          => array(
+                'args'          => [
                     'public'       => true,
                     'show_ui'      => false,
                     'show_in_rest' => true,
-                    'capabilities' => array(
+                    'capabilities' => [
                         'manage_terms' => 'ee_read_event_type',
                         'edit_terms'   => 'ee_edit_event_type',
                         'delete_terms' => 'ee_delete_event_type',
                         'assign_terms' => 'ee_assign_event_type',
-                    ),
-                    'rewrite'      => array(
+                    ],
+                    'rewrite'      => [
                         'slug' => EEH_URL::slugify(
                             esc_html__('event-type', 'event_espresso'),
                             'event-type'
-                        )
-                    ),
+                        ),
+                    ],
                     'hierarchical' => true,
-                ),
-            ),
-        );
+                ],
+            ],
+        ];
     }
 
 
-    /**
-     * @return array
-     */
-    public function getCustomTaxonomyDefinitions()
+    public function getCustomTaxonomyDefinitions(): array
     {
         return (array) apply_filters(
             'FHEE__EventEspresso_core_domain_entities_custom_post_types_TaxonomyDefinitions__getTaxonomies',
@@ -118,10 +109,7 @@ class CustomTaxonomyDefinitions
     }
 
 
-    /**
-     * @return array
-     */
-    public function getCustomTaxonomySlugs()
+    public function getCustomTaxonomySlugs(): array
     {
         return array_keys($this->getCustomTaxonomyDefinitions());
     }
@@ -142,7 +130,7 @@ class CustomTaxonomyDefinitions
      * @param string $taxonomy    The taxonomy name for the taxonomy being filtered.
      * @return string
      */
-    public function filterCustomTermDescription($description, $taxonomy)
+    public function filterCustomTermDescription(string $description, string $taxonomy): string
     {
         // get a list of EE taxonomies
         $custom_taxonomies = $this->getCustomTaxonomySlugs();

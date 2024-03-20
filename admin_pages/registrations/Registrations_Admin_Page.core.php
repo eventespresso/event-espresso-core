@@ -3267,6 +3267,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             $return_url    = $this->request->getRequestParam('return_url', '', DataType::URL);
             $filters       = $this->request->getRequestParam('filters', [], DataType::STRING, true);
             $report_params = $this->$method_name_for_getting_query_params($filters);
+            $report_params = $this->convertDatetimeObjectsToStrings($report_params);
             $use_filters   = $this->request->getRequestParam('use_filters', false, DataType::BOOL);
             wp_redirect(
                 EE_Admin_Page::add_query_args_and_nonce(
@@ -3284,6 +3285,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         } else {
             // Pull the current request params
             $request_args = $this->request->requestParams();
+            $request_args = $this->convertDatetimeObjectsToStrings($request_args);
             // Set the required request_args to be passed to the export
             $required_request_args = [
                 'export' => 'report',
@@ -3298,6 +3300,26 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 $EE_Export->export();
             }
         }
+    }
+
+
+    /**
+     * recursively convert Datetime objects in query params array to strings using MySQL format
+     *
+     * @param array $query_params
+     * @return array
+     * @since $VID:$
+     */
+    private function convertDatetimeObjectsToStrings(array $query_params): array
+    {
+        foreach ($query_params as $key => $value) {
+            if (is_array($value)) {
+                $query_params[$key] = $this->convertDatetimeObjectsToStrings($value);
+            } elseif ($value instanceof DateTime) {
+                $query_params[$key] = $value->format('Y-m-d H:i:s');
+            }
+        }
+        return $query_params;
     }
 
 

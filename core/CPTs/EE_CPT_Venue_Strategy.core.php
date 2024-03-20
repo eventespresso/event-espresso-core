@@ -14,24 +14,19 @@ class EE_CPT_Venue_Strategy
     /**
      * $CPT - the current page, if it utilizes CPTs
      *
-     * @var array|null
+     * @var array
      */
-    protected ?array $CPT = null;
+    protected array $CPT;
 
 
     /**
-     * @param array|WP_Query|null $wp_query
-     * @param array               $CPT
+     * @param WP_Query $wp_query
+     * @param array    $CPT
      */
-    public function __construct($wp_query, array $CPT = [])
+    public function __construct(WP_Query $wp_query, array $CPT = [])
     {
-        if (is_array($wp_query) && $wp_query['WP_Query'] instanceof WP_Query) {
-            $this->CPT = $wp_query['CPT'] ?? $CPT;
-            $wp_query  = $wp_query['WP_Query'];
-        } else {
-            $this->CPT = $CPT;
-        }
-        if ($wp_query instanceof WP_Query && ! $wp_query->is_tag) {
+        $this->CPT = $CPT;
+        if (! $wp_query->is_tag) {
             $wp_query->is_espresso_venue_single   = is_singular()
                 && (
                     (isset($wp_query->query->post_type) && $wp_query->query->post_type === EspressoPostType::VENUES)

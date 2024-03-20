@@ -81,6 +81,7 @@ jQuery(document).ready(function ($) {
 				url: ajaxurl,
 				data: {
 					action: 'espresso_hide_status_change_notice',
+                    page: 'espresso_maintenance_settings',
 					ee_admin_ajax: 1
 				},
 				dataType: 'json',

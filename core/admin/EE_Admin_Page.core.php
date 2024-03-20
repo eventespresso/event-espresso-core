@@ -4,7 +4,6 @@ use EventEspresso\core\domain\services\admin\notices\status_change\StatusChangeN
 use EventEspresso\core\domain\services\assets\EspressoLegacyAdminAssetManager;
 use EventEspresso\core\domain\services\assets\JqueryAssetManager;
 use EventEspresso\core\domain\services\capabilities\FeatureFlags;
-use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\interfaces\InterminableInterface;
@@ -334,7 +333,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     /**
      * _set_page_routes
      * child classes use this to define the page routes for all subpages handled by the class.  Page routes are
-     * assigned to a action => method pairs in an array and to the $_page_routes property.  Each page route must also
+     * assigned to an action => method pairs in an array and to the $_page_routes property.  Each page route must also
      * have a 'default' route. Here's the format
      * $this->_page_routes = array(
      *        'default' => array(
@@ -394,13 +393,13 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      *            given route has help popups setup and if it does then we need to make sure thickbox is enqueued.
      *            'columns' => array(4, 2), //this key triggers the setup of a page that uses columns (metaboxes).  The
      *            array indicates the max number of columns (4) and the default number of columns on page load (2).
-     *            There is an option in the "screen_options" dropdown that is setup so users can pick what columns they
+     *            There is an option in the "screen_options" dropdown that is set up so users can pick what columns they
      *            want to display.
      *            'help_tabs' => array( //this is used for adding help tabs to a page
      *                'tab_id' => array(
      *                    'title' => 'tab_title',
      *                    'filename' => 'name_of_file_containing_content', //this is the primary method for setting
-     *                    help tab content.  The fallback if it isn't present is to try a the callback.  Filename
+     *                    help tab content.  The fallback if it isn't present is to try the callback.  Filename
      *                    should match a file in the admin folder's "help_tabs" dir (ie..
      *                    events/help_tabs/name_of_file_containing_content.help_tab.php)
      *                    'callback' => 'callback_method_for_content', //if 'filename' isn't present then system will
@@ -439,7 +438,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * Child classes should use this method for implementing any "feature pointers" (using built-in WP styling js).
      * Note child classes can also define _add_feature_pointers_($this->_current_view) to limit screen options to a
      * particular view. Note: this is just a placeholder for now.  Implementation will come down the road See:
-     * WP_Internal_Pointers class in wp-admin/includes/template.php for example (its a final class so can't be
+     * WP_Internal_Pointers class in wp-admin/includes/template.php for example (it's a final class so can't be
      * extended) also see:
      *
      * @link   http://eamann.com/tech/wordpress-portland/
@@ -551,8 +550,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         } catch (Exception $exception) {
             $response['errors'] = $exception->getMessage();
         }
-        echo wp_json_encode($response);
-        exit();
+        wp_send_json($response);
     }
 
 
@@ -701,7 +699,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     {
         $registered_pages = apply_filters('FHEE_do_other_page_hooks_' . $this->page_slug, []);
         foreach ($registered_pages as $page) {
-            // now let's setup the file name and class that should be present
+            // now let's set up the file name and class that should be present
             $classname = str_replace('.class.php', '', $page);
             // autoloaders should take care of loading file
             if (! class_exists($classname)) {
@@ -753,7 +751,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
 
     /**
      * load_page_dependencies
-     * loads things specific to this page class when its loaded.  Really helps with efficiency.
+     * loads things specific to this page class when it's loaded.  Really helps with efficiency.
      *
      * @return void
      * @throws DomainException
@@ -974,7 +972,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
 
         // first lets' catch if the UI request has EVER been set.
         if ($this->_is_UI_request === null) {
-            // lets set if this is a UI request or not.
+            // let's set if this is a UI request or not.
             $this->_is_UI_request = ! $this->request->getRequestParam('noheader', false, DataType::BOOL);
             // wait a minute... we might have a noheader in the route array
             $this->_is_UI_request = ! (isset($this->_route['noheader']) && $this->_route['noheader'])
@@ -987,7 +985,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
 
 
     /**
-     * this method simply verifies a given route and makes sure its an actual route available for the loaded page
+     * this method simply verifies a given route and makes sure it's an actual route available for the loaded page
      *
      * @param string $route the route name we're verifying
      * @return bool we'll throw an exception if this isn't a valid route.
@@ -1206,11 +1204,11 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      *                                        $some_url,
      *                                        true
      *                                        );
-     *                                        It will produce a url in this structure:
+     *                                        It will produce a URL in this structure:
      *                                        http://{$some_url}/?page=espresso_registrations&action=resend_something
      *                                        &wp_referer[action]=default&wp_referer[event_id]=20&wpreferer[
      *                                        month_range]=March%202015
-     * @param bool   $exclude_nonce           If true, the the nonce will be excluded from the generated nonce.
+     * @param bool   $exclude_nonce           If true, the nonce will be excluded from the generated nonce.
      * @param int    $context
      * @return string
      */
@@ -1281,7 +1279,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                     throw new EE_Error(
                         sprintf(
                             esc_html__(
-                                'The _page_config array has a callback set for the "help_sidebar" option.  However the callback given (%s) is not a valid callback.  Doublecheck the spelling and make sure this method exists for the class %s',
+                                'The _page_config array has a callback set for the "help_sidebar" option.  However the callback given (%s) is not a valid callback.  Double check the spelling and make sure this method exists for the class %s',
                                 'event_espresso'
                             ),
                             $config['help_sidebar'],
@@ -1329,7 +1327,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                                                              . '/help_tabs/'
                                                              . $cfg['filename']
                                                              . '.help_tab.php' : $file_path;
-                    // if file is STILL not readable then let's do a EE_Error so its more graceful than a fatal error.
+                    // if file is STILL not readable then let's do an EE_Error so its more graceful than a fatal error.
                     if (! isset($cfg['callback']) && ! is_readable($file_path)) {
                         EE_Error::add_error(
                             sprintf(
@@ -1689,7 +1687,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      *        'content' => esc_html__('localized content for popup', 'event_espresso')
      *    )
      * );
-     * Then the EE_Admin_Parent will take care of making sure that is setup properly on the correct route.
+     * Then the EE_Admin_Parent will take care of making sure that is set up properly on the correct route.
      *
      * @param array $help_array
      * @param bool  $display
@@ -1703,7 +1701,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         $help_array = empty($help_array) ? $this->_get_help_content() : $help_array;
         // loop through the array and setup content
         foreach ($help_array as $trigger => $help) {
-            // make sure the array is setup properly
+            // make sure the array is set up properly
             if (! isset($help['title'], $help['content'])) {
                 throw new EE_Error(
                     esc_html__(
@@ -1712,7 +1710,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                     )
                 );
             }
-            // we're good so let's setup the template vars and then assign parsed template content to our content.
+            // we're good so let's set up the template vars and then assign parsed template content to our content.
             $template_args = [
                 'help_popup_id'      => $trigger,
                 'help_popup_title'   => $help['title'],
@@ -1830,7 +1828,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * This particular method will implement feature pointers for ALL EE_Admin pages.
      * Note: this is just a placeholder for now.  Implementation will come down the road
      *
-     * @see    WP_Internal_Pointers class in wp-admin/includes/template.php for example (its a final class so can't be
+     * @see    WP_Internal_Pointers class in wp-admin/includes/template.php for example (it's a final class so can't be
      *         extended) also see:
      * @link   http://eamann.com/tech/wordpress-portland/
      * @abstract
@@ -2212,7 +2210,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     /**
      * _add_screen_columns
      * This will check the _page_config array and if there is "columns" key index indicated, we'll set the template as
-     * the dynamic column template and we'll setup the column options for the page.
+     * the dynamic column template and we'll set up the column options for the page.
      *
      * @return void
      */
@@ -2242,7 +2240,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             $this->_column_template_path                         = EE_ADMIN_TEMPLATE
                                                                    . 'admin_details_metabox_column_wrapper.template.php';
             // finally if we don't have has_metaboxes set in the route config
-            // let's make sure it IS set other wise the necessary hidden fields for this won't be loaded.
+            // let's make sure it IS set otherwise the necessary hidden fields for this won't be loaded.
             $this->_route_config['has_metaboxes'] = true;
         }
     }
@@ -2752,7 +2750,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * contains the code for actually displaying an admin page
      *
      * @param bool $sidebar true with sidebar, false without
-     * @param bool $about   use the about admin wrapper instead of the default.
+     * @param bool $about   use the About admin wrapper instead of the default.
      * @return void
      * @throws DomainException
      * @throws EE_Error
@@ -2823,7 +2821,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     /**
      * This is used to display caf preview pages.
      *
-     * @param string $utm_campaign_source what is the key used for google analytics link
+     * @param string $utm_campaign_source what is the key used for Google Analytics link
      * @param bool   $display_sidebar     whether to use the sidebar template or the full template for the page.  TRUE
      *                                    = SHOW sidebar, FALSE = no sidebar. Default no sidebar.
      * @return void
@@ -3248,7 +3246,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @param array            $actions  if included allows us to set the actions that each button will carry out (i.e.
      *                                   via the "name" value in the button).  We can also use this to just dump
      *                                   default actions by submitting some other value.
-     * @param bool|string|null $referrer if false then we just do the default action on save and close.  Other wise it
+     * @param bool|string|null $referrer if false then we just do the default action on save and close.  Otherwise it
      *                                   will use the $referrer string. IF null, then we don't do ANYTHING on save and
      *                                   close (normal form handling).
      */
@@ -3760,7 +3758,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      *
      * @param string $route             the route that should receive the transient
      * @param array  $data              the data that gets sent
-     * @param bool   $notices           If this is for notices then we use this to indicate so, otherwise its just a
+     * @param bool   $notices           If this is for notices then we use this to indicate so, otherwise it's just a
      *                                  normal route transient.
      * @param bool   $skip_route_verify Used to indicate we want to skip route verification.  This is usually ONLY used
      *                                  when we are adding a transient before page_routes have been defined.
@@ -4092,7 +4090,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
 
 
     /**
-     * This processes an request to resend a registration and assumes we have a _REG_ID for doing so. So if the caller
+     * This processes a request to resend a registration and assumes we have a _REG_ID for doing so. So if the caller
      * knows that the _REG_ID isn't in the req_data array but CAN obtain it, the caller should ADD the _REG_ID to the
      * _req_data array.
      *

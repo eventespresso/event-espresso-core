@@ -370,7 +370,7 @@ class EED_PayPalOnboard extends EED_Module
      */
     public static function partnerAccessTokenExpired(EE_Payment_Method $paypal_pm): bool
     {
-        $expires_at = (int) PayPalExtraMetaManager::getPmOption($paypal_pm, Domain::META_KEY_EXPIRES_IN);
+        $expires_at = (int) PayPalExtraMetaManager::getPmOption($paypal_pm, Domain::META_KEY_TOKEN_EXPIRES_IN);
         if (! $expires_at) {
             return true;
         }

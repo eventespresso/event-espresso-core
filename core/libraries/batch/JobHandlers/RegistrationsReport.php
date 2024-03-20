@@ -2,6 +2,8 @@
 
 namespace EventEspresso\core\libraries\batch\JobHandlers;
 
+use DateTimeZone;
+use EEH_DTT_Helper;
 use EEH_Export;
 use EEH_File;
 use EEM_Base;
@@ -19,6 +21,7 @@ use EE_Checkin;
 use EE_Datetime;
 use EE_Error;
 use EE_Registry;
+use EventEspresso\core\domain\entities\DbSafeDateTime;
 use EventEspresso\core\libraries\batch\Helpers\BatchRequestException;
 use EventEspresso\core\libraries\batch\Helpers\JobParameters;
 use EventEspresso\core\libraries\batch\Helpers\JobStepResponse;
@@ -28,6 +31,7 @@ use EventEspresso\core\domain\services\admin\registrations\list_table\csv_report
 use EventEspresso\core\domain\services\admin\registrations\list_table\csv_reports\CheckinsCSV;
 use EventEspresso\core\domain\services\admin\registrations\list_table\csv_reports\PaymentsInfoCSV;
 use EventEspresso\core\domain\services\admin\registrations\list_table\csv_reports\RegistrationCSV;
+use Exception;
 use ReflectionException;
 
 /**
@@ -46,7 +50,7 @@ class RegistrationsReport extends JobHandlerFile
     // phpcs:disable PSR2.Methods.MethodDeclaration.Underscore
     /**
      * Performs any necessary setup for starting the job. This is also a good
-     * place to setup the $job_arguments which will be used for subsequent HTTP requests
+     * place to set up the $job_arguments which will be used for subsequent HTTP requests
      * when continue_job will be called
      *
      * @param JobParameters $job_parameters
@@ -54,6 +58,7 @@ class RegistrationsReport extends JobHandlerFile
      * @throws BatchRequestException
      * @throws EE_Error
      * @throws ReflectionException
+     * @throws Exception
      */
     public function create_job(JobParameters $job_parameters): JobStepResponse
     {
@@ -110,7 +115,7 @@ class RegistrationsReport extends JobHandlerFile
         $return_url_args = [];
         parse_str(
             parse_url(
-                $job_parameters->request_datum('return_url', ''),
+                $job_parameters->request_datum('return_url'),
                 PHP_URL_QUERY
             ),
             $return_url_args
@@ -133,12 +138,16 @@ class RegistrationsReport extends JobHandlerFile
             $event_id
         );
 
+        $utc_timezone = new DateTimeZone('UTC');
+        $site_timezone = new DateTimeZone(EEH_DTT_Helper::get_timezone());
+        $query_params = $this->convertDateStringsToObjects($query_params, $site_timezone, $utc_timezone);
+
         $job_parameters->add_extra_data('query_params', $query_params);
         $question_labels = $this->_get_question_labels($query_params);
         $job_parameters->add_extra_data('question_labels', $question_labels);
         $job_parameters->set_job_size($this->count_units_to_process($query_params));
         // we need to set the header columns
-        // but to do that we need to process one row so that we can extract ALL of the column headers
+        // but to do that we need to process one row so that we can extract ALL the column headers
         $csv_data_for_row = $this->get_csv_data_for(
             $event_id,
             0,
@@ -488,7 +497,7 @@ class RegistrationsReport extends JobHandlerFile
             $reg_csv_array = AnswersCSV::addAnswerColumns($reg_row, $reg_csv_array, $question_labels);
             // Include check-in data
             if ($event_id && $DTT_ID) {
-                // get whether or not the user has checked in
+                // get whether the user has checked in
                 $reg_csv_array[ esc_html__('Datetime Check-ins #', 'event_espresso') ] =
                     $reg_model->count_related(
                         $reg_row['Registration.REG_ID'],
@@ -519,7 +528,7 @@ class RegistrationsReport extends JobHandlerFile
                 $datetime_name                   = CheckinsCSV::getDatetimeLabel($datetime);
                 $reg_csv_array[ $datetime_name ] = implode(' --- ', $checkins);
             } elseif ($event_id) {
-                // get whether or not the user has checked in
+                // get whether the user has checked in
                 $reg_csv_array[ esc_html__('Event Check-ins #', 'event_espresso') ] =
                     $reg_model->count_related(
                         $reg_row['Registration.REG_ID'],
@@ -592,6 +601,35 @@ class RegistrationsReport extends JobHandlerFile
             $registrations_csv_ready_array[] = $reg_csv_array;
         }
         return $registrations_csv_ready_array;
+    }
+
+
+    /**
+     * recursively convert MySQL format date strings in query params array to Datetime objects
+     *
+     * @param array        $query_params
+     * @param DateTimeZone $site_timezone
+     * @param DateTimeZone $utc_timezone
+     * @return array
+     * @throws Exception
+     * @since $VID:$
+     */
+    private function convertDateStringsToObjects(
+        array $query_params,
+        DateTimeZone $site_timezone,
+        DateTimeZone $utc_timezone
+    ): array {
+        foreach ($query_params as $key => $value) {
+            if (is_array($value)) {
+                $query_params[$key] = $this->convertDateStringsToObjects($value, $site_timezone, $utc_timezone);
+                continue;
+            }
+            if (preg_match('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/', $value)) {
+                $query_params[$key] = DbSafeDateTime::createFromFormat('Y-m-d H:i:s', $value, $site_timezone);
+                $query_params[$key] = $query_params[$key]->setTimezone($utc_timezone);
+            }
+        }
+        return $query_params;
     }
 
 

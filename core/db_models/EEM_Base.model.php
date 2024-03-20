@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\entities\DbSafeDateTime;
 use EventEspresso\core\domain\services\database\DbStatus;
 use EventEspresso\core\domain\values\model\CustomSelects;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
@@ -1611,20 +1612,21 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
 
 
     /**
-     * This receives a time string for a given field and ensures that it is setup to match what the internal settings
-     * for the model are.  Returns a DateTime object.
+     * This receives a time string for a given field and ensures
+     * that it is set up to match what the internal settings for the model are.
+     * Returns a DateTime object.
      * Note: a gotcha for when you send in unix timestamp.  Remember a unix timestamp is already timezone agnostic,
-     * (functionally the equivalent of UTC+0).  So when you send it in, whatever timezone string you include is
-     * ignored.
+     * (functionally the equivalent of UTC+0).
+     * So when you send it in, whatever timezone string you include is ignored.
      *
      * @param string      $field_name      The field being setup.
      * @param string      $timestring      The date time string being used.
      * @param string      $incoming_format The format for the time string.
-     * @param string|null $timezone        By default, it is assumed the incoming time string is in timezone for
+     * @param string|null $timezone_string By default, it is assumed the incoming time string is in timezone for
      *                                     the blog.  If this is not the case, then it can be specified here.  If
      *                                     incoming format is
      *                                     'U', this is ignored.
-     * @return DateTime
+     * @return DbSafeDateTime
      * @throws EE_Error
      * @throws Exception
      */
@@ -1632,17 +1634,15 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         string $field_name,
         string $timestring,
         string $incoming_format,
-        ?string $timezone = ''
-    ) {
+        ?string $timezone_string = ''
+    ): DbSafeDateTime {
         // just using this to ensure the timezone is set correctly internally
         $this->get_formats_for($field_name);
         // load EEH_DTT_Helper
-        $set_timezone     = empty($timezone)
-            ? EEH_DTT_Helper::get_timezone()
-            : $timezone;
-        $incomingDateTime = date_create_from_format($incoming_format, $timestring, new DateTimeZone($set_timezone));
+        $timezone_string     = ! empty($timezone_string) ? $timezone_string : EEH_DTT_Helper::get_timezone();
+        $incomingDateTime = date_create_from_format($incoming_format, $timestring, new DateTimeZone($timezone_string));
         EEH_DTT_Helper::setTimezone($incomingDateTime, new DateTimeZone($this->_timezone));
-        return \EventEspresso\core\domain\entities\DbSafeDateTime::createFromDateTime($incomingDateTime);
+        return DbSafeDateTime::createFromDateTime($incomingDateTime);
     }
 
 

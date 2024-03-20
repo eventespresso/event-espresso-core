@@ -225,6 +225,7 @@ class QueryBuilder
     protected function addDateToWhereConditions()
     {
         $current_time = current_time('timestamp');
+        $timezone_string = EEH_DTT_Helper::get_timezone();
         if ($this->view === 'today') {
             $now = date('Y-m-d', $current_time);
             $this->where_params['REG_date'] = [
@@ -233,12 +234,14 @@ class QueryBuilder
                     $this->registration_model->convert_datetime_for_query(
                         'REG_date',
                         $now . ' 00:00:00',
-                        'Y-m-d H:i:s'
+                        'Y-m-d H:i:s',
+                        $timezone_string
                     ),
                     $this->registration_model->convert_datetime_for_query(
                         'REG_date',
                         $now . ' 23:59:59',
-                        'Y-m-d H:i:s'
+                        'Y-m-d H:i:s',
+                        $timezone_string
                     ),
                 ],
             ];
@@ -252,12 +255,14 @@ class QueryBuilder
                     $this->registration_model->convert_datetime_for_query(
                         'REG_date',
                         $yesterday . ' 00:00:00',
-                        'Y-m-d H:i:s'
+                        'Y-m-d H:i:s',
+                        $timezone_string
                     ),
                     $this->registration_model->convert_datetime_for_query(
                         'REG_date',
                         $yesterday . ' 23:59:59',
-                        'Y-m-d H:i:s'
+                        'Y-m-d H:i:s',
+                        $timezone_string
                     ),
                 ],
             ];
@@ -272,12 +277,14 @@ class QueryBuilder
                     $this->registration_model->convert_datetime_for_query(
                         'REG_date',
                         $current_year_and_month . '-01 00:00:00',
-                        'Y-m-d H:i:s'
+                        'Y-m-d H:i:s',
+                        $timezone_string
                     ),
                     $this->registration_model->convert_datetime_for_query(
                         'REG_date',
                         $current_year_and_month . '-' . $days_this_month . ' 23:59:59',
-                        'Y-m-d H:i:s'
+                        'Y-m-d H:i:s',
+                        $timezone_string
                     ),
                 ],
             ];
@@ -303,12 +310,14 @@ class QueryBuilder
                         $this->registration_model->convert_datetime_for_query(
                             'REG_date',
                             $year_requested . '-' . $month_requested . '-01 00:00:00',
-                            'Y-m-d H:i:s'
+                            'Y-m-d H:i:s',
+                            $timezone_string
                         ),
                         $this->registration_model->convert_datetime_for_query(
                             'REG_date',
                             $year_requested . '-' . $month_requested . '-' . $days_in_month . ' 23:59:59',
-                            'Y-m-d H:i:s'
+                            'Y-m-d H:i:s',
+                            $timezone_string
                         ),
                     ],
                 ];

@@ -8,35 +8,35 @@ Styling the progress bar and migration page
 
 /* GENERAL DISPLAY STUFF */
 
-.espresso-admin .maintenance_settings #post-body-content h2 {
+.espresso-admin.wp-core-ui .maintenance_settings #post-body-content h2 {
     margin-block-start: unset;
 }
 
-.ee-reset-delete-data-actions h4 {
+.espresso-admin.wp-core-ui .ee-reset-delete-data-actions h4 {
     align-items: center;
     display: flex;
     font-size: var(--ee-font-size-xl);
     justify-content: flex-start;
 }
 
-.ee-reset-delete-data-actions .ee-card {
+.espresso-admin.wp-core-ui .ee-reset-delete-data-actions .ee-card {
     background-color: hsl(207deg 25% 97.5%);
     font-size: var(--ee-font-size-3xl);
 }
 
-.ee-reset-delete-data-actions h4 .dashicons,
-.ee-reset-delete-data-actions h4 .dashicons:before {
+.espresso-admin.wp-core-ui .ee-reset-delete-data-actions h4 .dashicons,
+.espresso-admin.wp-core-ui .ee-reset-delete-data-actions h4 .dashicons:before {
     font-size: var(--ee-font-size-4xl);
+    height: var(--ee-font-size-4xl);
+    width: var(--ee-font-size-4xl);
 }
-.ee-reset-delete-data-actions h4 .dashicons {
-    margin-inline-end: 2rem;
+.espresso-admin.wp-core-ui .ee-reset-delete-data-actions h4 .dashicons {
+    align-items: center;
+    display: inline-flex;
+    justify-content: center;
+    margin-inline-end: 1rem;
 }
-.ee-reset-delete-data-actions h4 .dashicons:before {
-    position: relative;
-    top: -0.25rem;
-}
-
-.ee-reset-delete-data-actions .ee-admin-button-row {
+.espresso-admin.wp-core-ui .ee-reset-delete-data-actions .ee-admin-button-row {
     margin-block-start: 2rem;
     margin-block-end: 1rem;
 }

@@ -7,21 +7,17 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
  * EE_Attendee_Contact_List_Table
  * List table for the EE_Attendee records in the admin.
  *
- * @package EventEspresso
- * @author  Darren Ethier
+ * @package  EventEspresso
+ * @author   Darren Ethier
+ * @property Registrations_Admin_Page $_admin_page
  */
 class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
 {
     /**
-     * @var Registrations_Admin_Page
-     */
-    protected EE_Admin_Page $_admin_page;
-
-
-    /**
      * Initial setup of data (called by parent).
      *
      * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _setup_data()
     {
@@ -101,6 +97,7 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
      * @throws InvalidInterfaceException
      * @throws EE_Error
      * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _add_view_counts()
     {
@@ -308,6 +305,7 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
      * @param EE_Attendee $attendee
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function column_ATT_email(EE_Attendee $attendee): string
     {
@@ -344,6 +342,7 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
      * @param EE_Attendee $attendee
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function column_ATT_address(EE_Attendee $attendee): string
     {
@@ -357,6 +356,7 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
      * @param EE_Attendee $attendee
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function column_ATT_city(EE_Attendee $attendee): string
     {
@@ -415,6 +415,7 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
      * @param EE_Attendee $attendee
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function column_ATT_phone(EE_Attendee $attendee): string
     {

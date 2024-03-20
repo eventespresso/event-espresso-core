@@ -58,52 +58,56 @@
         if ($is_primary || (! $is_primary && $reg_url_link == $registration->reg_url_link())) { ?>
             <tr>
                 <td width="40%">
-                    <?php
-                    if ($registration->attendee() instanceof EE_Attendee) {
-                        echo esc_html($registration->attendee()->full_name(true));
-                    }
-                    ?>
-                    <p class="tiny-text" style="margin: .75em 0 0;">
-                        <?php if ($registration->count_question_groups()) { ?>
-                            <a class="ee-icon-only-lnk"
-                               href="<?php echo esc_url_raw($registration->edit_attendee_information_url()); ?>"
+                    <span>
+                        <?php
+                        if ($registration->attendee() instanceof EE_Attendee) {
+                            echo '<span class="ee-attendee-name">' . esc_html($registration->attendee()->full_name(true)) . '</span>';
+                        }
+                        ?>
+                        <span class="tiny-text" style="margin: .75em 0 0;">
+                            <?php if ($registration->count_question_groups()) { ?>
+                                <a class="ee-icon-only-lnk"
+                                   href="<?php echo esc_url_raw($registration->edit_attendee_information_url()); ?>"
+                                   title="<?php esc_attr_e(
+                                       'Click here to edit Attendee Information',
+                                       'event_espresso'
+                                   ); ?>"
+                                >
+                                    <span class="dashicons dashicons-groups"></span>
+                                    <span class="ee-link-text"><?php esc_html_e('edit info', 'event_espresso'); ?></span>
+                                </a>
+                            <?php } ?>
+                            <a class="ee-resend-reg-confirmation-email ee-icon-only-lnk"
+                               href="<?php echo esc_url_raw(
+                                   add_query_arg(
+                                       ['token' => $registration->reg_url_link(), 'resend_reg_confirmation' => 'true'],
+                                       EE_Registry::instance()->CFG->core->thank_you_page_url()
+                                   )
+                               ); ?>"
                                title="<?php esc_attr_e(
-                                   'Click here to edit Attendee Information',
+                                   'Click here to resend the Registration Confirmation email',
                                    'event_espresso'
                                ); ?>"
+                               rel="<?php echo esc_attr($registration->reg_url_link()); ?>"
                             >
-                                <span class="dashicons dashicons-groups"></span>
-                                <?php esc_html_e('edit info', 'event_espresso'); ?>
+                                <span class="dashicons dashicons-email-alt"></span>
+                                <span class="ee-link-text"><?php esc_html_e('resend email', 'event_espresso'); ?></span>
                             </a>
-                        <?php } ?>
-                        <a class="ee-resend-reg-confirmation-email ee-icon-only-lnk"
-                           href="<?php echo esc_url_raw(
-                               add_query_arg(
-                                   ['token' => $registration->reg_url_link(), 'resend_reg_confirmation' => 'true'],
-                                   EE_Registry::instance()->CFG->core->thank_you_page_url()
-                               )
-                           ); ?>"
-                           title="<?php esc_attr_e(
-                               'Click here to resend the Registration Confirmation email',
-                               'event_espresso'
-                           ); ?>"
-                           rel="<?php echo esc_attr($registration->reg_url_link()); ?>"
-                        >
-                            <span class="dashicons dashicons-email-alt"></span>
-                            <?php esc_html_e('resend email', 'event_espresso'); ?>
-                        </a>
-                    </p>
+                        </span>
+                    </span>
                 </td>
                 <td width="25%" class="jst-left">
-                    <?php $registration->e('REG_code') ?>
+                    <span class="ee-reg-code"><?php $registration->e('REG_code') ?></span>
                 </td>
                 <td width="35%" class="jst-left">
+                    <span>
                     <?php $registration->e_pretty_status(true) ?>
                     <?php
                     if ($registration->status_ID() === EEM_Registration::status_id_wait_list) {
                         $wait_list = true;
                     }
                     ?>
+                    </span>
                 </td>
             </tr>
             <?php do_action(
@@ -137,9 +141,16 @@
                     '%1$sre: Wait List Registrations%2$sPlease note that the total cost listed below in the Transaction Details is for ALL registrations, including those that are on the wait list, even though they can not be currently paid for. If any spaces become available however, you may be notified by the Event admin and have the opportunity to secure the remaining tickets by making a payment for them.%3$s',
                     'event_espresso'
                 ),
-                '<h6 class="" style="margin-bottom:.25em;"><span class="dashicons dashicons-clipboard ee-icon-size-16 purple-text"></span>',
-                '</h6 ><p class="ee-wait-list-notice">',
-                '</p ><br />'
+                '
+                <h6 class="" style="margin-bottom:.25em;">
+                    <span class="dashicons dashicons-clipboard ee-icon-size-16 purple-text"></span>
+                    <span class="ee-link-text">',
+                '
+                    </span>
+                </h6 >
+                <p class="ee-wait-list-notice">',
+                '
+                </p ><br />'
             )
         );
     }

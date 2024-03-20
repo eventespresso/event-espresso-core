@@ -1098,8 +1098,6 @@ final class EE_System implements ResettableInterface
         $this->register_custom_taxonomies->registerCustomTaxonomies();
         $this->register_custom_post_types->registerCustomPostTypes();
         $this->register_custom_taxonomy_terms->registerCustomTaxonomyTerms();
-        // load legacy Custom Post Types and Taxonomies
-        $this->loader->getShared('EE_Register_CPTs');
         do_action('AHEE__EE_System__load_CPTs_and_session__complete');
     }
 

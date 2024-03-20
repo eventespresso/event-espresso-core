@@ -76,7 +76,13 @@ class CaptureOrder extends OrdersApi
     public function validateOrder($response): array
     {
         $message = esc_html__('Validating Order Capture:', 'event_espresso');
-        PayPalLogger::errorLog($message, [$this->request_url, $response], $this->transaction->payment_method());
+        PayPalLogger::errorLog(
+            $message,
+            [$this->request_url,  $response],
+            $this->transaction->payment_method(),
+            false,
+            $this->transaction
+        );
         // We got a direct error response. Not valid. Return that error.
         if (! empty($response['error'])) {
             return $response;
