@@ -12,11 +12,9 @@ use EventEspresso\core\domain\entities\custom_post_types\EspressoPostType;
 class EE_CPT_Event_Strategy
 {
     /**
-     * the current page, if it utilizes CPTs
-     *
-     * @var object $CPT
+     * CPT details from CustomPostTypeDefinitions for specific post type
      */
-    protected $CPT;
+    protected array $CPT;
 
     private string $current_time;
 

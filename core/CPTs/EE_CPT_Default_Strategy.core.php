@@ -10,9 +10,7 @@
 class EE_CPT_Default_Strategy
 {
     /**
-     * $CPT - the current page, if it utilizes CPTs
-     *
-     * @var array
+     * CPT details from CustomPostTypeDefinitions for specific post type
      */
     protected array $CPT;
 
