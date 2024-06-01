@@ -31,7 +31,7 @@
 		"ext-json": "*",
 		"ext-mbstring": "*",
 		"ext-openssl": "*",
-		"dompdf/dompdf": "^2.0.1",
+		"dompdf/dompdf": "^3.0.0",
 		"endyjasmi/cuid": "2.*",
 		"tijsverkoyen/css-to-inline-styles": "2.2.4",
 		"jaybizzle/crawler-detect": "^1.2",
