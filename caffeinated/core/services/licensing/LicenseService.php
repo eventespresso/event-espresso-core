@@ -14,7 +14,7 @@ use PluginUpdateEngineChecker;
  * @package EventEspresso\core\services\licensing
  * @author  Darren Ethier
  * @since   4.9.59.p
- * @deprecated $VID:$
+ * @deprecated 5.0.20.p
  */
 class LicenseService
 {

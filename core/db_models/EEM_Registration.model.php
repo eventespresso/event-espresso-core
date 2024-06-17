@@ -21,37 +21,37 @@ class EEM_Registration extends EEM_Soft_Delete_Base
     const PRIMARY_REGISTRANT_COUNT = 1;
 
     /**
-     * @depecated $VID:$  use RegStatus::INCOMPLETE instead
+     * @depecated 5.0.20.p  use RegStatus::INCOMPLETE instead
      */
     const status_id_incomplete = 'RIC';
 
     /**
-     * @depecated $VID:$  use RegStatus::AWAITING_REVIEW instead
+     * @depecated 5.0.20.p  use RegStatus::AWAITING_REVIEW instead
      */
     const status_id_not_approved = 'RNA';
 
     /**
-     * @depecated $VID:$  use RegStatus::PENDING_PAYMENT instead
+     * @depecated 5.0.20.p  use RegStatus::PENDING_PAYMENT instead
      */
     const status_id_pending_payment = 'RPP';
 
     /**
-     * @depecated $VID:$  use RegStatus::WAIT_LIST instead
+     * @depecated 5.0.20.p  use RegStatus::WAIT_LIST instead
      */
     const status_id_wait_list = 'RWL';
 
     /**
-     * @depecated $VID:$  use RegStatus::APPROVED instead
+     * @depecated 5.0.20.p  use RegStatus::APPROVED instead
      */
     const status_id_approved = 'RAP';
 
     /**
-     * @depecated $VID:$  use RegStatus::CANCELLED instead
+     * @depecated 5.0.20.p  use RegStatus::CANCELLED instead
      */
     const status_id_cancelled = 'RCN';
 
     /**
-     * @depecated $VID:$  use RegStatus::DECLINED instead
+     * @depecated 5.0.20.p  use RegStatus::DECLINED instead
      */
     const status_id_declined = 'RDC';
 

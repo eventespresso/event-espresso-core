@@ -12,7 +12,7 @@ use EventEspresso\core\services\request\DataType;
  * License_Keys_Admin_Page
  * UI for managing License Keys
  *
- * @since $VID:$
+ * @since 5.0.20.p
  */
 class License_Keys_Admin_Page extends EE_Admin_Page
 {

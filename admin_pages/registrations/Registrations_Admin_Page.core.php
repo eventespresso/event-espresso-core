@@ -3770,7 +3770,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
 
     /**
      * @return EE_Session|null
-     * @since $VID:$
+     * @since 5.0.20.p
      */
     private function getSession(): ?EE_Session
     {
@@ -3784,7 +3784,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
      * @return void
      * @throws EE_Error
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 5.0.20.p
      */
     private function clearSession(string $class, string $function)
     {
@@ -3797,7 +3797,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
 
     /**
      * @return EE_Cart|null
-     * @since $VID:$
+     * @since 5.0.20.p
      */
     private function getCart(): ?EE_Cart
     {

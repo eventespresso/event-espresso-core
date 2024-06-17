@@ -89,7 +89,7 @@ class EE_Primary_Registration_Details_Shortcodes extends EE_Shortcodes
      * @return string
      * @throws EE_Error
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 5.0.20.p
      */
     protected function _parser($shortcode)
     {

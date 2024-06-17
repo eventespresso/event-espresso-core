@@ -81,7 +81,7 @@ class EE_Brewing_Regular extends EE_BASE implements InterminableInterface
 
     /**
      * @throws Exception
-     * @deprecated $VID:$
+     * @deprecated 5.0.20.p
      */
     public function initializePUE()
     {

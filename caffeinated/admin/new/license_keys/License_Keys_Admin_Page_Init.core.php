@@ -8,7 +8,7 @@ use EventEspresso\core\domain\services\capabilities\FeatureFlags;
  * License_Keys_Admin_Page_Init
  * Initializes the License Keys admin page
  *
- * @since $VID:$
+ * @since 5.0.20.p
  */
 class License_Keys_Admin_Page_Init extends EE_Admin_Page_Init
 {

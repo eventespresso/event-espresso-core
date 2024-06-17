@@ -7,7 +7,7 @@ use InvalidArgumentException;
 /**
  * Class for managing the various registration statuses used throughout the system.
  *
- * @since $VID:$
+ * @since 5.0.20.p
  */
 class RegStatus
 {

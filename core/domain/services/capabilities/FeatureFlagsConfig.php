@@ -70,7 +70,7 @@ class FeatureFlagsConfig extends JsonDataWordpressOption
      * feature flags that absolutely must be enabled/disabled based on hard-coded conditions
      *
      * @return stdClass
-     * @since $VID:$
+     * @since 5.0.20.p
      */
     public function getOverrides(): stdClass
     {

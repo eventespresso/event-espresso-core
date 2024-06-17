@@ -10,7 +10,7 @@ use stdClass;
 /**
  * class PluginLicense
  *
- * @since $VID:$
+ * @since 5.0.20.p
  */
 class PluginLicense
 {
@@ -158,7 +158,7 @@ class PluginLicense
 
     /**
      * @return string
-     * @since $VID:$
+     * @since 5.0.20.p
      */
     public function minCoreVersion(): string
     {

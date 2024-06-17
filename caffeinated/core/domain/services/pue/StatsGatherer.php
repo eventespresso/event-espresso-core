@@ -15,7 +15,7 @@ use Exception;
 use EventEspresso\core\domain\services\registration\RegStatus;
 
 /**
- * @deprecated $VID:$
+ * @deprecated 5.0.20.p
  */
 class StatsGatherer
 {

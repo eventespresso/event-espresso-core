@@ -218,7 +218,7 @@ class Manager
 
     /**
      * @return bool
-     * @since  $VID:$
+     * @since  5.0.20.p
      */
     public static function verifySSL(): bool
     {

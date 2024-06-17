@@ -13,7 +13,7 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  *
  * @package EventEspresso\core\services\licensing
  * @author  Brent Christensen  Tony Warwick
- * @since   $VID:$
+ * @since   5.0.20.p
  */
 class AddonLicense
 {

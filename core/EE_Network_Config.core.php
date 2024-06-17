@@ -199,7 +199,7 @@ class EE_Network_Core_Config extends EE_Config_Base
      * PUE site license key
      *
      * @var string $site_license_key
-     * @deprecated $VID:$
+     * @deprecated 5.0.20.p
      */
     public $site_license_key;
 

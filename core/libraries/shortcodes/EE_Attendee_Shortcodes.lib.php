@@ -161,7 +161,7 @@ class EE_Attendee_Shortcodes extends EE_Shortcodes
     /**
      * @return EE_Registration
      * @throws EE_Error
-     * @since $VID:$
+     * @since 5.0.20.p
      */
     private function getRegistration(): EE_Registration
     {
@@ -190,7 +190,7 @@ class EE_Attendee_Shortcodes extends EE_Shortcodes
      * @return EE_Attendee
      * @throws EE_Error
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 5.0.20.p
      */
     private function getAttendee(EE_Registration $registration): EE_Attendee
     {

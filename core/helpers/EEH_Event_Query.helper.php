@@ -403,7 +403,7 @@ class EEH_Event_Query
      * @return string
      * @throws EE_Error
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 5.0.20.p
      */
     protected static function postsJoinForTicket(string $SQL = ''): string
     {
