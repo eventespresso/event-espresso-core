@@ -57,10 +57,10 @@ class Extend_Events_Admin_List_Table extends Events_Admin_List_Table
         // what we need to do is get all PRIMARY datetimes for all events to filter on.
         // Note we need to include any other filters that are set!
         return EEH_Form_Fields::generate_event_months_dropdown(
-            $this->_req_data['month_range'] ?? null,
-            $this->_req_data['status'] ?? null,
+            $this->_req_data['month_range'] ?? '',
+            $this->_req_data['status'] ?? '',
             $this->_req_data['EVT_CAT'] ?? 0,
-            $this->_req_data['active_status'] ?? null
+            $this->_req_data['active_status'] ?? ''
         );
     }
 

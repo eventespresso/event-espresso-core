@@ -36,9 +36,8 @@ class EE_Ticket_List_Shortcodes extends EE_Shortcodes
      */
     protected function _parser($shortcode)
     {
-        switch ($shortcode) {
-            case '[TICKET_LIST]':
-                return $this->_get_ticket_list();
+        if ($shortcode == '[TICKET_LIST]') {
+            return $this->_get_ticket_list();
         }
         return '';
     }

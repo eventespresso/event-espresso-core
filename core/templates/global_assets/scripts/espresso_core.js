@@ -208,15 +208,15 @@ jQuery( document ).ready( function ( $ ) {
         let msg = '';
         // no existing errors?
 		if ( typeof(response.errors) !== 'undefined' && response.errors !== '' && response.errors !== false ) {
-			msg = msg + '<div class="ee-admin-notification error hidden"><p>' + response.errors + '</p></div>';
+			msg = msg + '<div class="ee-admin-notification ee-status-outline ee-status-bg--error hidden"><p>' + response.errors + '</p></div>';
 		}
 		// attention notice?
 		if ( typeof(response.attention) !== 'undefined' && response.attention !== '' && response.attention !== false ) {
-			msg = msg + '<div class="ee-admin-notification ee-attention hidden"><p>' + response.attention + '</p></div>';
+			msg = msg + '<div class="ee-admin-notification ee-status-outline ee-status-bg--attention hidden"><p>' + response.attention + '</p></div>';
 		}
 		// success ?
 		if ( typeof(response.success) !== 'undefined' && response.success !== '' && response.success !== false ) {
-			msg = msg + '<div class="ee-admin-notification updated hidden ee-fade-away"><p>' + response.success + '</p></div>';
+			msg = msg + '<div class="ee-admin-notification ee-status-outline ee-status-bg--success hidden ee-fade-away"><p>' + response.success + '</p></div>';
 		}
 		messages.html( msg );
         const new_messages = messages;

@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\services\registration\RegStatus;
 use EventEspresso\core\exceptions\InvalidStatusException;
 use EventEspresso\core\services\database\TableAnalysis;
 
@@ -20,63 +21,37 @@ class EEM_Registration extends EEM_Soft_Delete_Base
     const PRIMARY_REGISTRANT_COUNT = 1;
 
     /**
-     * Status ID (STS_ID on esp_status table) to indicate an INCOMPLETE registration.
-     * Initial status for registrations when they are first created
-     * Payments are NOT allowed.
-     * Automatically toggled to whatever the default Event registration status is upon completion of the attendee
-     * information reg step NO space reserved. Registration is NOT active
+     * @depecated $VID:$  use RegStatus::INCOMPLETE instead
      */
     const status_id_incomplete = 'RIC';
 
     /**
-     * Status ID (STS_ID on esp_status table) to indicate an UNAPPROVED registration.
-     * Payments are NOT allowed.
-     * Event Admin must manually toggle STS_ID for it to change
-     * No space reserved.
-     * Registration is active
+     * @depecated $VID:$  use RegStatus::AWAITING_REVIEW instead
      */
     const status_id_not_approved = 'RNA';
 
     /**
-     * Status ID (STS_ID on esp_status table) to indicate registration is PENDING_PAYMENT .
-     * Payments are allowed.
-     * STS_ID will automatically be toggled to RAP if payment is made in full by the attendee
-     * No space reserved.
-     * Registration is active
+     * @depecated $VID:$  use RegStatus::PENDING_PAYMENT instead
      */
     const status_id_pending_payment = 'RPP';
 
     /**
-     * Status ID (STS_ID on esp_status table) to indicate registration is on the WAIT_LIST .
-     * Payments are allowed.
-     * STS_ID will automatically be toggled to RAP if payment is made in full by the attendee
-     * No space reserved.
-     * Registration is active
+     * @depecated $VID:$  use RegStatus::WAIT_LIST instead
      */
     const status_id_wait_list = 'RWL';
 
     /**
-     * Status ID (STS_ID on esp_status table) to indicate an APPROVED registration.
-     * the TXN may or may not be completed ( paid in full )
-     * Payments are allowed.
-     * A space IS reserved.
-     * Registration is active
+     * @depecated $VID:$  use RegStatus::APPROVED instead
      */
     const status_id_approved = 'RAP';
 
     /**
-     * Status ID (STS_ID on esp_status table) to indicate a registration was CANCELLED by the attendee.
-     * Payments are NOT allowed.
-     * NO space reserved.
-     * Registration is NOT active
+     * @depecated $VID:$  use RegStatus::CANCELLED instead
      */
     const status_id_cancelled = 'RCN';
 
     /**
-     * Status ID (STS_ID on esp_status table) to indicate a registration was DECLINED by the Event Admin
-     * Payments are NOT allowed.
-     * No space reserved.
-     * Registration is NOT active
+     * @depecated $VID:$  use RegStatus::DECLINED instead
      */
     const status_id_declined = 'RDC';
 
@@ -150,7 +125,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base
                     'STS_ID',
                     esc_html__('Status ID', 'event_espresso'),
                     false,
-                    EEM_Registration::status_id_incomplete,
+                    RegStatus::INCOMPLETE,
                     'Status'
                 ),
                 'REG_date'         => new EE_Datetime_Field(
@@ -263,8 +238,8 @@ class EEM_Registration extends EEM_Soft_Delete_Base
         return (array) apply_filters(
             'FHEE__EEM_Registration__reg_statuses_that_allow_payment',
             [
-                EEM_Registration::status_id_approved,
-                EEM_Registration::status_id_pending_payment,
+                RegStatus::APPROVED,
+                RegStatus::PENDING_PAYMENT,
             ]
         );
     }
@@ -282,10 +257,10 @@ class EEM_Registration extends EEM_Soft_Delete_Base
         return (array) apply_filters(
             'FHEE__EEM_Registration__active_reg_statuses',
             [
-                EEM_Registration::status_id_approved,
-                EEM_Registration::status_id_pending_payment,
-                EEM_Registration::status_id_wait_list,
-                EEM_Registration::status_id_not_approved,
+                RegStatus::APPROVED,
+                RegStatus::PENDING_PAYMENT,
+                RegStatus::WAIT_LIST,
+                RegStatus::AWAITING_REVIEW,
             ]
         );
     }
@@ -303,9 +278,9 @@ class EEM_Registration extends EEM_Soft_Delete_Base
         return (array) apply_filters(
             'FHEE__EEM_Registration__inactive_reg_statuses',
             [
-                EEM_Registration::status_id_incomplete,
-                EEM_Registration::status_id_cancelled,
-                EEM_Registration::status_id_declined,
+                RegStatus::INCOMPLETE,
+                RegStatus::CANCELLED,
+                RegStatus::DECLINED,
             ]
         );
     }
@@ -324,9 +299,9 @@ class EEM_Registration extends EEM_Soft_Delete_Base
         return (array) apply_filters(
             'FHEE__EEM_Registration__closed_reg_statuses',
             [
-                EEM_Registration::status_id_cancelled,
-                EEM_Registration::status_id_declined,
-                EEM_Registration::status_id_wait_list,
+                RegStatus::CANCELLED,
+                RegStatus::DECLINED,
+                RegStatus::WAIT_LIST,
             ]
         );
     }
@@ -345,6 +320,10 @@ class EEM_Registration extends EEM_Soft_Delete_Base
     {
         if (empty(self::$_reg_status)) {
             EEM_Registration::instance()->_get_registration_status_array($exclude);
+        } elseif ($exclude) {
+            foreach ($exclude as $excluded_status) {
+                unset(self::$_reg_status[ $excluded_status ]);
+            }
         }
         return $translated
             ? EEM_Status::instance()->localized_status(self::$_reg_status, false, 'sentence')
@@ -381,7 +360,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base
         // in case reg status codes have been deleted from db
         if ($recurse && empty(self::$_reg_status)) {
             EEH_Activation::insert_default_status_codes();
-            EEM_Registration::instance()->_get_registration_status_array($exclude, false);
+            $this->_get_registration_status_array($exclude, false);
         }
     }
 
@@ -506,7 +485,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base
         );
         $where    = [
             'REG_date' => ['>=', $sql_date],
-            'STS_ID'   => ['!=', EEM_Registration::status_id_incomplete],
+            'STS_ID'   => ['!=', RegStatus::INCOMPLETE],
         ];
         if (! EE_Registry::instance()->CAP->current_user_can('ee_read_others_registrations', 'reg_per_day_report')) {
             $where['Event.EVT_wp_user'] = get_current_user_id();
@@ -529,7 +508,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base
 
     /**
      * Get the number of registrations per day including the count of registrations for each Registration Status.
-     * Note: EEM_Registration::status_id_incomplete registrations are excluded from the results.
+     * Note: RegStatus::INCOMPLETE registrations are excluded from the results.
      *
      * @param string $period
      * @return stdClass[] with properties Registration_REG_date and a column for each registration status as the STS_ID
@@ -562,7 +541,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base
         $select_parts = [];
         // loop through registration stati to do parts for each status.
         foreach (EEM_Registration::reg_status_array() as $STS_ID => $STS_code) {
-            if ($STS_ID === EEM_Registration::status_id_incomplete) {
+            if ($STS_ID === RegStatus::INCOMPLETE) {
                 continue;
             }
             $select_parts[] = "COUNT($STS_code.REG_ID) as $STS_ID";
@@ -599,7 +578,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base
         );
         $where    = [
             'REG_date' => ['>=', $date_sql],
-            'STS_ID'   => ['!=', EEM_Registration::status_id_incomplete],
+            'STS_ID'   => ['!=', RegStatus::INCOMPLETE],
         ];
         if (
             ! EE_Registry::instance()->CAP->current_user_can(
@@ -627,7 +606,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base
 
     /**
      * Get the number of registrations per event grouped by registration status.
-     * Note: EEM_Registration::status_id_incomplete registrations are excluded from the results.
+     * Note: RegStatus::INCOMPLETE registrations are excluded from the results.
      *
      * @param string $period
      * @return stdClass[] with properties `Registration_Event` and a column for each registration status as the STS_ID
@@ -658,7 +637,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base
         $select_parts = [];
         // loop through registration stati to do parts for each status.
         foreach (EEM_Registration::reg_status_array() as $STS_ID => $STS_code) {
-            if ($STS_ID === EEM_Registration::status_id_incomplete) {
+            if ($STS_ID === RegStatus::INCOMPLETE) {
                 continue;
             }
             $select_parts[] = "COUNT($STS_code.REG_ID) as $STS_ID";
@@ -712,7 +691,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base
     public function get_event_registration_count(int $EVT_ID, bool $for_incomplete_payments = false): int
     {
         // we only count approved registrations towards registration limits
-        $query_params = [['EVT_ID' => $EVT_ID, 'STS_ID' => self::status_id_approved]];
+        $query_params = [['EVT_ID' => $EVT_ID, 'STS_ID' => RegStatus::APPROVED]];
         if ($for_incomplete_payments) {
             $query_params[0]['Transaction.STS_ID'] = ['!=', EEM_Transaction::complete_status_code];
         }
@@ -893,7 +872,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base
             );
         }
         $statuses = is_array($statuses) ? $statuses : [$statuses];
-        $statuses = ! empty($statuses) ? $statuses : [EEM_Registration::status_id_approved];
+        $statuses = ! empty($statuses) ? $statuses : [RegStatus::APPROVED];
 
         $valid_reg_statuses = EEM_Registration::reg_statuses();
         foreach ($statuses as $status) {

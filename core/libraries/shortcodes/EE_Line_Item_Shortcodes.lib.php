@@ -37,6 +37,11 @@ class EE_Line_Item_Shortcodes extends EE_Shortcodes
     }
 
 
+    /**
+     * @param string $shortcode
+     * @throws ReflectionException
+     * @throws EE_Error
+     */
     protected function _parser($shortcode)
     {
         // ensure that the incoming object IS a line item.  If it isn't then bail early.
@@ -49,23 +54,18 @@ class EE_Line_Item_Shortcodes extends EE_Shortcodes
         switch ($shortcode) {
             case '[LINE_ITEM_NAME]':
                 return $line_item->name();
-                break;
 
             case '[LINE_ITEM_DESCRIPTION]':
                 return $line_item->desc();
-                break;
 
             case '[LINE_ITEM_QUANTITY]':
                 return $line_item->quantity();
-                break;
 
             case '[LINE_ITEM_AMOUNT]':
                 return $line_item->is_percent() ? $line_item->percent() . '%' : $line_item->unit_price_no_code();
-                break;
 
             case '[LINE_ITEM_TOTAL]':
                 return $line_item->total_no_code();
-                break;
         }
 
         if (strpos($shortcode, '[LINE_ITEM_TAXABLE_*') !== false) {

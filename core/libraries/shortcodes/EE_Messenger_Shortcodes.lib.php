@@ -80,16 +80,25 @@ class EE_Messenger_Shortcodes extends EE_Shortcodes
     }
 
 
+    /**
+     * @param string $shortcode
+     * @throws EE_Error
+     */
     protected function _parser($shortcode)
     {
         // make sure we end up with a copy of the EE_Messages_Addressee object
         $recipient = $this->_data instanceof EE_Messages_Addressee ? $this->_data : null;
-        $recipient = ! $recipient instanceof EE_Messages_Addressee && is_array(
-            $this->_data
-        ) && isset($this->_data['data']) && $this->_data['data'] instanceof EE_Messages_Addressee ? $this->_data['data']
-            : $recipient;
-        $recipient = ! $recipient instanceof EE_Messages_Addressee && ! empty($this->_extra_data['data']) && $this->_extra_data['data'] instanceof EE_Messages_Addressee
-            ? $this->_extra_data['data'] : $recipient;
+        $recipient = ! $recipient instanceof EE_Messages_Addressee
+            && is_array($this->_data)
+            && isset($this->_data['data'])
+            && $this->_data['data'] instanceof EE_Messages_Addressee
+                ? $this->_data['data']
+                : $recipient;
+        $recipient = ! $recipient instanceof EE_Messages_Addressee
+            && ! empty($this->_extra_data['data'])
+            && $this->_extra_data['data'] instanceof EE_Messages_Addressee
+                ? $this->_extra_data['data']
+                : $recipient;
 
         if (! $recipient instanceof EE_Messages_Addressee) {
             return '';
@@ -98,13 +107,12 @@ class EE_Messenger_Shortcodes extends EE_Shortcodes
         switch ($shortcode) {
             case '[DISPLAY_HTML_URL]':
                 return isset($this->_active_messengers['html']) ? $this->_get_url($recipient, 'html') : '';
-                break;
+
             case '[DISPLAY_PDF_URL]':
                 return isset($this->_active_messengers['pdf']) ? $this->_get_url($recipient, 'pdf') : '';
-                break;
+
             case '[DISPLAY_PDF_BUTTON]':
                 return isset($this->_active_messengers['pdf']) ? $this->_get_button($recipient, 'pdf') : '';
-                break;
         }
         return '';
     }

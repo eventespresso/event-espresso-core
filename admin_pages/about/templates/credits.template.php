@@ -21,9 +21,9 @@ $tEEm_members = [
             'name'  => 'Nazar Kolivoshka',
             'desc'  => esc_html__('Core Developer', 'event_espresso'),
         ],
-        'hossein-rafiei' => [
-            'email' => 'hossein@eventespresso.com',
-            'name'  => 'Hossein Rafiei',
+        'alex' => [
+            'email' => 'alex@eventespresso.com',
+            'name'  => 'Alexander Kucheryuk',
             'desc'  => esc_html__('Core Developer', 'event_espresso'),
         ],
     ],
@@ -31,12 +31,7 @@ $tEEm_members = [
         'tony-warwick' => [
             'email' => 'tony@eventespresso.com',
             'name'  => 'Tony Warwick',
-            'desc'  => esc_html__('Support', 'event_espresso'),
-        ],
-        'lorenzo-caum' => [
-            'email' => 'lorenzo@eventespresso.com',
-            'name'  => 'Lorenzo Caum',
-            'desc'  => esc_html__('Sales & Support', 'event_espresso'),
+            'desc'  => esc_html__('Support Lead', 'event_espresso'),
         ],
         'janice-gutierrez' => [
             'email' => 'janice@eventespresso.com',
@@ -48,10 +43,20 @@ $tEEm_members = [
             'name'  => 'Chinny Love Verana',
             'desc'  => esc_html__('Sales & Support', 'event_espresso'),
         ],
+        'kimiko-catherine-sy' => [
+            'email' => 'kimiko@eventespresso.com',
+            'name'  => 'Kimiko Catherine Sy',
+            'desc'  => esc_html__('Sales & Support', 'event_espresso'),
+        ],
         'sam' => [
             'email' => 'sam@eventespresso.com',
             'name'  => 'Sam',
-            'desc'  => esc_html__('Sales & Support', 'event_espresso'),
+            'desc'  => esc_html__('Support & QA', 'event_espresso'),
+        ],
+        'rio-michael-miranda' => [
+            'email' => 'rio@eventespresso.com',
+            'name'  => 'Rio Michael Miranda',
+            'desc'  => esc_html__('Support & QA', 'event_espresso'),
         ],
     ],
 ];

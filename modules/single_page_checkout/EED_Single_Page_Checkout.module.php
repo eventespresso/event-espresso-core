@@ -1406,10 +1406,8 @@ class EED_Single_Page_Checkout extends EED_Module
         EE_Registry::$i18n_js_strings['session_extension']              = absint(
             apply_filters('FHEE__EE_Session__extend_expiration__seconds_added', 10 * MINUTE_IN_SECONDS)
         );
-        EE_Registry::$i18n_js_strings['session_expiration']             = gmdate(
-            'M d, Y H:i:s',
-            EE_Registry::instance()->SSN->expiration() + (get_option('gmt_offset') * HOUR_IN_SECONDS)
-        );
+        EE_Registry::$i18n_js_strings['session_expiration']    = EE_Registry::instance()->SSN->expiration();
+        EE_Registry::$i18n_js_strings['use_session_countdown'] = EE_Registry::instance()->CFG->registration->useSessionCountdown();
     }
 
 
@@ -1429,20 +1427,6 @@ class EED_Single_Page_Checkout extends EED_Module
         wp_enqueue_style('single_page_checkout');
         // load JS
         wp_register_script(
-            'jquery_plugin',
-            EE_THIRD_PARTY_URL . 'jquery	.plugin.min.js',
-            ['jquery'],
-            '1.0.1',
-            true
-        );
-        wp_register_script(
-            'jquery_countdown',
-            EE_THIRD_PARTY_URL . 'jquery	.countdown.min.js',
-            ['jquery_plugin'],
-            '2.1.0',
-            true
-        );
-        wp_register_script(
             'single_page_checkout',
             SPCO_JS_URL . 'single_page_checkout.js',
             ['espresso_core', 'underscore', 'ee_form_section_validation'],
@@ -1456,9 +1440,6 @@ class EED_Single_Page_Checkout extends EED_Module
             $this->checkout->current_step->reg_form->enqueue_js();
         }
         wp_enqueue_script('single_page_checkout');
-        if (apply_filters('FHEE__registration_page_wrapper_template__display_time_limit', false)) {
-            wp_enqueue_script('jquery_countdown');
-        }
         /**
          * global action hook for enqueueing styles and scripts with
          * spco calls.
@@ -1547,11 +1528,7 @@ class EED_Single_Page_Checkout extends EED_Module
                                     ),
                                     'cookies_not_set_msg'     => $cookies_not_set_msg,
                                     'registration_time_limit' => $this->checkout->get_registration_time_limit(),
-                                    'session_expiration'      => gmdate(
-                                        'M d, Y H:i:s',
-                                        EE_Registry::instance()->SSN->expiration()
-                                        + (get_option('gmt_offset') * HOUR_IN_SECONDS)
-                                    ),
+                                    'use_session_countdown'   => EE_Registry::instance()->CFG->registration->useSessionCountdown(),
                                 ],
                             ]
                         ),

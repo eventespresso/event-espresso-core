@@ -3,6 +3,7 @@
 namespace EventEspresso\core\domain\services\graphql\enums;
 
 use EEM_Registration;
+use EventEspresso\core\domain\services\registration\RegStatus;
 use EventEspresso\core\services\graphql\enums\EnumBase;
 
 /**
@@ -40,25 +41,25 @@ class RegistrationStatusEnum extends EnumBase
     {
         return [
             'APPROVED'        => [
-                'value' => EEM_Registration::status_id_approved,
+                'value' => RegStatus::APPROVED,
             ],
             'CANCELLED'       => [
-                'value' => EEM_Registration::status_id_cancelled,
+                'value' => RegStatus::CANCELLED,
             ],
             'DECLINED'        => [
-                'value' => EEM_Registration::status_id_declined,
+                'value' => RegStatus::DECLINED,
             ],
             'INCOMPLETE'      => [
-                'value' => EEM_Registration::status_id_incomplete,
+                'value' => RegStatus::INCOMPLETE,
             ],
             'PENDING_PAYMENT' => [
-                'value' => EEM_Registration::status_id_pending_payment,
+                'value' => RegStatus::PENDING_PAYMENT,
             ],
             'UNAPPROVED'      => [
-                'value' => EEM_Registration::status_id_not_approved,
+                'value' => RegStatus::AWAITING_REVIEW,
             ],
             'WAIT_LIST'       => [
-                'value' => EEM_Registration::status_id_wait_list,
+                'value' => RegStatus::WAIT_LIST,
             ],
         ];
     }

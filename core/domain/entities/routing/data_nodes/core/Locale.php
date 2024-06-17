@@ -37,7 +37,7 @@ class Locale extends JsonDataNode
         $this->addData('site', get_locale());
         $this->addData('siteTimezone', [
             'city'   => EEH_DTT_Helper::get_timezone_string_for_display(),
-            'name'   => get_option('timezone_string'),
+            'name'   => EEH_DTT_Helper::get_valid_timezone_string(wp_timezone_string()),
             'offset' => EEH_DTT_Helper::get_site_timezone_gmt_offset(),
         ]);
         $this->setInitialized(true);

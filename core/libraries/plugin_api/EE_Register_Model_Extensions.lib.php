@@ -1,5 +1,8 @@
 <?php
 
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\Request;
+
 /**
  * EE_Register_Model_Extensions
  *
@@ -11,9 +14,9 @@
  */
 class EE_Register_Model_Extensions implements EEI_Plugin_API
 {
-    protected static $_registry;
+    protected static array $_registry = [];
 
-    protected static $_extensions = [];
+    protected static array $_extensions = [];
 
 
     /**
@@ -73,6 +76,12 @@ class EE_Register_Model_Extensions implements EEI_Plugin_API
         if (isset(self::$_registry[ $addon_name ])) {
             return true;
         }
+        /** @var Request $request */
+        $request = LoaderFactory::getShared(Request::class);
+        if ($request->isActivation()) {
+            return false;
+        }
+
         // check correct loading
         if (! did_action('AHEE__EE_System__load_espresso_addons') || did_action('AHEE__EE_Admin__loaded')) {
             EE_Error::doing_it_wrong(

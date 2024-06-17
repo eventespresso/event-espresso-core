@@ -214,4 +214,18 @@ class Manager
          )
          . '</p></div>';
     }
+
+
+    /**
+     * @return bool
+     * @since  $VID:$
+     */
+    public static function verifySSL(): bool
+    {
+        static $verify_ssl = null;
+        if ($verify_ssl === null) {
+            $verify_ssl = (bool) apply_filters('FHEE__EventEspresso_PaymentMethods_Manager__verifySSL', true);
+        }
+        return (bool) $verify_ssl;
+    }
 }

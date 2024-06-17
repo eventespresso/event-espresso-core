@@ -62,7 +62,9 @@ class EE_Admin_File_Uploader_Display_Strategy extends EE_Display_Strategy_Base
             ? 'class="large-text ee_media_url ' . $this->_input->html_class() . '" '
             : 'class="large-text ee_media_url" ';
         $input .= 'value="' . $this->_input->raw_value_in_form() . '" ';
-        $input .= $this->_input->other_html_attributes() . '>';
+        $input .= $this->_input->other_html_attributes();
+        $input .= $this->dataAttributesString($this->_input->dataAttributes());
+        $input .= '>';
         // image uploader
         $uploader = EEH_HTML::link(
             '#',

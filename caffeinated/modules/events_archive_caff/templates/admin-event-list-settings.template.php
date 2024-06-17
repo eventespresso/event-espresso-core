@@ -2,6 +2,24 @@
 
 use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
+/**
+ * Admin Event List Settings Template
+ *
+ * @package    Event Espresso
+ * @subpackage modules/events_archive_caff/templates/admin-event-list-settings.template.php
+ * @since      4.9.0
+ *
+ * @var bool $display_status_banner
+ * @var bool $display_description
+ * @var bool $display_ticket_selector
+ * @var bool $display_datetimes
+ * @var bool $display_venue
+ * @var bool $display_expired_events
+ * @var bool $display_events_with_expired_tickets
+ * @var bool $use_sortable_display_order
+ * @var bool $event_archive_display_order
+ */
+
 add_filter('FHEE__EEH_Form_Fields__label_html', '__return_empty_string');
 
 $values = EEH_Form_Fields::prep_answer_options(
@@ -26,7 +44,7 @@ $description = EEH_Form_Fields::prep_answer_options(
 <br/>
 <br/>
 <h2 class="ee-admin-settings-hdr">
-    <?php esc_html_e('Event List Pages', 'event_espresso'); ?>
+    <?php esc_html_e('Events List Pages', 'event_espresso'); ?>
 </h2>
 <table class="ee-admin-two-column-layout form-table">
     <tbody>
@@ -34,16 +52,21 @@ $description = EEH_Form_Fields::prep_answer_options(
     <tr>
         <th>
             <label for="event_listings_url">
-                <?php esc_html_e('Event Listings URL', 'event_espresso'); ?><?php echo EEH_Template::get_help_tab_link(
+                <?php esc_html_e('Events List URL', 'event_espresso'); ?><?php echo EEH_Template::get_help_tab_link(
                     'event_listings_url_info'
                 ); ?>
             </label>
         </th>
         <td>
-            <a id="event_listings_url" href="<?php echo esc_url_raw(EEH_Event_View::event_archive_url()); ?> target="_blank">
+            <a id="event_listings_url" href="<?php echo esc_url_raw(EEH_Event_View::event_archive_url()); ?>" target="_blank">
                 <?php echo esc_url(EEH_Event_View::event_archive_url()); ?>
                 <span class="dashicons dashicons-external"></span>
             </a>
+            <p class="description"><?php
+                esc_html_e(
+                    'This is the URL where all events will be displayed.  You can change the slug below.',
+                    'event_espresso'
+                ); ?></p>
         </td>
     </tr>
 
@@ -103,7 +126,7 @@ $description = EEH_Form_Fields::prep_answer_options(
             ); ?>
             <p class="description"><?php
                 esc_html_e(
-                    'Selecting "Yes" will inject an Event Status banner with the title whenever Events are displaying on the events archive page.',
+                    'Whether the status banner should be shown on the events list page next to the Event title.  The status banner is the banner that shows the status of the event (e.g. "Upcoming", "Expired", etc.).',
                     'event_espresso'
                 ); ?></p>
         </td>
@@ -128,6 +151,11 @@ $description = EEH_Form_Fields::prep_answer_options(
                 ),
                 AllowedTags::getWithFormTags()
             ); ?>
+            <p class="description"><?php
+                esc_html_e(
+                    'Whether the event description should be shown on the events list page.  If you choose "none" then the description will not be shown.  If you choose "excerpt" then the short description will be shown.  If you choose "full description" then the full description will be shown.',
+                    'event_espresso'
+                ); ?></p>
         </td>
     </tr>
 
@@ -150,6 +178,11 @@ $description = EEH_Form_Fields::prep_answer_options(
                 ),
                 AllowedTags::getWithFormTags()
             ); ?>
+            <p class="description"><?php
+                esc_html_e(
+                    'Whether the ticket selector should be shown on the events list page.',
+                    'event_espresso'
+                ); ?></p>
         </td>
     </tr>
 
@@ -172,6 +205,11 @@ $description = EEH_Form_Fields::prep_answer_options(
                 ),
                 AllowedTags::getWithFormTags()
             ); ?>
+            <p class="description"><?php
+                esc_html_e(
+                    'Whether the date and time details should be shown on the events list page.',
+                    'event_espresso'
+                ); ?></p>
         </td>
     </tr>
 
@@ -194,6 +232,11 @@ $description = EEH_Form_Fields::prep_answer_options(
                 ),
                 AllowedTags::getWithFormTags()
             ); ?>
+            <p class="description"><?php
+                esc_html_e(
+                    'Whether the venue details should be shown on the events list page.',
+                    'event_espresso'
+                ); ?></p>
         </td>
     </tr>
 
@@ -216,6 +259,40 @@ $description = EEH_Form_Fields::prep_answer_options(
                 ),
                 AllowedTags::getWithFormTags()
             ); ?>
+            <p class="description"><?php
+                esc_html_e(
+                    'Whether expired events should be shown on the events list page.',
+                    'event_espresso'
+                ); ?></p>
+        </td>
+    </tr>
+
+    <tr class="ee-feature-highlight-2024">
+        <th>
+            <label for="EED_Events_Archive_display_events_with_expired_tickets">
+                <?php esc_html_e('Display Events With Expired Tickets', 'event_espresso'); ?>
+            </label>
+        </th>
+        <td>
+            <?php echo wp_kses(
+                EEH_Form_Fields::select(
+                    'expired_tickets',
+                    $display_events_with_expired_tickets,
+                    $values,
+                    'EED_Events_Archive_display_events_with_expired_tickets',
+                    'EED_Events_Archive_display_events_with_expired_tickets'
+                ),
+                AllowedTags::getWithFormTags()
+            ); ?>
+            <p class="description">
+                <?php esc_html_e(
+                    'Whether events where ALL tickets are expired should be shown on the events list page.',
+                    'event_espresso'
+                ); ?>
+            </p>
+            <span class="ee-feature-highlight-2024-notice">
+                ✨ <?php esc_html_e('NEW','event_espresso'); ?>
+            </span>
         </td>
     </tr>
 
@@ -239,6 +316,11 @@ $description = EEH_Form_Fields::prep_answer_options(
                 ),
                 AllowedTags::getWithFormTags()
             ); ?>
+            <p class="description"><?php
+                esc_html_e(
+                    'Selecting "Yes" will allow you to drag and drop the order of the Event Description, Date and Times, Ticket Selector, and Venue Information on the event archive page.',
+                    'event_espresso'
+                ); ?></p>
         </td>
     </tr>
 
@@ -284,6 +366,11 @@ $description = EEH_Form_Fields::prep_answer_options(
                 ),
                 AllowedTags::getWithFormTags()
             ); ?>
+            <p class="description"><?php
+                esc_html_e(
+                    'Selecting "Yes" will reset the Event List Settings to their default values.',
+                    'event_espresso'
+                ); ?></p>
         </td>
     </tr>
 

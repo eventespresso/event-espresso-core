@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\services\registration\RegStatus;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -667,7 +668,7 @@ class EED_Messages extends EED_Module
             // NOT sending messages && reg status is something other than "Not-Approved"
             if (
                 ! apply_filters('FHEE__EED_Messages___maybe_registration__deliver_notifications', false)
-                && $registration->status_ID() !== EEM_Registration::status_id_not_approved
+                && $registration->status_ID() !== RegStatus::AWAITING_REVIEW
             ) {
                 return false;
             }

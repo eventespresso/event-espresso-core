@@ -44,16 +44,25 @@ class EE_Event_Author_Shortcodes extends EE_Shortcodes
     }
 
 
+    /**
+     * @param string $shortcode
+     * @throws EE_Error
+     */
     protected function _parser($shortcode)
     {
         // make sure we end up with a copy of the EE_Messages_Addressee object
         $recipient = $this->_data instanceof EE_Messages_Addressee ? $this->_data : null;
-        $recipient = ! $recipient instanceof EE_Messages_Addressee && is_array(
-            $this->_data
-        ) && isset($this->_data['data']) && $this->_data['data'] instanceof EE_Messages_Addressee ? $this->_data['data']
-            : $recipient;
-        $recipient = ! $recipient instanceof EE_Messages_Addressee && ! empty($this->_extra_data['data']) && $this->_extra_data['data'] instanceof EE_Messages_Addressee
-            ? $this->_extra_data['data'] : $recipient;
+        $recipient = ! $recipient instanceof EE_Messages_Addressee
+            && is_array($this->_data)
+            && isset($this->_data['data'])
+            && $this->_data['data'] instanceof EE_Messages_Addressee
+                ? $this->_data['data']
+                : $recipient;
+        $recipient = ! $recipient instanceof EE_Messages_Addressee
+            && ! empty($this->_extra_data['data'])
+            && $this->_extra_data['data'] instanceof EE_Messages_Addressee
+                ? $this->_extra_data['data']
+                : $recipient;
 
         // now it's possible that $recipient is not an instance of EE_Messages_Addressee in which case we need to see if $this->_data is an instance of $event.
         $event = $this->_data instanceof EE_Event ? $this->_data : null;
@@ -70,7 +79,6 @@ class EE_Event_Author_Shortcodes extends EE_Shortcodes
                     $fname = $user->first_name;
                 }
                 return $fname;
-                break;
 
             case '[EVENT_AUTHOR_LNAME]':
                 $lname = ! empty($recipient) ? $recipient->lname : null;
@@ -79,7 +87,6 @@ class EE_Event_Author_Shortcodes extends EE_Shortcodes
                     $lname = $user->last_name;
                 }
                 return $lname;
-                break;
 
             case '[EVENT_AUTHOR_FORMATTED_EMAIL]':
                 if (! empty($recipient)) {
@@ -100,7 +107,6 @@ class EE_Event_Author_Shortcodes extends EE_Shortcodes
                         ) . '<' . $user->user_email . '>';
                 }
                 return $email;
-                break;
 
             case '[EVENT_AUTHOR_EMAIL]':
                 $email = ! empty($recipient) ? $recipient->admin_email : null;
@@ -109,11 +115,9 @@ class EE_Event_Author_Shortcodes extends EE_Shortcodes
                     $email = $user->user_email;
                 }
                 return $email;
-                break;
 
             default:
                 return '';
-                break;
         }
     }
 

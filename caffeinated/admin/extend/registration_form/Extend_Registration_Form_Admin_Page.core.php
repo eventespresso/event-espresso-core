@@ -2,7 +2,6 @@
 
 use EventEspresso\caffeinated\admin\extend\registration_form\forms\SessionLifespanForm;
 use EventEspresso\caffeinated\admin\extend\registration_form\forms\SessionLifespanFormHandler;
-use EventEspresso\core\domain\values\session\SessionLifespanOption;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\request\sanitizers\AllowedTags;

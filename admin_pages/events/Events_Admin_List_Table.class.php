@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\services\registration\RegStatus;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 
@@ -463,7 +464,7 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
         $attendees_query_args = [
             'action'   => 'default',
             'event_id' => $event->ID(),
-            '_reg_status' => EEM_Registration::status_id_approved,
+            '_reg_status' => RegStatus::APPROVED,
         ];
         $attendees_link       = EE_Admin_Page::add_query_args_and_nonce($attendees_query_args, REG_ADMIN_URL);
         $registered_attendees = EEM_Registration::instance()->get_event_registration_count($event->ID());

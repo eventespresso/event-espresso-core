@@ -20,7 +20,7 @@ jQuery(document).ready( function($) {
 	*     allow_submit_reg_form: boolean,
 	*     override_messages: boolean,
 	*     get_next_step: boolean,
-	*     form_is_valid: boolean
+	*     form_is_valid: boolean,
 	* }}
 	* @namespace eei18n
 	* @type {{
@@ -66,6 +66,7 @@ jQuery(document).ready( function($) {
 	*     empty_cart: boolean,
 	*     session_extension: number,
 	*     session_expiration: number,
+	*     use_session_countdown: boolean,
 	*  }}
 	* @namespace response
 	* @type {{
@@ -74,23 +75,23 @@ jQuery(document).ready( function($) {
 	*     recaptcha_passed: boolean,
 	*     recaptcha_reload: boolean,
 	*     reg_step_html: string,
-	*     return_data: object
-	*     billing_form_rules: object
-	*     payment_method: string
-	*     payment_method_info: string
-	*     redirect_form: string
-	*     redirect_url: string
-	*     plz_select_method_of_payment: string
+	*     return_data: object,
+	*     billing_form_rules: object,
+	*     payment_method: string,
+	*     payment_method_info: string,
+	*     redirect_form: string,
+	*     redirect_url: string,
+	*     plz_select_method_of_payment: string,
 	* }}
 	* @namespace ee_form_section_vars
 	* @type {{
 	*     form_data: object,
 	*     form_section_id: string,
-	*     validation_rules: object
-	*     errors: object
-	*     required: boolean
-	*     localized_error_messages: object
-	*     validUrl: string
+	*     validation_rules: object,
+	*     errors: object,
+	*     required: boolean,
+	*     localized_error_messages: object,
+	*     validUrl: string,
 	* }}
 	*  @namespace EEFV
 	*  @type object
@@ -139,9 +140,8 @@ jQuery(document).ready( function($) {
 		payment_amount : 0,
 		// container for displaying how much time is left to complete registration
 		registration_time_limit : $( '#spco-registration-time-limit-spn' ),
-		// timestamp for when the session expires
-		//registration_session_expiration : new Date( Date.parse( $( '#spco-registration-expiration-spn' ).html() ) ),
-		registration_session_expiration : new Date( Date.parse( eei18n.session_expiration ) ),
+		// timestamp for when the session expires converted to milliseconds
+		registration_session_expiration : eei18n.session_expiration * 1000,
 		// AJAX notice fadeout times
 		notice_fadeout_success : 6000,
 		notice_fadeout_attention : 18000,
@@ -523,23 +523,37 @@ jQuery(document).ready( function($) {
 		 * @function
 		 */
 		start_registration_time_limit_countdown : function() {
-			if ( SPCO.registration_time_limit.length > 0 && parseInt( eei18n.empty_cart ) !== 1 && parseInt( eei18n.revisit ) !== 1 ) {
+			if (
+                SPCO.registration_time_limit.length > 0
+                && parseInt( eei18n.empty_cart ) !== 1
+                && parseInt( eei18n.revisit ) !== 1
+                && parseInt( eei18n.use_session_countdown ) === 1
+            ) {
 				$( '#spco-registration-time-limit-pg' ).show();
-				//SPCO.registration_session_expiration = new Date(Date.parse( $('#spco-registration-expiration-spn').html() ));
-				var layout = ( SPCO.registration_session_expiration - ( new Date() ) ) < ( 60 * 60 * 1000 ) ? '{m<}{mnn}{sep}{m>}{s<}{snn}{s>} {ml}' : '{h<}{hnn}{sep}{h>}{m<}{mnn}{sep}{m>}{s<}{snn}{s>} {hl}';
-				SPCO.registration_time_limit.countdown({
-					labels: [ eei18n.timer_years, eei18n.timer_months, eei18n.timer_weeks, eei18n.timer_days, eei18n.timer_hours, eei18n.timer_minutes, eei18n.timer_seconds ],
-					labels1: [ eei18n.timer_year, eei18n.timer_month, eei18n.timer_week, eei18n.timer_day, eei18n.timer_hour, eei18n.timer_minute, eei18n.timer_second ],
-					until: SPCO.registration_session_expiration,
-					layout: layout,
-					onExpiry: function() {
-						if ( SPCO.registration_session_expiration < new Date() ) {
-							SPCO.main_container.slideUp( function() {
-								SPCO.main_container.html( eei18n.registration_expiration_notice ).slideDown();
-							} );
-						}
-					}
-				});
+                // Set the date we're counting down to
+                const countDownDate = new Date(SPCO.registration_session_expiration).getTime();
+                const x = setInterval(function() {
+                    const now = new Date().getTime();
+                    const difference = countDownDate - now;
+                    // Time calculations for days, hours, minutes and seconds
+                    const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                    const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+                    const mins = String(minutes).padStart(2, '0');
+                    const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+                    const secs = String(seconds).padStart(2, '0');
+
+                    document.getElementById("spco-registration-time-limit-spn").innerHTML = hours > 0
+                        ? hours + ":" + mins + ":" + secs
+                        : mins + ":" + secs;
+
+                    if (difference < 0) {
+                        clearInterval(x);
+                        SPCO.main_container.slideUp( function() {
+                            SPCO.main_container.html( eei18n.registration_expiration_notice ).slideDown();
+                            document.getElementById("spco-registration-time-limit-pg").innerHTML = "EXPIRED";
+                        } );
+                    }
+                }, 1000);
 			}
 		},
 

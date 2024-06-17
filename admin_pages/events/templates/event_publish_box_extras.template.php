@@ -1,5 +1,8 @@
 <?php
 
+use EventEspresso\core\domain\services\registration\RegStatus;
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
+
 /**
  * @var string $approved_regs
  * @var string $event_editor_overview_add
@@ -9,9 +12,6 @@
  * @var string $view_not_approved_reg_url
  * @var string $view_pending_payment_reg_url
  */
-
-use EventEspresso\core\services\request\sanitizers\AllowedTags;
-
 ?>
 <div class="misc-pub-section">
     <span class="dashicons dashicons-groups ee-status-color--RAP"></span>
@@ -22,7 +22,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
         <span class='ee-reg-list-link__reg-count'><?php echo absint($approved_regs); ?></span>
         <?php printf(
             esc_html__('%s Registrations', 'event_espresso'),
-            EEH_Template::pretty_status(EEM_Registration::status_id_approved, false, 'sentence')
+            EEH_Template::pretty_status(RegStatus::APPROVED, false, 'sentence')
         ); ?>
         <span class='dashicons dashicons-external'></span>
     </a>
@@ -36,7 +36,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
         <span class='ee-reg-list-link__reg-count'><?php echo absint($pending_payment_regs); ?></span>
         <?php printf(
             esc_html__('%s Registrations', 'event_espresso'),
-            EEH_Template::pretty_status(EEM_Registration::status_id_pending_payment, false, 'sentence')
+            EEH_Template::pretty_status(RegStatus::PENDING_PAYMENT, false, 'sentence')
         ); ?>
         <span class='dashicons dashicons-external'></span>
     </a>
@@ -50,7 +50,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
         <span class='ee-reg-list-link__reg-count'><?php echo absint($not_approved_regs); ?></span>
         <?php printf(
             esc_html__('%s Registrations', 'event_espresso'),
-            EEH_Template::pretty_status(EEM_Registration::status_id_not_approved, false, 'sentence')
+            EEH_Template::pretty_status(RegStatus::AWAITING_REVIEW, false, 'sentence')
         ); ?>
         <span class='dashicons dashicons-external'></span>
     </a>

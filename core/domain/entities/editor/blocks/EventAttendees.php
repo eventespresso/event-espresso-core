@@ -4,10 +4,10 @@ namespace EventEspresso\core\domain\entities\editor\blocks;
 
 use DomainException;
 use EE_Error;
-use EEM_Registration;
 use EventEspresso\core\domain\entities\editor\Block;
 use EventEspresso\core\domain\entities\editor\CoreBlocksAssetManager;
 use EventEspresso\core\domain\services\blocks\EventAttendeesBlockRenderer;
+use EventEspresso\core\domain\services\registration\RegStatus;
 use EventEspresso\core\services\request\RequestInterface;
 
 /**
@@ -80,7 +80,7 @@ class EventAttendees extends Block
                 ),
                 'status'            => array(
                     'type'    => 'string',
-                    'default' => EEM_Registration::status_id_approved,
+                    'default' => RegStatus::APPROVED,
                 ),
                 'limit'             => array(
                     'type'    => 'number',

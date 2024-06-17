@@ -42,9 +42,8 @@ class EE_Event_List_Shortcodes extends EE_Shortcodes
      */
     protected function _parser($shortcode)
     {
-        switch ($shortcode) {
-            case '[EVENT_LIST]':
-                return $this->_get_event_list();
+        if ($shortcode == '[EVENT_LIST]') {
+            return $this->_get_event_list();
         }
         return '';
     }

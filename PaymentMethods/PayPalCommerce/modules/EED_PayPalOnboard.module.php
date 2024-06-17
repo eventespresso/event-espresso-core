@@ -4,6 +4,7 @@ use EventEspresso\core\domain\services\database\DbStatus;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\DataType;
 use EventEspresso\core\services\request\RequestInterface;
+use EventEspresso\PaymentMethods\Manager;
 use EventEspresso\PaymentMethods\PayPalCommerce\api\partners\TrackSellerOnboarding;
 use EventEspresso\PaymentMethods\PayPalCommerce\api\PayPalApi;
 use EventEspresso\PaymentMethods\PayPalCommerce\domain\Domain;
@@ -406,7 +407,7 @@ class EED_PayPalOnboard extends EED_Module
             ],
         ];
         if (defined('LOCAL_MIDDLEMAN_SERVER')) {
-            $post_args['sslverify'] = false;
+            $post_args['sslverify'] = Manager::verifySSL();
         }
         $post_url = EED_PayPalOnboard::getMiddlemanBaseUrl($paypal_pm) . 'get_token';
         $response = EED_PayPalOnboard::sendRequest($paypal_pm, $post_url, $post_args);

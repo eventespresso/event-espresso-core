@@ -124,7 +124,7 @@ use EventEspresso\core\domain\entities\custom_post_types\EspressoPostType;
  * 'EVT_additional_limit'=>new EE_Integer_Field('EVT_additional_limit', esc_html__("Limit of Additional Registrations
  * on Same Transaction", "event_espresso"), true),
  * 'EVT_default_registration_status'=>new EE_Enum_Text_Field('EVT_default_registration_status', esc_html__("Default
- * Registration Status on this Event", "event_espresso"), false, EEM_Registration::status_id_pending_payment,
+ * Registration Status on this Event", "event_espresso"), false, RegStatus::PENDING_PAYMENT,
  * EEM_Registration::reg_status_array()),
  * 'EVT_member_only'=>new EE_Boolean_Field('EVT_member_only', esc_html__("Member-Only Event Flag", "event_espresso"),
  * false, false),

@@ -1,0 +1,47 @@
+#site_license_key {
+    margin-right: .5rem;
+    max-width: calc(100% - 4rem) !important;
+}
+#site_license_key + .dashicons.dashicons-admin-network {
+    font-size: 2rem;
+    height: 2rem;
+    margin: 0.5rem 0.25rem 0;
+    width: 2rem;
+}
+.espresso-admin input.ee_media_url {
+    max-width: calc(100% - 4rem) !important;
+}
+
+.ee-license-status__wrapper.ee-layout-row--fixed {
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+}
+.ee-license-status__wrapper .ee-license-status__icon {
+    font-size: 2rem;
+    height: 2rem;
+    margin: 0 0.25rem;
+    width: 2rem;
+}
+.espresso-admin.wp-core-ui .button.ee-license-action-btn--hidden {
+    display: none;
+}
+
+.event-espresso_page_espresso_license_keys .ee-status-outline {
+    align-items: center;
+    display: flex;
+}
+
+.ee-status-outline.ee-status-outline--info.ee-status-bg--info {
+    color: var(--ee-status-color-blue) !important;
+    font-size: 1.1rem;
+    font-weight: 600;
+}
+.ee-status-outline.ee-status-outline--info.ee-status-bg--info .dashicons-sos {
+    color: var(--ee-status-color-blue) !important;
+    font-size: 3rem;
+    height: 3rem;
+    margin-inline-end: var(--ee-margin-small);
+    width: 3rem;
+}
+

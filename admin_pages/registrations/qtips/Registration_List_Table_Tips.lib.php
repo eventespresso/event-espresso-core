@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\domain\services\registration\RegStatus;
+
 /**
  * Registration_List_Table_Tips
  *
@@ -23,9 +25,9 @@ class Registration_List_Table_Tips extends EE_Qtip_Config
             ),
             /** removing status strips for now because they are triggered anywhere on the row. */
             /**1 => array(
-             * 'content_id' => 'registration-status-' . EEM_Registration::status_id_approved,
-             * 'target' => '.reg-status-' . EEM_Registration::status_id_approved,
-             * 'content' => $this->_registration_status_legend(EEM_Registration::status_id_approved),
+             * 'content_id' => 'registration-status-' . RegStatus::APPROVED,
+             * 'target' => '.reg-status-' . RegStatus::APPROVED,
+             * 'content' => $this->_registration_status_legend(RegStatus::APPROVED),
              * 'options' => array(
              * 'position' => array(
              * 'target' => 'mouse'
@@ -33,9 +35,9 @@ class Registration_List_Table_Tips extends EE_Qtip_Config
              * )
              * ),
              * 2 => array(
-             * 'content_id' => 'registration-status-' . EEM_Registration::status_id_pending_payment,
-             * 'target' => '.reg-status-' . EEM_Registration::status_id_pending_payment,
-             * 'content' => $this->_registration_status_legend(EEM_Registration::status_id_pending_payment),
+             * 'content_id' => 'registration-status-' . RegStatus::PENDING_PAYMENT,
+             * 'target' => '.reg-status-' . RegStatus::PENDING_PAYMENT,
+             * 'content' => $this->_registration_status_legend(RegStatus::PENDING_PAYMENT),
              * 'options' => array(
              * 'position' => array(
              * 'target' => 'mouse'
@@ -43,9 +45,9 @@ class Registration_List_Table_Tips extends EE_Qtip_Config
              * )
              * ),
              * 3 => array(
-             * 'content_id' => 'registration-status-' . EEM_Registration::status_id_not_approved,
-             * 'target' => '.reg-status-' . EEM_Registration::status_id_not_approved,
-             * 'content' => $this->_registration_status_legend(EEM_Registration::status_id_not_approved),
+             * 'content_id' => 'registration-status-' . RegStatus::AWAITING_REVIEW,
+             * 'target' => '.reg-status-' . RegStatus::AWAITING_REVIEW,
+             * 'content' => $this->_registration_status_legend(RegStatus::AWAITING_REVIEW),
              * 'options' => array(
              * 'position' => array(
              * 'target' => 'mouse'
@@ -53,9 +55,9 @@ class Registration_List_Table_Tips extends EE_Qtip_Config
              * )
              * ),
              * 4 => array(
-             * 'content_id' => 'registration-status-' . EEM_Registration::status_id_declined,
-             * 'target' => '.reg-status-' . EEM_Registration::status_id_declined,
-             * 'content' => $this->_registration_status_legend(EEM_Registration::status_id_declined),
+             * 'content_id' => 'registration-status-' . RegStatus::DECLINED,
+             * 'target' => '.reg-status-' . RegStatus::DECLINED,
+             * 'content' => $this->_registration_status_legend(RegStatus::DECLINED),
              * 'options' => array(
              * 'position' => array(
              * 'target' => 'mouse'
@@ -63,9 +65,9 @@ class Registration_List_Table_Tips extends EE_Qtip_Config
              * )
              * ),
              * 5 => array(
-             * 'content_id' => 'registration-status-' . EEM_Registration::status_id_cancelled,
-             * 'target' => '.reg-status-' . EEM_Registration::status_id_cancelled,
-             * 'content' => $this->_registration_status_legend(EEM_Registration::status_id_cancelled),
+             * 'content_id' => 'registration-status-' . RegStatus::CANCELLED,
+             * 'target' => '.reg-status-' . RegStatus::CANCELLED,
+             * 'content' => $this->_registration_status_legend(RegStatus::CANCELLED),
              * 'options' => array(
              * 'position' => array(
              * 'target' => 'mouse'
@@ -96,11 +98,11 @@ class Registration_List_Table_Tips extends EE_Qtip_Config
     {
 
         $status_array = array(
-            'approved_status' => EEM_Registration::status_id_approved,
-            'pending_status' => EEM_Registration::status_id_pending_payment,
-            'not_approved' => EEM_Registration::status_id_not_approved,
-            'declined_status' => EEM_Registration::status_id_declined,
-            'cancelled_status' => EEM_Registration::status_id_cancelled,
+            'approved_status' => RegStatus::APPROVED,
+            'pending_status' => RegStatus::PENDING_PAYMENT,
+            'not_approved' => RegStatus::AWAITING_REVIEW,
+            'declined_status' => RegStatus::DECLINED,
+            'cancelled_status' => RegStatus::CANCELLED,
         );
 
         return EEH_Template::status_legend($status_array, $status);

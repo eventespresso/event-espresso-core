@@ -34,6 +34,7 @@ class EE_Switch_Display_Strategy extends EE_Compound_Input_Display_Strategy
 				   style='{$input->html_style()}'
 				   value=$switch_value
 				   {$this->_input->other_html_attributes()}
+				   {$this->dataAttributesString($this->_input->dataAttributes())}
 				   $checked
 			/>
 			<label class='ee-switch__toggle' for='$html_id'></label>

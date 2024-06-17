@@ -16,50 +16,26 @@ use WP_Query;
  */
 class EventListQuery extends WP_Query
 {
-    /**
-     * @var string $title
-     */
-    private $title;
+    private ?string $title = '';
+
+    private int $limit = 10;
+
+    private ?string $css_class = '';
+
+    private bool $show_expired = false;
+
+    private ?string $month = '';
+
+    private ?string $category_slug = '';
 
     /**
-     * @var integer $limit
+     * @var array|string|null
      */
-    private $limit = 10;
+    private $order_by =[];
 
-    /**
-     * @var string $css_class
-     */
-    private $css_class;
+    private ?string $sort = '';
 
-    /**
-     * @var boolean $show_expired
-     */
-    private $show_expired = false;
-
-    /**
-     * @var string $month
-     */
-    private $month;
-
-    /**
-     * @var string $category_slug
-     */
-    private $category_slug;
-
-    /**
-     * @var string $order_by
-     */
-    private $order_by;
-
-    /**
-     * @var string $sort
-     */
-    private $sort;
-
-    /**
-     * @var boolean $show_title
-     */
-    private $show_title = true;
+    private bool $show_title = true;
 
 
     /**
@@ -67,7 +43,7 @@ class EventListQuery extends WP_Query
      *
      * @param array $args
      */
-    public function __construct($args = array())
+    public function __construct($args = [])
     {
         $args = $this->parseArgs((array) $args);
         $this->setupEventQueryHelper();
@@ -82,7 +58,7 @@ class EventListQuery extends WP_Query
      * @param array $args
      * @return array
      */
-    private function parseArgs(array $args)
+    private function parseArgs(array $args): array
     {
         // incoming args could be a mix of WP query args + EE shortcode args
         foreach ($args as $property => $value) {
@@ -118,65 +94,59 @@ class EventListQuery extends WP_Query
         // first off, let's remove any filters from previous queries
         remove_filter(
             'FHEE__archive_espresso_events_template__show_header',
-            array($this, 'show_event_list_title')
+            [$this, 'show_event_list_title']
         );
         remove_filter(
             'FHEE__archive_espresso_events_template__upcoming_events_h1',
-            array($this, 'event_list_title')
+            [$this, 'event_list_title']
         );
         remove_all_filters('FHEE__content_espresso_events__event_class');
         // Event List Title ?
         add_filter(
             'FHEE__archive_espresso_events_template__show_header',
-            array($this, 'show_event_list_title')
+            [$this, 'show_event_list_title']
         );
         add_filter(
             'FHEE__archive_espresso_events_template__upcoming_events_h1',
-            array($this, 'event_list_title'),
-            10,
-            1
+            [$this, 'event_list_title']
         );
         // add the css class
         add_filter(
             'FHEE__content_espresso_events__event_class',
-            array($this, 'event_list_css'),
-            10,
-            1
+            [$this, 'event_list_css']
         );
     }
 
 
-    private function getQueryArgs(array $args)
+    private function getQueryArgs(array $args): array
     {
         // the current "page" we are viewing
         $paged = max(1, get_query_var('paged'));
         // Force these args
         return array_merge(
             $args,
-            array(
+            [
                 'post_type'              => EspressoPostType::EVENTS,
                 'posts_per_page'         => $this->limit,
                 'update_post_term_cache' => false,
                 'update_post_meta_cache' => false,
                 'paged'                  => $paged,
                 'offset'                 => ($paged - 1) * $this->limit,
-            )
+            ]
         );
     }
 
     // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
+
 
     /**
      * show_event_list_title
      *
      * @return boolean
      */
-    public function show_event_list_title()
+    public function show_event_list_title(): bool
     {
-        return filter_var(
-            $this->show_title,
-            FILTER_VALIDATE_BOOLEAN
-        );
+        return filter_var($this->show_title, FILTER_VALIDATE_BOOLEAN);
     }
 
 
@@ -186,7 +156,7 @@ class EventListQuery extends WP_Query
      * @param string $event_list_title
      * @return    string
      */
-    public function event_list_title($event_list_title = '')
+    public function event_list_title(string $event_list_title = ''): string
     {
         if (! empty($this->title)) {
             return $this->title;
@@ -201,7 +171,7 @@ class EventListQuery extends WP_Query
      * @param string $event_list_css
      * @return string
      */
-    public function event_list_css($event_list_css = '')
+    public function event_list_css(string $event_list_css = ''): string
     {
         $event_list_css .= ! empty($event_list_css) ? ' ' : '';
         $event_list_css .= ! empty($this->css_class) ? $this->css_class : '';

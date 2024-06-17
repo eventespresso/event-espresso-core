@@ -1,6 +1,6 @@
 # Event Espresso GraphQL API
 
-Event Espresso GraphQL API is based on [WP GraphQL](https://github.com/wp-graphql). Please visit WP GraphQL [docs](https://docs.wpgraphql.com/) to get started. You can also use any _GraphiQL_ explorer to browse the API schema.
+Event Espresso GraphQL API is based on [WP GraphQL](https://github.com/wp-graphql). Please visit WP GraphQL [docs](https://www.wpgraphql.com/docs/introduction) to get started. You can also use any _GraphiQL_ explorer to browse the API schema. Unless `wp-config.php` constant `GRAPHQL_DEBUG` is set to `true` admin interface for [WP GraphQL](https://github.com/wp-graphql) will remain hidden in the backend (`/wp-admin/`) including [GraphiQL IDE](https://www.wpgraphql.com/docs/wp-graphiql).
 
 ## Examples
 

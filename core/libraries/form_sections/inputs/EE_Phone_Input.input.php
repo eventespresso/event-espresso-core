@@ -25,6 +25,6 @@ class EE_Phone_Input extends EE_Text_Input
                 '~^(([\d]{10})|(^[\d]{3}-[\d]{3}-[\d]{4}))$~'
             )
         );
-        parent::__construct($options);
+        parent::__construct($options, 'tel');
     }
 }

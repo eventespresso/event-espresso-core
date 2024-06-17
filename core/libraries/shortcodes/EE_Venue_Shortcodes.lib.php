@@ -93,67 +93,51 @@ class EE_Venue_Shortcodes extends EE_Shortcodes
         switch ($shortcode) {
             case '[VENUE_TITLE]':
                 return $this->_venue('title');
-                break;
 
             case '[VENUE_DESCRIPTION]':
                 return $this->_venue('description');
-                break;
 
             case '[VENUE_URL]':
                 return $this->_venue('url');
-                break;
 
             case '[VENUE_IMAGE]':
                 return $this->_venue('image');
-                break;
 
             case '[VENUE_PHONE]':
                 return $this->_venue('phone');
-                break;
 
             case '[VENUE_ADDRESS]':
                 return $this->_venue('address');
-                break;
 
             case '[VENUE_ADDRESS2]':
                 return $this->_venue('address2');
-                break;
 
             case '[VENUE_CITY]':
                 return $this->_venue('city');
-                break;
 
             case '[VENUE_COUNTRY]':
                 return $this->_venue('country');
-                break;
 
             case '[VENUE_STATE]':
                 return $this->_venue('state');
-                break;
 
             case '[VENUE_ZIP]':
                 return $this->_venue('zip');
-                break;
 
             case '[VENUE_FORMATTED_ADDRESS]':
                 return $this->_venue('formatted_address');
-                break;
 
             case '[GOOGLE_MAP_URL]':
                 return $this->_venue('gmap_url');
-                break;
 
             case '[GOOGLE_MAP_LINK]':
                 return $this->_venue('gmap_link');
-                break;
 
             case '[GOOGLE_MAP_IMAGE]':
                 return $this->_venue('gmap_link_img');
-                break;
 
             case '[VENUE_DETAILS_URL]':
                 return $this->_venue('permalink');
-                break;
         }
 
         if (strpos($shortcode, '[VENUE_META_*') !== false) {

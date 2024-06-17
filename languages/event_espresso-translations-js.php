@@ -16,6 +16,9 @@ $generated_i18n_strings = array(
 	// Reference: packages/ui-components/src/Pagination/constants.ts:10
 	__( '48', 'event_espresso' ),
 
+	// Reference: packages/ui-components/src/Pagination/constants.ts:11
+	__( '96', 'event_espresso' ),
+
 	// Reference: domains/core/admin/blocks/src/components/AvatarImage.tsx:27
 	__( 'contact avatar', 'event_espresso' ),
 
@@ -131,7 +134,7 @@ $generated_i18n_strings = array(
 
 	// Reference: domains/core/admin/blocks/src/event/controls/SelectField.tsx:10
 	// Reference: domains/core/admin/blocks/src/services/utils.ts:24
-	// Reference: packages/utils/src/list/index.ts:14
+	// Reference: packages/utils/src/list/index.ts:13
 	__( 'Select…', 'event_espresso' ),
 
 	// Reference: domains/core/admin/blocks/src/event/controls/SelectField.tsx:15
@@ -297,7 +300,11 @@ $generated_i18n_strings = array(
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:222
 	__( 'End Date', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/DateRegistrationsLink.tsx:13
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/DateRegistrationsLink.tsx:25
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/TicketRegistrationsLink.tsx:13
+	__( 'total registrations.', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/DateRegistrationsLink.tsx:26
 	__( 'view ALL registrations for this date.', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/DateSoldLink.tsx:13
@@ -867,9 +874,6 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:95
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:110
 	__( 'Quantity For Sale', 'event_espresso' ),
-
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/TicketRegistrationsLink.tsx:13
-	__( 'total registrations.', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/TicketRegistrationsLink.tsx:14
 	__( 'view ALL registrations for this ticket.', 'event_espresso' ),
@@ -1736,10 +1740,10 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/form-builder/src/state/utils.ts:442
 	__( 'year', 'event_espresso' ),
 
-	// Reference: packages/form/src/adapters/WPMediaImage.tsx:12
+	// Reference: packages/form/src/adapters/WPMediaImage.tsx:13
 	__( 'Select Image', 'event_espresso' ),
 
-	// Reference: packages/form/src/adapters/WPMediaImage.tsx:44
+	// Reference: packages/form/src/adapters/WPMediaImage.tsx:45
 	// Reference: packages/rich-text-editor/src/components/AdvancedTextEditor/toolbarButtons/WPMedia.tsx:11
 	// Reference: packages/rich-text-editor/src/rte-old/components/toolbarButtons/WPMedia.tsx:12
 	// Reference: packages/ui-components/src/SimpleEntityList/EntityTemplate.tsx:32
@@ -2222,17 +2226,24 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/ui-components/src/Pagination/ItemRender.tsx:9
 	__( 'next', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/Pagination/PerPage.tsx:37
+	// Reference: packages/ui-components/src/Pagination/PerPage.tsx:45
+	/* translators: %1$d is first item #, %2$d is last item #, %3$d is total items, ex: 20-30 of 100 items */
+	__( '%1$d-%2$d of %3$d items', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/Pagination/PerPage.tsx:54
 	__( 'items per page', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/Pagination/constants.ts:10
+	// Reference: packages/ui-components/src/Pagination/constants.ts:11
 	/* translators: %s is per page value */
 	__( '%s / page', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/Pagination/constants.ts:13
+	// Reference: packages/ui-components/src/Pagination/constants.ts:12
+	__( 'show all', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/Pagination/constants.ts:15
 	__( 'Next Page', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/Pagination/constants.ts:14
+	// Reference: packages/ui-components/src/Pagination/constants.ts:16
 	__( 'Previous Page', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/PercentSign/index.tsx:10

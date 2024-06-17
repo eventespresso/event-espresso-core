@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\services\registration\RegStatus;
 use EventEspresso\core\domain\services\admin\registrations\list_table\csv_reports\PaymentsInfoCSV;
 
 /**
@@ -390,7 +391,7 @@ class EE_Export
                             array(EEM_Transaction::failed_status_code, EEM_Transaction::abandoned_status_code),
                         ),
                         // unless the registration is approved, in which case include it regardless of transaction status
-                        'STS_ID'             => EEM_Registration::status_id_approved,
+                        'STS_ID'             => RegStatus::APPROVED,
                     ),
                     'Ticket.TKT_deleted' => array('IN', array(true, false)),
                 ),

@@ -43,11 +43,16 @@ class EE_Question_Shortcodes extends EE_Shortcodes
      * @param string $shortcode the shortcode to be parsed.
      *
      * @return string parsed shortcode
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _parser($shortcode)
     {
-
-        if (! $this->_data instanceof EE_Answer || ! isset($this->_extra_data['data']) || ! $this->_extra_data['data'] instanceof EE_Messages_Addressee) {
+        if (
+            ! $this->_data instanceof EE_Answer
+            || ! isset($this->_extra_data['data'])
+            || ! $this->_extra_data['data'] instanceof EE_Messages_Addressee
+        ) {
             return '';
         }
 
@@ -60,7 +65,6 @@ class EE_Question_Shortcodes extends EE_Shortcodes
                 }
 
                 return $question->get('QST_display_text');
-                break;
 
             case '[ANSWER]':
                 // need to get the question to determine the type of question (some questions require translation of the answer).
@@ -93,7 +97,6 @@ class EE_Question_Shortcodes extends EE_Shortcodes
                     $question,
                     $this->_data
                 );
-                break;
         }
 
         return '';

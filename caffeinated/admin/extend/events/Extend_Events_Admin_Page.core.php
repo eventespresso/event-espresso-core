@@ -3,6 +3,7 @@
 use EventEspresso\core\domain\entities\custom_post_types\EspressoPostType;
 use EventEspresso\core\domain\services\admin\events\editor\ui\DuplicateEventButton;
 use EventEspresso\core\domain\services\admin\events\editor\ui\TicketSelectorShortcodeButton;
+use EventEspresso\core\domain\services\registration\RegStatus;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
@@ -895,10 +896,10 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
 
         $default_reg_status_values = EEM_Registration::reg_status_array(
             [
-                EEM_Registration::status_id_cancelled,
-                EEM_Registration::status_id_declined,
-                EEM_Registration::status_id_incomplete,
-                EEM_Registration::status_id_wait_list,
+                RegStatus::CANCELLED,
+                RegStatus::DECLINED,
+                RegStatus::INCOMPLETE,
+                RegStatus::WAIT_LIST,
             ],
             true
         );
@@ -970,10 +971,10 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
         // what we need to do is get all PRIMARY datetimes for all events to filter on.
         // Note we need to include any other filters that are set!
         return EEH_Form_Fields::generate_event_months_dropdown(
-            $this->request->getRequestParam('month_range'),
-            $this->request->getRequestParam('status'),
+            $this->request->getRequestParam('month_range', ''),
+            $this->request->getRequestParam('status', ''),
             $this->request->getRequestParam('EVT_CAT', 0, 'int'),
-            $this->request->getRequestParam('active_status')
+            $this->request->getRequestParam('active_status', '')
         );
     }
 

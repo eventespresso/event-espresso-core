@@ -1,9 +1,11 @@
 <?php
 
+use EventEspresso\core\domain\entities\contexts\Context;
 use EventEspresso\core\domain\entities\contexts\ContextInterface;
 use EventEspresso\core\domain\entities\RegCode;
 use EventEspresso\core\domain\entities\RegUrlLink;
 use EventEspresso\core\domain\services\registration\CreateRegistrationService;
+use EventEspresso\core\domain\services\registration\RegStatus;
 use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -168,7 +170,17 @@ class EE_Registration_Processor extends EE_Processor_Base
      */
     public function update_registration_status_and_trigger_notifications(EE_Registration $registration)
     {
-        $this->toggle_incomplete_registration_status_to_default($registration, false);
+        $this->toggle_incomplete_registration_status_to_default(
+            $registration,
+            false,
+            new Context(
+                __METHOD__,
+                esc_html__(
+                    'Executed when the registration status is updated during the registration process just prior to triggering notifications.',
+                    'event_espresso'
+                )
+            )
+        );
         $this->toggle_registration_status_for_default_approved_events($registration, false);
         $this->toggle_registration_status_if_no_monies_owing($registration, false);
         $registration->save();
@@ -216,7 +228,17 @@ class EE_Registration_Processor extends EE_Processor_Base
             )
         ) {
             // change status to new value
-            $updated = $registration->set_status($this->new_reg_status($registration->ID()));
+            $updated = $registration->set_status(
+                $this->new_reg_status($registration->ID()),
+                false,
+                new Context(
+                    __METHOD__,
+                    esc_html__(
+                        'Executed when the registration status is manually updated during the reg process.',
+                        'event_espresso'
+                    )
+                )
+            );
             if ($updated && $save) {
                 $registration->save();
             }
@@ -247,24 +269,34 @@ class EE_Registration_Processor extends EE_Processor_Base
     public function toggle_incomplete_registration_status_to_default(
         EE_Registration $registration,
         $save = true,
-        ContextInterface $context = null
+        ?ContextInterface $context = null
     ) {
         $existing_reg_status = $registration->status_ID();
         // set initial REG_Status
         $this->set_old_reg_status($registration->ID(), $existing_reg_status);
         // is the registration currently incomplete ?
-        if ($registration->status_ID() === EEM_Registration::status_id_incomplete) {
+        if ($registration->status_ID() === RegStatus::INCOMPLETE) {
             // grab default reg status for the event, if set
-            $event_default_registration_status = $registration->event()->default_registration_status();
+            $event_default_registration_status = $registration->defaultRegistrationStatus();
             // if no default reg status is set for the event, then use the global value
             $STS_ID = ! empty($event_default_registration_status)
                 ? $event_default_registration_status
                 : EE_Registry::instance()->CFG->registration->default_STS_ID;
             // if the event default reg status is approved, then downgrade temporarily to payment pending to ensure that payments are triggered
-            $STS_ID = $STS_ID === EEM_Registration::status_id_approved ? EEM_Registration::status_id_pending_payment
+            $STS_ID = $STS_ID === RegStatus::APPROVED
+                ? RegStatus::PENDING_PAYMENT
                 : $STS_ID;
             // set incoming REG_Status
             $this->set_new_reg_status($registration->ID(), $STS_ID);
+            $context = $context instanceof ContextInterface
+                ? $context
+                : new Context(
+                    __METHOD__,
+                    esc_html__(
+                        'Executed when the registration status is updated to the default reg status during the registration process.',
+                        'event_espresso'
+                    )
+                );
             $registration->set_status($STS_ID, false, $context);
             if ($save) {
                 $registration->save();
@@ -315,16 +347,25 @@ class EE_Registration_Processor extends EE_Processor_Base
         // if not already, toggle reg status to approved IF the event default reg status is approved
         // ( as long as the registration wasn't cancelled or declined at some point )
         if (
-            $reg_status !== EEM_Registration::status_id_cancelled
-            && $reg_status
-               !== EEM_Registration::status_id_declined
-            && $reg_status !== EEM_Registration::status_id_approved
-            && $registration->event()->default_registration_status() === EEM_Registration::status_id_approved
+            $reg_status !== RegStatus::CANCELLED
+            && $reg_status !== RegStatus::DECLINED
+            && $reg_status !== RegStatus::APPROVED
+            && $registration->defaultRegistrationStatus() === RegStatus::APPROVED
         ) {
             // set incoming REG_Status
-            $this->set_new_reg_status($registration->ID(), EEM_Registration::status_id_approved);
+            $this->set_new_reg_status($registration->ID(), RegStatus::APPROVED);
             // toggle status to approved
-            $registration->set_status(EEM_Registration::status_id_approved);
+            $registration->set_status(
+                RegStatus::APPROVED,
+                false,
+                new Context(
+                    __METHOD__,
+                    esc_html__(
+                        'Executed when the registration status is updated for events with a default reg status of RegStatus::APPROVED.',
+                        'event_espresso'
+                    )
+                )
+            );
             if ($save) {
                 $registration->save();
             }
@@ -386,7 +427,7 @@ class EE_Registration_Processor extends EE_Processor_Base
         // toggle reg status to approved IF
         if (
 // REG status is pending payment
-            $registration->status_ID() === EEM_Registration::status_id_pending_payment
+            $registration->status_ID() === RegStatus::PENDING_PAYMENT
             // AND no monies are owing
             && (
                 (
@@ -411,9 +452,19 @@ class EE_Registration_Processor extends EE_Processor_Base
             // mark as paid
             self::$_amount_paid[ $registration->ID() ] = $registration->final_price();
             // track new REG_Status
-            $this->set_new_reg_status($registration->ID(), EEM_Registration::status_id_approved);
+            $this->set_new_reg_status($registration->ID(), RegStatus::APPROVED);
             // toggle status to approved
-            $registration->set_status(EEM_Registration::status_id_approved);
+            $registration->set_status(
+                RegStatus::APPROVED,
+                false,
+                new Context(
+                    __METHOD__,
+                    esc_html__(
+                        'Executed when the registration status is updated to RegStatus::APPROVED when no monies are owing.',
+                        'event_espresso'
+                    )
+                )
+            );
             if ($save) {
                 $registration->save();
             }
@@ -517,7 +568,7 @@ class EE_Registration_Processor extends EE_Processor_Base
         // set new  REG_Status
         $this->set_new_reg_status($registration->ID(), $registration->status_ID());
         return $this->reg_status_updated($registration->ID())
-               && $this->new_reg_status($registration->ID()) === EEM_Registration::status_id_approved;
+               && $this->new_reg_status($registration->ID()) === RegStatus::APPROVED;
     }
 
 

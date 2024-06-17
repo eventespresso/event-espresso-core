@@ -269,7 +269,7 @@ $generated_i18n_strings = array(
 	__( 'approved', 'event_espresso' ),
 
 	// Reference: assets/src/data/model/status/helpers.js:31
-	__( 'not approved', 'event_espresso' ),
+	__( 'not approved / awaiting review', 'event_espresso' ),
 
 	// Reference: assets/src/data/model/status/helpers.js:43
 	__( 'wait list', 'event_espresso' ),

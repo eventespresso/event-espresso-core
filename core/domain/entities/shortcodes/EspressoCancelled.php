@@ -6,6 +6,7 @@ use EE_Cart;
 use EE_Error;
 use EE_Registration;
 use EE_Registry;
+use EE_Session;
 use EE_Transaction;
 use EventEspresso\core\services\shortcodes\EspressoShortcode;
 use ReflectionException;
@@ -68,7 +69,11 @@ class EspressoCancelled extends EspressoShortcode
      */
     public function processShortcode($attributes = array())
     {
-        $transaction = EE_Registry::instance()->SSN->get_session_data('transaction');
+        $session = EE_Registry::instance()->SSN;
+        if (! $session instanceof EE_Session) {
+            return '';
+        }
+        $transaction = $session->get_session_data('transaction');
         if ($transaction instanceof EE_Transaction) {
             do_action('AHEE__EES_Espresso_Cancelled__process_shortcode__transaction', $transaction);
             $registrations = $transaction->registrations();
@@ -80,11 +85,11 @@ class EspressoCancelled extends EspressoShortcode
         }
         do_action('AHEE__EES_Espresso_Cancelled__process_shortcode__clear_session');
         // remove all unwanted records from the db
-        if (EE_Registry::instance()->CART instanceof EE_Cart) {
-            EE_Registry::instance()->CART->delete_cart();
+        if ($session->cart() instanceof EE_Cart) {
+            $session->cart()->delete_cart();
         }
+        $session->clear_session(__CLASS__, __FUNCTION__);
         // phpcs:disable WordPress.WP.I18n.UnorderedPlaceholdersText
-        EE_Registry::instance()->SSN->clear_session(__CLASS__, __FUNCTION__);
         return sprintf(
             esc_html__(
                 '%sAll unsaved registration information entered during this session has been deleted.%s',

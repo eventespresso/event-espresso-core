@@ -5,24 +5,24 @@ namespace EventEspresso\core\services\addon\api\v1;
 class LegacyModelApi
 {
     /**
-     * @var string path to EE_* entity classes
+     * path to EE_* entity classes
      */
-    private $entity_classes;
+    private string $entity_classes = '';
 
     /**
-     * @var string path to EEM_* entity model classes
+     * path to EEM_* entity model classes
      */
-    private $entity_models;
+    private string $entity_models = '';
 
     /**
-     * @var string path to EEE_* entity class extensions
+     * path to EEE_* entity class extensions
      */
-    private $entity_class_extensions;
+    private string $entity_class_extensions = '';
 
     /**
-     * @var string path to EEME_* entity model class extensions
+     * path to EEME_* entity model class extensions
      */
-    private $entity_model_extensions;
+    private string $entity_model_extensions = '';
 
 
     /**

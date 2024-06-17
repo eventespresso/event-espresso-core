@@ -47,11 +47,11 @@ class EE_Event_Meta_Shortcodes extends EE_Shortcodes
     /**
      * We have to overload the parent parser method because of the dynamic nature of custom event meta
      *
-     * @param  string $shortcode Incoming shortcode
-     * @param  mixed (array|object) $data      incoming data object/array
+     * @param  string      $shortcode Incoming shortcode
+     * @param array|object $data      incoming data object/array
      * @return string            parsed code.
      */
-    public function parser($shortcode, $data, $extra_data = array())
+    public function parser(string $shortcode, $data, $extra_data = []): string
     {
 
         // all shortcodes will be checked in the post_meta table (assuming the shortcode matches the post_meta key);
@@ -67,5 +67,6 @@ class EE_Event_Meta_Shortcodes extends EE_Shortcodes
 
     protected function _parser($shortcode)
     {
+        return '';
     }
 }

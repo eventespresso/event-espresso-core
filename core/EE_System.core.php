@@ -2,6 +2,10 @@
 
 use EventEspresso\core\domain\Domain;
 use EventEspresso\core\domain\DomainFactory;
+use EventEspresso\core\domain\services\capabilities\FeatureFlags;
+use EventEspresso\core\domain\services\custom_post_types\RegisterCustomPostTypes;
+use EventEspresso\core\domain\services\custom_post_types\RegisterCustomTaxonomies;
+use EventEspresso\core\domain\services\custom_post_types\RegisterCustomTaxonomyTerms;
 use EventEspresso\core\domain\services\database\MaintenanceStatus;
 use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
 use EventEspresso\core\exceptions\InvalidClassException;
@@ -72,75 +76,40 @@ final class EE_System implements ResettableInterface
      */
     const addon_activation_history_option_prefix = 'ee_addon_activation_history_';
 
-    /**
-     * @var AddonManager $addon_manager
-     */
-    private $addon_manager;
+    private static ?EE_System $_instance = null;
 
-    /**
-     * @var EE_System $_instance
-     */
-    private static $_instance;
+    private ?LoaderInterface $loader;
 
-    /**
-     * @var EE_Registry $registry
-     */
-    private $registry;
+    private ?EE_Maintenance_Mode $maintenance_mode;
 
-    /**
-     * @var LoaderInterface $loader
-     */
-    private $loader;
+    private ?EE_Registry $registry;
 
-    /**
-     * @var EE_Capabilities $capabilities
-     */
-    private $capabilities;
+    private ?RequestInterface $request;
 
-    /**
-     * @var EE_Maintenance_Mode $maintenance_mode
-     */
-    private $maintenance_mode;
+    private Router $router;
 
-    /**
-     * @var RequestInterface $request
-     */
-    private $request;
+    private ?AddonManager $addon_manager = null;
+
+    private ?EE_Capabilities $capabilities = null;
+
+    protected ?FeatureFlags $feature = null;
+
+    private ?RegisterCustomPostTypes $register_custom_post_types = null;
+
+    private ?RegisterCustomTaxonomies $register_custom_taxonomies = null;
+
+    private ?RegisterCustomTaxonomyTerms $register_custom_taxonomy_terms = null;
 
     /**
      * Stores which type of request this is, options being one of the constants on EE_System starting with req_type_*.
      * It can be a brand-new activation, a reactivation, an upgrade, a downgrade, or a normal request.
-     *
-     * @var int $_req_type
      */
-    private $_req_type;
+    private ?int $_req_type = null;
 
     /**
      * Whether or not there was a non-micro version change in EE core version during this request
-     *
-     * @var boolean $_major_version_change
      */
-    private $_major_version_change = false;
-
-    /**
-     * @var Router $router
-     */
-    private $router;
-
-    /**
-     * @param EventEspresso\core\domain\services\custom_post_types\RegisterCustomPostTypes
-     */
-    private $register_custom_post_types;
-
-    /**
-     * @param EventEspresso\core\domain\services\custom_post_types\RegisterCustomTaxonomies
-     */
-    private $register_custom_taxonomies;
-
-    /**
-     * @param EventEspresso\core\domain\services\custom_post_types\RegisterCustomTaxonomyTerms
-     */
-    private $register_custom_taxonomy_terms;
+    private bool $_major_version_change = false;
 
 
     /**
@@ -150,18 +119,20 @@ final class EE_System implements ResettableInterface
      * @param EE_Registry|null         $registry
      * @param RequestInterface|null    $request
      * @param Router|null              $router
+     * @param FeatureFlags|null        $feature
      * @return EE_System
      */
     public static function instance(
-        LoaderInterface $loader = null,
-        EE_Maintenance_Mode $maintenance_mode = null,
-        EE_Registry $registry = null,
-        RequestInterface $request = null,
-        Router $router = null
+        ?LoaderInterface $loader = null,
+        ?EE_Maintenance_Mode $maintenance_mode = null,
+        ?EE_Registry $registry = null,
+        ?RequestInterface $request = null,
+        ?Router $router = null,
+        ?FeatureFlags $feature = null
     ): EE_System {
         // check if class object is instantiated
         if (! self::$_instance instanceof EE_System) {
-            self::$_instance = new self($loader, $maintenance_mode, $registry, $request, $router);
+            self::$_instance = new self($loader, $maintenance_mode, $registry, $request, $router, $feature);
         }
         return self::$_instance;
     }
@@ -195,19 +166,22 @@ final class EE_System implements ResettableInterface
      * @param EE_Registry         $registry
      * @param RequestInterface    $request
      * @param Router              $router
+     * @param FeatureFlags        $feature
      */
     private function __construct(
         LoaderInterface $loader,
         EE_Maintenance_Mode $maintenance_mode,
         EE_Registry $registry,
         RequestInterface $request,
-        Router $router
+        Router $router,
+        FeatureFlags $feature
     ) {
         $this->registry         = $registry;
         $this->loader           = $loader;
         $this->request          = $request;
         $this->router           = $router;
         $this->maintenance_mode = $maintenance_mode;
+        $this->feature          = $feature;
         do_action('AHEE__EE_System__construct__begin', $this);
         add_action(
             'AHEE__EE_Bootstrap__load_espresso_addons',
@@ -379,7 +353,9 @@ final class EE_System implements ResettableInterface
             require_once EE_CAFF_PATH . 'brewing_regular.php';
             /** @var EE_Brewing_Regular $brew */
             $brew = LoaderFactory::getLoader()->getShared(EE_Brewing_Regular::class);
-            $brew->initializePUE();
+            if (! $this->feature->allowed('use_edd_plugin_licensing')) {
+                $brew->initializePUE();
+            }
             add_action(
                 'AHEE__EE_System__load_core_configuration__begin',
                 [$brew, 'caffeinated']
@@ -398,9 +374,19 @@ final class EE_System implements ResettableInterface
      *
      * @return void
      * @throws Exception
+     * @throws Throwable
      */
     public function load_espresso_addons()
     {
+        if ($this->feature->allowed('use_edd_plugin_licensing')) {
+            new EventEspresso\core\services\licensing\PluginLicense(
+                EVENT_ESPRESSO_MAIN_FILE,
+                0,
+                'Event Espresso Core',
+                'event_espresso_core',
+                espresso_version()
+            );
+        }
         // looking for hooks? they've been moved into the AddonManager to maintain compatibility
         $this->addon_manager->loadAddons();
     }

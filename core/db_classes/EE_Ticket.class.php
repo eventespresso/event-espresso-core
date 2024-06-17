@@ -1,6 +1,7 @@
 <?php
 
 use EventEspresso\core\domain\entities\tickets\TicketPriceModifiers;
+use EventEspresso\core\domain\services\registration\RegStatus;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
@@ -1633,7 +1634,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
         $count_regs_for_this_ticket = $this->count_registrations(
             [
                 [
-                    'STS_ID'      => EEM_Registration::status_id_approved,
+                    'STS_ID'      => RegStatus::APPROVED,
                     'REG_deleted' => 0,
                 ],
             ]

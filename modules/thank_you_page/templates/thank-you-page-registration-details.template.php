@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\domain\services\registration\RegStatus;
+
 /**
  * @type EE_Transaction $transaction
  * @type boolean        $is_primary
@@ -103,7 +105,7 @@
                     <span>
                     <?php $registration->e_pretty_status(true) ?>
                     <?php
-                    if ($registration->status_ID() === EEM_Registration::status_id_wait_list) {
+                    if ($registration->status_ID() === RegStatus::WAIT_LIST) {
                         $wait_list = true;
                     }
                     ?>

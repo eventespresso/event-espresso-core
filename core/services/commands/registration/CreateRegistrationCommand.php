@@ -6,9 +6,9 @@ use EE_Line_Item;
 use EE_Registration;
 use EE_Ticket;
 use EE_Transaction;
-use EEM_Registration;
 use EventEspresso\core\domain\services\capabilities\CapCheck;
 use EventEspresso\core\domain\services\capabilities\CapCheckInterface;
+use EventEspresso\core\domain\services\registration\RegStatus;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidEntityException;
 use EventEspresso\core\services\commands\Command;
@@ -76,7 +76,7 @@ class CreateRegistrationCommand extends Command implements CommandRequiresCapChe
         EE_Line_Item $ticket_line_item,
         $reg_count = 1,
         $reg_group_size = 0,
-        $reg_status = EEM_Registration::status_id_incomplete
+        $reg_status = RegStatus::INCOMPLETE
     ) {
         // grab the related ticket object for this line_item
         $this->ticket = $ticket_line_item->ticket();

@@ -205,6 +205,22 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
 
 
     /**
+     * returns string like: ' data-attribute-one="value-one" data-attribute-two="value-two"'
+     *
+     * @param array $data
+     * @return string
+     */
+    protected function dataAttributesString(array $data): string
+    {
+        $data_attributes = '';
+        foreach ($data as $attribute => $value) {
+            $data_attributes .= $this->_data_attribute($attribute, $value);
+        }
+        return $data_attributes;
+    }
+
+
+    /**
      * returns string like: ' data-attribute="value"'
      * returns an empty string if $value is null
      *
@@ -214,11 +230,8 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
      */
     protected function _data_attribute(string $attribute, string $value = ''): string
     {
-        if ($value === null) {
-            return '';
-        }
-        $value = esc_attr($value);
-        return " data-$attribute=\"$value\"";
+        $attribute = strpos($attribute, 'data-') !== 0 ? "data-$attribute" : $attribute;
+        return $this->_attribute($attribute, $value);
     }
 
 

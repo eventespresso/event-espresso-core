@@ -3,6 +3,7 @@
 use EventEspresso\core\domain\services\database\DbStatus;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\RequestInterface;
+use EventEspresso\PaymentMethods\Manager;
 
 /**
  * This class is used for setting scheduled tasks related to the EE_messages system.
@@ -116,7 +117,7 @@ class EE_Messages_Scheduler extends EE_Base
                 'timeout'     => 300,
                 'blocking'    => (defined('DOING_CRON') && DOING_CRON)
                     || (defined('DOING_AJAX') && DOING_AJAX),
-                'sslverify'   => false,
+                'sslverify'   => Manager::verifySSL(),
                 'redirection' => 10,
             ];
             $response     = wp_remote_get($request_url, $request_args);

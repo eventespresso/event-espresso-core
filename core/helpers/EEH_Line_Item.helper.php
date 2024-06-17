@@ -149,6 +149,7 @@ class EEH_Line_Item
      * @param EE_Line_Item|null $total_line_item grand total line item of type EEM_Line_Item::type_total
      * @param EE_Ticket         $ticket
      * @param int               $qty
+     * @param bool              $recalculate_totals
      * @return EE_Line_Item
      * @throws EE_Error
      * @throws ReflectionException
@@ -388,7 +389,13 @@ class EEH_Line_Item
                 $percent    = 0;
                 $unit_price = $sign * $price->amount();
             }
-            $price_desc = $price->desc() ? $price->desc() : $price->type_obj()->name();
+
+            $price_desc = $price->desc();
+            $price_type = $price->type_obj();
+            $price_desc = $price_desc === '' && $price_type instanceof EE_Price_Type
+                ? $price_type->name()
+                : $price_desc;
+
             $sub_line_item         = EE_Line_Item::new_instance(
                 [
                     'LIN_name'       => $price->name(),
@@ -452,7 +459,7 @@ class EEH_Line_Item
 
     /**
      * cancels an existing ticket line item,
-     * by decrementing it's quantity by 1 and adding a new "type_cancellation" sub-line-item.
+     * by decrementing its quantity by 1 and adding a new "type_cancellation" sub-line-item.
      * ALL totals and subtotals will NEED TO BE UPDATED after performing this action
      *
      * @param EE_Line_Item $ticket_line_item
@@ -554,7 +561,7 @@ class EEH_Line_Item
 
     /**
      * reinstates (un-cancels?) a previously canceled ticket line item,
-     * by incrementing it's quantity by 1, and decrementing it's "type_cancellation" sub-line-item.
+     * by incrementing its quantity by 1, and decrementing its "type_cancellation" sub-line-item.
      * ALL totals and subtotals will NEED TO BE UPDATED after performing this action
      *
      * @param EE_Line_Item $ticket_line_item
@@ -1802,7 +1809,7 @@ class EEH_Line_Item
                             // huh? that shouldn't happen.
                             $running_totals['total'] += $child_line_item->total();
                         } else {
-                            // its not in our running totals yet. great.
+                            // it's not in our running totals yet. great.
                             if ($child_line_item->is_taxable()) {
                                 $taxable_amount = $child_line_item->unit_price();
                             } else {
@@ -2051,7 +2058,7 @@ class EEH_Line_Item
 
 
     /**
-     * Cycles through all of the ticket line items for the supplied total line item
+     * Cycles through all the ticket line items for the supplied total line item
      * and ensures that the line item's "is_taxable" field matches that of its corresponding ticket
      *
      * @param EE_Line_Item $total_line_item

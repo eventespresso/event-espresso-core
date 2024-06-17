@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\services\registration\RegStatus;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\RequestInterface;
 
@@ -848,11 +849,11 @@ class EEH_MSG_Template
         return (array) apply_filters(
             'FHEE__EEH_MSG_Template__reg_status_to_message_type_array',
             array(
-                EEM_Registration::status_id_approved => 'registration',
-                EEM_Registration::status_id_pending_payment => 'pending_approval',
-                EEM_Registration::status_id_not_approved => 'not_approved_registration',
-                EEM_Registration::status_id_cancelled => 'cancelled_registration',
-                EEM_Registration::status_id_declined => 'declined_registration'
+                RegStatus::APPROVED => 'registration',
+                RegStatus::PENDING_PAYMENT => 'pending_approval',
+                RegStatus::AWAITING_REVIEW => 'not_approved_registration',
+                RegStatus::CANCELLED => 'cancelled_registration',
+                RegStatus::DECLINED => 'declined_registration'
             )
         );
     }

@@ -2,6 +2,7 @@
 
 use EventEspresso\core\exceptions\IpnException;
 use EventEspresso\payment_methods\Paypal_Standard\ItemizedOrder;
+use EventEspresso\PaymentMethods\Manager;
 
 /**
  * EEG_Paypal_Standard
@@ -387,7 +388,7 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway
             $this->_gateway_url,
             array(
                 'body'              => $req,
-                'sslverify'         => false,
+                'sslverify'         => Manager::verifySSL(),
                 'timeout'           => 60,
                 // make sure to set a site specific unique "user-agent" string since the WordPres default gets declined by PayPal
                 // plz see: https://github.com/websharks/s2member/issues/610

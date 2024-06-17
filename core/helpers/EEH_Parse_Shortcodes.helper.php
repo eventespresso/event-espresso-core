@@ -238,8 +238,7 @@ class EEH_Parse_Shortcodes
         }
 
         // now we've got parsed values for all the shortcodes in the template so we can go ahead and swap the shortcodes out.
-        $parsed = str_replace(array_values($matched_code), array_values($sc_values), $this->_template);
-        return $parsed;
+        return str_replace(array_values($matched_code), array_values($sc_values), $this->_template);
     }
 
 

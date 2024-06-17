@@ -3,6 +3,7 @@
 /**
  * @type bool $empty_cart
  * @type bool $revisit
+ * @type bool $use_session_countdown
  * @type EE_SPCO_Reg_Step[] $reg_steps
  * @type string $registration_time_limit
  * @type string $next_step
@@ -17,9 +18,8 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
 <div id="ee-single-page-checkout-dv" class="">
     <?php
     if (! $empty_cart) {
-        if (apply_filters('FHEE__registration_page_wrapper_template__display_time_limit', false)) { ?>
-            <p id="spco-registration-time-limit-pg" class="spco-steps-pg ee-attention important-notice"
-               style="display: none;">
+        if ($use_session_countdown) { ?>
+            <p id="spco-registration-time-limit-pg" class="spco-steps-pg ee-attention important-notice">
                 <?php echo sprintf(
                     apply_filters(
                         'FHEE__registration_page_wrapper_template___time_limit',

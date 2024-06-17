@@ -15,6 +15,7 @@ use EEM_Datetime;
 use EEM_Event;
 use EEM_Registration;
 use EEM_Ticket;
+use EventEspresso\core\domain\services\registration\RegStatus;
 use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -158,7 +159,7 @@ class EspressoEventAttendees extends EspressoShortcode
                 'event_id'            => null,
                 'datetime_id'         => null,
                 'ticket_id'           => null,
-                'status'              => EEM_Registration::status_id_approved,
+                'status'              => RegStatus::APPROVED,
                 'show_gravatar'       => false,
                 'display_on_archives' => false,
                 'limit'               => 999,

@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\services\registration\RegStatus;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
@@ -653,7 +654,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
             || (
                 // also release Tickets for Incomplete Transactions, but ONLY if the Registrations are NOT Approved
                 $STS_ID === EEM_Transaction::incomplete_status_code
-                && $registration->status_ID() !== EEM_Registration::status_id_approved
+                && $registration->status_ID() !== RegStatus::APPROVED
             )
         ) {
             if (self::debug) {

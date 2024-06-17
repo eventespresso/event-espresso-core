@@ -4,11 +4,10 @@ namespace EventEspresso\core\domain\services\registration\form\v1;
 
 use DomainException;
 use EE_Error;
-use EE_Form_Input_Base;
 use EE_Form_Section_HTML;
 use EE_Form_Section_Proper;
+use EE_Line_Item;
 use EE_Line_Item_Display;
-use EE_Question;
 use EE_Registration;
 use EE_Registration_Config;
 use EE_SPCO_Reg_Step_Attendee_Information;
@@ -31,35 +30,17 @@ use ReflectionException;
  */
 class RegForm extends EE_Form_Section_Proper
 {
-    /**
-     * @var bool
-     */
-    private $print_copy_info = false;
+    public EE_Registration_Config $reg_config;
 
-    /**
-     * @var EE_Registration_Config
-     */
-    public $reg_config;
+    public EE_SPCO_Reg_Step_Attendee_Information $reg_step;
 
-    /**
-     * @var int
-     */
-    protected $reg_form_count = 0;
+    private bool $print_copy_info = false;
 
-    /**
-     * @var EE_SPCO_Reg_Step_Attendee_Information
-     */
-    public $reg_step;
+    protected int $reg_form_count = 0;
 
-    /**
-     * @var array
-     */
-    private $required_questions = [];
+    private array $required_questions = [];
 
-    /**
-     * @var array
-     */
-    private $template_args = [];
+    private array $template_args = [];
 
 
     /**
@@ -219,11 +200,11 @@ class RegForm extends EE_Form_Section_Proper
                         'Ticket',
                         [$registration->ticket()->ID()]
                     );
-                    $ticket_line_item = is_array($ticket_line_item)
-                        ? reset($ticket_line_item)
-                        : $ticket_line_item;
+                    $ticket_line_item = reset($ticket_line_item);
                     $this->template_args['ticket_line_item'][ $registration->ticket()->ID() ] =
-                        $Line_Item_Display->display_line_item($ticket_line_item);
+                        $ticket_line_item instanceof EE_Line_Item
+                            ? $Line_Item_Display->display_line_item($ticket_line_item)
+                            : '';
                     if ($registration->is_primary_registrant()) {
                         $primary_registrant = $reg_url_link;
                     }

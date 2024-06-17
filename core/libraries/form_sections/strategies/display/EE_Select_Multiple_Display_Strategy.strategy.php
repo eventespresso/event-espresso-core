@@ -37,7 +37,8 @@ class EE_Select_Multiple_Display_Strategy extends EE_Select_Display_Strategy
             ? ' required'
             : '';
         $html .= ' style="' . $this->_input->html_style() . '"';
-        $html .= ' ' . $this->_input->other_html_attributes();
+        $html .= $this->_input->other_html_attributes();
+        $html .= $this->dataAttributesString($this->_input->dataAttributes());
         $html .= '>';
 
         EEH_HTML::indent(1, 'select');

@@ -13,18 +13,20 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
  *                                          'id' (internal value) and 'name' (label for displaying)
  */
 
-$question_order           = 0;
-$QSG_system               = $question_group->system_group();
-$question_group_questions = $question_group->questions();
+try {
 
-$disabled = ! empty($QSG_system) ? 'disabled' : '';
-$id = ! empty($QST_system) ? '_disabled' : '';
-$required_question_group_questions = EEM_Question::instance()->required_system_questions_in_system_question_group(
-    $QSG_system
-);
-$allowed_question_group_questions  = EEM_Question::instance()->allowed_system_questions_in_system_question_group(
-    $QSG_system
-);
+    $question_order           = 0;
+    $QSG_system               = $question_group->system_group();
+    $question_group_questions = $question_group->questions();
+
+    $disabled = ! empty($QSG_system) ? 'disabled' : '';
+    $id = ! empty($QST_system) ? '_disabled' : '';
+    $required_question_group_questions = EEM_Question::instance()->required_system_questions_in_system_question_group(
+        $QSG_system
+    );
+    $allowed_question_group_questions  = EEM_Question::instance()->allowed_system_questions_in_system_question_group(
+        $QSG_system
+    );
 ?>
 
 <div class="questions-group-wrap ee-layout-row">
@@ -44,7 +46,7 @@ $allowed_question_group_questions  = EEM_Question::instance()->allowed_system_qu
                         </label>
                     </th>
                     <td>
-                        <input class='regular-text'
+                        <input class='ee-input-width--reg'
                                id="QSG_name"
                                name="QSG_name"
                                type="text"
@@ -65,7 +67,7 @@ $allowed_question_group_questions  = EEM_Question::instance()->allowed_system_qu
                         </label>
                     </th>
                     <td>
-                        <input class='regular-text'
+                        <input class='ee-input-width--reg'
                             <?php echo esc_attr($disabled); ?>
                                id="QSG_identifier"
                                name="QSG_identifier<?php echo esc_attr($id); ?>"
@@ -95,7 +97,7 @@ $allowed_question_group_questions  = EEM_Question::instance()->allowed_system_qu
                     <td>
                         <textarea id="QSG_desc"
                                   name="QSG_desc"
-                                  class="regular-text"
+                                  class="ee-input-width--reg"
                                   rows="2"
                                   cols="40"
                         ><?php echo esc_textarea($question_group->get_f('QSG_desc')); ?></textarea>
@@ -113,9 +115,10 @@ $allowed_question_group_questions  = EEM_Question::instance()->allowed_system_qu
                         </label>
                     </th>
                     <td>
-                        <input class='ee-input-width--small'
+                        <input class='ee-input-width--tiny'
                                id="QSG_order"
                                name="QSG_order"
+                               type="number"
                                value="<?php echo esc_attr($question_group->order()); ?>"
                         />
                     </td>
@@ -135,7 +138,7 @@ $allowed_question_group_questions  = EEM_Question::instance()->allowed_system_qu
                                 $values,
                                 $question_group->show_group_name(),
                                 '',
-                                'ee-input-width--small'
+                                'ee-input-width--tiny'
                             ),
                             AllowedTags::getWithFormTags()
                         ); ?>
@@ -162,7 +165,7 @@ $allowed_question_group_questions  = EEM_Question::instance()->allowed_system_qu
                                 $values,
                                 $question_group->show_group_desc(),
                                 '',
-                                'ee-input-width--small'
+                                'ee-input-width--tiny'
                             ),
                             AllowedTags::getWithFormTags()
                         ); ?>
@@ -208,7 +211,7 @@ $allowed_question_group_questions  = EEM_Question::instance()->allowed_system_qu
                             && ! in_array($question->system_ID(), $allowed_question_group_questions)
                         ) {
                             // skip over system question not assigned to this group
-                            // except for the address system group cause we want the address questions to display
+                            // except for the address system group because we want the address questions to display
                             // even if they aren't selected (but still not show the personal system questions).
                             // The third condition checks if we're displaying a non system question group
                             // and the question is a system question, then we skip
@@ -278,3 +281,9 @@ $allowed_question_group_questions  = EEM_Question::instance()->allowed_system_qu
         </div>
     </div>
 </div>
+
+<?php
+
+} catch (Exception $e) {
+    EE_Error::add_error($e->getMessage(), __FILE__, __LINE__, __METHOD__);
+}

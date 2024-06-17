@@ -1,6 +1,7 @@
 <?php
 
 use EventEspresso\core\domain\entities\custom_post_types\EspressoPostType;
+use EventEspresso\core\domain\services\registration\RegStatus;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 
@@ -75,7 +76,7 @@ class EEM_Event extends EEM_CPT_Base
             ]
         );
         self::$_default_reg_status = empty(self::$_default_reg_status)
-            ? EEM_Registration::status_id_pending_payment
+            ? RegStatus::PENDING_PAYMENT
             : self::$_default_reg_status;
         $this->_tables             = [
             'Event_CPT'  => new EE_Primary_Table('posts', 'ID'),

@@ -63,6 +63,9 @@ class EE_Admin_Two_Column_Layout extends EE_Two_Column_Layout
         $input_html .= $input->get_html_for_help() !== ''
             ? EEH_HTML::nl() . $input->get_html_for_help()
             : '';
+        $input_html .= $input->extraContainerHtml() !== ''
+            ? EEH_HTML::nl() . $input->extraContainerHtml()
+            : '';
         // overriding parent to add wp admin specific things.
         $html = '';
         if ($input instanceof EE_Hidden_Input) {
@@ -78,7 +81,8 @@ class EE_Admin_Two_Column_Layout extends EE_Two_Column_Layout
                     'scope="row"'
                 )
                 . EEH_HTML::td($input_html),
-                sanitize_key($input->html_id()) . '-tr'
+                sanitize_key($input->html_id()) . '-tr',
+                $input->layoutContainerClass()
             );
         }
         return $html;

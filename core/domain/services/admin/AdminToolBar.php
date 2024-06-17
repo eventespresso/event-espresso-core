@@ -7,6 +7,7 @@ use EEH_URL;
 use EEM_Registration;
 use EventEspresso\core\domain\entities\custom_post_types\EspressoPostType;
 use EventEspresso\core\domain\services\database\MaintenanceStatus;
+use EventEspresso\core\domain\services\registration\RegStatus;
 use WP_Admin_Bar;
 
 /**
@@ -452,7 +453,7 @@ class AdminToolBar
                         [
                             'action'      => 'default',
                             'status'      => 'today',
-                            '_reg_status' => EEM_Registration::status_id_approved,
+                            '_reg_status' => RegStatus::APPROVED,
                         ],
                         $this->reg_admin_url
                     ),
@@ -488,7 +489,7 @@ class AdminToolBar
                         [
                             'action'      => 'default',
                             'status'      => 'today',
-                            '_reg_status' => EEM_Registration::status_id_pending_payment,
+                            '_reg_status' => RegStatus::PENDING_PAYMENT,
                         ],
                         $this->reg_admin_url
                     ),
@@ -519,17 +520,17 @@ class AdminToolBar
                     'id'     => 'espresso-toolbar-registrations-today-not-approved',
                     'parent' => 'espresso-toolbar-registrations',
                     'title'  => '<span class="ee-toolbar-icon"></span>'
-                                . esc_html__('Not Approved', 'event_espresso'),
+                                . esc_html__('Not Approved / Awaiting Review', 'event_espresso'),
                     'href'   => EEH_URL::add_query_args_and_nonce(
                         [
                             'action'      => 'default',
                             'status'      => 'today',
-                            '_reg_status' => EEM_Registration::status_id_not_approved,
+                            '_reg_status' => RegStatus::AWAITING_REVIEW,
                         ],
                         $this->reg_admin_url
                     ),
                     'meta'   => [
-                        'title'  => esc_html__('Not Approved', 'event_espresso'),
+                        'title'  => esc_html__('Not Approved / Awaiting Review', 'event_espresso'),
                         'target' => '',
                         'class'  => $this->menu_class . ' ee-toolbar-icon-not-approved',
                     ],
@@ -560,7 +561,7 @@ class AdminToolBar
                         [
                             'action'      => 'default',
                             'status'      => 'today',
-                            '_reg_status' => EEM_Registration::status_id_cancelled,
+                            '_reg_status' => RegStatus::CANCELLED,
                         ],
                         $this->reg_admin_url
                     ),
@@ -630,7 +631,7 @@ class AdminToolBar
                         [
                             'action'      => 'default',
                             'status'      => 'month',
-                            '_reg_status' => EEM_Registration::status_id_approved,
+                            '_reg_status' => RegStatus::APPROVED,
                         ],
                         $this->reg_admin_url
                     ),
@@ -666,7 +667,7 @@ class AdminToolBar
                         [
                             'action'      => 'default',
                             'status'      => 'month',
-                            '_reg_status' => EEM_Registration::status_id_pending_payment,
+                            '_reg_status' => RegStatus::PENDING_PAYMENT,
                         ],
                         $this->reg_admin_url
                     ),
@@ -697,17 +698,17 @@ class AdminToolBar
                     'id'     => 'espresso-toolbar-registrations-month-not-approved',
                     'parent' => 'espresso-toolbar-registrations',
                     'title'  => '<span class="ee-toolbar-icon"></span>'
-                                . esc_html__('Not Approved', 'event_espresso'),
+                                . esc_html__('Not Approved / Awaiting Review', 'event_espresso'),
                     'href'   => EEH_URL::add_query_args_and_nonce(
                         [
                             'action'      => 'default',
                             'status'      => 'month',
-                            '_reg_status' => EEM_Registration::status_id_not_approved,
+                            '_reg_status' => RegStatus::AWAITING_REVIEW,
                         ],
                         $this->reg_admin_url
                     ),
                     'meta'   => [
-                        'title'  => esc_html__('Not Approved', 'event_espresso'),
+                        'title'  => esc_html__('Not Approved / Awaiting Review', 'event_espresso'),
                         'target' => '',
                         'class'  => $this->menu_class . ' ee-toolbar-icon-not-approved',
                     ],
@@ -738,7 +739,7 @@ class AdminToolBar
                         [
                             'action'      => 'default',
                             'status'      => 'month',
-                            '_reg_status' => EEM_Registration::status_id_cancelled,
+                            '_reg_status' => RegStatus::CANCELLED,
                         ],
                         $this->reg_admin_url
                     ),

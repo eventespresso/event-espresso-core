@@ -12,6 +12,7 @@ use EventEspresso\core\services\addon\api\ThirdPartyPluginHandler;
 use EventEspresso\core\services\addon\api\v1\AddonApi as AddonApiV1;
 use EventEspresso\core\services\addon\api\v1\RegisterAddon as RegisterV1Addon;
 use Exception;
+use ReflectionException;
 use Throwable;
 
 /**

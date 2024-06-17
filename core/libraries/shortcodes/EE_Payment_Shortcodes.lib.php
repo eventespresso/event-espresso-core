@@ -44,6 +44,11 @@ class EE_Payment_Shortcodes extends EE_Shortcodes
     }
 
 
+    /**
+     * @param string $shortcode
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
     protected function _parser($shortcode)
     {
         // ensure that the incoming object is an EE_Payment object.  If it isn't then bail early.
@@ -56,16 +61,13 @@ class EE_Payment_Shortcodes extends EE_Shortcodes
         switch ($shortcode) {
             case '[PAYMENT_TIMESTAMP]':
                 return $payment->timestamp();
-                break;
 
             case '[PAYMENT_METHOD]':
                 // previously the column 'PAY_source' was known as 'PAY_method'
                 return $payment->source();
-                break;
 
             case '[PAYMENT_AMOUNT]':
                 return $payment->amount_no_code();
-                break;
 
             case '[PAYMENT_GATEWAY]':
                 // previously teh column 'PMD_ID' was more-or-less 'PAY_gateway'
@@ -74,35 +76,27 @@ class EE_Payment_Shortcodes extends EE_Shortcodes
                 } else {
                     return esc_html__('Unknown', 'event_espresso');
                 }
-                break;
 
             case '[PAYMENT_GATEWAY_RESPONSE]':
                 return $payment->gateway_response();
-                break;
 
             case '[PAYMENT_GATEWAY_TXN_ID]':
                 return $payment->txn_id_chq_nmbr();
-                break;
 
             case '[PAYMENT_PO_NUMBER]':
                 return $payment->po_number();
-                break;
 
             case '[PAYMENT_EXTRA_ACCOUNTING]':
                 return $payment->extra_accntng();
-                break;
 
             case '[PAYMENT_STATUS]':
                 return $payment->pretty_status();
-                break;
 
             case '[PAYMENT_STATUS_WITH_ICONS]':
                 return $payment->pretty_status(true);
-                break;
 
             default:
                 return '';
-                break;
         }
     }
 }

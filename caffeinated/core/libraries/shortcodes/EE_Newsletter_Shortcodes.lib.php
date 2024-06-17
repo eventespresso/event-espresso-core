@@ -26,6 +26,10 @@ class EE_Newsletter_Shortcodes extends EE_Shortcodes
     }
 
 
+    /**
+     * @param string $shortcode
+     * @throws EE_Error
+     */
     protected function _parser($shortcode)
     {
         if ($shortcode == '[NEWSLETTER_CONTENT]') {

@@ -1,7 +1,5 @@
 <?php
 
-use EventEspresso\core\exceptions\InvalidDataTypeException;
-use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\DataType;
 use EventEspresso\core\services\request\RequestInterface;
@@ -19,45 +17,33 @@ class EEH_Event_Query
 {
     /**
      * Start Date
-     *
-     * @var $_event_query_month
      */
-    protected static $_event_query_month;
+    protected static string $_event_query_month;
 
     /**
      * Category
-     *
-     * @var $_event_query_category
      */
-    protected static $_event_query_category;
+    protected static string $_event_query_category;
 
     /**
      * whether to display expired events in the event list
-     *
-     * @var bool $_show_expired
      */
-    protected static $_event_query_show_expired = false;
+    protected static bool $_event_query_show_expired = false;
 
     /**
      * list of params for controlling how the query results are ordered
-     *
-     * @var array $_event_query_orderby
      */
-    protected static $_event_query_orderby = [];
+    protected static array $_event_query_orderby = [];
 
     /**
      * direction list is sorted
-     *
-     * @var string $_event_query_sort
      */
-    protected static $_event_query_sort;
+    protected static string $_event_query_sort;
 
     /**
      * list of params used to build the query's various clauses
-     *
-     * @var $_query_params
      */
-    protected static $_query_params = [];
+    protected static array $_query_params = [];
 
 
     /**
@@ -66,21 +52,22 @@ class EEH_Event_Query
     public static function add_query_filters()
     {
         // add query filters
-        add_action('pre_get_posts', ['EEH_Event_Query', 'filter_query_parts'], 10, 1);
+        add_action('pre_get_posts', ['EEH_Event_Query', 'filter_query_parts']);
     }
 
 
     /**
      * @param WP_Query $WP_Query
      * @return bool
+     * @noinspection PhpUnnecessaryBoolCastInspection
      */
-    public static function apply_query_filters(WP_Query $WP_Query)
+    public static function apply_query_filters(WP_Query $WP_Query): bool
     {
         return (
-                   isset($WP_Query->query['post_type'])
-                   && $WP_Query->query['post_type'] === 'espresso_events'
-               )
-               || apply_filters('FHEE__EEH_Event_Query__apply_query_filters', false);
+                isset($WP_Query->query['post_type'])
+                && $WP_Query->query['post_type'] === 'espresso_events'
+            )
+            || (bool) apply_filters('FHEE__EEH_Event_Query__apply_query_filters', false);
     }
 
 
@@ -92,7 +79,7 @@ class EEH_Event_Query
         // ONLY add our filters if this isn't the main wp_query,
         // because if this is the main wp_query we already have
         // our cpt strategies take care of adding things in.
-        if ($WP_Query instanceof WP_Query && ! $WP_Query->is_main_query()) {
+        if (! $WP_Query->is_main_query()) {
             // build event list query
             add_filter('posts_fields', ['EEH_Event_Query', 'posts_fields'], 10, 2);
             add_filter('posts_join', ['EEH_Event_Query', 'posts_join'], 10, 2);
@@ -104,21 +91,18 @@ class EEH_Event_Query
 
 
     /**
-     * @param string $month
-     * @param string $category
-     * @param bool   $show_expired
+     * @param string|null  $month
+     * @param string|null  $category
+     * @param bool         $show_expired
      * @param array|string $orderby
-     * @param string $sort
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
+     * @param string|null  $sort
      */
     public static function set_query_params(
-        $month = '',
-        $category = '',
-        $show_expired = false,
+        ?string $month = '',
+        ?string $category = '',
+        bool $show_expired = false,
         $orderby = 'start_date',
-        $sort = 'ASC'
+        ?string $sort = 'ASC'
     ) {
         self::$_query_params                        = [];
         EEH_Event_Query::$_event_query_month        = EEH_Event_Query::_display_month($month);
@@ -132,26 +116,20 @@ class EEH_Event_Query
     /**
      * what month should the event list display events for?
      *
-     * @param string $month
+     * @param string|null $month
      * @return string
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      */
-    private static function _display_month($month = '')
+    private static function _display_month(?string $month = ''): string
     {
         return self::getRequest()->getRequestParam('event_query_month', $month);
     }
 
 
     /**
-     * @param string $category
+     * @param string|null $category
      * @return string
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      */
-    private static function _event_category_slug($category = '')
+    private static function _event_category_slug(?string $category = ''): string
     {
         return self::getRequest()->getRequestParam('event_query_category', $category);
     }
@@ -160,11 +138,8 @@ class EEH_Event_Query
     /**
      * @param bool $show_expired
      * @return bool
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      */
-    private static function _show_expired($show_expired = false)
+    private static function _show_expired(bool $show_expired = false): bool
     {
         // override default expired option if set via filter
         return self::getRequest()->getRequestParam('event_query_show_expired', $show_expired, 'bool');
@@ -172,13 +147,10 @@ class EEH_Event_Query
 
 
     /**
-     * @param array|string $orderby
+     * @param array|string|null $orderby
      * @return array
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      */
-    private static function _orderby($orderby = 'start_date')
+    private static function _orderby($orderby = 'start_date'): array
     {
         $event_query_orderby = self::getRequest()->getRequestParam(
             'event_query_orderby',
@@ -195,13 +167,10 @@ class EEH_Event_Query
 
 
     /**
-     * @param string $sort
+     * @param string|null $sort
      * @return string
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      */
-    private static function _sort($sort = 'ASC')
+    private static function _sort(?string $sort = 'ASC'): string
     {
         $sort = self::getRequest()->getRequestParam('event_query_sort', $sort);
         return in_array($sort, ['ASC', 'asc', 'DESC', 'desc'], true)
@@ -217,7 +186,7 @@ class EEH_Event_Query
      * @param WP_Query $wp_query
      * @return array   array of clauses
      */
-    public static function posts_clauses($clauses, WP_Query $wp_query)
+    public static function posts_clauses(array $clauses, WP_Query $wp_query): array
     {
         if (EEH_Event_Query::apply_query_filters($wp_query)) {
             global $wpdb;
@@ -232,11 +201,9 @@ class EEH_Event_Query
      * @param WP_Query $wp_query
      * @return string
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
-    public static function posts_fields($SQL, WP_Query $wp_query)
+    public static function posts_fields(string $SQL, WP_Query $wp_query): string
     {
         if (EEH_Event_Query::apply_query_filters($wp_query)) {
             // adds something like ", wp_esp_datetime.* " to WP Query SELECT statement
@@ -250,11 +217,9 @@ class EEH_Event_Query
      * @param array $orderby_params
      * @return string
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
-    public static function posts_fields_sql_for_orderby(array $orderby_params = [])
+    public static function posts_fields_sql_for_orderby(array $orderby_params = []): string
     {
         $SQL = ', MIN( ' . EEM_Datetime::instance()->table() . '.DTT_EVT_start ) as event_start_date ';
         foreach ($orderby_params as $orderby) {
@@ -285,11 +250,9 @@ class EEH_Event_Query
      * @param WP_Query $wp_query
      * @return string
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
-    public static function posts_join($SQL, WP_Query $wp_query)
+    public static function posts_join(string $SQL, WP_Query $wp_query): string
     {
         if (EEH_Event_Query::apply_query_filters($wp_query)) {
             // Category
@@ -306,18 +269,17 @@ class EEH_Event_Query
      * @param boolean $show_expired if TRUE, then displayed past events
      * @return string
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
-    public static function posts_join_sql_for_show_expired($SQL = '', $show_expired = false)
+    public static function posts_join_sql_for_show_expired(string $SQL = '', bool $show_expired = false): string
     {
         if (! $show_expired) {
-            $join = EEM_Event::instance()->table() . '.ID = ';
-            $join .= EEM_Datetime::instance()->table() . '.' . EEM_Event::instance()->primary_key_name();
+            $datetime_table = EEM_Datetime::instance()->table();
             // don't add if this is already in the SQL
-            if (strpos($SQL, $join) === false) {
-                $SQL .= ' INNER JOIN ' . EEM_Datetime::instance()->table() . ' ON ( ' . $join . ' ) ';
+            if (strpos($SQL, "INNER JOIN $datetime_table") === false) {
+                $event_table = EEM_Event::instance()->table();
+                $event_table_pk = EEM_Event::instance()->primary_key_name();
+                $SQL .= " INNER JOIN $datetime_table ON ( $event_table.ID = $datetime_table.$event_table_pk ) ";
             }
         }
         return $SQL;
@@ -330,10 +292,10 @@ class EEH_Event_Query
      *                              used for anything yet
      * @return string
      */
-    public static function posts_join_sql_for_terms($SQL = '', $join_terms = '')
+    public static function posts_join_sql_for_terms(string $SQL = '', string $join_terms = ''): string
     {
-        if (! empty($join_terms)) {
-            global $wpdb;
+        global $wpdb;
+        if (! empty($join_terms) && strpos($SQL, "LEFT JOIN $wpdb->term_relationships") === false) {
             $SQL .= " LEFT JOIN $wpdb->term_relationships ON ($wpdb->posts.ID = $wpdb->term_relationships.object_id)";
             $SQL .= " LEFT JOIN $wpdb->term_taxonomy ON ($wpdb->term_relationships.term_taxonomy_id = $wpdb->term_taxonomy.term_taxonomy_id)";
             $SQL .= " LEFT JOIN $wpdb->terms ON ($wpdb->terms.term_id = $wpdb->term_taxonomy.term_id) ";
@@ -349,11 +311,9 @@ class EEH_Event_Query
      * @param array  $orderby_params
      * @return string
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
-    public static function posts_join_for_orderby($SQL = '', array $orderby_params = [])
+    public static function posts_join_for_orderby(string $SQL = '', array $orderby_params = []): string
     {
         foreach ($orderby_params as $orderby) {
             switch ($orderby) {
@@ -363,12 +323,7 @@ class EEH_Event_Query
                         $SQL,
                         EEM_Datetime_Ticket::instance()->table() . '.' . EEM_Datetime::instance()->primary_key_name()
                     );
-                    $SQL .= ' LEFT JOIN ' . EEM_Ticket::instance()->table();
-                    $SQL .= ' ON (';
-                    $SQL .= EEM_Datetime_Ticket::instance()->table() . '.' . EEM_Ticket::instance()->primary_key_name();
-                    $SQL .= ' = ';
-                    $SQL .= EEM_Ticket::instance()->table() . '.' . EEM_Ticket::instance()->primary_key_name();
-                    $SQL .= ' )';
+                    $SQL .= EEH_Event_Query::postsJoinForTicket($SQL);
                     break;
                 case 'venue_title':
                 case 'city':
@@ -393,16 +348,16 @@ class EEH_Event_Query
      * @param string $join
      * @return string
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
-    protected static function _posts_join_for_datetime($SQL = '', $join = '')
+    protected static function _posts_join_for_datetime(string $SQL = '', string $join = ''): string
     {
         if (! empty($join)) {
-            $join .= ' = ' . EEM_Datetime::instance()->table() . '.' . EEM_Event::instance()->primary_key_name();
-            if (strpos($SQL, $join) === false) {
-                return ' INNER JOIN ' . EEM_Datetime::instance()->table() . ' ON ( ' . $join . ' )';
+            $datetime_table = EEM_Datetime::instance()->table();
+            // don't add if this is already in the SQL
+            if (strpos($SQL, "INNER JOIN $datetime_table") === false) {
+                $event_table_pk = EEM_Event::instance()->primary_key_name();
+                return " INNER JOIN $datetime_table ON ( $join = $datetime_table.$event_table_pk )";
             }
         }
         return '';
@@ -413,32 +368,29 @@ class EEH_Event_Query
      * @param string $SQL
      * @return string
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     protected static function _posts_join_for_event_venue(string $SQL = ''): string
     {
-        // grab venue table PK name & event_meta table name
-        $VNU_ID = EEM_Venue::instance()->primary_key_name();
-        $event_meta = EEM_Event::instance()->second_table();
-        // generate conditions for:  Event <=> Venue  JOIN clause
-        $event_venue_join = "Venue.ID = $event_meta.$VNU_ID";
+        $venue_table = EEM_Venue::instance()->table();
         // don't add joins if they have already been added
-        if (strpos($SQL, $event_venue_join) === false) {
+        if (strpos($SQL, "LEFT JOIN $venue_table") === false) {
             global $wpdb;
+            // grab venue table PK name & event_meta table name
+            $VNU_ID     = EEM_Venue::instance()->primary_key_name();
+            $event_meta = EEM_Event::instance()->second_table();
+            // generate conditions for:  Event <=> Venue  JOIN clause
+            $event_venue_join = "Venue.ID = $event_meta.$VNU_ID";
             // grab wp_posts (event), venue, and venue_meta table names
-            $wp_posts = $wpdb->posts;
-            $venue = EEM_Venue::instance()->table();
+            $wp_posts   = $wpdb->posts;
             $venue_meta = EEM_Venue::instance()->second_table();
             // generate JOIN clause for: Event <=> Event Meta
             $venue_SQL = " LEFT JOIN $event_meta ON ( $wp_posts.ID = $event_meta.EVT_ID )";
             // generate JOIN clause for: Event Meta <=> Venue
-            $venue_SQL .= " LEFT JOIN $venue AS Venue ON ( $event_venue_join )";
+            $venue_SQL .= " LEFT JOIN $venue_table AS Venue ON ( $event_venue_join )";
             // generate JOIN clause for: Venue <=> Venue Meta
             $venue_SQL .= " LEFT JOIN $venue_meta ON ( Venue.ID = $venue_meta.$VNU_ID )";
-            unset($venue, $VNU_ID, $event_meta, $venue_meta, $event_venue_join);
+            unset($venue_table, $VNU_ID, $event_meta, $venue_meta, $event_venue_join);
             return $venue_SQL;
         }
         unset($VNU_ID, $event_meta, $event_venue_join);
@@ -450,29 +402,39 @@ class EEH_Event_Query
      * @param string $SQL
      * @return string
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @since $VID:$
      */
-    protected static function _posts_join_for_venue_state($SQL = '')
+    protected static function postsJoinForTicket(string $SQL = ''): string
     {
-        // Venue Meta table name
-        $venue_meta_table = EEM_Venue::instance()->second_table();
-        // State table name
-        $state_table = EEM_State::instance()->table();
-        // State table pk
-        $state_table_pk = EEM_State::instance()->primary_key_name();
-        // verify vars
-        if ($venue_meta_table && $state_table && $state_table_pk) {
-            // like: wp_esp_venue_meta.STA_ID = wp_esp_state.STA_ID
-            $join = "$venue_meta_table.$state_table_pk = $state_table.$state_table_pk";
-            // don't add join if it has already been added
-            if (strpos($SQL, $join) === false) {
-                unset($state_table_pk, $venue_meta_table, $venue_table_pk);
-                return " LEFT JOIN $state_table ON ( $join )";
-            }
+        $ticket_table = EEM_Ticket::instance()->table();
+        // don't add if this is already in the SQL
+        if (strpos($SQL, "LEFT JOIN $ticket_table") === false) {
+            $datetime_table = EEM_Datetime::instance()->table();
+            $ticket_table_pk = EEM_Ticket::instance()->primary_key_name();
+            return " LEFT JOIN $ticket_table ON ( $datetime_table.$ticket_table_pk = $ticket_table.$ticket_table_pk )";
         }
-        unset($join, $state_table, $state_table_pk, $venue_meta_table, $venue_table_pk);
+        return '';
+    }
+
+
+
+    /**
+     * @param string $SQL
+     * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    protected static function _posts_join_for_venue_state(string $SQL = ''): string
+    {
+        $state_table = EEM_State::instance()->table();
+        // don't add join if it has already been added
+        if (strpos($SQL, "LEFT JOIN $state_table") === false) {
+            $state_table_pk = EEM_State::instance()->primary_key_name();
+            $venue_meta_table = EEM_Venue::instance()->second_table();
+            // like: wp_esp_venue_meta.STA_ID = wp_esp_state.STA_ID
+            return " LEFT JOIN $state_table ON ( $venue_meta_table.$state_table_pk = $state_table.$state_table_pk )";
+        }
         return '';
     }
 
@@ -482,11 +444,9 @@ class EEH_Event_Query
      * @param WP_Query $wp_query
      * @return string
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
-    public static function posts_where($SQL, WP_Query $wp_query)
+    public static function posts_where(string $SQL, WP_Query $wp_query): string
     {
         if (EEH_Event_Query::apply_query_filters($wp_query)) {
             // Show Expired ?
@@ -506,11 +466,9 @@ class EEH_Event_Query
      * @param boolean $show_expired if TRUE, then displayed past events
      * @return string
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
-    public static function posts_where_sql_for_show_expired($show_expired = false)
+    public static function posts_where_sql_for_show_expired(bool $show_expired = false): string
     {
         return ! $show_expired
             ? ' AND ' . EEM_Datetime::instance()->table() . '.DTT_EVT_end > \'' . current_time('mysql', true) . '\' '
@@ -519,17 +477,17 @@ class EEH_Event_Query
 
 
     /**
-     * @param boolean $event_category_slug
+     * @param string|null $event_category_slug
      * @return string
      */
-    public static function posts_where_sql_for_event_category_slug($event_category_slug = null)
+    public static function posts_where_sql_for_event_category_slug(?string $event_category_slug = null): string
     {
         global $wpdb;
         if (! empty($event_category_slug)) {
             $event_category_slugs_array   = array_map('trim', explode(',', $event_category_slug));
             $event_category_slugs_prepare = implode(', ', array_fill(0, count($event_category_slugs_array), '%s'));
             return $wpdb->prepare(
-                " AND {$wpdb->terms}.slug IN ({$event_category_slugs_prepare}) ",
+                " AND $wpdb->terms.slug IN ($event_category_slugs_prepare) ",
                 $event_category_slugs_array
             );
         }
@@ -538,40 +496,36 @@ class EEH_Event_Query
 
 
     /**
-     * @param boolean $month
+     * @param string|null $month
      * @return string
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
-    public static function posts_where_sql_for_event_list_month($month = null)
+    public static function posts_where_sql_for_event_list_month(?string $month = null): string
     {
         $SQL = '';
         if (! empty($month)) {
             $datetime_table = EEM_Datetime::instance()->table();
             // event start date is LESS than the end of the month ( so nothing that doesn't start until next month )
-            $SQL = " AND {$datetime_table}.DTT_EVT_start <= '";
+            $SQL = " AND $datetime_table.DTT_EVT_start <= '";
             $SQL .= date('Y-m-t 23:59:59', EEH_DTT_Helper::first_of_month_timestamp($month)) . "'";
             // event end date is GREATER than the start of the month ( so nothing that ended before this month )
-            $SQL .= " AND {$datetime_table}.DTT_EVT_end >= '";
+            $SQL .= " AND $datetime_table.DTT_EVT_end >= '";
             $SQL .= date('Y-m-01 0:0:00', EEH_DTT_Helper::first_of_month_timestamp($month)) . "' ";
         }
         return $SQL;
     }
 
+
     /**
      * @return string
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
-    public static function posts_where_sql_for_non_trashed_datetimes()
+    public static function posts_where_sql_for_non_trashed_datetimes(): string
     {
         return ' AND ' . EEM_Datetime::instance()->table() . '.DTT_deleted = 0';
     }
-
 
 
     /**
@@ -579,11 +533,9 @@ class EEH_Event_Query
      * @param WP_Query $wp_query
      * @return string
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
-    public static function posts_orderby($SQL, WP_Query $wp_query)
+    public static function posts_orderby(string $SQL, WP_Query $wp_query): string
     {
         if (EEH_Event_Query::apply_query_filters($wp_query)) {
             $SQL = EEH_Event_Query::posts_orderby_sql(
@@ -616,11 +568,9 @@ class EEH_Event_Query
      * @param string $sort
      * @return string
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
-    public static function posts_orderby_sql(array $orderby_params = [], $sort = 'ASC')
+    public static function posts_orderby_sql(array $orderby_params = [], string $sort = 'ASC'): string
     {
         global $wpdb;
         $SQL     = '';
@@ -641,7 +591,7 @@ class EEH_Event_Query
                 // then bump ahead to the next param
                 continue;
             }
-            // this will ad a comma depending on whether this is the first or last param
+            // this will add a comma depending on whether this is the first or last param
             $glue = $counter === 0 || $counter === count($orderby_params) ? ' ' : ', ';
             // ok what's we dealing with?
             switch ($orderby) {
@@ -690,7 +640,7 @@ class EEH_Event_Query
      * @return RequestInterface
      * @since   4.10.14.p
      */
-    private static function getRequest()
+    private static function getRequest(): RequestInterface
     {
         return LoaderFactory::getLoader()->getShared(RequestInterface::class);
     }

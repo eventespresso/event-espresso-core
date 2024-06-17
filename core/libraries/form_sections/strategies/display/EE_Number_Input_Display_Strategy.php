@@ -93,6 +93,7 @@ class EE_Number_Input_Display_Strategy extends EE_Display_Strategy_Base
                 $this->getNumberInputAttributes()
             )
         );
+        $input .= $this->dataAttributesString($this->_input->dataAttributes());
         $input .= $this->_close_tag();
         return $input;
     }

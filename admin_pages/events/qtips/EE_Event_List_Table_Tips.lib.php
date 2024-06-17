@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\domain\services\registration\RegStatus;
+
 /**
  * EE_Event_List_Table_Tips
  *
@@ -22,7 +24,7 @@ class EE_Event_List_Table_Tips extends EE_Qtip_Config
                 'content'    => sprintf(
                     esc_html__('%s Registrations', 'event_espresso'),
                     EEH_Template::pretty_status(
-                        EEM_Registration::status_id_approved,
+                        RegStatus::APPROVED,
                         false,
                         'sentence'
                     )

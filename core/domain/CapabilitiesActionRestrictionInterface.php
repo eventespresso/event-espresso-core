@@ -2,7 +2,7 @@
 
 namespace EventEspresso\core\domain;
 
-use EventEspresso\core\domain\entities\Context;
+use EventEspresso\core\domain\entities\contexts\Context;
 
 /**
  * Interface CapabilitiesActionRestrictionInterface

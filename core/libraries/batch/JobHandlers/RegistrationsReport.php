@@ -22,6 +22,7 @@ use EE_Datetime;
 use EE_Error;
 use EE_Registry;
 use EventEspresso\core\domain\entities\DbSafeDateTime;
+use EventEspresso\core\domain\services\registration\RegStatus;
 use EventEspresso\core\libraries\batch\Helpers\BatchRequestException;
 use EventEspresso\core\libraries\batch\Helpers\JobParameters;
 use EventEspresso\core\libraries\batch\Helpers\JobStepResponse;
@@ -104,7 +105,7 @@ class RegistrationsReport extends JobHandlerFile
                 ],
                 // unless the registration is approved,
                 // in which case include it regardless of transaction status
-                'STS_ID' => EEM_Registration::status_id_approved,
+                'STS_ID' => RegStatus::APPROVED,
             ];
         }
 

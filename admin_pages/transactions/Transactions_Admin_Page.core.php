@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\services\registration\RegStatus;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\request\DataType;
@@ -1224,9 +1225,9 @@ class Transactions_Admin_Page extends EE_Admin_Page
                 'STS_ID' => [
                     'IN',
                     [
-                        EEM_Registration::status_id_approved,
-                        EEM_Registration::status_id_pending_payment,
-                        EEM_Registration::status_id_not_approved,
+                        RegStatus::APPROVED,
+                        RegStatus::PENDING_PAYMENT,
+                        RegStatus::AWAITING_REVIEW,
                     ],
                 ],
             ],
@@ -1967,7 +1968,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
                 [
                     [
                         'STS_ID' => [
-                            'NOT_IN', [ EEM_Registration::status_id_cancelled ]
+                            'NOT_IN', [ RegStatus::CANCELLED ]
                         ]
                     ]
                 ]

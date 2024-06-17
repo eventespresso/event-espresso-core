@@ -4,7 +4,8 @@ namespace EventEspresso\core\domain\services\commands\registration;
 
 use DomainException;
 use EE_Error;
-use EEM_Registration;
+use EventEspresso\core\domain\entities\contexts\Context;
+use EventEspresso\core\domain\services\registration\RegStatus;
 use EventEspresso\core\domain\services\ticket\CancelTicketLineItemService;
 use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
@@ -66,7 +67,17 @@ class CancelRegistrationAndTicketLineItemCommandHandler extends CommandHandler
         $registration = $command->registration();
         $this->cancel_ticket_line_item_service->forRegistration($registration);
         // cancel original registration
-        $registration->set_status(EEM_Registration::status_id_cancelled);
+        $registration->set_status(
+            RegStatus::CANCELLED,
+            false,
+            new Context(
+                'cancel-registration-and-ticket-line-item-command-handler',
+                esc_html__(
+                    'Executed when the registration status is updated via CancelRegistrationAndTicketLineItemCommandHandler.',
+                    'event_espresso'
+                )
+            )
+        );
         $registration->save();
         return true;
     }

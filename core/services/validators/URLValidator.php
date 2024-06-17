@@ -18,12 +18,12 @@ namespace EventEspresso\core\services\validators;
 class URLValidator
 {
     /**
-     * Returns whether or not the URL is valid
+     * Returns whether the URL is valid
      * @since 4.9.68.p
      * @param $url
-     * @return boolean
+     * @return bool
      */
-    public function isValid($url)
+    public function isValid($url): bool
     {
         return  esc_url_raw($url) === $url;
     }

@@ -3,7 +3,7 @@
 </p>
 <p>
     <?php esc_html_e(
-        'Bulk actions allow you to perform an action to multiple registrations at once. The following bulk actions are supported: Approve Registrations, Decline Registrations, Set Registrations to Pending Payment, Set Registrations to Not Approved, Cancel Registrations, Trash Registrations. To use the bulk action feature, place a checkmark next to the registrations that you want to include. Then select a bulk action from the menu and click on the Apply button.',
+        'Bulk actions allow you to perform an action to multiple registrations at once. The following bulk actions are supported: Approve Registrations, Decline Registrations, Set Registrations to Pending Payment, Set Registrations to Not Approved / Awaiting Review, Cancel Registrations, Trash Registrations. To use the bulk action feature, place a checkmark next to the registrations that you want to include. Then select a bulk action from the menu and click on the Apply button.',
         'event_espresso'
     ); ?>
 </p>

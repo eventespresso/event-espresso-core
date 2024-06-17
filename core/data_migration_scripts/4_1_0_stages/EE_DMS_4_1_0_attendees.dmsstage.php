@@ -110,7 +110,7 @@ use EventEspresso\core\domain\entities\custom_post_types\EspressoPostType;
  * 'Transaction'),
  * 'TKT_ID'=>new EE_Foreign_Key_Int_Field('TKT_ID', esc_html__('Ticket ID','event_espresso'), false, 0, 'Ticket'),
  * 'STS_ID'=>new EE_Foreign_Key_String_Field('STS_ID', esc_html__('Status ID','event_espresso'), false,
- * EEM_Registration::status_id_not_approved, 'Status'),
+ * RegStatus::AWAITING_REVIEW, 'Status'),
  * 'REG_date'=>new EE_Datetime_Field('REG_date', esc_html__('Time registration occurred','event_espresso'), false,
  * time(), $timezone ),
  * 'REG_final_price'=>new EE_Money_Field('REG_final_price', esc_html__('Final Price of registration','event_espresso'),

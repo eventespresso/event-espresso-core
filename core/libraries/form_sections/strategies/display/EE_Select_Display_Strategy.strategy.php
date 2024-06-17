@@ -30,6 +30,7 @@ class EE_Select_Display_Strategy extends EE_Display_Strategy_Base
         $html .= $this->_attributes_string(
             $this->_standard_attributes_array()
         );
+        $html .= $this->dataAttributesString($this->_input->dataAttributes());
         $html .= '>';
 
         if (EEH_Array::is_multi_dimensional_array($this->_input->options())) {

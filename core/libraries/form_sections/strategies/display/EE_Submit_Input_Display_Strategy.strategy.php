@@ -32,6 +32,7 @@ class EE_Submit_Input_Display_Strategy extends EE_Display_Strategy_Base
                 ]
             )
         );
+        $html .= $this->dataAttributesString($this->_input->dataAttributes());
         $html .= $this->_close_tag();
         return $html;
     }

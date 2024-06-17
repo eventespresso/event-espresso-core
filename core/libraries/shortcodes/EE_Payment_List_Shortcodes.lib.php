@@ -43,7 +43,6 @@ class EE_Payment_List_Shortcodes extends EE_Shortcodes
 
     protected function _parser($shortcode)
     {
-
         if (strpos($shortcode, '[PAYMENT_LIST_*') !== false) {
             return $this->_get_payment_list($shortcode);
         }

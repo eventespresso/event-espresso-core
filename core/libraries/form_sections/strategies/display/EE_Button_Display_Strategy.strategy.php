@@ -28,12 +28,11 @@ class EE_Button_Display_Strategy extends EE_Display_Strategy_Base
                 )
             )
         );
-        if ($this->_input instanceof EE_Button_Input) {
-            $button_content = $this->_input->button_content();
-        } else {
-            $button_content = $this->_input->get_default();
-        }
+        $html .= $this->dataAttributesString($this->_input->dataAttributes());
         $html .= '>';
+        $button_content = $this->_input instanceof EE_Button_Input
+            ? $this->_input->button_content()
+            : $this->_input->get_default();
         $html .= $button_content;
         $html .= $this->_closing_tag();
         return $html;

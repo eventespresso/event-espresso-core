@@ -1,6 +1,7 @@
 <?php
 
 use EventEspresso\core\domain\services\assets\EspressoLegacyAdminAssetManager;
+use EventEspresso\core\domain\services\registration\RegStatus;
 use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -1169,28 +1170,28 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
                 'desc'  => $checkin_invalid->legendLabel(),
             ],
             'approved_status'  => [
-                'class' => 'ee-status-legend ee-status-bg--' . EEM_Registration::status_id_approved,
-                'desc'  => EEH_Template::pretty_status(EEM_Registration::status_id_approved, false, 'sentence'),
+                'class' => 'ee-status-legend ee-status-bg--' . RegStatus::APPROVED,
+                'desc'  => EEH_Template::pretty_status(RegStatus::APPROVED, false, 'sentence'),
             ],
             'cancelled_status' => [
-                'class' => 'ee-status-legend ee-status-bg--' . EEM_Registration::status_id_cancelled,
-                'desc'  => EEH_Template::pretty_status(EEM_Registration::status_id_cancelled, false, 'sentence'),
+                'class' => 'ee-status-legend ee-status-bg--' . RegStatus::CANCELLED,
+                'desc'  => EEH_Template::pretty_status(RegStatus::CANCELLED, false, 'sentence'),
             ],
             'declined_status'  => [
-                'class' => 'ee-status-legend ee-status-bg--' . EEM_Registration::status_id_declined,
-                'desc'  => EEH_Template::pretty_status(EEM_Registration::status_id_declined, false, 'sentence'),
+                'class' => 'ee-status-legend ee-status-bg--' . RegStatus::DECLINED,
+                'desc'  => EEH_Template::pretty_status(RegStatus::DECLINED, false, 'sentence'),
             ],
             'not_approved'     => [
-                'class' => 'ee-status-legend ee-status-bg--' . EEM_Registration::status_id_not_approved,
-                'desc'  => EEH_Template::pretty_status(EEM_Registration::status_id_not_approved, false, 'sentence'),
+                'class' => 'ee-status-legend ee-status-bg--' . RegStatus::AWAITING_REVIEW,
+                'desc'  => EEH_Template::pretty_status(RegStatus::AWAITING_REVIEW, false, 'sentence'),
             ],
             'pending_status'   => [
-                'class' => 'ee-status-legend ee-status-bg--' . EEM_Registration::status_id_pending_payment,
-                'desc'  => EEH_Template::pretty_status(EEM_Registration::status_id_pending_payment, false, 'sentence'),
+                'class' => 'ee-status-legend ee-status-bg--' . RegStatus::PENDING_PAYMENT,
+                'desc'  => EEH_Template::pretty_status(RegStatus::PENDING_PAYMENT, false, 'sentence'),
             ],
             'wait_list'        => [
-                'class' => 'ee-status-legend ee-status-bg--' . EEM_Registration::status_id_wait_list,
-                'desc'  => EEH_Template::pretty_status(EEM_Registration::status_id_wait_list, false, 'sentence'),
+                'class' => 'ee-status-legend ee-status-bg--' . RegStatus::WAIT_LIST,
+                'desc'  => EEH_Template::pretty_status(RegStatus::WAIT_LIST, false, 'sentence'),
             ],
         ];
         $this->_template_args['after_list_table'] = $this->_display_legend($legend_items);
@@ -1277,7 +1278,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
         // unlike the regular registrations list table,
         $status_ids_array          = apply_filters(
             'FHEE__Extend_Registrations_Admin_Page__get_event_attendees__status_ids_array',
-            [EEM_Registration::status_id_pending_payment, EEM_Registration::status_id_approved]
+            [RegStatus::PENDING_PAYMENT, RegStatus::APPROVED]
         );
         $query_params[0]['STS_ID'] = ['IN', $status_ids_array];
         return $query_params;

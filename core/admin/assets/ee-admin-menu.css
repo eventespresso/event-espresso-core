@@ -231,10 +231,19 @@ input.ee-toggle-round-flat + label:after {
     width: var(--ee-switch-button);
 }
 
+
 .ee-switch .ee-switch__input:checked + .ee-switch__toggle,
 input.ee-toggle-round-flat:checked + label {
     background-color: var(--ee-status-color-blue);
     margin-block: 0;
+}
+.ee-switch .ee-switch__input:disabled + .ee-switch__toggle,
+input.ee-toggle-round-flat:disabled + label {
+    background-color: var(--ee-status-color-blue-grey);
+}
+.ee-switch .ee-switch__input:disabled + .ee-switch__toggle:after,
+input.ee-toggle-round-flat:disabled + label:after {
+    background-color: var(--ee-color-off-white);
 }
 
 .ee-switch .ee-switch__input:checked + .ee-switch__toggle:after,

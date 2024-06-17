@@ -2,6 +2,7 @@
 
 use EventEspresso\core\domain\services\database\DbStatus;
 use EventEspresso\core\domain\services\database\MaintenanceStatus;
+use EventEspresso\core\domain\services\registration\RegStatus;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\interfaces\ResettableInterface;
@@ -2406,6 +2407,8 @@ class EE_Registration_Config extends EE_Config_Base
      */
     public $skip_reg_confirmation;
 
+    private bool $use_session_countdown = false;
+
 
 
 
@@ -2417,7 +2420,7 @@ class EE_Registration_Config extends EE_Config_Base
     public function __construct()
     {
         // set default registration settings
-        $this->default_STS_ID = EEM_Registration::status_id_pending_payment;
+        $this->default_STS_ID = RegStatus::PENDING_PAYMENT;
         $this->email_validation_level = 'wp_default';
         $this->show_pending_payment_options = true;
         $this->reg_steps = array();
@@ -2438,6 +2441,7 @@ class EE_Registration_Config extends EE_Config_Base
         $this->consent_checkbox_label_text = '';
         $this->gateway_log_lifespan = '7 days';
         $this->copy_attendee_info = true;
+        $this->use_session_countdown = false;
     }
 
 
@@ -2615,6 +2619,20 @@ class EE_Registration_Config extends EE_Config_Base
     {
         $this->consent_checkbox_label_text = (string) $consent_checkbox_label_text;
     }
+
+
+    public function useSessionCountdown(): bool
+    {
+        return $this->use_session_countdown;
+    }
+
+
+    public function setUseSessionCountdown(bool $use_session_countdown): void
+    {
+        $this->use_session_countdown = $use_session_countdown;
+    }
+
+
 }
 
 /**
@@ -2760,17 +2778,17 @@ class EE_Template_Config extends EE_Config_Base
     /**
      * @var EE_Ticket_Selector_Config|stdClass|null
      */
-    public $EED_Ticket_Selector;
+    public $EED_Ticket_Selector = null;
 
     /**
      * @var EE_Event_Single_Config|stdClass|null
      */
-    public $EED_Event_Single;
+    public $EED_Event_Single = null;
 
     /**
      * @var EE_Events_Archive_Config|stdClass|null
      */
-    public $EED_Events_Archive;
+    public $EED_Events_Archive = null;
 
     /**
      * @var EE_People_Config|stdClass|null
@@ -2778,33 +2796,7 @@ class EE_Template_Config extends EE_Config_Base
      */
     public $EED_People_Single;
 
-    public string $current_espresso_theme = '';
-
-    public $display_address_in_regform = true;
-
-    /**
-     * @var bool|int|string|null $enable_default_style
-     * @deprecated
-     */
-    public $enable_default_style;
-
-    /**
-     * @var bool|int|string|null $display_description_on_multi_reg_page
-     * @deprecated
-     */
-    public $display_description_on_multi_reg_page;
-
-    /**
-     * @var bool|int|string|null $use_custom_templates
-     * @deprecated
-     */
-    public $use_custom_templates;
-
-    /**
-     * @var bool|int|string|null $custom_style_sheet
-     * @deprecated
-     */
-    public $custom_style_sheet;
+    public string $current_espresso_theme = 'Espresso_Arabica_2014';
 
 
     /**
@@ -2814,11 +2806,6 @@ class EE_Template_Config extends EE_Config_Base
      */
     public function __construct()
     {
-        // set default template settings
-        $this->current_espresso_theme = 'Espresso_Arabica_2014';
-        $this->EED_Event_Single = null;
-        $this->EED_Events_Archive = null;
-        $this->EED_Ticket_Selector = null;
     }
 }
 
@@ -2942,27 +2929,42 @@ class EE_Map_Config extends EE_Config_Base
  */
 class EE_Events_Archive_Config extends EE_Config_Base
 {
-    public $display_status_banner;
+    /** @var bool|int */
+    public $display_address_in_regform = true;
 
-    public $display_description;
+    /** @var bool|int */
+    public $display_status_banner = false;
 
-    public $display_ticket_selector;
+    /** @var bool|int */
+    public $display_description = true;
 
-    public $display_datetimes;
+    /** @var bool|int */
+    public $display_ticket_selector = false;
 
-    public $display_venue;
+    /** @var bool|int */
+    public $display_datetimes = true;
 
-    public $display_expired_events;
+    /** @var bool|int */
+    public $display_venue = false;
 
-    public $use_sortable_display_order;
+    /** @var bool|int */
+    public $display_expired_events = false;
 
-    public $display_order_tickets;
+    /** @var bool|int */
+    public $display_events_with_expired_tickets = false;
 
-    public $display_order_datetimes;
+    // display order options
 
-    public $display_order_event;
+    /** @var bool|int */
+    public $use_sortable_display_order = false;
 
-    public $display_order_venue;
+    public ?int $display_order_tickets = 100;
+
+    public ?int $display_order_datetimes = 110;
+
+    public ?int $display_order_event = 120;
+
+    public ?int $display_order_venue = 130;
 
 
     /**

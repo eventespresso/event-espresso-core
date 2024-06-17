@@ -2,6 +2,7 @@
 
 use EventEspresso\core\domain\services\admin\registrations\DatetimesForEventCheckIn;
 use EventEspresso\core\domain\services\admin\registrations\list_table\csv_reports\RegistrationsCsvReportParams;
+use EventEspresso\core\domain\services\registration\RegStatus;
 use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -344,7 +345,7 @@ class EE_Event_Registrations_List_Table extends EE_Registrations_List_Table
         }
         $status_ids_array          = apply_filters(
             'FHEE__Extend_Registrations_Admin_Page__get_event_attendees__status_ids_array',
-            [EEM_Registration::status_id_pending_payment, EEM_Registration::status_id_approved]
+            [RegStatus::PENDING_PAYMENT, RegStatus::APPROVED]
         );
         $query_params[0]['STS_ID'] = ['IN', $status_ids_array];
         return EEM_Registration::instance()->count($query_params);

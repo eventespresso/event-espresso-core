@@ -42,9 +42,9 @@ class SessionLifespanOption extends WordPressOption
 
     /**
      * @param int $value
-     * @return false|mixed|void
+     * @return int
      */
-    public function setSessionLifespan(int $value)
+    public function setSessionLifespan(int $value): int
     {
         if ($value <= 0) {
             $value = SessionLifespanOption::DEFAULT_LIFESPAN;

@@ -28,25 +28,13 @@ use EventEspresso\core\services\routing\RouteHandler;
  */
 class EE_Brewing_Regular extends EE_BASE implements InterminableInterface
 {
-    /**
-     * @var EE_Dependency_Map
-     */
-    protected $dependency_map;
+    protected EE_Dependency_Map $dependency_map;
 
-    /**
-     * @var LoaderInterface
-     */
-    protected $loader;
+    protected LoaderInterface $loader;
 
-    /**
-     * @var TableAnalysis
-     */
-    protected $_table_analysis;
+    protected TableAnalysis $_table_analysis;
 
-    /**
-     * @var RouteHandler
-     */
-    protected $route_handler;
+    protected RouteHandler $route_handler;
 
 
     /**
@@ -93,6 +81,7 @@ class EE_Brewing_Regular extends EE_BASE implements InterminableInterface
 
     /**
      * @throws Exception
+     * @deprecated $VID:$
      */
     public function initializePUE()
     {
@@ -112,7 +101,7 @@ class EE_Brewing_Regular extends EE_BASE implements InterminableInterface
             'FHEE__EE_Config__register_modules__modules_to_register',
             [$this, 'caffeinated_modules_to_register']
         );
-        add_filter('FHEE__EE_Registry__load_helper__helper_paths', [$this, 'caf_helper_paths'], 10);
+        add_filter('FHEE__EE_Registry__load_helper__helper_paths', [$this, 'caf_helper_paths']);
         add_filter(
             'AHEE__EE_System__load_core_configuration__complete',
             function () {
@@ -137,7 +126,7 @@ class EE_Brewing_Regular extends EE_BASE implements InterminableInterface
         // load caff init
         add_action('AHEE__EE_System__set_hooks_for_core', [$this, 'caffeinated_init']);
         // load caff scripts
-        add_action('wp_enqueue_scripts', [$this, 'enqueue_caffeinated_scripts'], 10);
+        add_action('wp_enqueue_scripts', [$this, 'enqueue_caffeinated_scripts']);
     }
 
 

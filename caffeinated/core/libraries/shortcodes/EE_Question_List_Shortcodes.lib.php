@@ -42,9 +42,8 @@ class EE_Question_List_Shortcodes extends EE_Shortcodes
      */
     protected function _parser($shortcode)
     {
-        switch ($shortcode) {
-            case '[QUESTION_LIST]':
-                return $this->_get_question_list();
+        if ($shortcode == '[QUESTION_LIST]') {
+            return $this->_get_question_list();
         }
         return '';
     }

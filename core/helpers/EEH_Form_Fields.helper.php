@@ -1983,19 +1983,18 @@ class EEH_Form_Fields
      * @param string $evt_active_status "upcoming", "expired", "active", or "inactive"
      * @return string                    html
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function generate_event_months_dropdown(
-        $cur_date = '',
-        $status = null,
-        $evt_category = null,
-        $evt_active_status = null
-    ) {
+        string $cur_date = '',
+        string $status = 'all',
+        int $evt_category = 0,
+        string $evt_active_status = ''
+    ): string {
         // determine what post_status our condition will have for the query.
-        // phpcs:disable PSR2.ControlStructures.SwitchDeclaration.TerminatingComment
         switch ($status) {
             case 'month':
             case 'today':
-            case null:
             case 'all':
                 $where['Event.status'] = ['NOT IN', ['trash']];
                 break;
@@ -2006,16 +2005,11 @@ class EEH_Form_Fields
                 $where['Event.status'] = $status;
         }
 
-        // phpcs:enable
-
         // categories?
-
-
         if (! empty($evt_category) and $evt_category > 0) {
             $where['Event.Term_Taxonomy.taxonomy'] = 'espresso_event_categories';
             $where['Event.Term_Taxonomy.term_id']  = $evt_category;
         }
-
 
         //      $where['DTT_is_primary'] = 1;
 

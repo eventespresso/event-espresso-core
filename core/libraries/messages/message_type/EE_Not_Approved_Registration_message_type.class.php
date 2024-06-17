@@ -16,10 +16,10 @@ class EE_Not_Approved_Registration_message_type extends EE_Registration_Base_mes
     public function __construct()
     {
         $this->name = 'not_approved_registration';
-        $this->description = esc_html__('This message type is for messages sent to registrants when their registration is set to the not approved status.', 'event_espresso');
+        $this->description = esc_html__('This message type is for messages sent to registrants when their registration is set to "not approved" / "awaiting review" status.', 'event_espresso');
         $this->label = array(
-            'singular' => esc_html__('not approved registration', 'event_espresso'),
-            'plural' => esc_html__('not approved registrations', 'event_espresso')
+            'singular' => esc_html__('not approved / awaiting review registration', 'event_espresso'),
+            'plural' => esc_html__('not approved / awaiting review registrations', 'event_espresso')
             );
 
         $this->_master_templates = array(
@@ -50,11 +50,11 @@ class EE_Not_Approved_Registration_message_type extends EE_Registration_Base_mes
         $this->_contexts = array(
             'admin' => array(
                 'label' => esc_html__('Event Admin', 'event_espresso'),
-                'description' => esc_html__('This template is what event administrators will receive when registration status is set to not approved.', 'event_espresso')
+                'description' => esc_html__('This template is what event administrators will receive when registration status is set to not approved / awaiting review.', 'event_espresso')
                 ),
             'primary_attendee' => array(
                 'label' => esc_html__('Primary Registrant', 'event_espresso'),
-                'description' => esc_html__('This template is what the primary registrant (the person who completed the initial transaction) will receive when the registration status is not approved.', 'event_espresso')
+                'description' => esc_html__('This template is what the primary registrant (the person who completed the initial transaction) will receive when the registration status is not approved / awaiting review.', 'event_espresso')
                 )
             );
     }

@@ -6,8 +6,6 @@
  * @package         Event Espresso
  * @subpackage
  * @author              Mike Nelson
- *
- * ------------------------------------------------------------------------
  */
 class EE_Credit_Card_Month_Input extends EE_Month_Input
 {

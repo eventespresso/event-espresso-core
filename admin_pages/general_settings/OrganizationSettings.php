@@ -4,6 +4,7 @@ namespace EventEspresso\admin_pages\general_settings;
 
 use DomainException;
 use EE_Admin_File_Uploader_Input;
+use EE_Admin_Page;
 use EE_Admin_Two_Column_Layout;
 use EE_Core_Config;
 use EE_Country;
@@ -17,10 +18,12 @@ use EE_Organization_Config;
 use EE_Registry;
 use EE_State_Select_Input;
 use EE_Text_Input;
+use EEH_Array;
 use EEH_HTML;
 use EEH_Template;
 use EEM_Country;
 use EEM_State;
+use EventEspresso\core\domain\services\capabilities\FeatureFlags;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidFormSubmissionException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -40,25 +43,15 @@ use ReflectionException;
  */
 class OrganizationSettings extends FormHandler
 {
-    /**
-     * @var EE_Organization_Config
-     */
-    protected $organization_config;
+    protected EE_Organization_Config $organization_config;
 
-    /**
-     * @var EE_Core_Config
-     */
-    protected $core_config;
+    protected EE_Core_Config $core_config;
 
-    /**
-     * @var EE_Network_Core_Config
-     */
-    protected $network_core_config;
+    protected EE_Network_Core_Config $network_core_config;
 
- /**
-     * @var CountrySubRegionDao
-     */
-    protected $countrySubRegionDao;
+    protected CountrySubRegionDao $countrySubRegionDao;
+
+    private FeatureFlags $feature;
 
 
     /**
@@ -69,6 +62,7 @@ class OrganizationSettings extends FormHandler
      * @param EE_Core_Config         $core_config
      * @param EE_Network_Core_Config $network_core_config
      * @param CountrySubRegionDao    $countrySubRegionDao
+     * @param FeatureFlags           $feature
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws DomainException
@@ -78,12 +72,14 @@ class OrganizationSettings extends FormHandler
         EE_Organization_Config $organization_config,
         EE_Core_Config $core_config,
         EE_Network_Core_Config $network_core_config,
-        CountrySubRegionDao $countrySubRegionDao
+        CountrySubRegionDao $countrySubRegionDao,
+        FeatureFlags $feature
     ) {
         $this->organization_config = $organization_config;
         $this->core_config         = $core_config;
         $this->network_core_config = $network_core_config;
         $this->countrySubRegionDao = $countrySubRegionDao;
+        $this->feature             = $feature;
         parent::__construct(
             esc_html__('Your Organization Settings', 'event_espresso'),
             esc_html__('Your Organization Settings', 'event_espresso'),
@@ -107,239 +103,275 @@ class OrganizationSettings extends FormHandler
      */
     public function generate(): EE_Form_Section_Proper
     {
-        $has_sub_regions = EEM_State::instance()->count(
-            [['Country.CNT_ISO' => $this->organization_config->CNT_ISO]]
-        );
+        $has_sub_regions = EEM_State::instance()->count([['Country.CNT_ISO' => $this->organization_config->CNT_ISO]]);
+        $subsections     = [
+            'contact_information_hdr' => new EE_Form_Section_HTML(
+                EEH_HTML::h2(
+                    esc_html__('Contact Information', 'event_espresso')
+                    . ' '
+                    . EEH_HTML::span(EEH_Template::get_help_tab_link('contact_info_info')),
+                    '',
+                    'contact-information-hdr'
+                )
+            ),
+            'organization_name'       => new EE_Text_Input(
+                [
+                    'html_name'       => 'organization_name',
+                    'html_class'      => 'ee-input-width--reg',
+                    'html_label_text' => esc_html__('Organization Name', 'event_espresso'),
+                    'html_help_text'  => esc_html__(
+                        'Displayed on all emails and invoices.',
+                        'event_espresso'
+                    ),
+                    'default'         => $this->organization_config->get_pretty('name'),
+                    'required'        => false,
+                ]
+            ),
+            'organization_address_1'  => new EE_Text_Input(
+                [
+                    'html_name'       => 'organization_address_1',
+                    'html_class'      => 'ee-input-width--reg',
+                    'html_label_text' => esc_html__('Street Address', 'event_espresso'),
+                    'default'         => $this->organization_config->get_pretty('address_1'),
+                    'required'        => false,
+                ]
+            ),
+            'organization_address_2'  => new EE_Text_Input(
+                [
+                    'html_name'       => 'organization_address_2',
+                    'html_class'      => 'ee-input-width--reg',
+                    'html_label_text' => esc_html__('Street Address 2', 'event_espresso'),
+                    'default'         => $this->organization_config->get_pretty('address_2'),
+                    'required'        => false,
+                ]
+            ),
+            'organization_city'       => new EE_Text_Input(
+                [
+                    'html_name'       => 'organization_city',
+                    'html_class'      => 'ee-input-width--reg',
+                    'html_label_text' => esc_html__('City', 'event_espresso'),
+                    'default'         => $this->organization_config->get_pretty('city'),
+                    'required'        => false,
+                ]
+            ),
+            'organization_country'    => new EE_Country_Select_Input(
+                null,
+                [
+                    EE_Country_Select_Input::OPTION_GET_KEY => EE_Country_Select_Input::OPTION_GET_ALL,
+                    'html_name'                             => 'organization_country',
+                    'html_class'                            => 'ee-input-width--reg',
+                    'html_label_text'                       => esc_html__('Country', 'event_espresso'),
+                    'default'                               => $this->organization_config->CNT_ISO,
+                    'required'                              => false,
+                    'html_help_text'                        => sprintf(
+                        esc_html__(
+                            '%1$sThe Country set here will have the effect of setting the currency used for all ticket prices.%2$s',
+                            'event_espresso'
+                        ),
+                        '<span class="reminder-spn">',
+                        '</span>'
+                    ),
+                ]
+            ),
+            'organization_state'      => new EE_State_Select_Input(
+                null,
+                [
+                    'html_name'       => 'organization_state',
+                    'html_class'      => 'ee-input-width--reg',
+                    'html_label_text' => esc_html__('State/Province', 'event_espresso'),
+                    'default'         => $this->organization_config->STA_ID,
+                    'required'        => false,
+                    'html_help_text'  => empty($this->organization_config->STA_ID) || ! $has_sub_regions
+                        ? sprintf(
+                            esc_html__(
+                                'If the States/Provinces for the selected Country do not appear in this list, then click "Save".%3$sIf data exists, then the list will be populated when the page reloads and you will be able to make a selection at that time.%3$s%1$sMake sure you click "Save" again after selecting a State/Province that has just been loaded in order to keep that selection.%2$s',
+                                'event_espresso'
+                            ),
+                            '<span class="reminder-spn">',
+                            '</span>',
+                            '<br />'
+                        )
+                        : '',
+                ]
+            ),
+            'organization_zip'        => new EE_Text_Input(
+                [
+                    'html_name'       => 'organization_zip',
+                    'html_class'      => 'ee-input-width--small',
+                    'html_label_text' => esc_html__('Zip/Postal Code', 'event_espresso'),
+                    'default'         => $this->organization_config->get_pretty('zip'),
+                    'required'        => false,
+                ]
+            ),
+            'organization_email'      => new EE_Text_Input(
+                [
+                    'html_name'       => 'organization_email',
+                    'html_class'      => 'ee-input-width--reg',
+                    'html_label_text' => esc_html__('Primary Contact Email', 'event_espresso'),
+                    'html_help_text'  => sprintf(
+                        esc_html__(
+                            'This is where notifications go to when you use the %1$s and %2$s shortcodes in the message templates.',
+                            'event_espresso'
+                        ),
+                        '<code>[CO_FORMATTED_EMAIL]</code>',
+                        '<code>[CO_EMAIL]</code>'
+                    ),
+                    'default'         => $this->organization_config->get_pretty('email'),
+                    'required'        => false,
+                ]
+            ),
+            'organization_phone'      => new EE_Text_Input(
+                [
+                    'html_name'       => 'organization_phone',
+                    'html_class'      => 'ee-input-width--reg',
+                    'html_label_text' => esc_html__('Phone Number', 'event_espresso'),
+                    'html_help_text'  => esc_html__(
+                        'The phone number for your organization.',
+                        'event_espresso'
+                    ),
+                    'default'         => $this->organization_config->get_pretty('phone'),
+                    'required'        => false,
+                ]
+            ),
+            'organization_vat'        => new EE_Text_Input(
+                [
+                    'html_name'       => 'organization_vat',
+                    'html_class'      => 'ee-input-width--reg',
+                    'html_label_text' => esc_html__('VAT/Tax Number', 'event_espresso'),
+                    'html_help_text'  => esc_html__(
+                        'The VAT/Tax Number may be displayed on invoices and receipts.',
+                        'event_espresso'
+                    ),
+                    'default'         => $this->organization_config->get_pretty('vat'),
+                    'required'        => false,
+                ]
+            ),
+            'company_logo_hdr'        => new EE_Form_Section_HTML(
+                EEH_HTML::h2(
+                    esc_html__('Company Logo', 'event_espresso')
+                    . ' '
+                    . EEH_HTML::span(EEH_Template::get_help_tab_link('organization_logo_info')),
+                    '',
+                    'company-logo-hdr'
+                )
+            ),
+            'organization_logo_url'   => new EE_Admin_File_Uploader_Input(
+                [
+                    'html_name'       => 'organization_logo_url',
+                    'html_class'      => 'ee-input-width--big',
+                    'html_label_text' => esc_html__('Upload New Logo', 'event_espresso'),
+                    'html_help_text'  => esc_html__(
+                        'Your logo will be used on custom invoices, tickets, certificates, and payment templates.',
+                        'event_espresso'
+                    ),
+                    'default'         => $this->organization_config->get_pretty('logo_url'),
+                    'required'        => false,
+                ]
+            ),
+            'social_links_hdr'        => new EE_Form_Section_HTML(
+                EEH_HTML::h2(
+                    esc_html__('Social Links', 'event_espresso')
+                    . ' '
+                    . EEH_HTML::span(EEH_Template::get_help_tab_link('social_links_info'))
+                    . EEH_HTML::br()
+                    . EEH_HTML::p(
+                        esc_html__(
+                            'Enter any links to social accounts for your organization here',
+                            'event_espresso'
+                        ),
+                        '',
+                        'description'
+                    ),
+                    '',
+                    'social-links-hdr'
+                )
+            ),
+            'organization_facebook'   => new EE_Text_Input(
+                [
+                    'html_name'             => 'organization_facebook',
+                    'html_class'            => 'ee-input-width--reg',
+                    'html_label_text'       => esc_html__('Facebook', 'event_espresso'),
+                    'other_html_attributes' => ' placeholder="facebook.com/profile.name"',
+                    'default'               => $this->organization_config->get_pretty('facebook'),
+                    'required'              => false,
+                ]
+            ),
+            'organization_twitter'    => new EE_Text_Input(
+                [
+                    'html_name'             => 'organization_twitter',
+                    'html_class'            => 'ee-input-width--reg',
+                    'html_label_text'       => esc_html__('Twitter', 'event_espresso'),
+                    'other_html_attributes' => ' placeholder="twitter.com/twitterhandle"',
+                    'default'               => $this->organization_config->get_pretty('twitter'),
+                    'required'              => false,
+                ]
+            ),
+            'organization_linkedin'   => new EE_Text_Input(
+                [
+                    'html_name'             => 'organization_linkedin',
+                    'html_class'            => 'ee-input-width--reg',
+                    'html_label_text'       => esc_html__('LinkedIn', 'event_espresso'),
+                    'other_html_attributes' => ' placeholder="linkedin.com/in/profilename"',
+                    'default'               => $this->organization_config->get_pretty('linkedin'),
+                    'required'              => false,
+                ]
+            ),
+            'organization_pinterest'  => new EE_Text_Input(
+                [
+                    'html_name'             => 'organization_pinterest',
+                    'html_class'            => 'ee-input-width--reg',
+                    'html_label_text'       => esc_html__('Pinterest', 'event_espresso'),
+                    'other_html_attributes' => ' placeholder="pinterest.com/profilename"',
+                    'default'               => $this->organization_config->get_pretty('pinterest'),
+                    'required'              => false,
+                ]
+            ),
+            'organization_instagram'  => new EE_Text_Input(
+                [
+                    'html_name'             => 'organization_instagram',
+                    'html_class'            => 'ee-input-width--reg',
+                    'html_label_text'       => esc_html__('Instagram', 'event_espresso'),
+                    'other_html_attributes' => ' placeholder="instagram.com/handle"',
+                    'default'               => $this->organization_config->get_pretty('instagram'),
+                    'required'              => false,
+                ]
+            ),
+        ];
+
+        if ($this->feature->allowed('use_edd_plugin_licensing')) {
+            $subsections = EEH_Array::insert_into_array(
+                $subsections,
+                [
+                    'support_license_key_notice' => new EE_Form_Section_HTML(
+                        EEH_HTML::p(
+                            sprintf(
+                                esc_html__(
+                                    'Management for your Event Espresso Support License Key has been moved to the %1$sLicense Keys admin page%2$s',
+                                    'event_espresso'
+                                ),
+                                '<a href="' . EE_Admin_Page::add_query_args_and_nonce(
+                                    [],
+                                    LICENSE_KEYS_ADMIN_URL
+                                ) . '">',
+                                '</a>'
+                            ),
+                            '',
+                            'ee-status-outline ee-status-bg--info'
+                        )
+                    ),
+                ],
+                'contact_information_hdr'
+            );
+        }
         return apply_filters(
             'FHEE__EventEspresso_admin_pages_general_settings_OrganizationSettings__generate__form',
             new EE_Form_Section_Proper(
-                array(
+                [
                     'name'            => 'organization_settings',
                     'html_id'         => 'organization_settings',
                     'layout_strategy' => new EE_Admin_Two_Column_Layout(),
-                    'subsections'     => array(
-                        'contact_information_hdr'        => new EE_Form_Section_HTML(
-                            EEH_HTML::h2(
-                                esc_html__('Contact Information', 'event_espresso')
-                                . ' '
-                                . EEH_HTML::span(EEH_Template::get_help_tab_link('contact_info_info')),
-                                '',
-                                'contact-information-hdr'
-                            )
-                        ),
-                        'organization_name'      => new EE_Text_Input(
-                            array(
-                                'html_name' => 'organization_name',
-                                'html_label_text' => esc_html__('Organization Name', 'event_espresso'),
-                                'html_help_text'  => esc_html__(
-                                    'Displayed on all emails and invoices.',
-                                    'event_espresso'
-                                ),
-                                'default'         => $this->organization_config->get_pretty('name'),
-                                'required'        => false,
-                            )
-                        ),
-                        'organization_address_1'      => new EE_Text_Input(
-                            array(
-                                'html_name' => 'organization_address_1',
-                                'html_label_text' => esc_html__('Street Address', 'event_espresso'),
-                                'default'         => $this->organization_config->get_pretty('address_1'),
-                                'required'        => false,
-                            )
-                        ),
-                        'organization_address_2'      => new EE_Text_Input(
-                            array(
-                                'html_name' => 'organization_address_2',
-                                'html_label_text' => esc_html__('Street Address 2', 'event_espresso'),
-                                'default'         => $this->organization_config->get_pretty('address_2'),
-                                'required'        => false,
-                            )
-                        ),
-                        'organization_city'      => new EE_Text_Input(
-                            array(
-                                'html_name' => 'organization_city',
-                                'html_class'   => 'ee-input-size--reg',
-                                'html_label_text' => esc_html__('City', 'event_espresso'),
-                                'default'         => $this->organization_config->get_pretty('city'),
-                                'required'        => false,
-                            )
-                        ),
-                        'organization_country'      => new EE_Country_Select_Input(
-                            null,
-                            array(
-                                EE_Country_Select_Input::OPTION_GET_KEY => EE_Country_Select_Input::OPTION_GET_ALL,
-                                'html_name'       => 'organization_country',
-                                'html_class'         => 'ee-input-size--reg',
-                                'html_label_text' => esc_html__('Country', 'event_espresso'),
-                                'default'         => $this->organization_config->CNT_ISO,
-                                'required'        => false,
-                                'html_help_text'  => sprintf(
-                                    esc_html__(
-                                        '%1$sThe Country set here will have the effect of setting the currency used for all ticket prices.%2$s',
-                                        'event_espresso'
-                                    ),
-                                    '<span class="reminder-spn">',
-                                    '</span>'
-                                ),
-                            )
-                        ),
-                        'organization_state' => new EE_State_Select_Input(
-                            null,
-                            array(
-                                'html_name'       => 'organization_state',
-                                'html_label_text' => esc_html__('State/Province', 'event_espresso'),
-                                'default'         => $this->organization_config->STA_ID,
-                                'required'        => false,
-                                'html_help_text' => empty($this->organization_config->STA_ID) || ! $has_sub_regions
-                                    ? sprintf(
-                                        esc_html__(
-                                            'If the States/Provinces for the selected Country do not appear in this list, then click "Save".%3$sIf data exists, then the list will be populated when the page reloads and you will be able to make a selection at that time.%3$s%1$sMake sure you click "Save" again after selecting a State/Province that has just been loaded in order to keep that selection.%2$s',
-                                            'event_espresso'
-                                        ),
-                                        '<span class="reminder-spn">',
-                                        '</span>',
-                                        '<br />'
-                                    )
-                                    : '',
-                            )
-                        ),
-                        'organization_zip'      => new EE_Text_Input(
-                            array(
-                                'html_name' => 'organization_zip',
-                                'html_class'  => 'ee-input-size--small',
-                                'html_label_text' => esc_html__('Zip/Postal Code', 'event_espresso'),
-                                'default'         => $this->organization_config->get_pretty('zip'),
-                                'required'        => false,
-                            )
-                        ),
-                        'organization_email'      => new EE_Text_Input(
-                            array(
-                                'html_name' => 'organization_email',
-                                'html_label_text' => esc_html__('Primary Contact Email', 'event_espresso'),
-                                'html_help_text'  => sprintf(
-                                    esc_html__(
-                                        'This is where notifications go to when you use the %1$s and %2$s shortcodes in the message templates.',
-                                        'event_espresso'
-                                    ),
-                                    '<code>[CO_FORMATTED_EMAIL]</code>',
-                                    '<code>[CO_EMAIL]</code>'
-                                ),
-                                'default'         => $this->organization_config->get_pretty('email'),
-                                'required'        => false,
-                            )
-                        ),
-                        'organization_phone'      => new EE_Text_Input(
-                            array(
-                                'html_name' => 'organization_phone',
-                                'html_class'  => 'ee-input-size--small',
-                                'html_label_text' => esc_html__('Phone Number', 'event_espresso'),
-                                'html_help_text'  => esc_html__(
-                                    'The phone number for your organization.',
-                                    'event_espresso'
-                                ),
-                                'default'         => $this->organization_config->get_pretty('phone'),
-                                'required'        => false,
-                            )
-                        ),
-                        'organization_vat'      => new EE_Text_Input(
-                            array(
-                                'html_name' => 'organization_vat',
-                                'html_class'      => 'ee-input-size--reg',
-                                'html_label_text' => esc_html__('VAT/Tax Number', 'event_espresso'),
-                                'html_help_text'  => esc_html__(
-                                    'The VAT/Tax Number may be displayed on invoices and receipts.',
-                                    'event_espresso'
-                                ),
-                                'default'         => $this->organization_config->get_pretty('vat'),
-                                'required'        => false,
-                            )
-                        ),
-                        'company_logo_hdr'        => new EE_Form_Section_HTML(
-                            EEH_HTML::h2(
-                                esc_html__('Company Logo', 'event_espresso')
-                                . ' '
-                                . EEH_HTML::span(EEH_Template::get_help_tab_link('organization_logo_info')),
-                                '',
-                                'company-logo-hdr'
-                            )
-                        ),
-                        'organization_logo_url'      => new EE_Admin_File_Uploader_Input(
-                            array(
-                                'html_name' => 'organization_logo_url',
-                                'html_label_text' => esc_html__('Upload New Logo', 'event_espresso'),
-                                'html_help_text'  => esc_html__(
-                                    'Your logo will be used on custom invoices, tickets, certificates, and payment templates.',
-                                    'event_espresso'
-                                ),
-                                'default'         => $this->organization_config->get_pretty('logo_url'),
-                                'required'        => false,
-                            )
-                        ),
-                        'social_links_hdr'        => new EE_Form_Section_HTML(
-                            EEH_HTML::h2(
-                                esc_html__('Social Links', 'event_espresso')
-                                . ' '
-                                . EEH_HTML::span(EEH_Template::get_help_tab_link('social_links_info'))
-                                . EEH_HTML::br()
-                                . EEH_HTML::p(
-                                    esc_html__(
-                                        'Enter any links to social accounts for your organization here',
-                                        'event_espresso'
-                                    ),
-                                    '',
-                                    'description'
-                                ),
-                                '',
-                                'social-links-hdr'
-                            )
-                        ),
-                        'organization_facebook'      => new EE_Text_Input(
-                            array(
-                                'html_name' => 'organization_facebook',
-                                'html_label_text' => esc_html__('Facebook', 'event_espresso'),
-                                'other_html_attributes' => ' placeholder="facebook.com/profile.name"',
-                                'default'         => $this->organization_config->get_pretty('facebook'),
-                                'required'        => false,
-                            )
-                        ),
-                        'organization_twitter'      => new EE_Text_Input(
-                            array(
-                                'html_name' => 'organization_twitter',
-                                'html_label_text' => esc_html__('Twitter', 'event_espresso'),
-                                'other_html_attributes' => ' placeholder="twitter.com/twitterhandle"',
-                                'default'         => $this->organization_config->get_pretty('twitter'),
-                                'required'        => false,
-                            )
-                        ),
-                        'organization_linkedin'      => new EE_Text_Input(
-                            array(
-                                'html_name' => 'organization_linkedin',
-                                'html_label_text' => esc_html__('LinkedIn', 'event_espresso'),
-                                'other_html_attributes' => ' placeholder="linkedin.com/in/profilename"',
-                                'default'         => $this->organization_config->get_pretty('linkedin'),
-                                'required'        => false,
-                            )
-                        ),
-                        'organization_pinterest'      => new EE_Text_Input(
-                            array(
-                                'html_name' => 'organization_pinterest',
-                                'html_label_text' => esc_html__('Pinterest', 'event_espresso'),
-                                'other_html_attributes' => ' placeholder="pinterest.com/profilename"',
-                                'default'         => $this->organization_config->get_pretty('pinterest'),
-                                'required'        => false,
-                            )
-                        ),
-                        'organization_instagram'      => new EE_Text_Input(
-                            array(
-                                'html_name' => 'organization_instagram',
-                                'html_label_text' => esc_html__('Instagram', 'event_espresso'),
-                                'other_html_attributes' => ' placeholder="instagram.com/handle"',
-                                'default'         => $this->organization_config->get_pretty('instagram'),
-                                'required'        => false,
-                            )
-                        ),
-                    ),
-                )
+                    'subsections'     => $subsections,
+                ]
             ),
             $this,
             $has_sub_regions
@@ -378,7 +410,7 @@ class OrganizationSettings extends FormHandler
      * @throws InvalidDataTypeException
      * @throws ReflectionException
      */
-    public function process($form_data = array()): bool
+    public function process($form_data = []): bool
     {
         // process form
         $valid_data = (array) parent::process($form_data);

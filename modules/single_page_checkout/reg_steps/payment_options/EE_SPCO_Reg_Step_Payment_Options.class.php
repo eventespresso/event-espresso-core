@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\domain\entities\contexts\Context;
+use EventEspresso\core\domain\services\registration\RegStatus;
 use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -324,7 +326,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                 continue;
             }
             // event requires admin approval
-            if ($registration->status_ID() === EEM_Registration::status_id_not_approved) {
+            if ($registration->status_ID() === RegStatus::AWAITING_REVIEW) {
                 // add event to list of events with pre-approval reg status
                 $registrations_requiring_pre_approval[ $REG_ID ] = $registration;
                 do_action(
@@ -336,7 +338,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
             }
             if (
                 $this->checkout->revisit
-                && $registration->status_ID() !== EEM_Registration::status_id_approved
+                && $registration->status_ID() !== RegStatus::APPROVED
                 && (
                     $registration->event()->is_sold_out()
                     || $registration->event()->is_sold_out(true)
@@ -361,7 +363,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                 );
             } elseif (
                 ! $this->checkout->revisit
-                      && $registration->status_ID() !== EEM_Registration::status_id_not_approved
+                      && $registration->status_ID() !== RegStatus::AWAITING_REVIEW
                       && $registration->ticket()->is_free()
             ) {
                 $registrations_for_free_events[ $registration->ticket()->ID() ] = $registration;
@@ -535,7 +537,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
         $ejected_registrations = [];
         foreach ($registrations as $REG_ID => $registration) {
             if (
-                $registration->status_ID() === EEM_Registration::status_id_approved
+                $registration->status_ID() === RegStatus::APPROVED
                 || apply_filters(
                     'FHEE__EE_SPCO_Reg_Step_Payment_Options__find_registrations_that_lost_their_space__allow_reg_payment',
                     false,
@@ -566,14 +568,14 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                 )
             ) {
                 $ejected_registrations[ $REG_ID ] = $registration->event();
-                if ($registration->status_ID() !== EEM_Registration::status_id_wait_list) {
+                if ($registration->status_ID() !== RegStatus::WAIT_LIST) {
                     /** @type EE_Registration_Processor $registration_processor */
                     $registration_processor = EE_Registry::instance()->load_class('Registration_Processor');
                     // at this point, we should have enough details about the registrant to consider the registration
                     // NOT incomplete
                     $registration_processor->manually_update_registration_status(
                         $registration,
-                        EEM_Registration::status_id_wait_list
+                        RegStatus::WAIT_LIST
                     );
                 }
             }
@@ -2164,7 +2166,17 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
         /** @type EE_Registration_Processor $registration_processor */
         $registration_processor = EE_Registry::instance()->load_class('Registration_Processor');
         // at this point, we should have enough details about the registrant to consider the registration NOT incomplete
-        $registration_processor->toggle_incomplete_registration_status_to_default($primary_registration);
+        $registration_processor->toggle_incomplete_registration_status_to_default(
+            $primary_registration,
+            false,
+            new Context(
+                __METHOD__,
+                esc_html__(
+                    'Executed when the primary registrant\'s status is updated during the registration process when processing a billing form.',
+                    'event_espresso'
+                )
+            )
+        );
         return true;
     }
 

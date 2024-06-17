@@ -1,6 +1,7 @@
 <?php
 
 use EventEspresso\core\domain\services\admin\menu\AdminMenuManager;
+use EventEspresso\core\domain\services\capabilities\FeatureFlags;
 use EventEspresso\core\domain\services\database\MaintenanceStatus;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -78,7 +79,7 @@ class EE_Admin_Page_Loader
     public function __construct(?LoaderInterface $loader)
     {
         $this->loader = $loader instanceof LoaderInterface ? $loader : LoaderFactory::getLoader();
-        $this->menu_manager = $this->loader->getShared(AdminMenuManager::class, [$this->loader]);
+        $this->menu_manager = $this->loader->getShared(AdminMenuManager::class);
     }
 
 
@@ -317,8 +318,14 @@ class EE_Admin_Page_Loader
             return $admin_pages;
         }
         $this->defineCaffeinatedConstants();
+
+        $exclude = ['tickets'];
+        $feature = $this->loader->getShared(FeatureFlags::class);
+        if (! $feature->allowed('use_edd_plugin_licensing')) {
+            $exclude[] = 'license_keys';
+        }
         // okay let's setup an "New" pages first (we'll return installed refs later)
-        $admin_pages += $this->findAdminPageFolders(EE_CORE_CAF_ADMIN . 'new/*', ['tickets']);
+        $admin_pages += $this->findAdminPageFolders(EE_CORE_CAF_ADMIN . 'new/*', $exclude);
 
         return apply_filters(
             'FHEE__EE_Admin_Page_Loader___get_installed_pages__installed_refs',

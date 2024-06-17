@@ -786,7 +786,7 @@ class EED_Events_Archive extends EED_Module
      * @param array              $REQ
      * @return EE_Template_Config
      */
-    public static function update_template_settings($CFG, $REQ)
+    public static function update_template_settings(EE_Template_Config $CFG, array $REQ): EE_Template_Config
     {
         $CFG->EED_Events_Archive = new EE_Events_Archive_Config();
         // unless we are resetting the config...

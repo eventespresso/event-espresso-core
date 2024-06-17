@@ -1,6 +1,7 @@
 <?php
 
 use EventEspresso\core\domain\services\database\DbStatus;
+use EventEspresso\core\domain\services\registration\RegStatus;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
@@ -403,7 +404,7 @@ class EE_Cron_Tasks extends EE_Base
                         $primary_registration = $transaction->primary_registration();
                         if (
                             $primary_registration instanceof EE_Registration
-                            && $primary_registration->status_ID() !== EEM_Registration::status_id_not_approved
+                            && $primary_registration->status_ID() !== RegStatus::AWAITING_REVIEW
                         ) {
                             /** @type EE_Transaction_Processor $transaction_processor */
                             $transaction_processor = EE_Registry::instance()->load_class('Transaction_Processor');

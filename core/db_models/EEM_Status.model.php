@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\domain\services\registration\RegStatus;
+
 /**
  * Class EEM_Status
  *
@@ -88,31 +90,31 @@ class EEM_Status extends EEM_Base
     {
         // note these are all in lower case because ucwords() on upper case will NOT convert.
         $translation_array = [
-            EEM_Registration::status_id_pending_payment => [
+            RegStatus::PENDING_PAYMENT => [
                 esc_html__('pending payment', 'event_espresso'), // singular
                 esc_html__('pending payments', 'event_espresso'), // plural
             ],
-            EEM_Registration::status_id_approved        => [
+            RegStatus::APPROVED        => [
                 esc_html__('approved', 'event_espresso'), // singular
                 esc_html__('approved', 'event_espresso'), // plural
             ],
-            EEM_Registration::status_id_not_approved    => [
-                esc_html__('not approved', 'event_espresso'),
-                esc_html__('not approved', 'event_espresso'),
+            RegStatus::AWAITING_REVIEW    => [
+                esc_html__('not approved / awaiting review', 'event_espresso'),
+                esc_html__('not approved / awaiting review', 'event_espresso'),
             ],
-            EEM_Registration::status_id_cancelled       => [
+            RegStatus::CANCELLED       => [
                 esc_html__('cancelled', 'event_espresso'),
                 esc_html__('cancelled', 'event_espresso'),
             ],
-            EEM_Registration::status_id_incomplete      => [
+            RegStatus::INCOMPLETE      => [
                 esc_html__('incomplete', 'event_espresso'),
                 esc_html__('incomplete', 'event_espresso'),
             ],
-            EEM_Registration::status_id_declined        => [
+            RegStatus::DECLINED        => [
                 esc_html__('declined', 'event_espresso'),
                 esc_html__('declined', 'event_espresso'),
             ],
-            EEM_Registration::status_id_wait_list       => [
+            RegStatus::WAIT_LIST       => [
                 esc_html__('wait list', 'event_espresso'),
                 esc_html__('wait list', 'event_espresso'),
             ],

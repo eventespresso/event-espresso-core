@@ -12,16 +12,14 @@
  * @package        Event Espresso
  * @subpackage     libraries/shortcodes/EE_Primary_Registration_Details_Shortcodes.lib.php
  * @author         Darren Ethier
- *
- * ------------------------------------------------------------------------
  */
 class EE_Primary_Registration_Details_Shortcodes extends EE_Shortcodes
 {
     protected function _init_props()
     {
-        $this->label = esc_html__('Primary_Registration Details Shortcodes', 'event_espresso');
+        $this->label       = esc_html__('Primary_Registration Details Shortcodes', 'event_espresso');
         $this->description = esc_html__('All shortcodes specific primary registrant data', 'event_espresso');
-        $this->_shortcodes = array(
+        $this->_shortcodes = [
             '[PRIMARY_REGISTRANT_FNAME]'                  => esc_html__(
                 'Parses to the first name of the primary registration for the transaction.',
                 'event_espresso'
@@ -82,26 +80,38 @@ class EE_Primary_Registration_Details_Shortcodes extends EE_Shortcodes
                 'This is a special dynamic shortcode.  After the "*", add the exact text of an existing question, and if there is an answer for that question for this primary registrant, then it will be output in place of this shortcode.',
                 'event_espresso'
             ),
-        );
+        ];
     }
 
 
+    /**
+     * @param string $shortcode
+     * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since $VID:$
+     */
     protected function _parser($shortcode)
     {
         // make sure we end up with a copy of the EE_Messages_Addressee object
         $primary_registration = $this->_data instanceof EE_Messages_Addressee ? $this->_data : null;
-        $primary_registration = ! $primary_registration instanceof EE_Messages_Addressee && is_array(
-            $this->_data
-        ) && isset($this->_data['data']) && $this->_data['data'] instanceof EE_Messages_Addressee ? $this->_data['data']
+        $primary_registration = ! $primary_registration instanceof EE_Messages_Addressee
+        && is_array($this->_data)
+        && isset($this->_data['data'])
+        && $this->_data['data'] instanceof EE_Messages_Addressee
+            ? $this->_data['data']
             : $primary_registration;
-        $primary_registration = ! $primary_registration instanceof EE_Messages_Addressee && ! empty($this->_extra_data['data']) && $this->_extra_data['data'] instanceof EE_Messages_Addressee
-            ? $this->_extra_data['data'] : $primary_registration;
+        $primary_registration = ! $primary_registration instanceof EE_Messages_Addressee
+        && ! empty($this->_extra_data['data'])
+        && $this->_extra_data['data'] instanceof EE_Messages_Addressee
+            ? $this->_extra_data['data']
+            : $primary_registration;
 
         if (! $primary_registration instanceof EE_Messages_Addressee) {
             return '';
         }
 
-        $attendee = $primary_registration->primary_att_obj;
+        $attendee    = $primary_registration->primary_att_obj;
         $primary_reg = $primary_registration->primary_reg_obj;
 
         if (! $attendee instanceof EE_Attendee || ! $primary_reg instanceof EE_Registration) {
@@ -173,22 +183,23 @@ class EE_Primary_Registration_Details_Shortcodes extends EE_Shortcodes
                     && trim($question->get('QST_display_text')) === trim($shortcode)
                     && isset($primary_registration->registrations[ $primary_reg->ID() ]['ans_objs'][ $ansid ])
                 ) {
+                    /** @var EE_Answer $primary_reg_ansid */
                     $primary_reg_ansid = $primary_registration->registrations[ $primary_reg->ID() ]['ans_objs'][ $ansid ];
 
                     // what we show for the answer depends on the question type!
                     switch ($question->get('QST_type')) {
                         case EEM_Question::QST_type_state:
-                            $state = EEM_State::instance()->get_one_by_ID($primary_reg_ansid->get('ANS_value'));
+                            $state  = EEM_State::instance()->get_one_by_ID($primary_reg_ansid->get('ANS_value'));
                             $answer = $state instanceof EE_State ? $state->name() : '';
                             break;
 
                         case EEM_Question::QST_type_country:
                             $country = EEM_Country::instance()->get_one_by_ID($primary_reg_ansid->get('ANS_value'));
-                            $answer = $country instanceof EE_Country ? $country->name() : '';
+                            $answer  = $country instanceof EE_Country ? $country->name() : '';
                             break;
 
                         default:
-                            $answer = $primary_reg_ansid->get_pretty('ANS_value', 'no_wpautop');
+                            $answer = (string) $primary_reg_ansid->get_pretty('ANS_value', 'no_wpautop');
                             break;
                     }
 

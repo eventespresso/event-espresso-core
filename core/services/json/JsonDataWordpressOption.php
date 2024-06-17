@@ -49,9 +49,9 @@ abstract class JsonDataWordpressOption extends WordPressOption
      * @param $value
      * @return int
      */
-    public function updateOption($value): int
+    public function updateOption($value, bool $force_update = false): int
     {
-        $update = parent::updateOption($this->json_data_handler->encodeData($value));
+        $update = parent::updateOption($this->json_data_handler->encodeData($value), $force_update);
         if ($update === WordPressOption::UPDATE_SUCCESS) {
             $this->options = $value;
         }

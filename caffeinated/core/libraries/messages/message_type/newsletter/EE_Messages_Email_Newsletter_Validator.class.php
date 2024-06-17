@@ -19,7 +19,7 @@ class EE_Messages_Email_Newsletter_Validator extends EE_Messages_Validator
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function __construct(array $fields, $context)
+    public function __construct($fields, $context)
     {
         $this->_m_name = 'email';
         $this->_mt_name = 'newsletter';

@@ -16,13 +16,14 @@ class EE_Hidden_Display_Strategy extends EE_Display_Strategy_Base
     public function display(): string
     {
         return "
-        <input type='hidden' 
-               class='{$this->_input->html_class()}' 
-               id='{$this->_input->html_id()}' 
-               name='{$this->_input->html_name()}' 
-               style='{$this->_input->html_style()}' 
+        <input type='hidden'
+               class='{$this->_input->html_class()}'
+               id='{$this->_input->html_id()}'
+               name='{$this->_input->html_name()}'
+               style='{$this->_input->html_style()}'
                value='{$this->_input->raw_value_in_form()}'
                {$this->_input->other_html_attributes()}
+               {$this->dataAttributesString($this->_input->dataAttributes())}
         />";
     }
 }

@@ -1,7 +1,9 @@
 <?php
 
+use EventEspresso\core\domain\entities\contexts\Context;
 use EventEspresso\core\domain\entities\contexts\ContextInterface;
 use EventEspresso\core\domain\entities\RegCode;
+use EventEspresso\core\domain\services\registration\RegStatus;
 use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -168,8 +170,17 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @throws RuntimeException
      * @throws UnexpectedEntityException
      */
-    public function set_status($new_STS_ID = null, $use_default = false, ContextInterface $context = null)
-    {
+    public function set_status(
+        string $new_STS_ID = '',
+        bool $use_default = false,
+        ?ContextInterface $context = null
+    ): bool {
+        $new_STS_ID = (string) apply_filters(
+            'AFEE__EE_Registration__set_status__new_STS_ID',
+            $new_STS_ID,
+            $context,
+            $this
+        );
         // get current REG_Status
         $old_STS_ID = $this->status_ID();
         // if status has changed
@@ -183,12 +194,12 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
             parent::set('STS_ID', $new_STS_ID, $use_default);
             // THEN handle other changes that occur when reg status changes
             // TO approved
-            if ($new_STS_ID === EEM_Registration::status_id_approved) {
+            if ($new_STS_ID === RegStatus::APPROVED) {
                 // reserve a space by incrementing ticket and datetime sold values
                 $this->reserveRegistrationSpace();
                 do_action('AHEE__EE_Registration__set_status__to_approved', $this, $old_STS_ID, $new_STS_ID, $context);
                 // OR FROM  approved
-            } elseif ($old_STS_ID === EEM_Registration::status_id_approved) {
+            } elseif ($old_STS_ID === RegStatus::APPROVED) {
                 // release a space by decrementing ticket and datetime sold values
                 $this->releaseRegistrationSpace();
                 do_action(
@@ -228,7 +239,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @throws ReflectionException
      * @throws RuntimeException
      */
-    private function updateIfCanceledOrReinstated($new_STS_ID, $old_STS_ID, ContextInterface $context = null)
+    private function updateIfCanceledOrReinstated($new_STS_ID, $old_STS_ID, ?ContextInterface $context = null)
     {
         // these reg statuses should not be considered in any calculations involving monies owing
         $closed_reg_statuses = EEM_Registration::closed_reg_statuses();
@@ -266,7 +277,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
         array $closed_reg_statuses,
         $new_STS_ID,
         $old_STS_ID,
-        ContextInterface $context = null
+        ?ContextInterface $context = null
     ) {
         // true if registration has been cancelled or declined
         if (
@@ -317,7 +328,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
         array $closed_reg_statuses,
         $new_STS_ID,
         $old_STS_ID,
-        ContextInterface $context = null
+        ?ContextInterface $context = null
     ) {
         // true if reinstating cancelled or declined registration
         if (
@@ -353,7 +364,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @param ContextInterface|null $context
      * @return bool
      */
-    private function statusChangeUpdatesTransaction(ContextInterface $context = null)
+    private function statusChangeUpdatesTransaction(?ContextInterface $context = null)
     {
         $contexts_that_do_not_update_transaction = (array) apply_filters(
             'AHEE__EE_Registration__statusChangeUpdatesTransaction__contexts_that_do_not_update_transaction',
@@ -682,7 +693,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
     /**
      *    is_not_approved -  convenience method that returns TRUE if REG status ID ==
-     *    EEM_Registration::status_id_not_approved
+     *    RegStatus::AWAITING_REVIEW
      *
      * @return        boolean
      * @throws EE_Error
@@ -693,13 +704,13 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      */
     public function is_not_approved()
     {
-        return $this->status_ID() === EEM_Registration::status_id_not_approved;
+        return $this->status_ID() === RegStatus::AWAITING_REVIEW;
     }
 
 
     /**
      *    is_pending_payment -  convenience method that returns TRUE if REG status ID ==
-     *    EEM_Registration::status_id_pending_payment
+     *    RegStatus::PENDING_PAYMENT
      *
      * @return        boolean
      * @throws EE_Error
@@ -710,12 +721,12 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      */
     public function is_pending_payment()
     {
-        return $this->status_ID() === EEM_Registration::status_id_pending_payment;
+        return $this->status_ID() === RegStatus::PENDING_PAYMENT;
     }
 
 
     /**
-     *    is_approved -  convenience method that returns TRUE if REG status ID == EEM_Registration::status_id_approved
+     *    is_approved -  convenience method that returns TRUE if REG status ID == RegStatus::APPROVED
      *
      * @return        boolean
      * @throws EE_Error
@@ -726,12 +737,12 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      */
     public function is_approved()
     {
-        return $this->status_ID() === EEM_Registration::status_id_approved;
+        return $this->status_ID() === RegStatus::APPROVED;
     }
 
 
     /**
-     *    is_cancelled -  convenience method that returns TRUE if REG status ID == EEM_Registration::status_id_cancelled
+     *    is_cancelled -  convenience method that returns TRUE if REG status ID == RegStatus::CANCELLED
      *
      * @return        boolean
      * @throws EE_Error
@@ -742,12 +753,12 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      */
     public function is_cancelled()
     {
-        return $this->status_ID() === EEM_Registration::status_id_cancelled;
+        return $this->status_ID() === RegStatus::CANCELLED;
     }
 
 
     /**
-     *    is_declined -  convenience method that returns TRUE if REG status ID == EEM_Registration::status_id_declined
+     *    is_declined -  convenience method that returns TRUE if REG status ID == RegStatus::DECLINED
      *
      * @return        boolean
      * @throws EE_Error
@@ -758,13 +769,13 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      */
     public function is_declined()
     {
-        return $this->status_ID() === EEM_Registration::status_id_declined;
+        return $this->status_ID() === RegStatus::DECLINED;
     }
 
 
     /**
      *    is_incomplete -  convenience method that returns TRUE if REG status ID ==
-     *    EEM_Registration::status_id_incomplete
+     *    RegStatus::INCOMPLETE
      *
      * @return        boolean
      * @throws EE_Error
@@ -775,7 +786,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      */
     public function is_incomplete()
     {
-        return $this->status_ID() === EEM_Registration::status_id_incomplete;
+        return $this->status_ID() === RegStatus::INCOMPLETE;
     }
 
 
@@ -1301,7 +1312,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
     /**
      * owes_monies_and_can_pay
-     * whether or not this registration has monies owing and it's' status allows payment
+     * whether this registration has monies owing and it's' status allows payment
      *
      * @param array $requires_payment list of registration statuses that allow a registrant to make a payment
      * @return bool
@@ -1365,37 +1376,37 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
         );
         $icon   = '';
         switch ($this->status_ID()) {
-            case EEM_Registration::status_id_approved:
+            case RegStatus::APPROVED:
                 $icon = $show_icons
                     ? '<span class="dashicons dashicons-star-filled ee-icon-size-16 green-text"></span>'
                     : '';
                 break;
-            case EEM_Registration::status_id_pending_payment:
+            case RegStatus::PENDING_PAYMENT:
                 $icon = $show_icons
                     ? '<span class="dashicons dashicons-star-half ee-icon-size-16 orange-text"></span>'
                     : '';
                 break;
-            case EEM_Registration::status_id_not_approved:
+            case RegStatus::AWAITING_REVIEW:
                 $icon = $show_icons
                     ? '<span class="dashicons dashicons-marker ee-icon-size-16 orange-text"></span>'
                     : '';
                 break;
-            case EEM_Registration::status_id_cancelled:
+            case RegStatus::CANCELLED:
                 $icon = $show_icons
                     ? '<span class="dashicons dashicons-no ee-icon-size-16 lt-grey-text"></span>'
                     : '';
                 break;
-            case EEM_Registration::status_id_incomplete:
+            case RegStatus::INCOMPLETE:
                 $icon = $show_icons
                     ? '<span class="dashicons dashicons-no ee-icon-size-16 lt-orange-text"></span>'
                     : '';
                 break;
-            case EEM_Registration::status_id_declined:
+            case RegStatus::DECLINED:
                 $icon = $show_icons
                     ? '<span class="dashicons dashicons-no ee-icon-size-16 red-text"></span>'
                     : '';
                 break;
-            case EEM_Registration::status_id_wait_list:
+            case RegStatus::WAIT_LIST:
                 $icon = $show_icons
                     ? '<span class="dashicons dashicons-clipboard ee-icon-size-16 purple-text"></span>'
                     : '';
@@ -1607,8 +1618,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 
     /**
-     * Returns the number of times this registration has checked into any of the datetimes
-     * its available for
+     * Returns the number of times this registration has checked into any of the datetimes it's available for
      *
      * @return int
      * @throws EE_Error
@@ -1625,7 +1635,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
     /**
      * Returns the number of current Check-ins this registration is checked into for any of the datetimes the
-     * registration is for.  Note, this is ONLY checked in (does not include checkedout)
+     * registration is for.  Note, this is ONLY checked in (does not include checked out)
      *
      * @return int
      * @throws EE_Error
@@ -1641,7 +1651,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 
     /**
-     * The purpose of this method is simply to check whether this registration can checkin to the given datetime.
+     * The purpose of this method is simply to check whether this registration can check in to the given datetime.
      *
      * @param int | EE_Datetime $DTT_OR_ID      The datetime the registration is being checked against
      * @param bool              $check_approved This is used to indicate whether the caller wants can_checkin to also
@@ -1680,13 +1690,13 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 
     /**
-     * This method verifies whether the user can checkin for the given datetime considering the max uses value set on
+     * This method verifies whether the user can check in for the given datetime considering the max uses value set on
      * the ticket. To do this,  a query is done to get the count of the datetime records already checked into.  If the
      * datetime given does not have a check-in record and checking in for that datetime will exceed the allowed uses,
      * then return false.  Otherwise return true.
      *
      * @param int | EE_Datetime $DTT_OR_ID The datetime the registration is being checked against
-     * @return bool true means can checkin.  false means cannot checkin.
+     * @return bool true means can check in.  false means cannot check in.
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -1705,19 +1715,19 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
             ? $this->ticket()->uses()
             : EE_INF;
 
-        // if max uses is not set or equals infinity then return true cause its not a factor for whether user can
-        // check-in or not.
+        // if max uses is not set or equals infinity then return true
+        // because it's not a factor for whether user can check in or not.
         if (! $max_uses || $max_uses === EE_INF) {
             return true;
         }
 
-        // does this datetime have a checkin record?  If so, then the dtt count has already been verified so we can just
+        // does this datetime have a check-in record?  If so, then the dtt count has already been verified so we can just
         // go ahead and toggle.
         if (EEM_Checkin::instance()->exists([['REG_ID' => $this->ID(), 'DTT_ID' => $DTT_ID]])) {
             return true;
         }
 
-        // made it here so the last check is whether the number of checkins per unique datetime on this registration
+        // made it here so the last check is whether the number of check-ins per unique datetime on this registration
         // disallows further check-ins.
         $count_unique_dtt_checkins = EEM_Checkin::instance()->count(
             [
@@ -1729,8 +1739,8 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
             'DTT_ID',
             true
         );
-        // checkins have already reached their max number of uses
-        // so registrant can NOT checkin
+        // check-ins have already reached their max number of uses
+        // so registrant can NOT check in
         if ($count_unique_dtt_checkins >= $max_uses) {
             EE_Error::add_error(
                 esc_html__(
@@ -1757,7 +1767,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @param int  $DTT_ID  include specific datetime to toggle Check-in for.
      *                      If not included or null, then it is assumed latest datetime is being toggled.
      * @param bool $verify  If true then can_checkin() is used to verify whether the person
-     *                      can be checked in or not.  Otherwise this forces change in checkin status.
+     *                      can be checked in or not.  Otherwise this forces change in check-in status.
      * @return bool|int     the chk_in status toggled to OR false if nothing got changed.
      * @throws EE_Error
      * @throws InvalidArgumentException
@@ -1770,7 +1780,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
         if (empty($DTT_ID)) {
             $datetime = $this->get_latest_related_datetime();
             $DTT_ID   = $datetime instanceof EE_Datetime ? $datetime->ID() : 0;
-            // verify the registration can checkin for the given DTT_ID
+            // verify the registration can check in for the given DTT_ID
         } elseif (! $this->can_checkin($DTT_ID, $verify)) {
             EE_Error::add_error(
                 sprintf(
@@ -1889,13 +1899,13 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
     /**
      * This method simply returns the check-in status for this registration and the given datetime.
-     * If neither the datetime nor the checkin values are provided as arguments,
+     * If neither the datetime nor the check-in values are provided as arguments,
      * then this will return the LATEST check-in status for the registration across all datetimes it belongs to.
      *
      * @param int|null        $DTT_ID  The ID of the datetime we're checking against
      *                                 (if empty we'll get the primary datetime for
-     *                                 this registration (via event) and use it's ID);
-     * @param EE_Checkin|null $checkin If present, we use the given checkin object rather than the dtt_id.
+     *                                 this registration (via event) and use its ID);
+     * @param EE_Checkin|null $checkin If present, we use the given check-in object rather than the dtt_id.
      * @return int                     Integer representing Check-in status.
      * @throws EE_Error
      * @throws ReflectionException
@@ -2268,7 +2278,14 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     public function delete()
     {
         if ($this->update_extra_meta(EE_Registration::PRE_TRASH_REG_STATUS_KEY, $this->status_ID()) === true) {
-            $this->set_status(EEM_Registration::status_id_cancelled);
+            $this->set_status(
+                RegStatus::CANCELLED,
+                false,
+                new Context(
+                    __METHOD__,
+                    esc_html__('Executed when a registration is trashed.', 'event_espresso')
+                )
+            );
         }
         return parent::delete();
     }
@@ -2294,11 +2311,18 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
         $previous_status = $this->get_extra_meta(
             EE_Registration::PRE_TRASH_REG_STATUS_KEY,
             true,
-            EEM_Registration::status_id_cancelled
+            RegStatus::CANCELLED
         );
         if ($previous_status) {
             $this->delete_extra_meta(EE_Registration::PRE_TRASH_REG_STATUS_KEY);
-            $this->set_status($previous_status);
+            $this->set_status(
+                $previous_status,
+                false,
+                new Context(
+                    __METHOD__,
+                    esc_html__('Executed when a trashed registration is restored.', 'event_espresso')
+                )
+            );
         }
         return parent::restore();
     }
@@ -2328,11 +2352,11 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
             // overpaid or paid
             case EEH_Money::compare_floats($paid, $price, '>'):
             case EEH_Money::compare_floats($paid, $price):
-                $new_status = EEM_Registration::status_id_approved;
+                $new_status = RegStatus::APPROVED;
                 break;
             //  underpaid
             case EEH_Money::compare_floats($paid, $price, '<'):
-                $new_status = EEM_Registration::status_id_pending_payment;
+                $new_status = RegStatus::PENDING_PAYMENT;
                 break;
             // uhhh Houston...
             default:
@@ -2342,7 +2366,17 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
         }
         if ($new_status !== $this->status_ID()) {
             if ($trigger_set_status_logic) {
-                return $this->set_status($new_status);
+                return $this->set_status(
+                    $new_status,
+                    false,
+                    new Context(
+                        __METHOD__,
+                        esc_html__(
+                            'Executed when the registration status is updated based on total paid.',
+                            'event_espresso'
+                        )
+                    )
+                );
             }
             parent::set('STS_ID', $new_status);
             return true;
@@ -2562,5 +2596,25 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
         $this->save();
         // convert payment amount back to a negative value for storage in the db
         return (float) $payment_amount;
+    }
+
+
+    /**
+     * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since $VID:$
+     */
+    public function defaultRegistrationStatus(): string
+    {
+        $default_event_reg_status = $this->event()->default_registration_status();
+        $default_reg_status = (string) apply_filters(
+            'AFEE__EE_Registration__defaultRegistrationStatus__default_reg_status',
+            $default_event_reg_status,
+            $this
+        );
+        return RegStatus::isValidStatus($default_reg_status, false)
+            ? $default_reg_status
+            : $default_event_reg_status;
     }
 }

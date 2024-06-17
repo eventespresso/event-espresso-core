@@ -131,12 +131,13 @@ abstract class WordPressOption
 
     /**
      * @param $value
+     * @param bool $force_update
      * @return int
      */
-    public function updateOption($value): int
+    public function updateOption($value, bool $force_update = false): int
     {
         // don't update if value has not changed since last update
-        if ($this->valueIsUnchanged($value)) {
+        if (! $force_update && $this->valueIsUnchanged($value)) {
             return WordPressOption::UPDATE_NONE;
         }
         $this->value = $value;

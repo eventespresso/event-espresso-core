@@ -2,30 +2,27 @@
 
 namespace EventEspresso\caffeinated\admin\extend\registration_form\forms;
 
-use EE_Admin_Two_Column_Layout;
 use EE_Error;
-use EE_Form_Section_HTML;
-use EE_Form_Section_Proper;
-use EE_Select_Input;
-use EEH_HTML;
+use EE_Config;
+use EE_Switch_Input;
 use EventEspresso\core\domain\values\session\SessionLifespanOption;
 
 class SessionLifespanFormHandler
 {
-    /**
-     * @var SessionLifespanOption
-     */
-    private $session_lifespan_option;
+    private SessionLifespanOption $session_lifespan_option;
+    private EE_Config $config;
 
 
     /**
      * SessionLifespanForm constructor.
      *
      * @param SessionLifespanOption $session_lifespan_option
+     * @param EE_Config $config
      */
-    public function __construct(SessionLifespanOption $session_lifespan_option)
+    public function __construct(SessionLifespanOption $session_lifespan_option, EE_Config $config)
     {
         $this->session_lifespan_option = $session_lifespan_option;
+        $this->config = $config;
     }
 
 
@@ -43,6 +40,11 @@ class SessionLifespanFormHandler
                     if (isset($valid_data['session_lifespan'])) {
                         $session_lifespan = (int) $valid_data['session_lifespan'];
                         $this->session_lifespan_option->setSessionLifespan($session_lifespan);
+                        $this->config->registration->setUseSessionCountdown(
+                            isset($valid_data['use_session_countdown'])
+                            && $valid_data['use_session_countdown'] === EE_Switch_Input::OPTION_ON
+                        );
+                        $this->config->update_espresso_config();
                     } else {
                         EE_Error::add_error(
                             esc_html__(

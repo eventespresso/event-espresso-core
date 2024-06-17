@@ -249,24 +249,18 @@ abstract class EE_Form_Section_Layout_Base
      */
     public function display_help_text($input)
     {
-        $help_text  = $input->html_help_text();
-        if ($help_text !== '' && $help_text !== null) {
-            $tag = is_admin() ? 'p' : 'span';
-            return '<'
-                   . $tag
-                   . ' id="'
-                   . $input->html_id()
-                   . '-help" class="'
-                   . $input->html_help_class()
-                   . '" style="'
-                   . $input->html_help_style()
-                   . '">'
-                   . $help_text
-                   . '</'
-                   . $tag
-                   . '>';
+        $help_text = $input->html_help_text();
+        if (! $help_text) {
+            return '';
         }
-        return '';
+        $tag = is_admin() ? 'p' : 'span';
+        return '
+        <' . $tag . ' id="' . esc_attr($input->html_id()) . '-help"
+              class="' . esc_attr($input->html_help_class()) . '"
+              style="' . esc_attr($input->html_help_style()) . '"
+        >
+            ' . $help_text . '
+        </' . $tag . '>';
     }
 
 

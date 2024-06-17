@@ -3,6 +3,7 @@
 namespace EventEspresso\core\libraries\rest_api\calculations;
 
 use EE_Error;
+use EventEspresso\core\domain\services\registration\RegStatus;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\libraries\rest_api\calculations\Base as DatetimeCalculationBase;
@@ -174,7 +175,7 @@ class Datetime extends DatetimeCalculationBase
             array(
                 array(
                     'Ticket.Datetime.DTT_ID' => $wpdb_row['Datetime.DTT_ID'],
-                    'STS_ID'                 => EEM_Registration::status_id_pending_payment,
+                    'STS_ID'                 => RegStatus::PENDING_PAYMENT,
                 ),
             ),
             'REG_ID',

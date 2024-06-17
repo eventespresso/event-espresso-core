@@ -19,7 +19,7 @@
         <strong><?php esc_html_e('Filter by Status', 'event_espresso'); ?></strong>
         <br />
         <?php esc_html_e(
-            'The following statuses are available: Approved, Cancelled, Declined, Not Approved, Pending Payment.',
+            'The following statuses are available: Approved, Cancelled, Declined, Not Approved / Awaiting Review, Pending Payment.',
             'event_espresso'
         ); ?>
         <ul>
@@ -48,10 +48,10 @@
                 ); ?>
             </li>
             <li style="list-style-type: none;">
-                <strong><?php esc_html_e('Not Approved', 'event_espresso'); ?></strong>
+                <strong><?php esc_html_e('Awaiting Review', 'event_espresso'); ?></strong>
                 <br />
                 <?php esc_html_e(
-                    'A not approved registration is performed by the event admin. Payments are not allowed, the registration is active, and no space is reserved.',
+                    'Registration is awaiting review from the event admin. Payments are not allowed, the registration is active, and no space is reserved.',
                     'event_espresso'
                 ); ?>
             </li>

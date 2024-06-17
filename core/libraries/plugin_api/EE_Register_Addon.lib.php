@@ -1,8 +1,8 @@
 <?php
 
-use EventEspresso\caffeinated\core\domain\services\pue\RegisterAddonPUE;
 use EventEspresso\core\domain\DomainInterface;
 use EventEspresso\core\domain\RequiresDomainInterface;
+use EventEspresso\core\domain\services\capabilities\FeatureFlags;
 use EventEspresso\core\exceptions\ExceptionLogger;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -340,6 +340,7 @@ class EE_Register_Addon implements EEI_Plugin_API
         EE_Register_Addon::registerPersonalDataExporters($addon_name);
         // and privacy policy generators
         EE_Register_Addon::registerPersonalDataErasers($addon_name);
+        EE_Register_Addon::registerLicense($addon_name);
         // load and instantiate main addon class
         $addon = EE_Register_Addon::_load_and_init_addon_class($addon_name);
         // delay calling after_registration hook on each addon until after all add-ons have been registered.
@@ -427,7 +428,7 @@ class EE_Register_Addon implements EEI_Plugin_API
             // the addon slug for use in URLs, etc
             'plugin_slug'           => isset($setup_args['plugin_slug'])
                 ? (string) $setup_args['plugin_slug']
-                : '',
+                : sanitize_key($class_name),
             // page slug to be used when generating the "Settings" link on the WP plugin page
             'plugin_action_slug'    => isset($setup_args['plugin_action_slug'])
                 ? (string) $setup_args['plugin_action_slug']
@@ -551,7 +552,10 @@ class EE_Register_Addon implements EEI_Plugin_API
                 : [],
             'privacy_policies'      => isset($setup_args['privacy_policies'])
                 ? (array) $setup_args['privacy_policies']
-                : '',
+                : [],
+            'license'               => isset($setup_args['license'])
+                ? (array) $setup_args['license']
+                : [],
         ];
         // if plugin_action_slug is NOT set, but an admin page path IS set,
         // then let's just use the plugin_slug since that will be used for linking to the admin page
@@ -682,8 +686,6 @@ class EE_Register_Addon implements EEI_Plugin_API
         if (did_action('activate_plugin')) {
             // to find if THIS is the addon that was activated, just check if we have already registered it or not
             // (as the newly-activated addon wasn't around the first time addons were registered).
-            // Note: the presence of pue_options in the addon registration options will initialize the $_settings
-            // property for the add-on, but the add-on is only partially initialized.  Hence, the additional check.
             if (
                 ! isset(self::$_settings[ $addon_name ])
                 || (isset(self::$_settings[ $addon_name ])
@@ -1099,7 +1101,6 @@ class EE_Register_Addon implements EEI_Plugin_API
      */
     public static function load_pue_update()
     {
-        RegisterAddonPUE::loadPueUpdate();
     }
 
 
@@ -1119,6 +1120,25 @@ class EE_Register_Addon implements EEI_Plugin_API
                 }
             }
         }
+    }
+
+
+    private static function registerLicense($addon_name)
+    {
+        $addon_settings = self::$_settings[ $addon_name ] ?? [];
+        if (empty($addon_settings)) {
+            return;
+        }
+        $license_data = isset($addon_settings['license']) ? (array) $addon_settings['license'] : [];
+        // copy known values from addon settings to license data if anything's missing
+        $license_data += [
+            'main_file_path'   => $addon_settings['main_file_path'] ?? '',
+            'min_core_version' => $addon_settings['min_core_version'] ?? '',
+            'plugin_id'        => 0, // no corresponding value in addon settings
+            'plugin_slug'      => $addon_settings['plugin_slug'] ?? '',
+            'version'          => $addon_settings['version'] ?? '',
+        ];
+        EventEspresso\core\services\licensing\AddonLicense::register($addon_name, $license_data);
     }
 
 

@@ -120,8 +120,10 @@ class EE_CPT_Strategy extends EE_Base
         if (! $wp_query instanceof WP_Query) {
             return '';
         }
+        // cuz WP_Query is a mess and doesn't always have the post_type set in the same place
         $post_type = $wp_query->query->post_type ?? '';
-        $post_type = $post_type === '' && isset($wp_query->query['post_type']) ? $wp_query->query['post_type'] : '';
+        $post_type = $wp_query->query['post_type'] ?? $post_type;
+        $post_type = $wp_query->query_vars['post_type'] ?? $post_type;
         return is_array($post_type) ? (string) reset($post_type) : (string) $post_type;
     }
 

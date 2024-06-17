@@ -6,6 +6,7 @@ use EE_Error;
 use EEH_DTT_Helper;
 use EEM_Base;
 use EEM_Registration;
+use EventEspresso\core\domain\services\registration\RegStatus;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\request\DataType;
@@ -209,8 +210,8 @@ class QueryBuilder
             return;
         }
         $this->where_params['STS_ID'] = $this->view === 'incomplete'
-            ? EEM_Registration::status_id_incomplete
-            : ['!=', EEM_Registration::status_id_incomplete];
+            ? RegStatus::INCOMPLETE
+            : ['!=', RegStatus::INCOMPLETE];
     }
 
 

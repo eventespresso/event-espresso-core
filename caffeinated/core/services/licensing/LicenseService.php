@@ -4,6 +4,8 @@ namespace EventEspresso\caffeinated\core\services\licensing;
 
 use EventEspresso\caffeinated\core\domain\services\pue\Config;
 use EventEspresso\caffeinated\core\domain\services\pue\Stats;
+use EventEspresso\core\domain\services\capabilities\FeatureFlags;
+use EventEspresso\core\services\loaders\LoaderFactory;
 use PluginUpdateEngineChecker;
 
 /**
@@ -12,24 +14,32 @@ use PluginUpdateEngineChecker;
  * @package EventEspresso\core\services\licensing
  * @author  Darren Ethier
  * @since   4.9.59.p
+ * @deprecated $VID:$
  */
 class LicenseService
 {
     private Config $config;
 
+    private FeatureFlags $feature;
+
     private Stats $stats_collection;
 
-    public function __construct(Stats $stats_collection, Config $config)
+    public function __construct(Stats $stats_collection, Config $config, FeatureFlags $feature)
     {
         $this->config = $config;
         $this->stats_collection = $stats_collection;
+        $this->feature          = $feature;
     }
 
     public function loadPueClient()
     {
         // PUE Auto Upgrades stuff
-        if (is_readable(EE_THIRD_PARTY . 'pue/pue-client.php')) { // include the file
+        if (
+            ! $this->feature->allowed('use_edd_plugin_licensing')
+            && is_readable(EE_THIRD_PARTY . 'pue/pue-client.php')
+        ) { // include the file
             require_once(EE_THIRD_PARTY . 'pue/pue-client.php');
+
             // $options needs to be an array with the included keys as listed.
             $options = array(
                 // 'optionName' => '', //(optional) - used as the reference for saving update information in the
@@ -60,9 +70,8 @@ class LicenseService
                 $this->config->pluginSlug(),
                 $options
             );
-
-            do_action('AHEE__EE_System__brew_espresso__after_pue_init');
         }
+        do_action('AHEE__EE_System__brew_espresso__after_pue_init');
     }
 
 
@@ -75,6 +84,10 @@ class LicenseService
      */
     public static function isUpdateAvailable(string $basename = ''): bool
     {
+        $feature = LoaderFactory::getShared(FeatureFlags::class);
+        if (! $feature->allowed('use_edd_plugin_licensing')) {
+            return false;
+        }
         $basename = ! empty($basename) ? $basename : EE_PLUGIN_BASENAME;
 
         $update = false;

@@ -8,10 +8,10 @@ use EE_Payment_Processor;
 use EE_Registration;
 use EE_Transaction;
 use EE_Transaction_Processor;
-use EEM_Registration;
 use EEM_Transaction;
 use EventEspresso\core\domain\services\cron\CronJob;
 use EventEspresso\core\domain\services\cron\CronUtilities;
+use EventEspresso\core\domain\services\registration\RegStatus;
 use ReflectionException;
 use RuntimeException;
 
@@ -168,7 +168,7 @@ class ExpiredTransactionCheck extends CronJob
         $primary_registration = $transaction->primary_registration();
         if (
             $primary_registration instanceof EE_Registration
-            && $primary_registration->status_ID() !== EEM_Registration::status_id_not_approved
+            && $primary_registration->status_ID() !== RegStatus::AWAITING_REVIEW
         ) {
             $this->transaction_processor->update_transaction_and_registrations_after_checkout_or_payment(
                 $transaction,

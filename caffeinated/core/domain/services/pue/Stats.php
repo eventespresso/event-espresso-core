@@ -18,6 +18,7 @@ use EventEspresso\core\services\request\RequestInterface;
  * @package EventEspresso\core\domain\services\pue
  * @author  Darren Ethier
  * @since   4.9.59.p
+ * @deprecated $VID:$
  */
 class Stats
 {

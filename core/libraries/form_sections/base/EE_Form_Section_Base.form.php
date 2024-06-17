@@ -91,20 +91,26 @@ abstract class EE_Form_Section_Base
      */
     public function __construct($options_array = [])
     {
-        // used by display strategies
-        // assign incoming values to properties
-        foreach ($options_array as $key => $value) {
-            $key = '_' . $key;
-            if (property_exists($this, $key) && empty($this->{$key})) {
-                $this->{$key} = $value;
-                if ($key === '_subsections' && ! is_array($value)) {
-                    throw new InvalidDataTypeException($key, $value, 'array');
-                }
-            }
-        }
         // set parser which allows the form section's rendered HTML to be filtered
         if (isset($options_array['form_html_filter']) && $options_array['form_html_filter'] instanceof FormHtmlFilter) {
             $this->_form_html_filter = $options_array['form_html_filter'];
+            unset($options_array['form_html_filter']);
+        }
+        // used by display strategies
+        // assign incoming values to properties
+        foreach ($options_array as $key => $value) {
+            $setter = 'set_' . $key;
+            if (method_exists($this, $setter)) {
+                $this->$setter($value);
+                continue;
+            }
+            $_key = "_$key";
+            if (property_exists($this, $_key) && empty($this->{$_key})) {
+                if ($_key === '_subsections' && ! is_array($value)) {
+                    throw new InvalidDataTypeException($_key, $value, 'array');
+                }
+                $this->{$_key} = $value;
+            }
         }
     }
 
@@ -307,7 +313,14 @@ abstract class EE_Form_Section_Base
      */
     public function set_other_html_attributes($other_html_attributes)
     {
-        $this->_other_html_attributes = $other_html_attributes ?? '';
+        if (empty($other_html_attributes)) {
+            return;
+        }
+        // make sure attributes are separated by a space
+        $other_html_attributes = strpos($other_html_attributes, ' ') !== 0
+            ? " $other_html_attributes"
+            : $other_html_attributes;
+        $this->_other_html_attributes .= $other_html_attributes;
     }
 
 

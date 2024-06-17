@@ -2,6 +2,7 @@
 
 use EventEspresso\core\domain\services\admin\registrations\list_table\csv_reports\RegistrationsCsvReportParams;
 use EventEspresso\core\domain\services\capabilities\user_caps\RegistrationsListTableUserCapabilities;
+use EventEspresso\core\domain\services\registration\RegStatus;
 use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -359,10 +360,10 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
             case 'trash':
                 return EEM_Registration::instance()->count_deleted([$where]);
             case 'incomplete':
-                $where['STS_ID'] = EEM_Registration::status_id_incomplete;
+                $where['STS_ID'] = RegStatus::INCOMPLETE;
                 break;
             default:
-                $where['STS_ID'] = ['!=', EEM_Registration::status_id_incomplete];
+                $where['STS_ID'] = ['!=', RegStatus::INCOMPLETE];
         }
         return EEM_Registration::instance()->count([$where]);
     }
@@ -436,7 +437,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
                         ),
                     ],
                 ],
-                'STS_ID'   => ['!=', EEM_Registration::status_id_incomplete],
+                'STS_ID'   => ['!=', RegStatus::INCOMPLETE],
             ]
         );
         return EEM_Registration::instance()->count([$where]);
@@ -733,14 +734,14 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
             ? $payment_method->admin_name()
             : esc_html__('Unknown', 'event_espresso');
 
-        $payment_status = EEM_Registration::status_id_pending_payment;
+        $payment_status = RegStatus::PENDING_PAYMENT;
         $content = '<span>';
         $icon = '';
         $label = esc_attr__('pending payment', 'event_espresso');
         if ($registration->paid() == $registration->final_price()) {
             $icon = '<span class="dashicons dashicons-yes green-icon"></span> ';
             $label = esc_attr__('paid in full', 'event_espresso');
-            $payment_status = EEM_Registration::status_id_approved;
+            $payment_status = RegStatus::APPROVED;
         }
         if ($registration->paid() > $registration->final_price()) {
             $icon = '<span class="dashicons dashicons-warning orange-icon"></span> ';

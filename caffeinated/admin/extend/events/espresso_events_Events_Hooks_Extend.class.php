@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\services\registration\RegStatus;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
@@ -579,7 +580,7 @@ class espresso_events_Events_Hooks_Extend extends EE_Admin_Hooks
                         'Registration',
                         [
                             [
-                                'STS_ID' => ['NOT IN', [EEM_Registration::status_id_incomplete]],
+                                'STS_ID' => ['NOT IN', [RegStatus::INCOMPLETE]],
                             ],
                         ]
                     );
@@ -1599,7 +1600,7 @@ class espresso_events_Events_Hooks_Extend extends EE_Admin_Hooks
                         [
                             'STS_ID' => [
                                 '!=',
-                                EEM_Registration::status_id_incomplete,
+                                RegStatus::INCOMPLETE,
                             ],
                         ],
                     ]

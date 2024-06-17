@@ -46,7 +46,6 @@ class EE_Datetime_Shortcodes extends EE_Shortcodes
      */
     protected function _parser($shortcode)
     {
-
         if (! $this->_data instanceof EE_Datetime) {
             return ''; // get out cause we can only parse with the datetime object.
         }

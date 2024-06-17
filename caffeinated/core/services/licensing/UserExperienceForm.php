@@ -14,6 +14,9 @@ use EEH_Template;
 use EventEspresso\caffeinated\core\domain\services\pue\Stats;
 use EventEspresso\core\libraries\form_sections\strategies\filter\VsprintfFilter;
 
+/**
+ * @deprecated $VID:$
+ */
 class UserExperienceForm
 {
     /**

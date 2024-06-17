@@ -699,8 +699,11 @@ class Pricing_Admin_Page extends EE_Admin_Page
                     && $price->type_obj()->base_type() !== EEM_Price_Type::base_type_tax
                 ) {
                     $ticket = EEM_Ticket::instance()->get_one_by_ID(1);
-                    $ticket->_add_relation_to($price, 'Price');
-                    $ticket->save();
+                    // TODO: create new default ticket if it doesn't exist
+                    if ($ticket instanceof EE_Ticket) {
+                        $ticket->_add_relation_to($price, 'Price');
+                        $ticket->save();
+                    }
                 }
                 $updated = 1;
             }

@@ -38,6 +38,7 @@
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\core\services\request\sanitizers\AllowedTags;
+use EventEspresso\PaymentMethods\Manager;
 
 if (! class_exists('PluginUpdateEngineChecker')):
     /**
@@ -1352,7 +1353,7 @@ if (! class_exists('PluginUpdateEngineChecker')):
                 'blocking'   => true,
                 'user-agent' => 'PUE-stats-carrier',
                 'body'       => $body,
-                'sslverify'  => false,
+                'sslverify'  => Manager::verifySSL(),
             ];
 
             wp_remote_post($this->metadataUrl, $args);

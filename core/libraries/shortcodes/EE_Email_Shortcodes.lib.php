@@ -67,36 +67,33 @@ class EE_Email_Shortcodes extends EE_Shortcodes
     }
 
 
+    /**
+     * @param string $shortcode
+     * @throws EE_Error
+     */
     protected function _parser($shortcode)
     {
-
         switch ($shortcode) {
             case '[SITE_ADMIN_EMAIL]':
                 return $this->_get_site_admin_email();
-                break;
 
             case '[EVENT_AUTHOR_FORMATTED_EMAIL]':
                 return $this->_get_event_admin_emails();
-                break;
 
             case '[EVENT_AUTHOR_EMAIL]':
                 return $this->_get_event_admin_emails(false);
-                break;
 
             case '[CO_FORMATTED_EMAIL]':
             case '[ESPRESSO_ADMIN_FORMATTED_EMAIL]':
                 return EE_Registry::instance()->CFG->organization->get_pretty('name') . ' <'
                        . EE_Registry::instance()->CFG->organization->get_pretty('email') . '>';
-                break;
 
             case '[CO_EMAIL]':
             case '[ESPRESSO_ADMIN_EMAIL]':
                 return EE_Registry::instance()->CFG->organization->get_pretty('email');
-                break;
 
             default:
                 return '';
-                break;
         }
     }
 

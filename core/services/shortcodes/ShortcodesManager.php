@@ -202,7 +202,7 @@ class ShortcodesManager
         $posts = is_array($wp_query->posts) ? $wp_query->posts : [$wp_query->posts];
         foreach ($posts as $post) {
             // now check post content and excerpt for EE shortcodes
-            $load_assets = $this->parseContentForShortcodes($post->post_content, $post)
+            $load_assets = $this->parseContentForShortcodes((string) $post->post_content, $post)
                 ? true
                 : $load_assets;
         }

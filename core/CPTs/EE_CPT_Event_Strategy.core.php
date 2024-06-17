@@ -20,6 +20,8 @@ class EE_CPT_Event_Strategy
 
     private string $datetime_table;
 
+    private string $datetime_table_pk;
+
     private string $event_table;
 
     private string $event_table_pk;
@@ -39,6 +41,7 @@ class EE_CPT_Event_Strategy
         $this->CPT = $CPT;
         $this->current_time      = current_time('mysql', true);
         $this->datetime_table    = EEM_Datetime::instance()->table();
+        $this->datetime_table_pk = EEM_Datetime::instance()->primary_key_name();
         $this->event_table       = EEM_Event::instance()->table();
         $this->event_table_pk    = EEM_Event::instance()->primary_key_name();
         $this->template_settings = $template_settings;
@@ -107,7 +110,7 @@ class EE_CPT_Event_Strategy
                 || $wp_query->is_espresso_event_taxonomy
             )
             && $this->isEspressoEvent($wp_query)
-            && strpos($SQL, $this->datetime_table) === false
+            && strpos($SQL, "$this->datetime_table.*") === false
         ) {
             // adds something like ", wp_esp_datetime.* " to WP Query SELECT statement
             $SQL .= ", $this->datetime_table.* ";
@@ -127,6 +130,8 @@ class EE_CPT_Event_Strategy
      * @param string   $SQL
      * @param WP_Query $wp_query
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      * @noinspection PhpUndefinedFieldInspection
      */
     public function posts_join(string $SQL, WP_Query $wp_query): string
@@ -138,13 +143,31 @@ class EE_CPT_Event_Strategy
                 || $wp_query->is_espresso_event_taxonomy
             )
             && $this->isEspressoEvent($wp_query)
-            && strpos($SQL, $this->datetime_table) === false
         ) {
-            // adds something like:
-            // " LEFT JOIN wp_esp_datetime ON ( wp_esp_datetime.EVT_ID = wp_posts.ID ) "
-            // to WP Query JOIN statement
-            $SQL .= " INNER JOIN $this->datetime_table";
-            $SQL .= " ON ( $this->event_table.ID = $this->datetime_table.$this->event_table_pk ) ";
+            if (strpos($SQL, " INNER JOIN $this->datetime_table") === false) {
+                // adds something like:
+                // " LEFT JOIN wp_esp_datetime ON ( wp_esp_datetime.EVT_ID = wp_posts.ID ) "
+                // to WP Query JOIN statement
+                $SQL .= " INNER JOIN $this->datetime_table";
+                $SQL .= " ON ( $this->event_table.ID = $this->datetime_table.$this->event_table_pk ) ";
+            }
+            // filter out events with expired tickets
+            $date_tickets_table = EEM_Datetime_Ticket::instance()->table();
+            if (
+                (
+                    ! isset($this->template_settings->EED_Events_Archive)
+                    || ! isset($this->template_settings->EED_Events_Archive->display_events_with_expired_tickets)
+                    || ! $this->template_settings->EED_Events_Archive->display_events_with_expired_tickets
+                )
+                && strpos($SQL, " INNER JOIN $date_tickets_table") === false
+            ) {
+                $tickets_table = EEM_Ticket::instance()->table();
+                $tickets_table_pk = EEM_Ticket::instance()->primary_key_name();
+                $SQL .= " INNER JOIN $date_tickets_table AS Datetime_Ticket";
+                $SQL .= " ON ( Datetime_Ticket.$this->datetime_table_pk = $this->datetime_table.$this->datetime_table_pk )";
+                $SQL .= " INNER JOIN $tickets_table AS Ticket";
+                $SQL .= " ON ( Datetime_Ticket.TKT_ID=Ticket.$tickets_table_pk )";
+            }
         }
         return $SQL;
     }
@@ -172,6 +195,13 @@ class EE_CPT_Event_Strategy
                 || ! $this->template_settings->EED_Events_Archive->display_expired_events
             ) {
                 $SQL .= " AND $this->datetime_table.DTT_EVT_end > '$this->current_time' ";
+            }
+            if (
+                ! isset($this->template_settings->EED_Events_Archive)
+                || ! isset($this->template_settings->EED_Events_Archive->display_events_with_expired_tickets)
+                || ! $this->template_settings->EED_Events_Archive->display_events_with_expired_tickets
+            ) {
+                $SQL .= ' AND Ticket.TKT_end_date > "' . current_time('mysql', true) . '" AND Ticket.TKT_deleted=0';
             }
             // exclude trashed datetimes
             $SQL .= " AND $this->datetime_table.DTT_deleted = 0";
@@ -246,7 +276,7 @@ class EE_CPT_Event_Strategy
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function the_post(WP_Post &$post)
+    public function the_post(WP_Post $post)
     {
         if ($post->post_type === EspressoPostType::EVENTS && ! isset($post->EE_Event)) {
             $post->EE_Event = EEM_Event::instance()->get_one_by_ID($post->ID);

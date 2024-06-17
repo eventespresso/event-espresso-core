@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\domain\services\registration\RegStatus;
+
 /**
  * EE_Event_Shortcodes
  *
@@ -115,10 +117,13 @@ class EE_Event_Shortcodes extends EE_Shortcodes
     }
 
 
+    /**
+     * @param string $shortcode
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
     protected function _parser($shortcode)
     {
-
-
         $this->_event = $this->_data instanceof EE_Event ? $this->_data : null;
 
         // if no event, then let's see if there is a reg_obj.  If there IS, then we'll try and grab the event from the reg_obj instead.
@@ -139,32 +144,25 @@ class EE_Event_Shortcodes extends EE_Shortcodes
         switch ($shortcode) {
             case '[EVENT_ID]':
                 return $this->_event->ID();
-                break;
 
             case '[EVENT]':
             case '[EVENT_NAME]':
                 return $this->_event->get('EVT_name');
-                break;
 
             case '[EVENT_PHONE]':
                 return $this->_event->get('EVT_phone');
-                break;
 
             case '[EVENT_DESCRIPTION]':
                 return $this->_event->get('EVT_desc');
-                break;
 
             case '[EVENT_EXCERPT]':
                 return $this->_event->get('EVT_short_desc');
-                break;
 
             case '[EVENT_LINK]':
                 return $this->_get_event_link($this->_event);
-                break;
 
             case '[EVENT_URL]':
                 return $this->_get_event_link($this->_event, false);
-                break;
 
             case '[VIRTUAL_URL]':
                 $venue = $this->_event->get_first_related('Venue');
@@ -179,7 +177,6 @@ class EE_Event_Shortcodes extends EE_Shortcodes
                     return '';
                 }
                 return $venue->get('VNU_virtual_phone');
-                break;
 
             case '[EVENT_IMAGE]':
                 $image = $this->_event->feature_image_url(array(600, 300));
@@ -191,33 +188,28 @@ class EE_Event_Shortcodes extends EE_Shortcodes
                           $this->_event->get('EVT_name')
                       ) . '" />'
                     : '';
-                break;
 
             case '[EVENT_FACEBOOK_URL]':
                 $facebook_url = $this->_event->get_post_meta('event_facebook', true);
                 return empty($facebook_url) ? EE_Registry::instance()->CFG->organization->get_pretty('facebook')
                     : $facebook_url;
-                break;
 
             case '[EVENT_TWITTER_URL]':
                 $twitter_url = $this->_event->get_post_meta('event_twitter', true);
                 return empty($twitter_url) ? EE_Registry::instance()->CFG->organization->get_pretty('twitter')
                     : $twitter_url;
-                break;
 
             case '[EVENT_AUTHOR_EMAIL]':
                 $author_id = $this->_event->get('EVT_wp_user');
                 $user_data = get_userdata((int) $author_id);
                 return $user_data->user_email;
-                break;
 
             case '[EVENT_TOTAL_SPOTS_TAKEN]':
                 return EEM_Registration::instance()->count(
-                    array(array('EVT_ID' => $this->_event->ID(), 'STS_ID' => EEM_Registration::status_id_approved)),
+                    array(array('EVT_ID' => $this->_event->ID(), 'STS_ID' => RegStatus::APPROVED)),
                     'REG_ID',
                     true
                 );
-                break;
 
             case '[REGISTRATION_LIST_TABLE_FOR_EVENT_URL]':
                 return EEH_URL::add_query_args_and_nonce(
@@ -229,7 +221,6 @@ class EE_Event_Shortcodes extends EE_Shortcodes
                     admin_url('admin.php'),
                     true
                 );
-                break;
         }
 
         if (strpos($shortcode, '[EVENT_META_*') !== false) {

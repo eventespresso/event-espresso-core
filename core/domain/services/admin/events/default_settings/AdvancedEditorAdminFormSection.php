@@ -37,10 +37,7 @@ use EEH_HTML;
  */
 class AdvancedEditorAdminFormSection
 {
-    /**
-     * @var EE_Admin_Config
-     */
-    protected $admin_config;
+    protected  EE_Admin_Config $admin_config;
 
 
     /**
@@ -69,7 +66,7 @@ class AdvancedEditorAdminFormSection
      * @return array
      * @since 5.0.0.p
      */
-    public function mergeFormSubsections(array $default_event_settings_form_subsections)
+    public function mergeFormSubsections(array $default_event_settings_form_subsections): array
     {
         return [
                    'new_features_section_header' => new EE_Form_Section_HTML(
@@ -99,6 +96,7 @@ class AdvancedEditorAdminFormSection
                                    ),
                                    '<br />'
                                ),
+                               'html_class'      => 'ee-input-width--small',
                            ]
                        )
                    ),
@@ -114,9 +112,7 @@ class AdvancedEditorAdminFormSection
     public function updateAdminFormSettings(array $valid_data, EE_Config $config)
     {
         $config->admin->setUseAdvancedEditor(
-            isset($valid_data['use_advanced_editor'])
-                ? $valid_data['use_advanced_editor']
-                : false
+            $valid_data['use_advanced_editor'] ?? false
         );
     }
 }

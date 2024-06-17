@@ -3,6 +3,7 @@
 use EventEspresso\core\domain\entities\custom_post_types\EspressoPostType;
 use EventEspresso\core\domain\services\admin\events\default_settings\AdvancedEditorAdminFormSection;
 use EventEspresso\core\domain\services\admin\events\editor\ui\TicketSelectorShortcodeButton;
+use EventEspresso\core\domain\services\registration\RegStatus;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\orm\tree_traversal\NodeGroupDao;
@@ -1075,7 +1076,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         $success = $this->_event_model()->update_by_ID($event_values, $post_id);
         // get event_object for other metaboxes...
         // though it would seem to make sense to just use $this->_event_model()->get_one_by_ID( $post_id )..
-        // i have to setup where conditions to override the filters in the model
+        // i have to set up where conditions to override the filters in the model
         // that filter out auto-draft and inherit statuses so we GET the inherit id!
         /** @var EE_Event $event */
         $event = $this->_event_model()->get_one(
@@ -1092,6 +1093,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 ],
             ]
         );
+
+        if (! $event instanceof EE_Event) {
+            return;
+        }
 
         // the following are default callbacks for event attachment updates
         // that can be overridden by caffeinated functionality and/or addons.
@@ -1362,7 +1367,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                             [
                                 'STS_ID' => [
                                     'NOT IN',
-                                    [EEM_Registration::status_id_incomplete],
+                                    [RegStatus::INCOMPLETE],
                                 ],
                             ],
                         ]
@@ -1553,19 +1558,19 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         $approved_query_args        = [
             [
                 'REG_deleted' => 0,
-                'STS_ID'      => EEM_Registration::status_id_approved,
+                'STS_ID'      => RegStatus::APPROVED,
             ],
         ];
         $not_approved_query_args    = [
             [
                 'REG_deleted' => 0,
-                'STS_ID'      => EEM_Registration::status_id_not_approved,
+                'STS_ID'      => RegStatus::AWAITING_REVIEW,
             ],
         ];
         $pending_payment_query_args = [
             [
                 'REG_deleted' => 0,
-                'STS_ID'      => EEM_Registration::status_id_pending_payment,
+                'STS_ID'      => RegStatus::PENDING_PAYMENT,
             ],
         ];
         // publish box
@@ -1574,7 +1579,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 [
                     'action'      => 'default',
                     'event_id'    => $this->_cpt_model_obj->ID(),
-                    '_reg_status' => EEM_Registration::status_id_approved,
+                    '_reg_status' => RegStatus::APPROVED,
                     'use_filters' => true,
                 ],
                 REG_ADMIN_URL
@@ -1583,7 +1588,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 [
                     'action'      => 'default',
                     'event_id'    => $this->_cpt_model_obj->ID(),
-                    '_reg_status' => EEM_Registration::status_id_not_approved,
+                    '_reg_status' => RegStatus::AWAITING_REVIEW,
                     'use_filters' => true,
                 ],
                 REG_ADMIN_URL
@@ -1592,7 +1597,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 [
                     'action'      => 'default',
                     'event_id'    => $this->_cpt_model_obj->ID(),
-                    '_reg_status' => EEM_Registration::status_id_pending_payment,
+                    '_reg_status' => RegStatus::PENDING_PAYMENT,
                     'use_filters' => true,
                 ],
                 REG_ADMIN_URL
@@ -1855,9 +1860,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         ];
         $default_reg_status_values = EEM_Registration::reg_status_array(
             [
-                EEM_Registration::status_id_cancelled,
-                EEM_Registration::status_id_declined,
-                EEM_Registration::status_id_incomplete,
+                RegStatus::CANCELLED,
+                RegStatus::DECLINED,
+                RegStatus::INCOMPLETE,
             ],
             true
         );
@@ -2501,10 +2506,10 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         $registration_stati_for_selection = EEM_Registration::reg_status_array(
         // exclude
             [
-                EEM_Registration::status_id_cancelled,
-                EEM_Registration::status_id_declined,
-                EEM_Registration::status_id_incomplete,
-                EEM_Registration::status_id_wait_list,
+                RegStatus::CANCELLED,
+                RegStatus::DECLINED,
+                RegStatus::INCOMPLETE,
+                RegStatus::WAIT_LIST,
             ],
             true
         );
@@ -2540,7 +2545,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                                                          $registration_stati_for_selection
                                                      )
                                     ? sanitize_text_field($registration_config->default_STS_ID)
-                                    : EEM_Registration::status_id_pending_payment,
+                                    : RegStatus::PENDING_PAYMENT,
                                 'html_label_text' => esc_html__('Default Registration Status', 'event_espresso')
                                                      . EEH_Template::get_help_tab_link(
                                         'default_settings_status_help_tab'
@@ -2549,6 +2554,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                                     'This setting allows you to preselect what the default registration status setting is when creating an event.  Note that changing this setting does NOT retroactively apply it to existing events.',
                                     'event_espresso'
                                 ),
+                                'html_class'      => 'ee-input-width--small',
                             ]
                         ),
                         'default_max_tickets'     => new EE_Integer_Input(
@@ -2566,6 +2572,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                                     'This setting allows you to indicate what will be the default for the maximum number of tickets per order when creating new events.',
                                     'event_espresso'
                                 ),
+                                'html_class'      => 'ee-input-width--tiny',
                             ]
                         ),
                     ]

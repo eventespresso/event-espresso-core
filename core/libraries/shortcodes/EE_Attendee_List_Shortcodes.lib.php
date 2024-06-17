@@ -36,9 +36,8 @@ class EE_Attendee_List_Shortcodes extends EE_Shortcodes
      */
     protected function _parser($shortcode)
     {
-        switch ($shortcode) {
-            case '[ATTENDEE_LIST]':
-                return $this->_get_attendee_list();
+        if ($shortcode == '[ATTENDEE_LIST]') {
+            return $this->_get_attendee_list();
         }
         return '';
     }

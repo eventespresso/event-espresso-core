@@ -36,14 +36,14 @@ class AdminMenuManager
     /**
      * @var AdminMenuItem[]
      */
-    private $menu_items = [];
+    private array $menu_items = [];
 
     /**
      * objects for page_init objects detected and loaded
      *
      * @var EE_Admin_Page_Init[]
      */
-    private $installed_pages = [];
+    private array $installed_pages = [];
 
     /**
      * set to TRUE if site is currently in maintenance mode level 2
@@ -57,12 +57,12 @@ class AdminMenuManager
      *
      * @var int
      */
-    private $menu_position;
+    private int $menu_position;
 
     /**
      * @var AdminMenuItem
      */
-    private $top_level_menu_item;
+    private AdminMenuItem $top_level_menu_item;
 
 
     public function __construct()
@@ -207,6 +207,21 @@ class AdminMenuManager
                 ),
             ]
         );
+    }
+
+
+    /**
+     * adds an AdminMenuItem
+     *
+     * @param AdminMenuItem $admin_menu_item
+     * @return AdminMenuItem
+     */
+    public function addAdminMenuItem(AdminMenuItem $admin_menu_item): AdminMenuItem
+    {
+        // get the menu group that this menu item belongs to and then add it
+        $admin_group = $this->getMenuGroup($admin_menu_item);
+        $admin_group->addMenuItem($admin_menu_item);
+        return $admin_menu_item;
     }
 
 

@@ -68,6 +68,7 @@ class EEH_Event_View extends EEH_Base
             $post instanceof WP_Post
             && $post->post_type === EspressoPostType::EVENTS
             && EEH_Event_View::$_event instanceof EE_Event
+            && EEH_Event_View::$_event->ID() === $post->ID
         ) {
             $post->EE_Event = EEH_Event_View::$_event;
         }

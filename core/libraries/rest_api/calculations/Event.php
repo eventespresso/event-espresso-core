@@ -3,6 +3,7 @@
 namespace EventEspresso\core\libraries\rest_api\calculations;
 
 use DomainException;
+use EventEspresso\core\domain\services\registration\RegStatus;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
@@ -192,7 +193,7 @@ class Event extends EventCalculationBase
             array(
                 array(
                     'EVT_ID' => $wpdb_row['Event_CPT.ID'],
-                    'STS_ID' => EEM_Registration::status_id_approved,
+                    'STS_ID' => RegStatus::APPROVED,
                 ),
             ),
             'REG_ID',
@@ -235,7 +236,7 @@ class Event extends EventCalculationBase
             array(
                 array(
                     'EVT_ID' => $wpdb_row['Event_CPT.ID'],
-                    'STS_ID' => EEM_Registration::status_id_pending_payment,
+                    'STS_ID' => RegStatus::PENDING_PAYMENT,
                 ),
             ),
             'REG_ID',

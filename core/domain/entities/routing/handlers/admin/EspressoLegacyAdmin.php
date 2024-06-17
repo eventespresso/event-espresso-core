@@ -77,11 +77,12 @@ class EspressoLegacyAdmin extends AdminRoute
         $this->dependency_map->registerDependencies(
             'EventEspresso\admin_pages\general_settings\OrganizationSettings',
             [
-                'EE_Registry'                                             => EE_Dependency_Map::load_from_cache,
-                'EE_Organization_Config'                                  => EE_Dependency_Map::load_from_cache,
-                'EE_Core_Config'                                          => EE_Dependency_Map::load_from_cache,
-                'EE_Network_Core_Config'                                  => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\address\CountrySubRegionDao' => EE_Dependency_Map::load_from_cache,
+                'EE_Registry'                                                  => EE_Dependency_Map::load_from_cache,
+                'EE_Organization_Config'                                       => EE_Dependency_Map::load_from_cache,
+                'EE_Core_Config'                                               => EE_Dependency_Map::load_from_cache,
+                'EE_Network_Core_Config'                                       => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\address\CountrySubRegionDao'      => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\services\capabilities\FeatureFlags' => EE_Dependency_Map::load_from_cache,
             ]
         );
         $this->dependency_map->registerDependencies(

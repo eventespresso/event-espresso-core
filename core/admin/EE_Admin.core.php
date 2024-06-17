@@ -5,6 +5,7 @@ use EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitio
 use EventEspresso\core\domain\entities\notifications\PersistentAdminNotice;
 use EventEspresso\core\domain\services\database\DbStatus;
 use EventEspresso\core\domain\services\database\MaintenanceStatus;
+use EventEspresso\core\domain\services\registration\RegStatus;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\interfaces\InterminableInterface;
@@ -660,7 +661,7 @@ final class EE_Admin implements InterminableInterface
         $registrations                   = EEM_Registration::instance()->count(
             [
                 [
-                    'STS_ID' => ['!=', EEM_Registration::status_id_incomplete],
+                    'STS_ID' => ['!=', RegStatus::INCOMPLETE],
                 ],
             ]
         );

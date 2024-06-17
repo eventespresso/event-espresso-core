@@ -167,7 +167,7 @@ class RequestTypeContext extends Context
      */
     public function isActivation(): bool
     {
-        return $this->is_activation;
+        return $this->is_activation || $this->slug() === RequestTypeContext::ACTIVATION;
     }
 
 

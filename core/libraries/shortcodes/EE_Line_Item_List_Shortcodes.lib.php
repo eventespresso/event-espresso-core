@@ -36,9 +36,12 @@ class EE_Line_Item_List_Shortcodes extends EE_Shortcodes
     }
 
 
+    /**
+     * @param string $shortcode
+     * @throws EE_Error
+     */
     protected function _parser($shortcode)
     {
-
         switch ($shortcode) {
             case '[TICKET_LINE_ITEM_LIST]':
                 return $this->_get_ticket_line_item_list();

@@ -49,11 +49,9 @@ class EE_Primary_Registration_List_Shortcodes extends EE_Shortcodes
         switch ($shortcode) {
             case '[PRIMARY_REGISTRANT_TICKET_LIST]':
                 return $this->_get_recipient_ticket_list(true);
-                break;
 
             case '[PRIMARY_REGISTRANT_DATETIME_LIST]':
                 return $this->_get_recipient_datetime_list(true);
-                break;
         }
         return '';
     }

@@ -50,9 +50,9 @@
         ); ?>
     </li>
     <li>
-        <strong><?php esc_html_e('Not Approved Registrations', 'event_espresso'); ?></strong><br />
+        <strong><?php esc_html_e('Not Approved / Awaiting Review Registrations', 'event_espresso'); ?></strong><br />
         <?php esc_html_e(
-            'Shows number of registrants who cannot attend the event because they were not approved. Click on the Not Approved Registrations link to be brought to a page where you can be a list of registrants who cannot attend the event.',
+            'Shows number of registrants who cannot attend the event because they are awaiting review. Click on the Not Approved / Awaiting Review Registrations link to be brought to a page where you can see a list of registrants who cannot attend the event.',
             'event_espresso'
         ); ?>
     </li>

@@ -1,7 +1,7 @@
 <?php
 
 /**
- *EE_Ticket_Shortcodes
+ * EE_Ticket_Shortcodes
  *
  * this is a child class for the EE_Shortcodes library.  The EE_Ticket_Shortcodes lists all shortcodes related to
  * ticket specific info.
@@ -12,25 +12,26 @@
  * @package        Event Espresso
  * @subpackage     libraries/shortcodes/EE_Ticket_Shortcodes.lib.php
  * @author         Darren Ethier
- *
- * ------------------------------------------------------------------------
  */
 class EE_Ticket_Shortcodes extends EE_Shortcodes
 {
     /**
      * Will hold the EE_Ticket if available
      *
-     * @var EE_Ticket
+     * @var EE_Ticket|null
      */
-    protected $_ticket;
+    protected ?EE_Ticket $_ticket = null;
 
 
     protected function _init_props()
     {
-        $this->label = esc_html__('Ticket Shortcodes', 'event_espresso');
+        $this->label       = esc_html__('Ticket Shortcodes', 'event_espresso');
         $this->description = esc_html__('All shortcodes specific to ticket related data', 'event_espresso');
-        $this->_shortcodes = array(
-            '[TICKET_ID]'               => esc_html__('Will be replaced by the ticket ID of a ticket', 'event_espresso'),
+        $this->_shortcodes = [
+            '[TICKET_ID]'               => esc_html__(
+                'Will be replaced by the ticket ID of a ticket',
+                'event_espresso'
+            ),
             '[TICKET_NAME]'             => esc_html__('The name of the ticket', 'event_espresso'),
             '[TICKET_DESCRIPTION]'      => esc_html__('The description of the ticket', 'event_espresso'),
             '[TICKET_PRICE]'            => esc_html__('The price of the ticket', 'event_espresso'),
@@ -43,45 +44,58 @@ class EE_Ticket_Shortcodes extends EE_Shortcodes
                 'event_espresso'
             ),
             '[TKT_USES_*]'              => esc_html__(
-                'This attribute based shortcode parses to show the number of uses the ticket has.  The optional "schema" attribute can be used to indicate what schema is used when the uses is infinite.  Options are:',
-                'event_espresso'
-            ) .
-                                           '<p><ul>' .
-                                           '<li><strong>symbol</strong>:' . esc_html__(
-                                               'This returns the &infin; symbol.',
-                                               'event_espresso'
-                                           ) . '</li>' .
-                                           '<li><strong>text</strong>:' . esc_html__(
-                                               'This returns the word, "Unlimited". This is also the default if the "schema" attribute is not used.',
-                                               'event_espresso'
-                                           ) . '</li>' .
-                                           '<li><strong>{custom}</strong>:' . esc_html__(
-                                               'You can put anything you want as a string instead and that will be used.  So you could have the world "any" and whenever uses for a ticket is infinity, this shortcode will parse to "any".',
-                                               'event_espresso'
-                                           ) . '</li>' .
-                                           '</ul></p>',
-        );
+                    'This attribute based shortcode parses to show the number of uses the ticket has.  The optional "schema" attribute can be used to indicate what schema is used when the uses is infinite.  Options are:',
+                    'event_espresso'
+                ) . '
+        <ul>
+            <li>
+                <strong>symbol</strong>:' . esc_html__(
+                    'This returns the &infin; symbol.',
+                    'event_espresso'
+                ) . '
+            </li>
+            <li>
+                <strong>text</strong>:' . esc_html__(
+                    'This returns the word, "Unlimited". This is also the default if the "schema" attribute is not used.',
+                    'event_espresso'
+                ) . '
+            </li>
+            <li>
+                <strong>{custom}</strong>:' . esc_html__(
+                    'You can put anything you want as a string instead and that will be used.  So you could have the world "any" and whenever uses for a ticket is infinity, this shortcode will parse to "any".',
+                    'event_espresso'
+                ) . '
+            </li>
+        </ul>',
+        ];
     }
 
 
+    /**
+     * @param $shortcode
+     * @return int|string
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
     protected function _parser($shortcode)
     {
-
         $this->_ticket = $this->_data instanceof EE_Ticket ? $this->_data : null;
 
         $aee = $this->_data instanceof EE_Messages_Addressee ? $this->_data : null;
-        $aee = ! $aee instanceof EE_Messages_Addressee && is_array(
-            $this->_extra_data
-        ) && isset($this->_extra_data['data']) && $this->_extra_data['data'] instanceof EE_Messages_Addressee
-            ? $this->_extra_data['data'] : $aee;
+        $aee = ! $aee instanceof EE_Messages_Addressee
+        && is_array($this->_extra_data)
+        && isset($this->_extra_data['data'])
+        && $this->_extra_data['data'] instanceof EE_Messages_Addressee
+            ? $this->_extra_data['data']
+            : $aee;
 
 
         // possible EE_Line_Item may be incoming data
         $this->_ticket = empty($this->_ticket)
-                         && $this->_data instanceof EE_Line_Item
-                         && $aee instanceof EE_Messages_Addressee
-                         && ! empty($aee->line_items_with_children[ $this->_data->ID() ]['EE_Ticket'])
-                         && $aee->line_items_with_children[ $this->_data->ID() ]['EE_Ticket'] instanceof EE_Ticket
+        && $this->_data instanceof EE_Line_Item
+        && $aee instanceof EE_Messages_Addressee
+        && ! empty($aee->line_items_with_children[ $this->_data->ID() ]['EE_Ticket'])
+        && $aee->line_items_with_children[ $this->_data->ID() ]['EE_Ticket'] instanceof EE_Ticket
             ? $aee->line_items_with_children[ $this->_data->ID() ]['EE_Ticket']
             : $this->_ticket;
 
@@ -100,31 +114,25 @@ class EE_Ticket_Shortcodes extends EE_Shortcodes
         switch ($shortcode) {
             case '[TICKET_ID]':
                 return $this->_ticket->ID();
-                break;
 
             case '[TICKET_NAME]':
                 return $this->_ticket->get('TKT_name');
-                break;
 
             case '[TICKET_DESCRIPTION]':
                 return $this->_ticket->get('TKT_description');
-                break;
 
             case '[TICKET_PRICE]':
                 return EEH_Template::format_currency($this->_ticket->get('TKT_price'));
-                break;
 
             case '[TICKET_PRICE_WITH_TAXES]':
                 return EEH_Template::format_currency($this->_ticket->get_ticket_total_with_taxes());
-                break;
 
             case '[TKT_QTY_PURCHASED]':
                 return $aee instanceof EE_Messages_Addressee ? $aee->tickets[ $this->_ticket->ID() ]['count'] : '';
-                break;
         }
 
         if (strpos($shortcode, '[TKT_USES_*') !== false) {
-            $attrs = $this->_get_shortcode_attrs($shortcode);
+            $attrs  = $this->_get_shortcode_attrs($shortcode);
             $schema = empty($attrs['schema']) ? null : $attrs['schema'];
             return $this->_ticket->get_pretty('TKT_uses', $schema);
         }
@@ -132,7 +140,7 @@ class EE_Ticket_Shortcodes extends EE_Shortcodes
     }
 
 
-    public function get_ticket_set()
+    public function get_ticket_set(): ?EE_Ticket
     {
         return $this->_ticket;
     }

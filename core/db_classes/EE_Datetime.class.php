@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\services\registration\RegStatus;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 
@@ -1312,7 +1313,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
         $count_regs_for_this_datetime = EEM_Registration::instance()->count(
             [
                 [
-                    'STS_ID'                 => EEM_Registration::status_id_approved,
+                    'STS_ID'                 => RegStatus::APPROVED,
                     'REG_deleted'            => 0,
                     'Ticket.Datetime.DTT_ID' => $this->ID(),
                 ],
@@ -1386,7 +1387,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
      * @throws ReflectionException
      */
     public function venue(array $query_params = [])
-    {   
+    {
         // If no $query_params have been passed, use the VNU_ID assigned to the Datetime itself
         if (empty($query_params)){
             $VNU_ID = $this->venue_ID();

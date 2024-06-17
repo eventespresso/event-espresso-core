@@ -154,9 +154,7 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
                                     'This lets you choose whether the extra ticket details section is displayed with the ticket selector.',
                                     'event_espresso'
                                 ),
-                                'default'                 => isset($EE_Ticket_Selector_Config->show_ticket_details)
-                                    ? $EE_Ticket_Selector_Config->show_ticket_details
-                                    : true,
+                                'default'                 => $EE_Ticket_Selector_Config->show_ticket_details ?? true,
                                 'display_html_label_text' => false,
                             )
                         ),
@@ -170,9 +168,7 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
                                     'This lets you indicate whether information about ticket sales is shown with ticket details in the ticket selector.',
                                     'event_espresso'
                                 ),
-                                'default'                 => isset($EE_Ticket_Selector_Config->show_ticket_sale_columns)
-                                    ? $EE_Ticket_Selector_Config->show_ticket_sale_columns
-                                    : true,
+                                'default'                 => $EE_Ticket_Selector_Config->show_ticket_sale_columns ?? true,
                                 'display_html_label_text' => false,
                             )
                         ),
@@ -186,9 +182,7 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
                                     'Indicate whether to show expired tickets in the ticket selector',
                                     'event_espresso'
                                 ),
-                                'default'                 => isset($EE_Ticket_Selector_Config->show_expired_tickets)
-                                    ? $EE_Ticket_Selector_Config->show_expired_tickets
-                                    : true,
+                                'default'                 => $EE_Ticket_Selector_Config->show_expired_tickets ?? true,
                                 'display_html_label_text' => false,
                             )
                         ),
@@ -212,6 +206,7 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
                                     ? $show_datetime_selector
                                     : EE_Ticket_Selector_Config::DO_NOT_SHOW_DATETIME_SELECTOR,
                                 'display_html_label_text' => false,
+                                'html_class'              => 'ee-input-width--reg',
                             )
                         ),
                         'datetime_selector_threshold' => new EE_Select_Input(
@@ -229,6 +224,7 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
                                     ? $datetime_selector_threshold
                                     : 3,
                                 'display_html_label_text' => false,
+                                'html_class'              => 'ee-input-width--tiny',
                             )
                         ),
                         'datetime_selector_max_checked' => new EE_Integer_Input(
@@ -247,6 +243,7 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
                                 'default'                 => $EE_Ticket_Selector_Config->getDatetimeSelectorMaxChecked(),
                                 'display_html_label_text' => false,
                                 'min_value'               => 0,
+                                'html_class'              => 'ee-input-width--tiny',
                             )
                         ),
                     )

@@ -94,8 +94,10 @@ class EE_Recipient_Details_Shortcodes extends EE_Shortcodes
 
     /**
      * @access protected
-     * @param  string $shortcode the shortcode to be parsed.
+     * @param string $shortcode the shortcode to be parsed.
      * @return string parsed shortcode
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _parser($shortcode)
     {
@@ -131,71 +133,58 @@ class EE_Recipient_Details_Shortcodes extends EE_Shortcodes
         switch ($shortcode) {
             case '[RECIPIENT_FNAME]':
                 return $attendee->fname();
-                break;
 
             case '[RECIPIENT_LNAME]':
                 return $attendee->lname();
-                break;
 
             case '[RECIPIENT_EMAIL]':
                 return $attendee->email();
-                break;
 
             case '[RECIPIENT_REGISTRATION_ID]':
                 if (! $this->_recipient->reg_obj instanceof EE_Registration) {
                     return '';
                 }
                 return $this->_get_reg_id();
-                break;
 
             case '[RECIPIENT_REGISTRATION_CODE]':
                 if (! $this->_recipient->reg_obj instanceof EE_Registration) {
                     return '';
                 }
                 return $this->_get_reg_code();
-                break;
 
             case '[RECIPIENT_EDIT_REGISTRATION_LINK]':
                 if (! $this->_recipient->reg_obj instanceof EE_Registration) {
                     return '';
                 }
                 return $this->_recipient->reg_obj->edit_attendee_information_url();
-                break;
 
             case '[RECIPIENT_PHONE_NUMBER]':
                 return $attendee->phone();
-                break;
 
             case '[RECIPIENT_ADDRESS]':
                 return $attendee->address();
-                break;
 
             case '[RECIPIENT_ADDRESS2]':
                 return $attendee->address2();
-                break;
 
             case '[RECIPIENT_CITY]':
                 return $attendee->city();
-                break;
 
             case '[RECIPIENT_ZIP_PC]':
                 return $attendee->zip();
-                break;
 
             case '[RECIPIENT_ADDRESS_STATE]':
                 $state_obj = $attendee->state_obj();
                 return $state_obj instanceof EE_State ? $state_obj->name() : '';
-                break;
 
             case '[RECIPIENT_COUNTRY]':
                 $country_obj = $attendee->country_obj();
                 return $country_obj instanceof EE_Country ? $country_obj->name() : '';
-                break;
+
             case '[RECIPIENT_TOTAL_AMOUNT_PAID]':
                 return $this->_recipient->reg_obj instanceof EE_Registration
                     ? $this->_recipient->reg_obj->pretty_paid()
                     : 0;
-                break;
         }
 
         if (strpos($shortcode, '[RECIPIENT_ANSWER_*') !== false) {
@@ -234,7 +223,6 @@ class EE_Recipient_Details_Shortcodes extends EE_Shortcodes
                     }
 
                     return $answer;
-                    break;
                 }
             }
         }

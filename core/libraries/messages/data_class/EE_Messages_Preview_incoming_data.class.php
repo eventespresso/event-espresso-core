@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\services\registration\RegStatus;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\RequestInterface;
 
@@ -479,7 +480,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data
                         'ATT_ID'           => $regatt,
                         'TXN_ID'           => $regtxn,
                         'TKT_ID'           => $ticket->ID(),
-                        'STS_ID'           => EEM_Registration::status_id_pending_payment,
+                        'STS_ID'           => RegStatus::PENDING_PAYMENT,
                         'REG_date'         => time(),
                         'REG_final_price'  => $ticket->get('TKT_price'),
                         'REG_session'      => 'dummy_session_id',

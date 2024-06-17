@@ -22,114 +22,83 @@ use EventEspresso\core\services\loaders\ObjectIdentifier;
  */
 class EE_Registry implements ResettableInterface
 {
-    /**
-     * @var EE_Registry $_instance
-     */
-    private static $_instance;
+    private static ?EE_Registry $_instance = null;
 
-    /**
-     * @var EE_Dependency_Map $_dependency_map
-     */
-    protected $_dependency_map;
+    protected EE_Dependency_Map $_dependency_map;
 
-    /**
-     * @var Mirror
-     */
-    private $mirror;
+    private Mirror $mirror;
 
-    /**
-     * @var ClassInterfaceCache $class_cache
-     */
-    private $class_cache;
+    private ClassInterfaceCache $class_cache;
 
-    /**
-     * @var array $_class_abbreviations
-     */
-    protected $_class_abbreviations = [];
+    private ObjectIdentifier $object_identifier;
 
-    /**
-     * @var CommandBusInterface $BUS
-     */
-    public $BUS;
+    protected array $_class_abbreviations = [];
 
-    /**
-     * @var EE_Cart $CART
-     */
-    public $CART;
+    public ?CommandBusInterface $BUS = null;
 
-    /**
-     * @var EE_Config $CFG
-     */
-    public $CFG;
+    public ?EE_Cart $CART = null;
 
-    /**
-     * @var EE_Network_Config $NET_CFG
-     */
-    public $NET_CFG;
+    public ?EE_Config $CFG = null;
+
+    public ?EE_Network_Config $NET_CFG = null;
 
     /**
      * RegistryContainer for storing library classes in
      *
-     * @var RegistryContainer $LIB
+     * @var RegistryContainer|null $LIB
      */
-    public $LIB;
+    public ?RegistryContainer $LIB = null;
 
     /**
-     * @var EE_Request_Handler $REQ
+     * @var EE_Request_Handler|null $REQ
      * @deprecated 4.10.14.p
      */
-    public $REQ;
+    public ?EE_Request_Handler $REQ = null;
 
-    /**
-     * @var EE_Session $SSN
-     */
-    public $SSN;
+    public ?EE_Session $SSN = null;
 
     /**
      * @since 4.5.0
-     * @var EE_Capabilities $CAP
+     * @var EE_Capabilities|null $CAP
      */
-    public $CAP;
+    public ?EE_Capabilities$CAP = null;
 
     /**
      * @since 4.9.0
-     * @var EE_Message_Resource_Manager $MRM
+     * @var EE_Message_Resource_Manager|null $MRM
      */
-    public $MRM;
+    public ?EE_Message_Resource_Manager $MRM = null;
 
-    /**
-     * @var Registry $AssetsRegistry
-     */
-    public $AssetsRegistry;
+    public ?Registry $AssetsRegistry = null;
 
     /**
      * RegistryContainer for holding addons which have registered themselves to work with EE core
      *
      * @var RegistryContainer|EE_Addon[] $addons
      */
-    public $addons;
+    public $addons = [];
 
     /**
      * keys are 'short names' (eg Event), values are class names (eg 'EEM_Event')
      *
      * @var EEM_Base[] $models
      */
-    public $models = [];
+    public array $models = [];
 
     /**
      * @var RegistryContainer|EED_Module[] $modules
      */
-    public $modules;
+    public $modules = [];
 
     /**
      * @var RegistryContainer|EES_Shortcode[] $shortcodes
      */
-    public $shortcodes;
+    public $shortcodes = [];
 
     /**
      * @var RegistryContainer|WP_Widget[] $widgets
      */
-    public $widgets;
+    public $widgets = [];
 
     /**
      * this is an array of all implemented model names (i.e. not the parent abstract models, or models
@@ -139,7 +108,7 @@ class EE_Registry implements ResettableInterface
      *
      * @var array $non_abstract_db_models
      */
-    public $non_abstract_db_models = [];
+    public array $non_abstract_db_models = [];
 
     /**
      * internationalization for JS strings
@@ -148,34 +117,21 @@ class EE_Registry implements ResettableInterface
      *
      * @var array $i18n_js_strings
      */
-    public static $i18n_js_strings = [];
+    public static array $i18n_js_strings = [];
 
     /**
      * $main_file - path to espresso.php
      *
-     * @var array $main_file
+     * @var string $main_file
      */
-    public $main_file;
+    public string $main_file = '';
 
     /**
-     * array of ReflectionClass objects where the key is the class name
+     * boolean flag to indicate whether to load/save dependencies from/to the cache
      *
-     * @deprecated 4.9.62.p
-     * @var ReflectionClass[] $_reflectors
+     * @var bool $_cache_on
      */
-    public $_reflectors;
-
-    /**
-     * boolean flag to indicate whether or not to load/save dependencies from/to the cache
-     *
-     * @var boolean $_cache_on
-     */
-    protected $_cache_on = true;
-
-    /**
-     * @var ObjectIdentifier
-     */
-    private $object_identifier;
+    protected bool $_cache_on = true;
 
 
     /**
@@ -230,7 +186,7 @@ class EE_Registry implements ResettableInterface
         $this->mirror            = $mirror;
         $this->class_cache       = $class_cache;
         $this->object_identifier = $object_identifier;
-        // $registry_container = new RegistryContainer();
+
         $this->LIB        = new RegistryContainer();
         $this->addons     = new RegistryContainer();
         $this->modules    = new RegistryContainer();

@@ -153,29 +153,36 @@ class DisplayTicketSelector
      */
     protected function setEvent($event = null): bool
     {
+        global $post;
         if ($event === null) {
-            global $post;
             $event = $post;
         }
         if ($event instanceof EE_Event) {
             $this->event = $event;
-        } elseif ($event instanceof WP_Post) {
-            if (isset($event->EE_Event) && $event->EE_Event instanceof EE_Event) {
+            return true;
+        }
+        if ($event instanceof WP_Post) {
+            if (
+                isset($event->EE_Event)
+                && $event->EE_Event instanceof EE_Event
+                && ( ! $post instanceof WP_Post || $post->ID === $event->EE_Event->ID() )
+            ) {
                 $this->event = $event->EE_Event;
-            } elseif (isset($event->post_type) && $event->post_type === EspressoPostType::EVENTS) {
+                return true;
+            }
+            if (isset($event->post_type) && $event->post_type === EspressoPostType::EVENTS) {
                 $event->EE_Event = EEM_Event::instance()->instantiate_class_from_post_object($event);
                 $this->event     = $event->EE_Event;
+                return true;
             }
-        } else {
-            $user_msg = esc_html__('No Event object or an invalid Event object was supplied.', 'event_espresso');
-            $dev_msg  = $user_msg . esc_html__(
-                'In order to generate a ticket selector, please ensure you are passing either an EE_Event object or a WP_Post object of the post type "espresso_event" to the EE_Ticket_Selector class constructor.',
-                'event_espresso'
-            );
-            EE_Error::add_error($user_msg . '||' . $dev_msg, __FILE__, __FUNCTION__, __LINE__);
-            return false;
         }
-        return true;
+        $user_msg = esc_html__('No Event object or an invalid Event object was supplied.', 'event_espresso');
+        $dev_msg  = $user_msg . esc_html__(
+            'In order to generate a ticket selector, please ensure you are passing either an EE_Event object or a WP_Post object of the post type "espresso_event" to the EE_Ticket_Selector class constructor.',
+            'event_espresso'
+        );
+        EE_Error::add_error($user_msg . '||' . $dev_msg, __FILE__, __FUNCTION__, __LINE__);
+        return false;
     }
 
 

@@ -168,8 +168,23 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      */
     protected $disabled = false;
 
+    protected array $_data_attributes = [];
 
     protected bool $_no_label = false; // if true, then no hrml label will be displayed for this input
+
+    /**
+     * adds a class to the input's container
+     *
+     * @var string
+     */
+    protected string $_layout_container_class = '';
+
+    /**
+     * additional HTML to inject into the input's container
+     *
+     * @var string
+     */
+    protected string $_extra_container_html = '';
 
 
     /**
@@ -218,10 +233,17 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
                 $this->disable($value);
                 continue;
             }
+            $setter = 'set_' . $key;
+            if (method_exists($this, $setter)) {
+                $this->$setter($value);
+                unset($input_args[$key]);
+                continue;
+            }
             // add underscore to $key to match property names
-            $_key = '_' . $key;
+            $_key = "_$key";
             if (property_exists($this, $_key)) {
                 $this->{$_key} = $value;
+                unset($input_args[$key]);
             }
         }
         // ensure that "required" is set correctly
@@ -554,6 +576,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      * according to the form section's layout strategy
      *
      * @return string
+     * @throws EE_Error
      */
     public function get_html_for_label()
     {
@@ -566,6 +589,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      * according to the form section's layout strategy
      *
      * @return string
+     * @throws EE_Error
      */
     public function get_html_for_errors()
     {
@@ -578,6 +602,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      * according to the form section's layout strategy
      *
      * @return string
+     * @throws EE_Error
      */
     public function get_html_for_help()
     {
@@ -825,6 +850,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      * }</code>
      *
      * @return array
+     * @throws EE_Error
      */
     public function get_jquery_validation_rules(): array
     {
@@ -1113,9 +1139,8 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
                     $req_data[ $first_part_to_consider ]
                 );
             }
-        } else {
-            return null;
         }
+        return null;
     }
 
 
@@ -1133,12 +1158,8 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
             $request  = LoaderFactory::getLoader()->getShared(RequestInterface::class);
             $req_data = $request->postParams();
         }
-        $checked_value = $this->find_form_data_for_this_section($req_data);
-        if ($checked_value !== null) {
-            return true;
-        } else {
-            return false;
-        }
+
+        return $this->find_form_data_for_this_section($req_data) !== null;
     }
 
 
@@ -1233,8 +1254,26 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      *
      * @return bool
      */
-    public function isDisabled()
+    public function isDisabled(): bool
     {
         return $this->disabled;
+    }
+
+
+    public function dataAttributes(): array
+    {
+        return $this->_data_attributes;
+    }
+
+
+    public function layoutContainerClass(): string
+    {
+        return $this->_layout_container_class;
+    }
+
+
+    public function extraContainerHtml(): string
+    {
+        return $this->_extra_container_html;
     }
 }

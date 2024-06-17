@@ -12,7 +12,11 @@ use EEM_Registration;
 use EEM_Ticket;
 use EEM_Transaction;
 use Exception;
+use EventEspresso\core\domain\services\registration\RegStatus;
 
+/**
+ * @deprecated $VID:$
+ */
 class StatsGatherer
 {
     public const COUNT_ALL_EVENTS                 = 'event';
@@ -209,24 +213,24 @@ class StatsGatherer
                     $count = $this->registration_model->count();
                     break;
                 case self::COUNT_REGISTRATIONS_CANCELLED:
-                    $count = $this->registration_model->count([['STS_ID' => EEM_Registration::status_id_cancelled]]);
+                    $count = $this->registration_model->count([['STS_ID' => RegStatus::CANCELLED]]);
                     break;
                 case self::COUNT_REGISTRATIONS_INCOMPLETE:
-                    $count = $this->registration_model->count([['STS_ID' => EEM_Registration::status_id_incomplete]]);
+                    $count = $this->registration_model->count([['STS_ID' => RegStatus::INCOMPLETE]]);
                     break;
                 case self::COUNT_REGISTRATIONS_NOT_APPROVED:
-                    $count = $this->registration_model->count([['STS_ID' => EEM_Registration::status_id_not_approved]]);
+                    $count = $this->registration_model->count([['STS_ID' => RegStatus::AWAITING_REVIEW]]);
                     break;
                 case self::COUNT_REGISTRATIONS_DECLINED:
-                    $count = $this->registration_model->count([['STS_ID' => EEM_Registration::status_id_declined]]);
+                    $count = $this->registration_model->count([['STS_ID' => RegStatus::DECLINED]]);
                     break;
                 case self::COUNT_REGISTRATIONS_PENDING:
                     $count = $this->registration_model->count(
-                        [['STS_ID' => EEM_Registration::status_id_pending_payment]]
+                        [['STS_ID' => RegStatus::PENDING_PAYMENT]]
                     );
                     break;
                 case self::COUNT_REGISTRATIONS_APPROVED:
-                    $count = $this->registration_model->count([['STS_ID' => EEM_Registration::status_id_approved]]);
+                    $count = $this->registration_model->count([['STS_ID' => RegStatus::APPROVED]]);
                     break;
                 case self::SUM_TRANSACTIONS_COMPLETE_TOTAL:
                     $count = $this->transaction_model->sum(

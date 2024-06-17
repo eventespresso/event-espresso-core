@@ -574,7 +574,7 @@ if (! function_exists('espresso_list_of_event_dates')) {
 			$cols = $cols >= 3 ? 'big' : 'small';
 			$ul_class = "ee-event-datetimes-ul ee-event-datetimes-ul--{$cols}";
 			$html = '<ul id="ee-event-datetimes-ul-' . esc_attr($post->ID) . '" class="'. $ul_class.'">';
-
+            $datetime = null;
             foreach ($datetimes as $datetime) {
                 if ($datetime instanceof EE_Datetime) {
 

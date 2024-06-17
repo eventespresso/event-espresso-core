@@ -24,7 +24,7 @@ class PueRequests extends Route
      * @var   bool
      * @since 5.0.0.p
      */
-    private bool $load_pue = true;
+    private $load_pue = true;
 
 
     /**
@@ -36,7 +36,7 @@ class PueRequests extends Route
     public function matchesCurrentRequest(): bool
     {
         // route may match, but PUE loading is still conditional based on this filter
-        $this->load_pue = (bool) apply_filters('FHEE__EE_System__brew_espresso__load_pue', true);
+        $this->load_pue = apply_filters('FHEE__EE_System__brew_espresso__load_pue', true);
         return $this->request->isAdmin() || $this->request->isAjax() || $this->request->isActivation();
     }
 
@@ -50,8 +50,9 @@ class PueRequests extends Route
             $this->dependency_map->registerDependencies(
                 'EventEspresso\caffeinated\core\services\licensing\LicenseService',
                 [
-                    'EventEspresso\caffeinated\core\domain\services\pue\Stats'  => EE_Dependency_Map::load_from_cache,
-                    'EventEspresso\caffeinated\core\domain\services\pue\Config' => EE_Dependency_Map::load_from_cache,
+                    'EventEspresso\caffeinated\core\domain\services\pue\Stats'     => EE_Dependency_Map::load_from_cache,
+                    'EventEspresso\caffeinated\core\domain\services\pue\Config'    => EE_Dependency_Map::load_from_cache,
+                    'EventEspresso\core\domain\services\capabilities\FeatureFlags' => EE_Dependency_Map::load_from_cache,
                 ]
             );
             $this->dependency_map->registerDependencies(

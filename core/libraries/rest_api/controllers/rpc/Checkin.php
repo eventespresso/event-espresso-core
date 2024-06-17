@@ -92,7 +92,7 @@ class Checkin extends Base
                         'rest_toggle_checkin_failed',
                         esc_html__(
                         // @codingStandardsIgnoreStart
-                            'Registration check-in failed because the registration is not approved. You may attempt to force checking in though.',
+                            'Registration check-in failed because the registration is not approved / awaiting review. You may attempt to force checking in though.',
                             // @codingStandardsIgnoreEnd
                             'event_espresso'
                         )

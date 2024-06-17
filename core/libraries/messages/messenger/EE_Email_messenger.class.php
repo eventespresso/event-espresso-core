@@ -225,7 +225,7 @@ class EE_Email_messenger extends EE_messenger
                 'type'       => 'email',
                 'required'   => false,
                 'validation' => true,
-                'css_class'  => 'large-text',
+                'css_class'  => 'ee-input-width--big',
                 'format'     => '%s',
                 'default'    => get_bloginfo('admin_email'),
             ),

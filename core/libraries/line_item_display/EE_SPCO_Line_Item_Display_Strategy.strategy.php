@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\services\registration\RegStatus;
 use EventEspresso\core\services\helpers\DebugDisplay;
 
 /**
@@ -156,7 +157,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
                         // if event has default reg status of Not Approved, then don't display info on it
                         if (
                             $event instanceof EE_Event
-                            && $event->default_registration_status() === EEM_Registration::status_id_not_approved
+                            && $event->default_registration_status() === RegStatus::AWAITING_REVIEW
                         ) {
                             // unless display is forced
                             $display_event = false;
@@ -167,7 +168,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
                                         continue;
                                     }
                                     $display_event = $registration->event_ID() === $options['event_id']
-                                    && $registration->status_ID() !== EEM_Registration::status_id_not_approved
+                                    && $registration->status_ID() !== RegStatus::AWAITING_REVIEW
                                         ? true
                                         : $display_event;
                                 }

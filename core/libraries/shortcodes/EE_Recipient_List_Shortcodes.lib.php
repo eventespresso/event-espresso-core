@@ -46,11 +46,9 @@ class EE_Recipient_List_Shortcodes extends EE_Shortcodes
         switch ($shortcode) {
             case '[RECIPIENT_TICKET_LIST]':
                 return $this->_get_recipient_ticket_list();
-                break;
 
             case '[RECIPIENT_DATETIME_LIST]':
                 return $this->_get_recipient_datetime_list();
-                break;
         }
         return '';
     }

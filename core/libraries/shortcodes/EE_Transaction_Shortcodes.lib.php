@@ -274,13 +274,13 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes
         switch ($shortcode) {
             case '[TXN_ID]':
                 return $transaction->ID();
-                break;
+
             case '[PAYMENT_URL]':
                 $payment_url = $transaction->payment_overview_url();
                 return empty($payment_url)
                     ? esc_html__('http://dummypaymenturlforpreview.com', 'event_espresso')
                     : $payment_url;
-                break;
+
             case '[INVOICE_LINK]':
                 $invoice_url = $transaction->invoice_url();
                 $invoice_url = empty($invoice_url) ? 'http://dummyinvoicelinksforpreview.com' : $invoice_url;
@@ -289,76 +289,74 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes
                     '<a href="' . $invoice_url . '">',
                     '</a>'
                 );
-                break;
+
             case '[INVOICE_URL]':
                 $invoice_url = $transaction->invoice_url();
                 return empty($invoice_url) ? 'http://dummyinvoicelinksforpreview.com' : $invoice_url;
-                break;
+
             case '[INVOICE_LOGO_URL]':
                 return $this->_get_invoice_logo();
-                break;
+
             case '[INVOICE_LOGO]':
                 return $this->_get_invoice_logo(true);
-                break;
+
             case '[INVOICE_PAYEE_NAME]':
                 return $this->_get_invoice_payee_name();
-                break;
+
             case '[INVOICE_PAYEE_ADDRESS]':
                 return $this->_get_invoice_payee_address();
-                break;
+
             case '[INVOICE_PAYMENT_INSTRUCTIONS]':
                 return $this->_get_invoice_payment_instructions();
-                break;
+
             case '[INVOICE_PAYEE_EMAIL]':
                 return $this->_get_invoice_payee_email();
                 break;
             case '[TOTAL_COST]':
                 $total = $transaction->total();
                 return ! empty($total) ? EEH_Template::format_currency($total) : '';
-                break;
-            case '[PAYMENT_STATUS]':
-                $status = $transaction->pretty_status();
-                return ! empty($status) ? $status : esc_html__('Unknown', 'event_espresso');
-                break; /**/
+
             // note the [payment_status] shortcode is kind of misleading because payment status might be different
             // from txn status so I'm adding this here for clarity.
+            case '[PAYMENT_STATUS]':
             case '[TXN_STATUS]':
                 $status = $transaction->pretty_status();
                 return ! empty($status) ? $status : esc_html__('Unknown', 'event_espresso');
-                break;
+
             case '[TXN_STATUS_ID]':
                 return $transaction->status_ID();
-                break;
+
             case '[PAYMENT_GATEWAY]':
                 return $this->_get_payment_gateway($transaction);
-                break;
+
             case '[AMOUNT_PAID]':
                 return $payment instanceof EE_Payment
                     ? EEH_Template::format_currency($payment->amount())
                     : EEH_Template::format_currency(0);
-                break;
+
             case '[LAST_AMOUNT_PAID]':
                 $last_payment = $transaction->last_payment();
                 return $last_payment instanceof EE_Payment
                     ? EEH_Template::format_currency($last_payment->amount())
                     : EEH_Template::format_currency(0);
+
             case '[TOTAL_AMOUNT_PAID]':
                 return EEH_Template::format_currency($transaction->paid());
-                break;
+
             case '[TOTAL_OWING]':
                 $total_owing = $transaction->remaining();
                 return EEH_Template::format_currency($total_owing);
-                break;
+
             case '[TXN_SUBTOTAL]':
                 return EEH_Template::format_currency($this->_get_subtotal());
-                break;
+
             case '[TXN_TAX_SUBTOTAL]':
                 return EEH_Template::format_currency($this->_get_subtotal(true));
-                break;
+
             case '[TKT_QTY_PURCHASED]':
             case '[TXN_TOTAL_TICKETS]':
                 return $this->_data->total_ticket_count;
-                break;
+
             case '[TRANSACTION_ADMIN_URL]':
                 require_once EE_CORE . 'admin/EE_Admin_Page.core.php';
                 $query_args = array(
@@ -366,9 +364,8 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes
                     'action' => 'view_transaction',
                     'TXN_ID' => $transaction->ID(),
                 );
-                $url = EE_Admin_Page::add_query_args_and_nonce($query_args, admin_url('admin.php'));
-                return $url;
-                break;
+                return EE_Admin_Page::add_query_args_and_nonce($query_args, admin_url('admin.php'));
+
             case '[RECEIPT_URL]':
                 // get primary_registration
                 $reg = $this->_data->primary_reg_obj;
@@ -376,13 +373,13 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes
                     return '';
                 }
                 return $reg->receipt_url();
-                break;
+
             case '[INVOICE_RECEIPT_SWITCHER_URL]':
                 return $this->_get_invoice_receipt_switcher(false);
-                break;
+
             case '[INVOICE_RECEIPT_SWITCHER_BUTTON]':
                 return $this->_get_invoice_receipt_switcher();
-                break;
+
             case '[LAST_PAYMENT_TRANSACTION_ID]':
                 $id = '';
                 $payment = $payment instanceof EE_Payment && $payment->ID() !== 0
@@ -392,8 +389,8 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes
                     $id = $payment->txn_id_chq_nmbr();
                 }
                 return $id;
-                break;
         }
+
         if (strpos($shortcode, '[OWING_STATUS_MESSAGE_*') !== false) {
             return $this->_get_custom_total_owing($shortcode);
         }

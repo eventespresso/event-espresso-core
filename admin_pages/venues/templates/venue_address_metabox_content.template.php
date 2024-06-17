@@ -15,7 +15,7 @@ do_action('AHEE__venue_address_metabox_content__before', $template_args);
         <label for="phys-addr">
             <?php esc_html_e('Address:', 'event_espresso'); ?>
         </label>
-        <input class="all-options"
+        <input class="ee-input-width--big"
                id="phys-addr"
                type="text"
                value="<?php echo esc_html($_venue->get_pretty('VNU_address')); ?>"
@@ -26,7 +26,7 @@ do_action('AHEE__venue_address_metabox_content__before', $template_args);
         <label for="phys-addr-2">
             <?php esc_html_e('Address 2:', 'event_espresso'); ?>
         </label>
-        <input class="all-options"
+        <input class="ee-input-width--big"
                id="phys-addr-2"
                type="text"
                value="<?php echo esc_html($_venue->get_pretty('VNU_address2')); ?>"
@@ -37,7 +37,7 @@ do_action('AHEE__venue_address_metabox_content__before', $template_args);
         <label for="phys-city">
             <?php esc_html_e('City:', 'event_espresso'); ?>
         </label>
-        <input class="all-options"
+        <input class="ee-input-width--big"
                id="phys-city"
                type="text"
                value="<?php echo esc_html($_venue->get_pretty('VNU_city')); ?>"
@@ -51,7 +51,7 @@ do_action('AHEE__venue_address_metabox_content__before', $template_args);
         <label for="zip-postal">
             <?php esc_html_e('Zip/Postal Code:', 'event_espresso'); ?>
         </label>
-        <input class="all-options"
+        <input class="ee-input-width--small"
                id="zip-postal"
                type="text"
                value="<?php echo esc_html($_venue->get_pretty('VNU_zip')); ?>"

@@ -6,6 +6,52 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Releases
 
+### [5.0.20]
+
+#### Added
+ - [Integrate Easy Digital Downloads into Core & Add-ons (#487)](https://github.com/eventespresso/cafe/pull/487)  
+ - [Reimplement Registration Form Session Countdown Timer (#1283)](https://github.com/eventespresso/cafe/pull/1283)
+ - [Add Extra HTML5 Input Types to Form Inputs (#1279)](https://github.com/eventespresso/cafe/pull/1279)
+ - [NEW Add-ons (#487)](https://github.com/eventespresso/cafe/pull/487)
+ - [Reimplement Registration Form Session Countdown Timer (#1283)](https://github.com/eventespresso/cafe/pull/1283)
+ - [Add Extra HTML5 Input Types to Form Inputs (#1279)](https://github.com/eventespresso/cafe/pull/1279)
+
+#### Fixed
+ - [Fix Event Editor Width (#1194)](https://github.com/eventespresso/cafe/pull/1194)
+ - [Add Events List Template Setting to Filter Out Events with Expired Tickets (#1179)](https://github.com/eventespresso/cafe/pull/1179)
+ - [Allow Null Value for Order Props in EE_Events_Archive_Config (#1201)](https://github.com/eventespresso/cafe/pull/1201)
+ - [Fix Promotions Admin Pagination (#1196)](https://github.com/eventespresso/cafe/pull/1196)
+ - [Add User Proofing when Creating New Default Ticket Price (#1202)](https://github.com/eventespresso/cafe/pull/1202)
+ - [Fix Model Extension Activation Error (#1209)](https://github.com/eventespresso/cafe/pull/1209)
+ - [Fix Message Shortcode Parser Types (#1207)](https://github.com/eventespresso/cafe/pull/1207)
+ - [Fix Default Registration Status Options in EDTR + UI Fixes (#1227)](https://github.com/eventespresso/cafe/pull/1227)
+ - [Exit Editor Early If Invalid Event Identified (#1247)](https://github.com/eventespresso/cafe/pull/1247)
+ - [Type Cast Post Content for Shortcodes (#1249)](https://github.com/eventespresso/cafe/pull/1249)
+ - [Cant Reset an Empty Array (#1253)](https://github.com/eventespresso/cafe/pull/1253)
+ - [Fix Registration Form Admin Page UI Issues (#1248)](https://github.com/eventespresso/cafe/pull/1248)
+ - [Fix Reg Admin Session Errors (#1245)](https://github.com/eventespresso/cafe/pull/1245)
+ - [Fix Missing Price Type Error (#1258)](https://github.com/eventespresso/cafe/pull/1258)
+ - [Fix REM Filter Dates List HTML Error (#1259)](https://github.com/eventespresso/cafe/pull/1259)
+ - [Fix config having empty value when using manual offsets (#1273)](https://github.com/eventespresso/cafe/pull/1273)
+ - [Verify Session Exists in EspressoCancelled Shortcode (#1269)](https://github.com/eventespresso/cafe/pull/1269)
+ - [Fix Line Item Type Error (#1296)](https://github.com/eventespresso/cafe/pull/1296)
+
+#### Changed
+ - [Build Machine 5.0.19.p changes (#1170)](https://github.com/eventespresso/cafe/pull/1170)
+ - [Extract package @eventespresso/types (Barista #1298) (#1221)](https://github.com/eventespresso/cafe/pull/1221)
+ - [Create package @eventespresso/config (Barista#1302) (#1213)](https://github.com/eventespresso/cafe/pull/1213)
+ - [Add Show All Option to Pagination Component (Barista#1280) (#1218)](https://github.com/eventespresso/cafe/pull/1218)
+ - [Update README.md for GraphQL API README.md (#1212)](https://github.com/eventespresso/cafe/pull/1212)
+ - [Extract Reg Status Constants into New Class  - [Fix Feature Flags Admin (Barista#1308) (#1257)](https://github.com/eventespresso/cafe/pull/1257)
+ - [Filter Value of Verify SSL Parameter for Remote Requests (#1286)](https://github.com/eventespresso/cafe/pull/1286)
+ - [PUE to EDD Tweaks (#1268)](https://github.com/eventespresso/cafe/pull/1268)
+ - MOD Add Hooks for Filtering Reg Status (#1193)](https://github.com/eventespresso/cafe/pull/1193)
+ - [Fix Feature Flags Admin (Barista#1308) (#1257)](https://github.com/eventespresso/cafe/pull/1257)
+ - [Add ItemCount to Datetime Registrations Link (Barista#1309) (#1260)](https://github.com/eventespresso/cafe/pull/1260)
+ - [Filter Value of Verify SSL Parameter for Remote Requests (#1286)](https://github.com/eventespresso/cafe/pull/1286)
+ - [PUE to EDD Tweaks (#1268)](https://github.com/eventespresso/cafe/pull/1268)
+ - MOD
+
 ### [5.0.19]
 
 #### Fixed
@@ -47,6 +93,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - [PPC. Update order status/error messages (#1162)](https://github.com/eventespresso/cafe/pull/1162)
  - [Prevent fatal error from get_edit_post_link returning null (#1166)](https://github.com/eventespresso/cafe/pull/1166)
  - [Remove Serialized Objects from Registration Report Requests (#1154)](https://github.com/eventespresso/cafe/pull/1154)
+ - [Build Machine 5.0.19.p changes (#1170)](https://github.com/eventespresso/cafe/pull/1170)
+ - [Extract package @eventespresso/types (Barista #1298) (#1221)](https://github.com/eventespresso/cafe/pull/1221)
+ - [Create package @eventespresso/config (Barista#1302) (#1213)](https://github.com/eventespresso/cafe/pull/1213)
+ - [Add Show All Option to Pagination Component (Barista#1280) (#1218)](https://github.com/eventespresso/cafe/pull/1218)
+ - [Update README.md for GraphQL API README.md (#1212)](https://github.com/eventespresso/cafe/pull/1212)
+ - [Extract Reg Status Constants into New Class  - [Fix Feature Flags Admin (Barista#1308) (#1257)](https://github.com/eventespresso/cafe/pull/1257)
+ - [Add ItemCount to Datetime Registrations Link (Barista#1309) (#1260)](https://github.com/eventespresso/cafe/pull/1260)
+ - [Filter Value of Verify SSL Parameter for Remote Requests (#1286)](https://github.com/eventespresso/cafe/pull/1286)
+ - [PUE to EDD Tweaks (#1268)](https://github.com/eventespresso/cafe/pull/1268)
+ - MOD Add Hooks for Filtering Reg Status (#1193)](https://github.com/eventespresso/cafe/pull/1193)
+ - [Fix Feature Flags Admin (Barista#1308) (#1257)](https://github.com/eventespresso/cafe/pull/1257)
+ - [Add ItemCount to Datetime Registrations Link (Barista#1309) (#1260)](https://github.com/eventespresso/cafe/pull/1260)
+ - [Filter Value of Verify SSL Parameter for Remote Requests (#1286)](https://github.com/eventespresso/cafe/pull/1286)
+ - [PUE to EDD Tweaks (#1268)](https://github.com/eventespresso/cafe/pull/1268)
  - MOD Plugins (#1136)](https://github.com/eventespresso/cafe/pull/1136)
 
 

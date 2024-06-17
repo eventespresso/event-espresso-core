@@ -39,9 +39,8 @@ class EE_Datetime_List_Shortcodes extends EE_Shortcodes
      */
     protected function _parser($shortcode)
     {
-        switch ($shortcode) {
-            case '[DATETIME_LIST]':
-                return $this->_get_datetime_list();
+        if ($shortcode == '[DATETIME_LIST]') {
+            return $this->_get_datetime_list();
         }
         return '';
     }

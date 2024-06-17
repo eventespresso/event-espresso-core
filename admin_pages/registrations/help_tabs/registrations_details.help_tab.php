@@ -6,7 +6,7 @@
 </p>
 <p>
     <?php esc_html_e(
-        'The number for the registration is shown along with the date of the registration. Next the status of the registration is shown. A registration may have one of the following statuses: Approved, Pending Payment, Not Approved, Declined, or Cancelled.',
+        'The number for the registration is shown along with the date of the registration. Next the status of the registration is shown. A registration may have one of the following statuses: Approved, Pending Payment, Not Approved / Awaiting Review, Declined, or Cancelled.',
         'event_espresso'
     ); ?>
 <ul>
@@ -35,10 +35,10 @@
         ); ?>
     </li>
     <li style="list-style-type: none;">
-        <strong><?php esc_html_e('Not Approved', 'event_espresso'); ?></strong>
+        <strong><?php esc_html_e('Awaiting Review', 'event_espresso'); ?></strong>
         <br />
         <?php esc_html_e(
-            'A not approved registration is performed by the event admin. Payments are not allowed, the registration is active, and no space is reserved.',
+            'Registration is awaiting review from the event admin. Payments are not allowed, the registration is active, and no space is reserved.',
             'event_espresso'
         ); ?>
     </li>

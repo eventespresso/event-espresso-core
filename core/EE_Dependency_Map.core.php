@@ -458,12 +458,13 @@ class EE_Dependency_Map
                 'EventEspresso\core\services\request\Request'  => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\request\Response' => EE_Dependency_Map::load_from_cache,
             ],
-            'EE_System'                                                                                                          => [
-                'EventEspresso\core\services\loaders\Loader'  => EE_Dependency_Map::load_from_cache,
-                'EE_Maintenance_Mode'                         => EE_Dependency_Map::load_from_cache,
-                'EE_Registry'                                 => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\routing\Router'  => EE_Dependency_Map::load_from_cache,
+            'EE_System'                                                                                                   => [
+                'EventEspresso\core\services\loaders\Loader'                   => EE_Dependency_Map::load_from_cache,
+                'EE_Maintenance_Mode'                                          => EE_Dependency_Map::load_from_cache,
+                'EE_Registry'                                                  => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\request\Request'                  => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\routing\Router'                   => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\services\capabilities\FeatureFlags' => EE_Dependency_Map::load_from_cache,
             ],
             'EE_Session'                                                                                                         => [
                 'EventEspresso\core\services\cache\TransientCacheStorage'  => EE_Dependency_Map::load_from_cache,
@@ -573,9 +574,11 @@ class EE_Dependency_Map
             ],
             'EventEspresso\caffeinated\admin\extend\registration_form\forms\SessionLifespanForm'                                 => [
                 'EventEspresso\core\domain\values\session\SessionLifespanOption' => EE_Dependency_Map::load_from_cache,
+                'EE_Registration_Config'                                         => EE_Dependency_Map::load_from_cache,
             ],
             'EventEspresso\caffeinated\admin\extend\registration_form\forms\SessionLifespanFormHandler'                          => [
                 'EventEspresso\core\domain\values\session\SessionLifespanOption' => EE_Dependency_Map::load_from_cache,
+                'EE_Config'                                                      => EE_Dependency_Map::load_from_cache,
             ],
             'EventEspresso\core\services\database\TableManager'                                                                  => [
                 'EventEspresso\core\services\database\TableAnalysis' => EE_Dependency_Map::load_from_cache,
@@ -886,6 +889,10 @@ class EE_Dependency_Map
                 null,
                 null,
                 'EE_Template_Config' => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\domain\services\licensing\LicenseKeyFormInput'                                                    => [
+                'EventEspresso\core\services\licensing\PluginLicense'  => EE_Dependency_Map::not_registered,
+                'EventEspresso\core\services\licensing\LicenseManager' => EE_Dependency_Map::load_from_cache,
             ],
         ];
     }
