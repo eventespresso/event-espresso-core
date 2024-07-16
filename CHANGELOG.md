@@ -8,9 +8,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [5.0.21]
 
-#### Added
- - NEW
-
 #### Fixed
  - [Fix Errors from Event Smart Log (#1316)](https://github.com/eventespresso/cafe/pull/1316)
  - [Fix Saving Custom Message Templates in Event Editor (#1324)](https://github.com/eventespresso/cafe/pull/1324)
@@ -40,16 +37,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - [Optimize Event list table datetime and ticket query (#1348)](https://github.com/eventespresso/cafe/pull/1348)
  - [Reduce Vendor Folder Size (#1349)](https://github.com/eventespresso/cafe/pull/1349)
  - MOD
-
-#### Deprecated
- - DEP
-
-#### Removed
- - RMV
-
-#### Security
- - SEC
-
 
 
 ### [5.0.20]
