@@ -225,7 +225,7 @@ class EEH_Template
      * @param bool $check_if_custom   If true, the method will only check if a custom template exists
      *                                and won't include core plugin folders.
      * @return string The resolved template path, or an empty string if the template was not found.
-     * @since $VID:$
+     * @since 5.0.21.p
      */
     private static function resolveTemplatePath(string $cache_id, array $templates, bool $check_if_custom): string
     {

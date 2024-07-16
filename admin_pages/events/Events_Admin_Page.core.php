@@ -2049,7 +2049,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      * @param string $timezone_string
      * @return array
      * @throws Exception
-     * @since $VID:$
+     * @since 5.0.21.p
      */
     public function whereParamsForDatetimeMonthRange(string $month_range, string $timezone_string = ''): array
     {

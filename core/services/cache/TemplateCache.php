@@ -18,7 +18,7 @@ use EEH_Array;
  * @package     Event Espresso
  * @subpackage  EventEspresso\core\services\cache
  * @author      Brent Christensen
- * @since       $VID:$
+ * @since       5.0.21.p
  */
 class TemplateCache
 {

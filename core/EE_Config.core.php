@@ -155,7 +155,7 @@ final class EE_Config implements ResettableInterface
 
     /**
      * @return void
-     * @since $VID:$
+     * @since 5.0.21.p
      */
     private function loadLegacyConfigClasses()
     {
@@ -997,7 +997,7 @@ final class EE_Config implements ResettableInterface
 
     /**
      * @return string|null
-     * @deprecated $VID:$
+     * @deprecated 5.0.21.p
      */
     public static function get_page_for_posts(): ?string
     {
@@ -1007,7 +1007,7 @@ final class EE_Config implements ResettableInterface
 
     /**
      * @return void
-     * @deprecated $VID:$
+     * @deprecated 5.0.21.p
      */
     public function register_shortcodes_and_modules()
     {
@@ -1017,7 +1017,7 @@ final class EE_Config implements ResettableInterface
                 'Usage is deprecated. Use EventEspresso\core\services\shortcodes\LegacyShortcodesManager::registerShortcode() or EventEspresso\core\services\modules\LegacyModulesManager::registerModule() as direct replacement.',
                 'event_espresso'
             ),
-            '$VID:$',
+            '5.0.21.p',
             '5.5.0'
         );
     }
@@ -1025,7 +1025,7 @@ final class EE_Config implements ResettableInterface
 
     /**
      * @return void
-     * @deprecated $VID:$
+     * @deprecated 5.0.21.p
      */
     public function initialize_shortcodes_and_modules()
     {
@@ -1035,7 +1035,7 @@ final class EE_Config implements ResettableInterface
                 'Usage is deprecated. Use EventEspresso\core\services\shortcodes\LegacyShortcodesManager::initializeShortcodes() or EventEspresso\core\services\modules\LegacyModulesManager::initializeModules() as direct replacement.',
                 'event_espresso'
             ),
-            '$VID:$',
+            '5.0.21.p',
             '5.5.0'
         );
     }
@@ -1044,7 +1044,7 @@ final class EE_Config implements ResettableInterface
     /**
      * @param string $module_path - full path up to and including module folder
      * @return bool
-     * @deprecated $VID:$
+     * @deprecated 5.0.21.p
      */
     public static function register_module($module_path = '')
     {
@@ -1054,7 +1054,7 @@ final class EE_Config implements ResettableInterface
                 'Usage is deprecated. Use EventEspresso\core\services\modules\LegacyModulesManager::registerModule() as direct replacement.',
                 'event_espresso'
             ),
-            '$VID:$',
+            '5.0.21.p',
             '5.5.0'
         );
         /** @var LegacyModulesManager $legacy_modules_manager */
@@ -1065,7 +1065,7 @@ final class EE_Config implements ResettableInterface
 
     /**
      * @return void
-     * @deprecated $VID:$
+     * @deprecated 5.0.21.p
      */
     public function widgets_init()
     {
@@ -1075,7 +1075,7 @@ final class EE_Config implements ResettableInterface
                 'Usage is deprecated. Use EventEspresso\core\services\widgets\LegacyWidgetsManager::widgetsInit() as direct replacement.',
                 'event_espresso'
             ),
-            '$VID:$',
+            '5.0.21.p',
             '5.5.0'
         );
         /** @var LegacyWidgetsManager $legacy_widgets_manager */
@@ -1087,7 +1087,7 @@ final class EE_Config implements ResettableInterface
     /**
      * @param string $widget_path - full path up to and including widget folder
      * @return void
-     * @deprecated $VID:$
+     * @deprecated 5.0.21.p
      */
     public static function register_ee_widget($widget_path = '')
     {
@@ -1097,7 +1097,7 @@ final class EE_Config implements ResettableInterface
                 'Usage is deprecated. Use EventEspresso\core\services\widgets\LegacyWidgetsManager::registerWidget() as direct replacement.',
                 'event_espresso'
             ),
-            '$VID:$',
+            '5.0.21.p',
             '5.5.0'
         );
         /** @var LegacyWidgetsManager $legacy_widgets_manager */
@@ -1112,7 +1112,7 @@ final class EE_Config implements ResettableInterface
      * @param string $method_name - the actual module method to be routed to
      * @param string $key         - url param key indicating a route is being called
      * @return bool
-     * @deprecated $VID:$
+     * @deprecated 5.0.21.p
      */
     public static function register_route($route = '', $module = '', $method_name = '', $key = 'ee')
     {
@@ -1122,7 +1122,7 @@ final class EE_Config implements ResettableInterface
                 'Usage is deprecated. Use EventEspresso\core\services\modules\ModuleRoutesManager::registerRoute() as direct replacement.',
                 'event_espresso'
             ),
-            '$VID:$',
+            '5.0.21.p',
             '5.5.0'
         );
         return EE_Config::getModuleRoutesManager()->registerRoute(
@@ -1138,7 +1138,7 @@ final class EE_Config implements ResettableInterface
      * @param string $route - "pretty" public alias for module method
      * @param string $key   - url param key indicating a route is being called
      * @return array
-     * @deprecated $VID:$
+     * @deprecated 5.0.21.p
      */
     public static function get_route($route = '', $key = 'ee')
     {
@@ -1148,7 +1148,7 @@ final class EE_Config implements ResettableInterface
                 'Usage is deprecated. Use EventEspresso\core\services\modules\ModuleRoutesManager::getRoute() as direct replacement.',
                 'event_espresso'
             ),
-            '$VID:$',
+            '5.0.21.p',
             '5.5.0'
         );
         return EE_Config::getModuleRoutesManager()->getRoute((string) $route, (string) $key);
@@ -1157,7 +1157,7 @@ final class EE_Config implements ResettableInterface
 
     /**
      * @return array
-     * @deprecated $VID:$
+     * @deprecated 5.0.21.p
      */
     public static function get_routes()
     {
@@ -1167,7 +1167,7 @@ final class EE_Config implements ResettableInterface
                 'Usage is deprecated. Use EventEspresso\core\services\modules\ModuleRoutesManager::getRoutes() as direct replacement.',
                 'event_espresso'
             ),
-            '$VID:$',
+            '5.0.21.p',
             '5.5.0'
         );
         return EE_Config::getModuleRoutesManager()->getRoutes();
@@ -1181,7 +1181,7 @@ final class EE_Config implements ResettableInterface
      * @param array|string $forward    - function name or array( class, method )
      * @param string       $key        - url param key indicating a route is being called
      * @return bool
-     * @deprecated $VID:$
+     * @deprecated 5.0.21.p
      */
     public static function register_forward($route = '', $status = 0, $forward = '', $key = 'ee')
     {
@@ -1191,7 +1191,7 @@ final class EE_Config implements ResettableInterface
                 'Usage is deprecated. Use EventEspresso\core\services\modules\ModuleRoutesManager::registerForward() as direct replacement.',
                 'event_espresso'
             ),
-            '$VID:$',
+            '5.0.21.p',
             '5.5.0'
         );
         return EE_Config::getModuleRoutesManager()->registerForward(
@@ -1209,7 +1209,7 @@ final class EE_Config implements ResettableInterface
      *                           allows different forwards to be served based on status
      * @param string  $key       - url param key indicating a route is being called
      * @return string
-     * @deprecated $VID:$
+     * @deprecated 5.0.21.p
      */
     public static function get_forward($route = '', $status = 0, $key = 'ee')
     {
@@ -1219,7 +1219,7 @@ final class EE_Config implements ResettableInterface
                 'Usage is deprecated. Use EventEspresso\core\services\modules\ModuleRoutesManager::getForward() as direct replacement.',
                 'event_espresso'
             ),
-            '$VID:$',
+            '5.0.21.p',
             '5.5.0'
         );
         if (is_array($route) && isset($route[0], $route[1])) {
@@ -1237,7 +1237,7 @@ final class EE_Config implements ResettableInterface
      * @param string  $view
      * @param string  $key       - url param key indicating a route is being called
      * @return bool
-     * @deprecated $VID:$
+     * @deprecated 5.0.21.p
      */
     public static function register_view($route = '', $status = 0, $view = '', $key = 'ee')
     {
@@ -1247,7 +1247,7 @@ final class EE_Config implements ResettableInterface
                 'Usage is deprecated. Use EventEspresso\core\services\modules\ModuleRoutesManager::registerView() as direct replacement.',
                 'event_espresso'
             ),
-            '$VID:$',
+            '5.0.21.p',
             '5.5.0'
         );
         return EE_Config::getModuleRoutesManager()->registerView(
@@ -1265,7 +1265,7 @@ final class EE_Config implements ResettableInterface
      *                                  class, allows different views to be served based on status
      * @param string            $key    - url param key indicating a route is being called
      * @return string
-     * @deprecated $VID:$
+     * @deprecated 5.0.21.p
      */
     public static function get_view($route = '', $status = 0, $key = 'ee')
     {
@@ -1275,7 +1275,7 @@ final class EE_Config implements ResettableInterface
                 'Usage is deprecated. Use EventEspresso\core\services\modules\ModuleRoutesManager::getView() as direct replacement.',
                 'event_espresso'
             ),
-            '$VID:$',
+            '5.0.21.p',
             '5.5.0'
         );
         if (is_array($route) && isset($route[0], $route[1])) {

@@ -2152,7 +2152,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      * @param $primary_registration
      * @return bool
      * @throws EE_Error
-     * @since $VID:$
+     * @since 5.0.21.p
      */
     private function validatePrimaryRegistration($primary_registration): bool
     {
@@ -2184,7 +2184,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      * @return EE_Attendee|null
      * @throws EE_Error
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 5.0.21.p
      */
     private function getPrimaryAttendee(EE_Registration $primary_registration): ?EE_Attendee
     {
@@ -2204,7 +2204,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      * @param $primary_attendee
      * @return bool
      * @throws EE_Error
-     * @since $VID:$
+     * @since 5.0.21.p
      */
     private function validatePrimaryAttendee($primary_attendee): bool
     {
@@ -2236,7 +2236,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      * @return bool
      * @throws EE_Error
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 5.0.21.p
      */
     private function addAttendeeToPrimaryRegistration(
         EE_Attendee $primary_attendee,

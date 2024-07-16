@@ -10,7 +10,7 @@ use EventEspresso\core\services\cache\PostRelatedCacheManager;
  *
  * @package EventEspresso\core\domain\entities\routing\handlers\admin
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.21.p
  */
 class WordPressPostsPage extends AdminRoute
 {
