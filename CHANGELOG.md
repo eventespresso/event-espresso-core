@@ -22,7 +22,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - [Relax EE_Admin_Config::useAdvancedEditor Prop Type (#1368)](https://github.com/eventespresso/cafe/pull/1368)
  - [Fix EE3 migrations Fatals/Notices (#1359)](https://github.com/eventespresso/cafe/pull/1359)
  - [Legacy Shortcodes Manager. Fix the type error (#1372)](https://github.com/eventespresso/cafe/pull/1372)
- - FIX
 
 #### Changed
  - [Build Machine Changes 5.0.20.p (#1309)](https://github.com/eventespresso/cafe/pull/1309)
@@ -36,7 +35,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - [Use get_post_meta() for Featured Image Alt Tag (#1342)](https://github.com/eventespresso/cafe/pull/1342)
  - [Optimize Event list table datetime and ticket query (#1348)](https://github.com/eventespresso/cafe/pull/1348)
  - [Reduce Vendor Folder Size (#1349)](https://github.com/eventespresso/cafe/pull/1349)
- - MOD
 
 
 ### [5.0.20]
