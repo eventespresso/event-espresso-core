@@ -17,9 +17,9 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     /**
      * the input's name attribute
      *
-     * @var string
+     * @var string|null
      */
-    protected $_html_name;
+    protected ?string $_html_name = null;
 
     /**
      * id for the html label tag
@@ -286,7 +286,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     {
         if (! $this->_html_name) {
             $this->_html_name = $this->name();
-            if ($this->_parent_section && $this->_parent_section instanceof EE_Form_Section_Proper) {
+            if ($this->_parent_section instanceof EE_Form_Section_Proper) {
                 $this->_html_name = $this->_parent_section->html_name_prefix() . "[{$this->name()}]";
             }
         }

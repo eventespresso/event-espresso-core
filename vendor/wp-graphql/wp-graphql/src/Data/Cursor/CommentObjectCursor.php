@@ -19,33 +19,50 @@ class CommentObjectCursor extends AbstractCursor {
 	public $cursor_node;
 
 	/**
-	 * @param array|\WP_Comment_Query $query_vars The query vars to use when building the SQL statement.
-	 * @param string|null            $cursor Whether to generate the before or after cursor. Default "after"
+	 * {@inheritDoc}
 	 *
-	 * @return void
+	 * @param array<string,mixed>|\WP_Comment_Query $query_vars The query vars to use when building the SQL statement.
 	 */
 	public function __construct( $query_vars, $cursor = 'after' ) {
 		// Handle deprecated use of $query.
 		if ( $query_vars instanceof \WP_Comment_Query ) {
-			_doing_it_wrong( __FUNCTION__, 'The first argument should be an array of $query_vars, not the WP_Comment_Query object', '1.9.0' );
+			_doing_it_wrong( __METHOD__, 'The first argument should be an array of $query_vars, not the WP_Comment_Query object', '1.9.0' );
 			$query_vars = $query_vars->query_vars;
 		}
 
 		// Initialize the class properties.
 		parent::__construct( $query_vars, $cursor );
 
+		// Set ID Key.
+		$this->id_key = "{$this->wpdb->comments}.comment_ID";
 	}
 
 	/**
 	 * {@inheritDoc}
 	 *
-	 * @return ?WP_Comment
+	 * @return ?\WP_Comment
 	 */
 	public function get_cursor_node() {
+		// Bail if no offset.
 		if ( ! $this->cursor_offset ) {
 			return null;
 		}
 
+		/**
+		 * If pre-hooked, return filtered node.
+		 *
+		 * @param \WP_Comment|null                           $pre_comment The pre-filtered comment node.
+		 * @param int                                        $offset      The cursor offset.
+		 * @param \WPGraphQL\Data\Cursor\CommentObjectCursor $node        The cursor instance.
+		 *
+		 * @return \WP_Comment|null
+		 */
+		$pre_comment = apply_filters( 'graphql_pre_comment_cursor_node', null, $this->cursor_offset, $this );
+		if ( null !== $pre_comment ) {
+			return $pre_comment;
+		}
+
+		// Get cursor node.
 		$comment = WP_Comment::get_instance( $this->cursor_offset );
 
 		return false !== $comment ? $comment : null;
@@ -68,15 +85,24 @@ class CommentObjectCursor extends AbstractCursor {
 			$this->compare_with( $orderby, $order );
 		}
 
-		// if there's no specific orderby, then compare by date
+		/**
+		 * If there's no orderby specified yet, compare with the following fields.
+		 */
 		if ( ! $this->builder->has_fields() ) {
-			$this->compare_with_date();
+			$this->compare_with_cursor_fields(
+				[
+					[
+						'key'  => "{$this->wpdb->comments}.comment_date",
+						'by'   => $this->cursor_node ? $this->cursor_node->comment_date : null,
+						'type' => 'DATETIME',
+					],
+				]
+			);
 		}
 
-		$this->builder->add_field( "{$this->wpdb->comments}.comment_ID", $this->cursor_offset, 'ID', null, $this );
+		$this->compare_with_id_field();
 
 		return $this->to_sql();
-
 	}
 
 	/**
@@ -88,8 +114,17 @@ class CommentObjectCursor extends AbstractCursor {
 	 * @return void
 	 */
 	public function compare_with( $by, $order ) {
+		// Bail early, if "key" and "value" provided in query_vars.
+		$key   = $this->get_query_var( "graphql_cursor_compare_by_{$by}_key" );
+		$value = $this->get_query_var( "graphql_cursor_compare_by_{$by}_value" );
+		if ( ! empty( $key ) && ! empty( $value ) ) {
+			$this->builder->add_field( $key, $value, null, $order );
+			return;
+		}
 
-		$type = null;
+		$key   = "{$this->wpdb->comments}.{$by}";
+		$value = $this->cursor_node->{$by};
+		$type  = null;
 
 		if ( 'comment_date' === $by ) {
 			$type = 'DATETIME';
@@ -97,27 +132,16 @@ class CommentObjectCursor extends AbstractCursor {
 
 		$value = $this->cursor_node->{$by} ?? null;
 		if ( ! empty( $value ) ) {
-			$this->builder->add_field( "{$this->wpdb->comments}.{$by}", $value, $type );
+			$this->builder->add_field( $key, $value, $type );
 			return;
 		}
-
 	}
 
 	/**
-	 * Use comment date based comparison
-	 *
-	 * @return void
-	 */
-	private function compare_with_date() {
-		$this->builder->add_field( "{$this->wpdb->comments}.comment_date", $this->cursor_node->comment_date ?? null, 'DATETIME' );
-	}
-
-	/**
-	 *{@inheritDoc}
+	 * {@inheritDoc}
 	 */
 	public function to_sql() {
 		$sql = $this->builder->to_sql();
 		return ! empty( $sql ) ? ' AND ' . $sql : '';
 	}
-
 }

@@ -9,14 +9,16 @@ namespace WPGraphQL\Utils;
 class DebugLog {
 
 	/**
-	 * @var array
+	 * The log items.
+	 *
+	 * @var array<string,mixed>[]
 	 */
 	protected $logs;
 
 	/**
 	 * Whether logs are enabled
 	 *
-	 * @var boolean
+	 * @var bool
 	 */
 	protected $logs_enabled;
 
@@ -35,7 +37,7 @@ class DebugLog {
 		 * Filters whether GraphQL Debug is enabled enabled. Serves as the default state for enabling debug logs.
 		 *
 		 * @param bool $enabled Whether logs are enabled or not
-		 * @param DebugLog $debug_log The DebugLog class instance
+		 * @param \WPGraphQL\Utils\DebugLog $debug_log The DebugLog class instance
 		 */
 		$this->logs_enabled = apply_filters( 'graphql_debug_logs_enabled', $enabled, $this );
 	}
@@ -43,13 +45,12 @@ class DebugLog {
 	/**
 	 * Given a message and a config, a log entry is added to the log
 	 *
-	 * @param mixed|string|array $message The debug log message
-	 * @param array  $config Config for the debug log. Set type and any additional information to log
+	 * @param mixed|string|mixed[] $message The debug log message
+	 * @param array<string,mixed>  $config Config for the debug log. Set type and any additional information to log
 	 *
-	 * @return array
+	 * @return array<string,mixed>
 	 */
 	public function add_log_entry( $message, $config = [] ) {
-
 		if ( empty( $message ) ) {
 			return [];
 		}
@@ -75,37 +76,39 @@ class DebugLog {
 		}
 
 		if ( ! isset( $this->logs[ wp_json_encode( $message ) ] ) ) {
-			$log_entry = array_merge( [
-				'type'    => $type,
-				'message' => $message,
-			], $config );
+			$log_entry = array_merge(
+				[
+					'type'    => $type,
+					'message' => $message,
+				],
+				$config
+			);
 
 			$this->logs[ wp_json_encode( $message ) ] = $log_entry;
 
 			/**
 			 * Filter the log entry for the debug log
 			 *
-			 * @param array $log The log entry
-			 * @param array $config The config passed in with the log entry
+			 * @param array<string,mixed> $log    The log entry
+			 * @param array<string,mixed> $config The config passed in with the log entry
 			 */
 			return apply_filters( 'graphql_debug_log_entry', $log_entry, $config );
 		}
 
 		return [];
-
 	}
 
 	/**
 	 * Returns the debug log
 	 *
-	 * @return array
+	 * @return array<string,mixed>[]
 	 */
 	public function get_logs() {
 
 		/**
 		 * Init the debug logger
 		 *
-		 * @param DebugLog $instance The DebugLog instance
+		 * @param \WPGraphQL\Utils\DebugLog $instance The DebugLog instance
 		 */
 		do_action( 'graphql_get_debug_log', $this );
 
@@ -122,10 +125,9 @@ class DebugLog {
 		/**
 		 * Return the filtered debug log
 		 *
-		 * @param array    $logs     The logs to be output with the request
-		 * @param DebugLog $instance The Debug Log class
+		 * @param array<string,mixed>[]     $logs     The logs to be output with the request
+		 * @param \WPGraphQL\Utils\DebugLog $instance The Debug Log class
 		 */
 		return apply_filters( 'graphql_debug_log', array_values( $this->logs ), $this );
 	}
-
 }

@@ -2,7 +2,6 @@
 
 namespace EventEspresso\core\services\container;
 
-use EventEspresso\core\exceptions\InvalidDataTypeException;
 use ReflectionClass;
 use ReflectionException;
 use ReflectionMethod;
@@ -23,55 +22,51 @@ class Mirror
     /**
      * @var ReflectionClass[]
      */
-    private $classes = [];
+    private array $classes = [];
 
     /**
      * @var ReflectionMethod[]
      */
-    private $constructors = [];
+    private array $constructors = [];
 
     /**
      * @var ReflectionParameter[][]
      */
-    private $parameters = [];
+    private array $parameters = [];
 
     /**
      * @var ReflectionParameter[][]
      */
-    private $parameter_classes = [];
+    private array $parameter_classes = [];
 
     /**
      * @var ReflectionProperty[][]
      */
-    private $properties = [];
+    private array $properties = [];
 
     /**
      * @var ReflectionMethod[][]
      */
-    private $methods = [];
+    private array $methods = [];
 
     /**
      * @var array
      */
-    private $default_properties = [];
+    private array $default_properties = [];
 
     /**
      * @var array
      */
-    private $static_properties = [];
+    private array $static_properties = [];
 
 
     /**
      * @param string $class_name
      * @return ReflectionClass
      * @throws ReflectionException
-     * @throws InvalidDataTypeException
      */
     public function getReflectionClass(string $class_name): ReflectionClass
     {
-        if (! is_string($class_name)) {
-            throw new InvalidDataTypeException($class_name, '$class_name', 'string (fully qualified class name)');
-        }
         if (! isset($this->classes[ $class_name ])) {
             $this->classes[ $class_name ] = new ReflectionClass($class_name);
         }
@@ -82,14 +77,10 @@ class Mirror
     /**
      * @param string $class_name
      * @return ReflectionMethod|null
-     * @throws InvalidDataTypeException
      * @throws ReflectionException
      */
     public function getConstructor(string $class_name): ?ReflectionMethod
     {
-        if (! is_string($class_name)) {
-            throw new InvalidDataTypeException($class_name, '$class_name', 'string (fully qualified class name)');
-        }
         if (! isset($this->constructors[ $class_name ])) {
             $reflection_class                  = $this->getReflectionClass($class_name);
             $this->constructors[ $class_name ] = $reflection_class->getConstructor();
@@ -101,7 +92,6 @@ class Mirror
     /**
      * @param ReflectionClass $reflection_class
      * @return ReflectionMethod|null
-     * @throws InvalidDataTypeException
      * @throws ReflectionException
      */
     public function getConstructorFromReflection(ReflectionClass $reflection_class): ?ReflectionMethod
@@ -113,7 +103,6 @@ class Mirror
     /**
      * @param string $class_name
      * @return ReflectionParameter[]
-     * @throws InvalidDataTypeException
      * @throws ReflectionException
      */
     public function getParameters(string $class_name): array
@@ -129,7 +118,6 @@ class Mirror
     /**
      * @param ReflectionClass $reflection_class
      * @return ReflectionParameter[]
-     * @throws InvalidDataTypeException
      * @throws ReflectionException
      */
     public function getParametersFromReflection(ReflectionClass $reflection_class): array
@@ -141,7 +129,6 @@ class Mirror
     /**
      * @param ReflectionMethod $constructor
      * @return ReflectionParameter[]
-     * @throws InvalidDataTypeException
      * @throws ReflectionException
      */
     public function getParametersFromReflectionConstructor(ReflectionMethod $constructor): array
@@ -155,7 +142,6 @@ class Mirror
      *
      * @param string $class_name
      * @return ReflectionParameter[]
-     * @throws InvalidDataTypeException
      * @throws ReflectionException
      */
     public function getRequiredParameters(string $class_name): array
@@ -176,7 +162,6 @@ class Mirror
      * @param string              $class_name
      * @param string              $index
      * @return string|null
-     * @throws ReflectionException
      */
     public function getParameterClassName(ReflectionParameter $param, string $class_name, string $index): ?string
     {
@@ -202,7 +187,7 @@ class Mirror
      * @return string|null
      * @since   4.10.13.p
      */
-    private function getParameterClassNameLegacy(ReflectionParameter $param)
+    private function getParameterClassNameLegacy(ReflectionParameter $param): ?string
     {
         $reflection_class = $param->getClass();
         return $reflection_class instanceof ReflectionClass
@@ -217,10 +202,10 @@ class Mirror
      * which can either be a ReflectionNamedType or ReflectionUnionType
      *
      * @param ReflectionParameter $param
-     * @return null
+     * @return string|null
      * @since   4.10.13.p
      */
-    private function getParameterClassNamePhp8(ReflectionParameter $param)
+    private function getParameterClassNamePhp8(ReflectionParameter $param): ?string
     {
         $reflection_type = $param->getType();
         if ($reflection_type instanceof \ReflectionNamedType) {
@@ -242,7 +227,6 @@ class Mirror
      * @param string              $class_name
      * @param string              $index
      * @return array|string|null
-     * @throws ReflectionException
      */
     public function getParameterDefaultValue(ReflectionParameter $param, string $class_name, string $index)
     {
@@ -265,14 +249,16 @@ class Mirror
     /**
      * @param string $class_name
      * @return ReflectionProperty[]
-     * @throws InvalidDataTypeException
      * @throws ReflectionException
      */
     public function getProperties(string $class_name): array
     {
         if (! isset($this->properties[ $class_name ])) {
-            $reflection_class                = $this->getReflectionClass($class_name);
-            $this->properties[ $class_name ] = $reflection_class->getProperties();
+            $reflection_class = $this->getReflectionClass($class_name);
+            $properties       = $reflection_class->getProperties();
+            foreach ($properties as $property) {
+                $this->properties[ $class_name ][ $property->getName() ] = $property;
+            }
         }
         return $this->properties[ $class_name ];
     }
@@ -281,7 +267,6 @@ class Mirror
     /**
      * @param ReflectionClass $reflection_class
      * @return ReflectionProperty[]
-     * @throws InvalidDataTypeException
      * @throws ReflectionException
      */
     public function getPropertiesFromReflection(ReflectionClass $reflection_class): array
@@ -292,8 +277,22 @@ class Mirror
 
     /**
      * @param string $class_name
+     * @param string $property_name
+     * @return ReflectionProperty|null
+     * @throws ReflectionException
+     */
+    public function getProperty(string $class_name, string $property_name): ?ReflectionProperty
+    {
+        if (! isset($this->properties[ $class_name ][ $property_name ])) {
+            $this->getProperties($class_name);
+        }
+        return $this->properties[ $class_name ][ $property_name ] ?? null;
+    }
+
+
+    /**
+     * @param string $class_name
      * @return ReflectionMethod[]
-     * @throws InvalidDataTypeException
      * @throws ReflectionException
      */
     public function getMethods(string $class_name): array
@@ -309,7 +308,6 @@ class Mirror
     /**
      * @param ReflectionClass $reflection_class )
      * @return ReflectionMethod[]
-     * @throws InvalidDataTypeException
      * @throws ReflectionException
      */
     public function getMethodsFromReflection(ReflectionClass $reflection_class): array
@@ -321,7 +319,6 @@ class Mirror
     /**
      * @param string $class_name
      * @return array
-     * @throws InvalidDataTypeException
      * @throws ReflectionException
      */
     public function getDefaultProperties(string $class_name): array
@@ -337,7 +334,6 @@ class Mirror
     /**
      * @param string $class_name
      * @return array
-     * @throws InvalidDataTypeException
      * @throws ReflectionException
      */
     public function getStaticProperties(string $class_name): array

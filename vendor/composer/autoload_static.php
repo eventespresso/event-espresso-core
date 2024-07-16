@@ -4,13 +4,10 @@
 
 namespace Composer\Autoload;
 
-class ComposerStaticInite2ae942d6da517425b9c31af9338243f
+class ComposerStaticInit2bf67e8fea067690dd80b0e018b63aad
 {
     public static $files = array (
         'a4a119a56e50fbb293281d9a48007e0e' => __DIR__ . '/..' . '/symfony/polyfill-php80/bootstrap.php',
-        'a3ed03db03d57650e139da3e8903943c' => __DIR__ . '/..' . '/wp-graphql/wp-graphql/access-functions.php',
-        'f23fb2f3f8f0b37aeaa2e54bba971cf2' => __DIR__ . '/..' . '/wp-graphql/wp-graphql/activation.php',
-        '041a301cb7808aeb8a9086a5113fbadc' => __DIR__ . '/..' . '/wp-graphql/wp-graphql/deactivation.php',
     );
 
     public static $prefixLengthsPsr4 = array (
@@ -133,9 +130,9 @@ class ComposerStaticInite2ae942d6da517425b9c31af9338243f
     public static function getInitializer(ClassLoader $loader)
     {
         return \Closure::bind(function () use ($loader) {
-            $loader->prefixLengthsPsr4 = ComposerStaticInite2ae942d6da517425b9c31af9338243f::$prefixLengthsPsr4;
-            $loader->prefixDirsPsr4 = ComposerStaticInite2ae942d6da517425b9c31af9338243f::$prefixDirsPsr4;
-            $loader->classMap = ComposerStaticInite2ae942d6da517425b9c31af9338243f::$classMap;
+            $loader->prefixLengthsPsr4 = ComposerStaticInit2bf67e8fea067690dd80b0e018b63aad::$prefixLengthsPsr4;
+            $loader->prefixDirsPsr4 = ComposerStaticInit2bf67e8fea067690dd80b0e018b63aad::$prefixDirsPsr4;
+            $loader->classMap = ComposerStaticInit2bf67e8fea067690dd80b0e018b63aad::$classMap;
 
         }, null, ClassLoader::class);
     }

@@ -77,17 +77,17 @@ class EED_Events_Archive extends EED_Module
         /** @var CustomPostTypeDefinitions $custom_post_type_definitions */
         $custom_post_type_definitions = LoaderFactory::getLoader()->getShared(CustomPostTypeDefinitions::class);
         $custom_post_types            = $custom_post_type_definitions->getDefinitions();
-        EE_Config::register_route(
+        EED_Module::registerRoute(
             $custom_post_types[EspressoPostType::EVENTS]['plural_slug'],
             'Events_Archive',
             'run'
         );
-        EE_Config::register_route(
+        EED_Module::registerRoute(
             'event_list',
             'Events_Archive',
             'event_list'
         );
-        EE_Config::register_route(
+        EED_Module::registerRoute(
             'iframe',
             'Events_Archive',
             'event_list_iframe',

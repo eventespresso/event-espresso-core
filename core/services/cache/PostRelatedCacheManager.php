@@ -6,9 +6,9 @@ namespace EventEspresso\core\services\cache;
  * Class PostRelatedCacheManager
  * Tracks cached content for Posts and clears them when a post is updated
  *
- * @package       Event Espresso
- * @author        Brent Christensen
- * @since         4.9.31
+ * @package Event Espresso
+ * @author  Brent Christensen
+ * @since   4.9.31
  */
 class PostRelatedCacheManager extends BasicCacheManager
 {
@@ -33,7 +33,7 @@ class PostRelatedCacheManager extends BasicCacheManager
     public function __construct(CacheStorageInterface $cache_storage)
     {
         parent::__construct($cache_storage);
-        add_action('save_post', array($this, 'clearPostRelatedCache'));
+        add_action('save_post', [$this, 'clearPostRelatedCache']);
     }
 
 
@@ -42,7 +42,7 @@ class PostRelatedCacheManager extends BasicCacheManager
      *
      * @return string
      */
-    public function cachePrefix()
+    public function cachePrefix(): string
     {
         return PostRelatedCacheManager::POST_CACHE_PREFIX;
     }
@@ -51,15 +51,15 @@ class PostRelatedCacheManager extends BasicCacheManager
     /**
      * @return array
      */
-    protected function getPostRelatedCache()
+    protected function getPostRelatedCache(): array
     {
-        $post_related_cache = get_option(PostRelatedCacheManager::POST_CACHE_OPTIONS_KEY, array());
+        $post_related_cache = get_option(PostRelatedCacheManager::POST_CACHE_OPTIONS_KEY, []);
         // verify that cached data was not truncated or corrupted and no longer an array
         if (! is_array($post_related_cache)) {
             // uh-oh... let's get rid of any transients using our cache prefix
-            $this->clear(PostRelatedCacheManager::CACHE_PREFIX);
+            $this->clear(BasicCacheManager::CACHE_PREFIX);
             // then update the post related cache tracking option
-            $post_related_cache = array();
+            $post_related_cache = [];
             $this->updatePostRelatedCache($post_related_cache);
         }
         return $post_related_cache;
@@ -69,7 +69,7 @@ class PostRelatedCacheManager extends BasicCacheManager
     /**
      * @param array $post_related_cache
      */
-    protected function updatePostRelatedCache(array $post_related_cache = array())
+    protected function updatePostRelatedCache(array $post_related_cache = [])
     {
         update_option(PostRelatedCacheManager::POST_CACHE_OPTIONS_KEY, $post_related_cache);
     }
@@ -89,13 +89,13 @@ class PostRelatedCacheManager extends BasicCacheManager
      *                           can be found and/or cleared. ex: "venue-28", or "shortcode-156".
      *                           BasicCacheManager::CACHE_PREFIX will also be prepended to the cache id.
      */
-    public function clearPostRelatedCacheOnUpdate($post_ID, $id_prefix)
+    public function clearPostRelatedCacheOnUpdate(int $post_ID, string $id_prefix)
     {
         $post_related_cache = $this->getPostRelatedCache();
         // if post is not already being tracked
         if (! isset($post_related_cache[ $post_ID ])) {
             // add array to add cache ids to
-            $post_related_cache[ $post_ID ] = array();
+            $post_related_cache[ $post_ID ] = [];
         }
         if (! in_array($id_prefix, $post_related_cache[ $post_ID ], true)) {
             // add cache id to be tracked
@@ -111,7 +111,7 @@ class PostRelatedCacheManager extends BasicCacheManager
      *
      * @param int $post_ID [required]
      */
-    public function clearPostRelatedCache($post_ID)
+    public function clearPostRelatedCache(int $post_ID)
     {
         $post_related_cache = $this->getPostRelatedCache();
         // if post is not being tracked
@@ -119,7 +119,7 @@ class PostRelatedCacheManager extends BasicCacheManager
             // let's clean up some of the duplicate IDs that were getting added
             foreach ($post_related_cache as $other_post_ID => $cache_IDs) {
                 // remove duplicates
-                $post_related_cache[ $other_post_ID ] = array_unique($post_related_cache[ $other_post_ID ]);
+                $post_related_cache[ $other_post_ID ] = array_unique($cache_IDs);
             }
             $this->updatePostRelatedCache($post_related_cache);
             return;

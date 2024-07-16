@@ -24,60 +24,80 @@ class EE_Billing_Attendee_Info_Form extends EE_Billing_Info_Form
     {
         $options_array['subsections'] = array_merge(
             [
-                'first_name' => new EE_Text_Input([
+                'first_name' => new EE_Text_Input(
+                    [
                         'required'        => true,
                         'html_class'      => 'ee-billing-qstn ee-billing-qstn-fname',
                         'html_label_text' => esc_html__('First Name', 'event_espresso'),
-                    ]),
-                'last_name'  => new EE_Text_Input([
+                    ]
+                ),
+                'last_name'  => new EE_Text_Input(
+                    [
                         'required'        => true,
                         'html_class'      => 'ee-billing-qstn ee-billing-qstn-lname',
                         'html_label_text' => esc_html__('Last Name', 'event_espresso'),
-                    ]),
-                'email'      => new EE_Email_Input([
+                    ]
+                ),
+                'email'      => new EE_Email_Input(
+                    [
                         'required'        => true,
                         'html_class'      => 'ee-billing-qstn ee-billing-qstn-email',
                         'html_label_text' => esc_html__('Email', 'event_espresso'),
-                    ]),
-                'address'    => new EE_Text_Input([
+                    ]
+                ),
+                'address'    => new EE_Text_Input(
+                    [
                         'html_label_text' => esc_html__('Address', 'event_espresso'),
                         'required'        => true,
                         'html_class'      => 'ee-billing-qstn ee-billing-qstn-address',
-                    ]),
-                'address2'   => new EE_Text_Input([
+                    ]
+                ),
+                'address2'   => new EE_Text_Input(
+                    [
                         'html_label_text' => esc_html__('Address 2', 'event_espresso'),
                         'html_class'      => 'ee-billing-qstn ee-billing-qstn-address2',
-                    ]),
-                'city'       => new EE_Text_Input([
+                    ]
+                ),
+                'city'       => new EE_Text_Input(
+                    [
                         'required'        => true,
                         'html_class'      => 'ee-billing-qstn ee-billing-qstn-city',
                         'html_label_text' => esc_html__('City', 'event_espresso'),
-                    ]),
+                    ]
+                ),
                 'state'      => apply_filters(
                     'FHEE__EE_Billing_Attendee_Info_Form__state_field',
-                    new EE_State_Select_Input(null, [
-                            'required'        => true,
-                            'html_class'      => 'ee-billing-qstn ee-billing-qstn-state',
-                            'html_label_text' => esc_html__('State', 'event_espresso'),
-                        ])
+                    new EE_State_Select_Input(
+                        null, [
+                        'required'        => true,
+                        'html_class'      => 'ee-billing-qstn ee-billing-qstn-state',
+                        'html_label_text' => esc_html__('State', 'event_espresso'),
+                    ]
+                    )
                 ),
                 'country'    => apply_filters(
                     'FHEE__EE_Billing_Attendee_Info_Form__country_field',
-                    new EE_Country_Select_Input(null, [
-                            'required'        => true,
-                            'html_class'      => 'ee-billing-qstn ee-billing-qstn-country',
-                            'html_label_text' => esc_html__('Country', 'event_espresso'),
-                        ])
+                    new EE_Country_Select_Input(
+                        null, [
+                        'required'        => true,
+                        'html_class'      => 'ee-billing-qstn ee-billing-qstn-country',
+                        'html_label_text' => esc_html__('Country', 'event_espresso'),
+                    ]
+                    )
                 ),
-                'zip'        => new EE_Text_Input([
+                'zip'        => new EE_Text_Input(
+                    [
                         'required'        => true,
                         'html_class'      => 'ee-billing-qstn ee-billing-qstn-zip',
                         'html_label_text' => esc_html__('Zip', 'event_espresso'),
-                    ]),
-                'phone'      => new EE_Text_Input([
+                    ]
+                ),
+                'phone'      => new EE_Text_Input(
+                    [
                         'html_class'      => 'ee-billing-qstn ee-billing-qstn-phone',
                         'html_label_text' => esc_html__('Phone', 'event_espresso'),
-                    ]),
+                    ]
+                ),
             ],
             $options_array['subsections'] ?? []
         );
@@ -125,6 +145,7 @@ class EE_Billing_Attendee_Info_Form extends EE_Billing_Info_Form
      * @param EE_Attendee $attendee
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      * @since 4.10.0.p
      */
     protected function getAttendeeStateValueForForm(EE_Attendee $attendee): string
@@ -193,24 +214,26 @@ class EE_Billing_Attendee_Info_Form extends EE_Billing_Info_Form
      *
      * @return EE_Attendee
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function create_attendee_from_billing_form_data()
+    public function create_attendee_from_billing_form_data(): EE_Attendee
     {
         // grab billing form data
         $data = $this->valid_data();
-        return EE_Attendee::new_instance([
-            'ATT_fname'    => ! empty($data['first_name']) ? $data['first_name'] : '',
-            'ATT_lname'    => ! empty($data['last_name']) ? $data['last_name'] : '',
-            'ATT_email'    => ! empty($data['email']) ? $data['email'] : '',
-            'ATT_address'  => ! empty($data['address']) ? $data['address'] : '',
-            'ATT_address2' => ! empty($data['address2']) ? $data['address2'] : '',
-            'ATT_city'     => ! empty($data['city']) ? $data['city'] : '',
-            'STA_ID'       => ! empty($data['state']) ? $data['state'] : '',
-            'CNT_ISO'      => ! empty($data['country']) ? $data['country'] : '',
-            'ATT_zip'      => ! empty($data['zip']) ? $data['zip'] : '',
-            'ATT_phone'    => ! empty($data['phone']) ? $data['phone'] : '',
-        ]);
+        return EE_Attendee::new_instance(
+            [
+                'ATT_fname'    => ! empty($data['first_name']) ? $data['first_name'] : '',
+                'ATT_lname'    => ! empty($data['last_name']) ? $data['last_name'] : '',
+                'ATT_email'    => ! empty($data['email']) ? $data['email'] : '',
+                'ATT_address'  => ! empty($data['address']) ? $data['address'] : '',
+                'ATT_address2' => ! empty($data['address2']) ? $data['address2'] : '',
+                'ATT_city'     => ! empty($data['city']) ? $data['city'] : '',
+                'STA_ID'       => ! empty($data['state']) ? $data['state'] : '',
+                'CNT_ISO'      => ! empty($data['country']) ? $data['country'] : '',
+                'ATT_zip'      => ! empty($data['zip']) ? $data['zip'] : '',
+                'ATT_phone'    => ! empty($data['phone']) ? $data['phone'] : '',
+            ]
+        );
     }
 }
-
 // End of file EE_Billing_Attendee_Info_Form.form.php

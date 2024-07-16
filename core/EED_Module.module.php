@@ -2,6 +2,7 @@
 
 use EventEspresso\core\interfaces\ResettableInterface;
 use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\modules\ModuleRoutesManager;
 use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\core\services\request\ResponseInterface;
 
@@ -14,19 +15,17 @@ use EventEspresso\core\services\request\ResponseInterface;
  */
 abstract class EED_Module extends EE_Configurable implements ResettableInterface
 {
+    private static ?ModuleRoutesManager $module_routes_manager = null;
+
     /**
      * rendered output to be returned to WP
-     *
-     * @var    string $output
      */
-    protected $output = '';
+    protected string $output = '';
 
     /**
      * the current active espresso template theme
-     *
-     * @var    string $theme
      */
-    protected $theme = '';
+    protected string $theme = '';
 
 
     /**
@@ -40,10 +39,9 @@ abstract class EED_Module extends EE_Configurable implements ResettableInterface
 
 
     /**
-     *    set_hooks - for hooking into EE Core, other modules, etc
+     * set_hooks - for hooking into EE Core, other modules, etc
      *
-     * @access    public
-     * @return    void
+     * @return void
      */
     public static function set_hooks()
     {
@@ -51,10 +49,9 @@ abstract class EED_Module extends EE_Configurable implements ResettableInterface
 
 
     /**
-     *    set_hooks_admin - for hooking into EE Admin Core, other modules, etc
+     * set_hooks_admin - for hooking into EE Admin Core, other modules, etc
      *
-     * @access    public
-     * @return    void
+     * @return void
      */
     public static function set_hooks_admin()
     {
@@ -62,12 +59,11 @@ abstract class EED_Module extends EE_Configurable implements ResettableInterface
 
 
     /**
-     *    run - initial module setup
-     *    this method is primarily used for activating resources in the EE_Front_Controller thru the use of filters
+     * run - initial module setup
+     * this method is primarily used for activating resources in the EE_Front_Controller thru the use of filters
      *
-     * @access    public
-     * @var            WP $WP
-     * @return    void
+     * @param WP $WP
+     * @return void
      */
     abstract public function run($WP);
 
@@ -77,8 +73,8 @@ abstract class EED_Module extends EE_Configurable implements ResettableInterface
      */
     final public function __construct()
     {
-        $this->theme = EE_Config::get_current_theme();
-        $module_name = $this->module_name();
+        $this->theme                                     = EE_Config::get_current_theme();
+        $module_name                                     = $this->module_name();
         EE_Registry::instance()->modules->{$module_name} = $this;
     }
 
@@ -89,7 +85,7 @@ abstract class EED_Module extends EE_Configurable implements ResettableInterface
      * @throws EE_Error
      * @throws ReflectionException
      */
-    protected static function get_instance($module_name = '')
+    protected static function get_instance(string $module_name = '')
     {
         $module_name = ! empty($module_name)
             ? $module_name
@@ -105,12 +101,9 @@ abstract class EED_Module extends EE_Configurable implements ResettableInterface
 
 
     /**
-     *    module_name
-     *
-     * @access    public
-     * @return    string
+     * @return string
      */
-    public function module_name()
+    public function module_name(): string
     {
         return get_class($this);
     }
@@ -119,7 +112,7 @@ abstract class EED_Module extends EE_Configurable implements ResettableInterface
     /**
      * @return string
      */
-    public function theme()
+    public function theme(): string
     {
         return $this->theme;
     }
@@ -127,7 +120,7 @@ abstract class EED_Module extends EE_Configurable implements ResettableInterface
 
     /**
      * @return RequestInterface
-     * @since   4.10.14.p
+     * @since 4.10.14.p
      */
     protected static function getRequest()
     {
@@ -141,14 +134,33 @@ abstract class EED_Module extends EE_Configurable implements ResettableInterface
 
     /**
      * @return ResponseInterface
-     * @since   4.10.14.p
+     * @since 4.10.14.p
      */
-    protected static function getResponse()
+    protected static function getResponse(): ResponseInterface
     {
         static $response;
         if (! $response instanceof RequestInterface) {
             $response = LoaderFactory::getLoader()->getShared(ResponseInterface::class);
         }
         return $response;
+    }
+
+
+    public static function getModuleRoutesManager(): ModuleRoutesManager
+    {
+        if (! self::$module_routes_manager instanceof ModuleRoutesManager) {
+            self::$module_routes_manager = LoaderFactory::getLoader()->getShared(ModuleRoutesManager::class);
+        }
+        return self::$module_routes_manager;
+    }
+
+
+    public static function registerRoute(
+        string $route = '',
+        string $module = '',
+        string $method_name = '',
+        string $key = 'ee'
+    ): bool {
+        return self::getModuleRoutesManager()->registerRoute($route, $module, $method_name, $key);
     }
 }

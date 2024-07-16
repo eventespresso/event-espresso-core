@@ -16,17 +16,13 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
  */
 class StylesheetAsset extends BrowserAsset
 {
-
-    /**
-     * @var string $media
-     */
-    private $media;
+    private string $media;
 
 
     /**
      * CssFile constructor.
      *
-     * @param                 $handle
+     * @param string          $handle
      * @param string          $source
      * @param array           $dependencies
      * @param DomainInterface $domain
@@ -36,12 +32,12 @@ class StylesheetAsset extends BrowserAsset
      * @throws DomainException
      */
     public function __construct(
-        $handle,
-        $source,
+        string $handle,
+        string $source,
         array $dependencies,
         DomainInterface $domain,
-        $media = 'all',
-        $version = ''
+        string $media = 'all',
+        string $version = ''
     ) {
         parent::__construct(Asset::TYPE_CSS, $handle, $source, $dependencies, $domain, $version);
         $this->setMedia($media);
@@ -51,7 +47,7 @@ class StylesheetAsset extends BrowserAsset
     /**
      * @return string
      */
-    public function media()
+    public function media(): string
     {
         return $this->media;
     }
@@ -61,15 +57,8 @@ class StylesheetAsset extends BrowserAsset
      * @param string $media
      * @throws InvalidDataTypeException
      */
-    private function setMedia($media)
+    private function setMedia(string $media)
     {
-        if (! is_string($media)) {
-            throw new InvalidDataTypeException(
-                '$media',
-                $media,
-                'string'
-            );
-        }
         $this->media = $media;
     }
 

@@ -177,6 +177,7 @@ jQuery(document).ready( function($) {
 				SPCO.set_listener_for_datepicker_change();
 				SPCO.set_listener_close_notifications();
 				SPCO.set_listener_for_payment_amount_change();
+				SPCO.set_listener_for_copy_email_confirm();
 				SPCO.auto_submit_gateway_form();
 				SPCO.start_registration_time_limit_countdown();
 			}
@@ -502,6 +503,17 @@ jQuery(document).ready( function($) {
                 if (parseInt(payment_amount) === 0) {
                     SPCO.remove_billing_forms();
                 }
+            });
+        },
+
+
+        /**
+         * @function
+         */
+        set_listener_for_copy_email_confirm: function () {
+            $('.ee-reg-qstn-email_confirm').bind('copy paste', function (e) {
+                e.preventDefault();
+                alert(eei18n.no_copy_paste_email_confirm);
             });
         },
 

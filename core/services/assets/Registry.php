@@ -13,6 +13,7 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use Exception;
 use InvalidArgumentException;
+use Throwable;
 
 /**
  * Used for registering assets used in EE.
@@ -28,21 +29,18 @@ class Registry
     const FILE_NAME_BUILD_MANIFEST = 'build-manifest.json';
 
     /**
-     * @var AssetCollection[] $assets
+     * @var AssetCollection|Asset[] $assets
      */
     protected $assets = [];
 
-    /**
-     * @var AssetManifestInterface
-     */
-    private $asset_manifest;
+    private AssetManifestInterface $asset_manifest;
 
     /**
      * This holds the js_data data object that will be exposed on pages that enqueue the `eejs-core` script.
      *
      * @var array
      */
-    protected $js_data = [];
+    protected array $js_data = [];
 
     /**
      * This keeps track of all scripts with registered data.  It is used to prevent duplicate data objects setup in the
@@ -50,7 +48,7 @@ class Registry
      *
      * @var array
      */
-    private $script_handles_with_data = [];
+    private array $script_handles_with_data = [];
 
 
     /**
@@ -89,11 +87,11 @@ class Registry
     }
 
 
-
     /**
      * Callback for the wp_enqueue_scripts actions used to register assets.
      *
      * @throws Exception
+     * @throws Throwable
      * @since 4.9.62.p
      */
     public function registerScriptsAndStyles()
@@ -134,7 +132,7 @@ class Registry
                 $script->source(),
                 $script->dependencies(),
                 $script->version(),
-                $script->loadInFooter()
+                ['in_footer' => $script->loadInFooter()]
             );
             if (! $registered && $this->debug()) {
                 throw new AssetRegistrationException($script->handle());
@@ -194,6 +192,7 @@ class Registry
      * Used to call wp_localize_scripts so that data can be added throughout the runtime until this later hook point.
      *
      * @throws Exception
+     * @throws Throwable
      * @since 4.9.31.rc.015
      */
     public function enqueueData()

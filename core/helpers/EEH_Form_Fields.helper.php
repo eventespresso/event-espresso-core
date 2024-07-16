@@ -1981,7 +1981,7 @@ class EEH_Form_Fields
      * @param string $status            "view" (i.e. all, today, month, draft)
      * @param int    $evt_category      category event belongs to
      * @param string $evt_active_status "upcoming", "expired", "active", or "inactive"
-     * @return string                    html
+     * @return string
      * @throws EE_Error
      * @throws ReflectionException
      */
@@ -1991,6 +1991,7 @@ class EEH_Form_Fields
         int $evt_category = 0,
         string $evt_active_status = ''
     ): string {
+        $status = empty($status) ? 'all' : $status;
         // determine what post_status our condition will have for the query.
         switch ($status) {
             case 'month':

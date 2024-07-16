@@ -111,8 +111,9 @@ class AdvancedEditorAdminFormSection
      */
     public function updateAdminFormSettings(array $valid_data, EE_Config $config)
     {
-        $config->admin->setUseAdvancedEditor(
-            $valid_data['use_advanced_editor'] ?? false
-        );
+        if (! $config->admin instanceof EE_Admin_Config) {
+            return;
+        }
+        $config->admin->setUseAdvancedEditor($valid_data['use_advanced_editor'] ?? true);
     }
 }

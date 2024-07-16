@@ -1,6 +1,7 @@
 <?php
 
 use EventEspresso\core\interfaces\InterminableInterface;
+use EventEspresso\core\services\modules\ModuleRoutesManager;
 use EventEspresso\core\services\request\RequestInterface;
 
 /**
@@ -15,30 +16,25 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 final class EE_Module_Request_Router implements InterminableInterface
 {
-    /**
-     * @var RequestInterface $request
-     */
-    private $request;
+    private RequestInterface $request;
 
-    /**
-     * @var array $_previous_routes
-     */
-    private static $_previous_routes = array();
+    private ModuleRoutesManager $module_routes_manager;
 
-    /**
-     * @var WP_Query $WP_Query
-     */
-    public $WP_Query;
+    private static array $_previous_routes = [];
+
+    public ?WP_Query $WP_Query = null;
 
 
     /**
      * EE_Module_Request_Router constructor.
      *
-     * @param RequestInterface $request
+     * @param RequestInterface    $request
+     * @param ModuleRoutesManager $module_routes_manager
      */
-    public function __construct(RequestInterface $request)
+    public function __construct(RequestInterface $request, ModuleRoutesManager $module_routes_manager)
     {
-        $this->request = $request;
+        $this->request               = $request;
+        $this->module_routes_manager = $module_routes_manager;
     }
 
 
@@ -62,12 +58,12 @@ final class EE_Module_Request_Router implements InterminableInterface
         if (! empty(self::$_previous_routes)) {
             // get last run route
             $previous_routes = array_values(self::$_previous_routes);
-            $previous_route = array_pop($previous_routes);
+            $previous_route  = array_pop($previous_routes);
         }
         //  has another route already been run ?
         if ($previous_route) {
             // check if  forwarding has been set
-            $current_route = $this->get_forward($previous_route);
+            $current_route = $this->get_forward((array) $previous_route);
             try {
                 // check for recursive forwarding
                 if (isset(self::$_previous_routes[ $current_route ])) {
@@ -89,11 +85,10 @@ final class EE_Module_Request_Router implements InterminableInterface
             // first route called
             $current_route = null;
             // grab all routes
-            $routes = EE_Config::get_routes();
+            $routes = $this->module_routes_manager->getRoutes();
             foreach ($routes as $key => $route) {
                 // first determine if route key uses w?ldc*rds
-                $uses_wildcards = strpos($key, '?') !== false
-                                  || strpos($key, '*') !== false;
+                $uses_wildcards = strpos($key, '?') !== false || strpos($key, '*') !== false;
                 // check request for module route
                 $route_found = $uses_wildcards
                     ? $this->request->matches($key)
@@ -104,7 +99,7 @@ final class EE_Module_Request_Router implements InterminableInterface
                         : $this->request->getRequestParam($key);
                     $current_route = sanitize_text_field($current_route);
                     if ($current_route) {
-                        $current_route = array($key, $current_route);
+                        $current_route = [$key, $current_route];
                         break;
                     }
                 }
@@ -125,14 +120,14 @@ final class EE_Module_Request_Router implements InterminableInterface
      *
      * @param string $key
      * @param string $current_route
-     * @return EED_Module|object|boolean|null
+     * @return EED_Module|null
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function resolve_route($key, $current_route)
+    public function resolve_route(string $key, string $current_route): ?EED_Module
     {
         // get module method that route has been mapped to
-        $module_method = EE_Config::get_route($current_route, $key);
+        $module_method = $this->module_routes_manager->getRoute($current_route, $key);
         // verify result was returned
         if (empty($module_method)) {
             $msg = sprintf(
@@ -140,13 +135,7 @@ final class EE_Module_Request_Router implements InterminableInterface
                 $current_route
             );
             EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
-            return false;
-        }
-        // verify that result is an array
-        if (! is_array($module_method)) {
-            $msg = sprintf(esc_html__('The %s  route has not been properly registered.', 'event_espresso'), $current_route);
-            EE_Error::add_error($msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__);
-            return false;
+            return null;
         }
         // grab module name
         $module_name = $module_method[0];
@@ -157,7 +146,7 @@ final class EE_Module_Request_Router implements InterminableInterface
                 $current_route
             );
             EE_Error::add_error($msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__);
-            return false;
+            return null;
         }
         // grab method
         $method = $module_method[1];
@@ -165,7 +154,7 @@ final class EE_Module_Request_Router implements InterminableInterface
         if (! class_exists($module_name)) {
             $msg = sprintf(esc_html__('The requested %s class could not be found.', 'event_espresso'), $module_name);
             EE_Error::add_error($msg, __FILE__, __FUNCTION__, __LINE__);
-            return false;
+            return null;
         }
         // verify that method exists
         if (! method_exists($module_name, $method)) {
@@ -175,7 +164,7 @@ final class EE_Module_Request_Router implements InterminableInterface
                 $current_route
             );
             EE_Error::add_error($msg . '||' . $msg, __FILE__, __FUNCTION__, __LINE__);
-            return false;
+            return null;
         }
         // instantiate module and call route method
         return $this->_module_router($module_name, $method);
@@ -186,9 +175,9 @@ final class EE_Module_Request_Router implements InterminableInterface
      * this method instantiates modules and calls the method that was defined when the route was registered
      *
      * @param string $module_name
-     * @return EED_Module|object|null
+     * @return EED_Module|null
      */
-    public static function module_factory($module_name)
+    public static function module_factory(string $module_name): ?EED_Module
     {
         if ($module_name === 'EED_Module') {
             EE_Error::add_error(
@@ -210,7 +199,10 @@ final class EE_Module_Request_Router implements InterminableInterface
         // ensure that class is actually a module
         if (! $module instanceof EED_Module) {
             EE_Error::add_error(
-                sprintf(esc_html__('The requested %s module is not of the class EED_Module.', 'event_espresso'), $module_name),
+                sprintf(
+                    esc_html__('The requested %s module is not of the class EED_Module.', 'event_espresso'),
+                    $module_name
+                ),
                 __FILE__,
                 __FUNCTION__,
                 __LINE__
@@ -230,7 +222,7 @@ final class EE_Module_Request_Router implements InterminableInterface
      * @throws EE_Error
      * @throws ReflectionException
      */
-    private function _module_router($module_name, $method)
+    private function _module_router(string $module_name, string $method): ?EED_Module
     {
         // instantiate module class
         $module = EE_Module_Request_Router::module_factory($module_name);
@@ -248,21 +240,27 @@ final class EE_Module_Request_Router implements InterminableInterface
 
 
     /**
-     * @param $current_route
+     * @param array $current_route
      * @return string
      */
-    public function get_forward($current_route)
+    public function get_forward(array $current_route): string
     {
-        return EE_Config::get_forward($current_route);
+        if (isset($current_route[0], $current_route[1])) {
+            return $this->module_routes_manager->getForward($current_route[1], $current_route[0]);
+        }
+        return '';
     }
 
 
     /**
-     * @param $current_route
+     * @param array $current_route
      * @return string
      */
-    public function get_view($current_route)
+    public function get_view(array $current_route): string
     {
-        return EE_Config::get_view($current_route);
+        if (isset($current_route[0], $current_route[1])) {
+            return $this->module_routes_manager->getView($current_route[1], $current_route[0]);
+        }
+        return '';
     }
 }

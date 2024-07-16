@@ -5841,7 +5841,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                 $primary_key_field instanceof EE_Primary_Key_String_Field
                 && is_string($base_class_obj_or_id)
             ) {
-                // assume its a string representation of the object
+                // assume it's a string representation of the object
                 $model_object = $this->get_one_by_ID($base_class_obj_or_id);
             } else {
                 throw new EE_Error(
@@ -5857,7 +5857,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                 );
             }
         }
-        if ($ensure_is_in_db && $model_object->ID() !== null) {
+        if ($ensure_is_in_db && $model_object instanceof EE_Base_Class && $model_object->ID() !== null) {
             $model_object->save();
         }
         return $model_object;

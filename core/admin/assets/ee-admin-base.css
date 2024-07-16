@@ -203,7 +203,7 @@
 
     --ee-feature-highlight-2024: hsl(187, 80%, 60%);
     --ee-feature-highlight-2024-bg: hsl(187, 80%, 95%);
-    --ee-feature-highlight-2024-font: var(--ee-status-color-grey);
+    --ee-feature-highlight-2024-font: var(--ee-status-color-dark-grey);
 
     /* FONT COLORS */
 

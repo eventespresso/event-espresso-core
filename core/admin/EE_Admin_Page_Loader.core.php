@@ -131,11 +131,15 @@ class EE_Admin_Page_Loader
     private function findAndLoadAdminPages()
     {
         $admin_pages = $this->findAdminPages();
-        // this just checks the caffeinated folder and takes care of setting up any caffeinated stuff.
-        $admin_pages = $this->findCaffeinatedAdminPages($admin_pages);
-        // then extensions and hooks, although they don't get added to the admin pages array
-        $this->findAdminPageExtensions();
-        $this->findAdminPageHooks();
+		$isCaffeinated = ! (defined('EE_DECAF') && EE_DECAF) && is_dir(EE_PLUGIN_DIR_PATH . 'caffeinated/admin');
+		// first let's check if there IS a caffeinated folder.
+		if ($isCaffeinated) {
+			// this just checks the caffeinated folder and takes care of setting up any caffeinated stuff.
+			$admin_pages = $this->findCaffeinatedAdminPages($admin_pages);
+			// then extensions and hooks, although they don't get added to the admin pages array
+			$this->findAdminPageExtensions();
+			$this->findAdminPageHooks();
+		}
         // allow plugins to add in their own pages (note at this point they will need to have an autoloader defined for their class) OR hook into EEH_Autoloader::load_admin_page() to add their path.;
         // loop through admin pages and setup the $_installed_pages array.
         $hooks_ref = [];
@@ -161,23 +165,28 @@ class EE_Admin_Page_Loader
             $menu_slug = $admin_menu->menuSlug();
             $this->_menu_slugs[ $menu_slug ] = $page;
             $menu_pages[ $menu_slug ] = $admin_page_init;
+
+			// if we're not caffeinated, then we don't need to do any of the following.
+			if (! $isCaffeinated) {
+				continue;
+			}
             // now that we've got the admin_init objects...
-            // lets see if there are any caffeinated pages extending the originals.
-            // If there are then let's hook into the init admin filter and load our extend instead.
+            // let's see if there are any caffeinated pages extending the originals.
+            // If there are then let's hook into the init admin filter and load our extentions instead.
             // Set flag for register hooks on extended pages b/c extended pages use the default INIT.
             $extended_hooks = $admin_page_init->register_hooks(
                 $this->loadCaffeinatedExtensions($admin_page_init, $page, $menu_slug)
             );
-            $hooks_ref      += $extended_hooks;
+            $hooks_ref = array_merge($hooks_ref, $extended_hooks);
         }
-        // the hooks_ref is all the pages where we have $extended _Hooks files
+		// the hooks_ref is all the pages where we have $extended _Hooks files
         // that will extend a class in a different folder.
         // So we want to make sure we load the file for the parent.
         // first make sure we've got unique values
         $hooks_ref = array_unique($hooks_ref);
         // now let's loop and require!
         foreach ($hooks_ref as $path) {
-            require_once($path);
+			require_once($path);
         }
         // make sure we have menu slugs global setup. Used in EE_Admin_Page->page_setup() to ensure we don't do a full class load for an admin page that isn't requested.
         global $ee_menu_slugs;
@@ -198,7 +207,6 @@ class EE_Admin_Page_Loader
      */
     private function findAdminPages(): array
     {
-
         // grab everything in the  admin core directory
         $admin_page_folders = $this->findAdminPageFolders(EE_ADMIN_PAGES . '*');
         $admin_page_folders = apply_filters(
@@ -313,10 +321,6 @@ class EE_Admin_Page_Loader
      */
     private function findCaffeinatedAdminPages(array $admin_pages): array
     {
-        // first let's check if there IS a caffeinated folder. If there is not then lets get out.
-        if ((defined('EE_DECAF') && EE_DECAF) || ! is_dir(EE_PLUGIN_DIR_PATH . 'caffeinated/admin')) {
-            return $admin_pages;
-        }
         $this->defineCaffeinatedConstants();
 
         $exclude = ['tickets'];
@@ -340,7 +344,7 @@ class EE_Admin_Page_Loader
      */
     private function findAdminPageExtensions()
     {
-        // let's see if there are any EXTENDS to setup in the $_caffeinated_extends array
+        // let's see if there are any EXTENDS to set up in the $_caffeinated_extends array
         // (that will be used later for hooking into the _initialize_admin_age in the related core_init admin page)
         $extensions = $this->findAdminPageFolders(EE_CORE_CAF_ADMIN . 'extend/*');
         if ($extensions) {

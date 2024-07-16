@@ -3,8 +3,8 @@
 namespace WPGraphQL\Data;
 
 use GraphQL\Error\UserError;
-use WP_Taxonomy;
 use WPGraphQL\Utils\Utils;
+use WP_Taxonomy;
 
 class TermObjectMutation {
 
@@ -12,16 +12,15 @@ class TermObjectMutation {
 	 * This prepares the object to be mutated - ensures data is safe to be saved,
 	 * and mapped from input args to WordPress $args
 	 *
-	 * @throws UserError User error for invalid term.
-	 * 
-	 * @param array        $input         The input from the GraphQL Request
-	 * @param WP_Taxonomy  $taxonomy      The Taxonomy object for the type of term being mutated
-	 * @param string       $mutation_name The name of the mutation (create, update, etc)
+	 * @throws \GraphQL\Error\UserError User error for invalid term.
 	 *
-	 * @return mixed
+	 * @param array<string,mixed> $input         The input from the GraphQL Request
+	 * @param \WP_Taxonomy        $taxonomy The Taxonomy object for the type of term being mutated
+	 * @param string              $mutation_name The name of the mutation (create, update, etc)
+	 *
+	 * @return array<string,mixed>
 	 */
 	public static function prepare_object( array $input, WP_Taxonomy $taxonomy, string $mutation_name ) {
-
 		$insert_args = [];
 
 		/**
@@ -60,7 +59,7 @@ class TermObjectMutation {
 			$parent_id = Utils::get_database_id_from_id( $input['parentId'] );
 
 			if ( empty( $parent_id ) ) {
-				throw new UserError( __( 'The parent ID is not a valid ID', 'wp-graphql' ) );
+				throw new UserError( esc_html__( 'The parent ID is not a valid ID', 'wp-graphql' ) );
 			}
 
 			/**
@@ -69,7 +68,7 @@ class TermObjectMutation {
 			$parent_term = get_term( absint( $parent_id ), $taxonomy->name );
 
 			if ( ! $parent_term instanceof \WP_Term ) {
-				throw new UserError( __( 'The parent does not exist', 'wp-graphql' ) );
+				throw new UserError( esc_html__( 'The parent does not exist', 'wp-graphql' ) );
 			}
 
 			$insert_args['parent'] = $parent_term->term_id;
@@ -78,10 +77,10 @@ class TermObjectMutation {
 		/**
 		 * Filter the $insert_args
 		 *
-		 * @param array $insert_args The array of input args that will be passed to the functions that insert terms
-		 * @param array $input The data that was entered as input for the mutation
-		 * @param WP_Taxonomy $taxonomy The taxonomy object of the term being mutated
-		 * @param string $mutation_name The name of the mutation being performed (create, edit, etc)
+		 * @param array<string,mixed> $insert_args   The array of input args that will be passed to the functions that insert terms
+		 * @param array<string,mixed> $input         The data that was entered as input for the mutation
+		 * @param \WP_Taxonomy        $taxonomy      The taxonomy object of the term being mutated
+		 * @param string              $mutation_name The name of the mutation being performed (create, edit, etc)
 		 */
 		return apply_filters( 'graphql_term_object_insert_term_args', $insert_args, $input, $taxonomy, $mutation_name );
 	}

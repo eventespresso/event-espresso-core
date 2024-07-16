@@ -3,6 +3,7 @@
 use EventEspresso\core\domain\entities\custom_post_types\EspressoPostType;
 use EventEspresso\core\domain\services\admin\events\editor\ui\DuplicateEventButton;
 use EventEspresso\core\domain\services\admin\events\editor\ui\TicketSelectorShortcodeButton;
+use EventEspresso\core\domain\services\cache\TemplateCacheAdmin;
 use EventEspresso\core\domain\services\registration\RegStatus;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -787,6 +788,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
      */
     protected function _template_settings()
     {
+        new TemplateCacheAdmin(EE_Registry::instance()->CFG->template_settings, $this->request);
         $this->_template_args['values'] = $this->_yes_no_values;
         /**
          * Note leaving this filter in for backward compatibility this was moved in 4.6.x
@@ -814,6 +816,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
      */
     protected function _update_template_settings()
     {
+        new TemplateCacheAdmin(EE_Registry::instance()->CFG->template_settings, $this->request);
         /**
          * Note leaving this filter in for backward compatibility this was moved in 4.6.x
          * from General_Settings_Admin_Page to here.
@@ -847,6 +850,12 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
             );
             $rewrite_rules->flush();
         }
+        do_action(
+            'AHEE__General_Settings_Admin_Page__update_template_settings__after_update',
+            EE_Registry::instance()->CFG->template_settings,
+            $this->request->requestParams(),
+            $success
+        );
         $this->_redirect_after_action($success, $what, 'updated', ['action' => 'template_settings']);
     }
 

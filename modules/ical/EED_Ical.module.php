@@ -43,7 +43,7 @@ class EED_Ical extends EED_Module
             2
         );
         // process ics download request
-        EE_Config::register_route('download_ics_file', 'EED_Ical', 'download_ics_file');
+        EED_Module::registerRoute('download_ics_file', 'EED_Ical', 'download_ics_file');
     }
 
 

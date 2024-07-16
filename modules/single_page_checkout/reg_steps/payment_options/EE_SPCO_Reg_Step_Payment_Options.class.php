@@ -2097,7 +2097,11 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
 
 
     /**
-     * _capture_primary_registration_data_from_billing_form
+     * Captures primary registration data from the billing form.
+     *
+     * This method is used to gather the primary registrant data before attempting payment.
+     * It checks if the billing form is an instance of EE_Billing_Attendee_Info_Form and if the transaction
+     * has a primary registrant. If not, it captures the primary registrant data from the billing form.
      *
      * @return bool
      * @throws EE_Error
@@ -2106,63 +2110,24 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    private function _capture_primary_registration_data_from_billing_form()
+    private function _capture_primary_registration_data_from_billing_form(): bool
     {
-        // convert billing form data into an attendee
-        $this->checkout->primary_attendee_obj = $this->checkout->billing_form->create_attendee_from_billing_form_data();
-        if (! $this->checkout->primary_attendee_obj instanceof EE_Attendee) {
-            EE_Error::add_error(
-                sprintf(
-                    esc_html__(
-                        'The billing form details could not be used for attendee details due to a technical issue.%sPlease try again or contact %s for assistance.',
-                        'event_espresso'
-                    ),
-                    '<br/>',
-                    EE_Registry::instance()->CFG->organization->get_pretty('email')
-                ),
-                __FILE__,
-                __FUNCTION__,
-                __LINE__
-            );
-            return false;
-        }
         $primary_registration = $this->checkout->transaction->primary_registration();
-        if (! $primary_registration instanceof EE_Registration) {
-            EE_Error::add_error(
-                sprintf(
-                    esc_html__(
-                        'The primary registrant for this transaction could not be determined due to a technical issue.%sPlease try again or contact %s for assistance.',
-                        'event_espresso'
-                    ),
-                    '<br/>',
-                    EE_Registry::instance()->CFG->organization->get_pretty('email')
-                ),
-                __FILE__,
-                __FUNCTION__,
-                __LINE__
-            );
+        if (! $this->validatePrimaryRegistration($primary_registration)) {
             return false;
         }
-        if (
-            ! $primary_registration->_add_relation_to($this->checkout->primary_attendee_obj, 'Attendee')
-              instanceof
-              EE_Attendee
-        ) {
-            EE_Error::add_error(
-                sprintf(
-                    esc_html__(
-                        'The primary registrant could not be associated with this transaction due to a technical issue.%sPlease try again or contact %s for assistance.',
-                        'event_espresso'
-                    ),
-                    '<br/>',
-                    EE_Registry::instance()->CFG->organization->get_pretty('email')
-                ),
-                __FILE__,
-                __FUNCTION__,
-                __LINE__
-            );
+
+        $primary_attendee = $this->getPrimaryAttendee($primary_registration);
+        if (! $this->validatePrimaryAttendee($primary_attendee)) {
             return false;
         }
+
+        if (! $this->addAttendeeToPrimaryRegistration($primary_attendee, $primary_registration)) {
+            return false;
+        }
+        // both the primary registration and primary attendee objects should be valid entities at this point
+        $this->checkout->primary_attendee_obj = $primary_attendee;
+
         /** @type EE_Registration_Processor $registration_processor */
         $registration_processor = EE_Registry::instance()->load_class('Registration_Processor');
         // at this point, we should have enough details about the registrant to consider the registration NOT incomplete
@@ -2178,6 +2143,132 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
             )
         );
         return true;
+    }
+
+
+    /**
+     * returns true if the primary registration is a valid entity
+     *
+     * @param $primary_registration
+     * @return bool
+     * @throws EE_Error
+     * @since $VID:$
+     */
+    private function validatePrimaryRegistration($primary_registration): bool
+    {
+        if ($primary_registration instanceof EE_Registration) {
+            return true;
+        }
+        EE_Error::add_error(
+            sprintf(
+                esc_html__(
+                    'The primary registrant for this transaction could not be determined due to a technical issue.%sPlease try again or contact %s for assistance.',
+                    'event_espresso'
+                ),
+                '<br/>',
+                EE_Registry::instance()->CFG->organization->get_pretty('email')
+            ),
+            __FILE__,
+            __FUNCTION__,
+            __LINE__
+        );
+        return false;
+    }
+
+
+    /**
+     * retrieves the primary attendee object for the primary registration and copies the billing form data to it.
+     * if the primary registration does not have an attendee object, then one is created from the billing form info
+     *
+     * @param EE_Registration $primary_registration
+     * @return EE_Attendee|null
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since $VID:$
+     */
+    private function getPrimaryAttendee(EE_Registration $primary_registration): ?EE_Attendee
+    {
+        // if we have a primary registration, then we should have a primary attendee
+        $attendee = $primary_registration->attendee();
+        if ($attendee instanceof EE_Attendee) {
+            return $this->checkout->billing_form->copy_billing_form_data_to_attendee($attendee);
+        }
+        // if not, then we need to create one from the billing form
+        return $this->checkout->billing_form->create_attendee_from_billing_form_data();
+    }
+
+
+    /**
+     * returns true if the primary attendee is a valid entity
+     *
+     * @param $primary_attendee
+     * @return bool
+     * @throws EE_Error
+     * @since $VID:$
+     */
+    private function validatePrimaryAttendee($primary_attendee): bool
+    {
+        if ($primary_attendee instanceof EE_Attendee) {
+            return true;
+        }
+        EE_Error::add_error(
+            sprintf(
+                esc_html__(
+                    'The billing form details could not be used for attendee details due to a technical issue.%sPlease try again or contact %s for assistance.',
+                    'event_espresso'
+                ),
+                '<br/>',
+                EE_Registry::instance()->CFG->organization->get_pretty('email')
+            ),
+            __FILE__,
+            __FUNCTION__,
+            __LINE__
+        );
+        return false;
+    }
+
+
+    /**
+     * returns true if the attendee was successfully added to the primary registration
+     *
+     * @param EE_Attendee     $primary_attendee
+     * @param EE_Registration $primary_registration
+     * @return bool
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since $VID:$
+     */
+    private function addAttendeeToPrimaryRegistration(
+        EE_Attendee $primary_attendee,
+        EE_Registration $primary_registration
+    ): bool {
+        // ensure attendee has an ID by saving
+        $primary_attendee->save();
+
+        // compare attendee IDs
+        if ($primary_registration->attendee_id() === $primary_attendee->ID()) {
+            return true;
+        }
+
+        $primary_attendee = $primary_registration->_add_relation_to($primary_attendee, 'Attendee');
+        if ($primary_attendee instanceof EE_Attendee) {
+            return true;
+        }
+
+        EE_Error::add_error(
+            sprintf(
+                esc_html__(
+                    'The primary registrant could not be associated with this transaction due to a technical issue.%sPlease try again or contact %s for assistance.',
+                    'event_espresso'
+                ),
+                '<br/>',
+                EE_Registry::instance()->CFG->organization->get_pretty('email')
+            ),
+            __FILE__,
+            __FUNCTION__,
+            __LINE__
+        );
+        return false;
     }
 
 

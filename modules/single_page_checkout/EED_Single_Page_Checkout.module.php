@@ -244,7 +244,7 @@ class EED_Single_Page_Checkout extends EED_Module
                 EED_Single_Page_Checkout::$_reg_steps_array[ $order ] = $reg_step;
                 // register custom key route for each reg step
                 // ie: step=>"slug" - this is the entire reason we load the reg steps array now
-                EE_Config::register_route(
+                EED_Module::registerRoute(
                     $reg_step['slug'],
                     'EED_Single_Page_Checkout',
                     'run',
@@ -1408,6 +1408,7 @@ class EED_Single_Page_Checkout extends EED_Module
         );
         EE_Registry::$i18n_js_strings['session_expiration']    = EE_Registry::instance()->SSN->expiration();
         EE_Registry::$i18n_js_strings['use_session_countdown'] = EE_Registry::instance()->CFG->registration->useSessionCountdown();
+        EE_Registry::$i18n_js_strings['no_copy_paste_email_confirm'] = esc_html__("We're sorry but copy and paste is disabled for email confirmation inputs. Please enter the email address manually.", 'event_espresso');
     }
 
 

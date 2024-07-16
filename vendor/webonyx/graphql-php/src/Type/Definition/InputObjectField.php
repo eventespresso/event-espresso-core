@@ -13,6 +13,7 @@ use GraphQL\Utils\Utils;
 use function array_key_exists;
 use function sprintf;
 
+#[\AllowDynamicProperties]
 class InputObjectField
 {
     /** @var string */
@@ -32,18 +33,6 @@ class InputObjectField
 
     /** @var mixed[] */
     public $config;
-
-    public $caps;
-
-    public $formatter;
-
-    public $key;
-
-    public $resolver;
-
-    public $use_for_input;
-
-    public $use_for_output;
 
     /**
      * @param mixed[] $opts

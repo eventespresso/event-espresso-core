@@ -169,6 +169,8 @@ class CrawlerDetect
         ));
 
         if ($agent === '') {
+            $this->matches = array();
+
             return false;
         }
 
@@ -189,7 +191,7 @@ class CrawlerDetect
     /**
      * @return string|null
      */
-    public function getUserAgent(): ?string
+    public function getUserAgent()
     {
         return $this->userAgent;
     }

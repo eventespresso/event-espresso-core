@@ -6,15 +6,58 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Releases
 
+### [5.0.21]
+
+#### Added
+ - NEW
+
+#### Fixed
+ - [Fix Errors from Event Smart Log (#1316)](https://github.com/eventespresso/cafe/pull/1316)
+ - [Fix Saving Custom Message Templates in Event Editor (#1324)](https://github.com/eventespresso/cafe/pull/1324)
+ - [Dont Load Caff Admin, Hooks, or Extensions if Decaf (#1325)](https://github.com/eventespresso/cafe/pull/1325)
+ - [Fix Loading of Admin Class Hooks (#1323)](https://github.com/eventespresso/cafe/pull/1323)
+ - [Fix Events List Month Filter (#1330)](https://github.com/eventespresso/cafe/pull/1330)
+ - [Fix Datepicker Input Format (#1341)](https://github.com/eventespresso/cafe/pull/1341)
+ - [Fix Event Template Settings Persistence and Add Template Caching (#1329)](https://github.com/eventespresso/cafe/pull/1329)
+ - [Force HTTPS for iCal Links and GearMan Jobs (#1345)](https://github.com/eventespresso/cafe/pull/1345)
+ - [Extract Additional Classes and Non-Config Related Logic From EE_Config (#1270)](https://github.com/eventespresso/cafe/pull/1270)
+ - [Fix Currency Config Prop Type (#1363)](https://github.com/eventespresso/cafe/pull/1363)
+ - [Relax EE_Admin_Config::useAdvancedEditor Prop Type (#1368)](https://github.com/eventespresso/cafe/pull/1368)
+ - [Fix EE3 migrations Fatals/Notices (#1359)](https://github.com/eventespresso/cafe/pull/1359)
+ - [Legacy Shortcodes Manager. Fix the type error (#1372)](https://github.com/eventespresso/cafe/pull/1372)
+ - FIX
+
+#### Changed
+ - [Build Machine Changes 5.0.20.p (#1309)](https://github.com/eventespresso/cafe/pull/1309)
+ - [Add support for Node v20 Iron (Barista#1324) (#1305)](https://github.com/eventespresso/cafe/pull/1305)
+ - [Convert http to https (#1314)](https://github.com/eventespresso/cafe/pull/1314)
+ - [Add support for decimals in Ticket Price Calculator (Barista#1311) (#1336)](https://github.com/eventespresso/cafe/pull/1336)
+ - [Mod/update wp graphql to v1.27.0 (#1334)](https://github.com/eventespresso/cafe/pull/1334)
+ - [Check that Assets are Registered and Update React (#1340)](https://github.com/eventespresso/cafe/pull/1340)
+ - [Disable Copy and Paste for Email Confirmation Inputs (#1343)](https://github.com/eventespresso/cafe/pull/1343)
+ - [PPC. Refactor the payment process (#1331)](https://github.com/eventespresso/cafe/pull/1331)
+ - [Use get_post_meta() for Featured Image Alt Tag (#1342)](https://github.com/eventespresso/cafe/pull/1342)
+ - [Optimize Event list table datetime and ticket query (#1348)](https://github.com/eventespresso/cafe/pull/1348)
+ - [Reduce Vendor Folder Size (#1349)](https://github.com/eventespresso/cafe/pull/1349)
+ - MOD
+
+#### Deprecated
+ - DEP
+
+#### Removed
+ - RMV
+
+#### Security
+ - SEC
+
+
+
 ### [5.0.20]
 
 #### Added
- - [Integrate Easy Digital Downloads into Core & Add-ons (#487)](https://github.com/eventespresso/cafe/pull/487)  
- - [Reimplement Registration Form Session Countdown Timer (#1283)](https://github.com/eventespresso/cafe/pull/1283)
+ - [Integrate Easy Digital Downloads into Core & Add-ons (#487)](https://github.com/eventespresso/cafe/pull/487)
  - [Add Extra HTML5 Input Types to Form Inputs (#1279)](https://github.com/eventespresso/cafe/pull/1279)
- - [NEW Add-ons (#487)](https://github.com/eventespresso/cafe/pull/487)
  - [Reimplement Registration Form Session Countdown Timer (#1283)](https://github.com/eventespresso/cafe/pull/1283)
- - [Add Extra HTML5 Input Types to Form Inputs (#1279)](https://github.com/eventespresso/cafe/pull/1279)
 
 #### Fixed
  - [Fix Event Editor Width (#1194)](https://github.com/eventespresso/cafe/pull/1194)
@@ -37,20 +80,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - [Fix Line Item Type Error (#1296)](https://github.com/eventespresso/cafe/pull/1296)
 
 #### Changed
- - [Build Machine 5.0.19.p changes (#1170)](https://github.com/eventespresso/cafe/pull/1170)
+ - [Build Machine Changes 5.0.19.p (#1170)](https://github.com/eventespresso/cafe/pull/1170)
  - [Extract package @eventespresso/types (Barista #1298) (#1221)](https://github.com/eventespresso/cafe/pull/1221)
  - [Create package @eventespresso/config (Barista#1302) (#1213)](https://github.com/eventespresso/cafe/pull/1213)
  - [Add Show All Option to Pagination Component (Barista#1280) (#1218)](https://github.com/eventespresso/cafe/pull/1218)
  - [Update README.md for GraphQL API README.md (#1212)](https://github.com/eventespresso/cafe/pull/1212)
- - [Extract Reg Status Constants into New Class  - [Fix Feature Flags Admin (Barista#1308) (#1257)](https://github.com/eventespresso/cafe/pull/1257)
- - [Filter Value of Verify SSL Parameter for Remote Requests (#1286)](https://github.com/eventespresso/cafe/pull/1286)
- - [PUE to EDD Tweaks (#1268)](https://github.com/eventespresso/cafe/pull/1268)
- - MOD Add Hooks for Filtering Reg Status (#1193)](https://github.com/eventespresso/cafe/pull/1193)
+ - [Extract Reg Status Constants into New Class and Add Hooks for Filtering Reg Status (#1193)](https://github.com/eventespresso/cafe/pull/1193)
  - [Fix Feature Flags Admin (Barista#1308) (#1257)](https://github.com/eventespresso/cafe/pull/1257)
- - [Add ItemCount to Datetime Registrations Link (Barista#1309) (#1260)](https://github.com/eventespresso/cafe/pull/1260)
  - [Filter Value of Verify SSL Parameter for Remote Requests (#1286)](https://github.com/eventespresso/cafe/pull/1286)
+ - [Add ItemCount to Datetime Registrations Link (Barista#1309) (#1260)](https://github.com/eventespresso/cafe/pull/1260)
  - [PUE to EDD Tweaks (#1268)](https://github.com/eventespresso/cafe/pull/1268)
- - MOD
+
 
 ### [5.0.19]
 
@@ -62,7 +102,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - [PPC. Fix partial payments (#1134)](https://github.com/eventespresso/cafe/pull/1134)
 
 #### Changed
- - [Build Machine 5.0.18.p changes (#1146)](https://github.com/eventespresso/cafe/pull/1146)
+ - [Build Machine Changes 5.0.18.p (#1146)](https://github.com/eventespresso/cafe/pull/1146)
  - [PPC. Add transaction to the logs (#1158)](https://github.com/eventespresso/cafe/pull/1158)
  - [PPC. Update order status/error messages (#1162)](https://github.com/eventespresso/cafe/pull/1162)
  - [Prevent fatal error from get_edit_post_link returning null (#1166)](https://github.com/eventespresso/cafe/pull/1166)
@@ -88,26 +128,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - [Improve AJAX Response Handling in SPCO (#1119)](https://github.com/eventespresso/cafe/pull/1119)
  - [Refactor Reg Admin List Table Columns (#1099)](https://github.com/eventespresso/cafe/pull/1099)
  - [Remove TAB Transaction Registrations from Reg Report CSV (#1093)](https://github.com/eventespresso/cafe/pull/1093)
- - [Improve Custom Post Type Defense Against Hostile Themes  - [Build Machine 5.0.18.p changes (#1146)](https://github.com/eventespresso/cafe/pull/1146)
- - [PPC. Add transaction to the logs (#1158)](https://github.com/eventespresso/cafe/pull/1158)
- - [PPC. Update order status/error messages (#1162)](https://github.com/eventespresso/cafe/pull/1162)
- - [Prevent fatal error from get_edit_post_link returning null (#1166)](https://github.com/eventespresso/cafe/pull/1166)
- - [Remove Serialized Objects from Registration Report Requests (#1154)](https://github.com/eventespresso/cafe/pull/1154)
- - [Build Machine 5.0.19.p changes (#1170)](https://github.com/eventespresso/cafe/pull/1170)
- - [Extract package @eventespresso/types (Barista #1298) (#1221)](https://github.com/eventespresso/cafe/pull/1221)
- - [Create package @eventespresso/config (Barista#1302) (#1213)](https://github.com/eventespresso/cafe/pull/1213)
- - [Add Show All Option to Pagination Component (Barista#1280) (#1218)](https://github.com/eventespresso/cafe/pull/1218)
- - [Update README.md for GraphQL API README.md (#1212)](https://github.com/eventespresso/cafe/pull/1212)
- - [Extract Reg Status Constants into New Class  - [Fix Feature Flags Admin (Barista#1308) (#1257)](https://github.com/eventespresso/cafe/pull/1257)
- - [Add ItemCount to Datetime Registrations Link (Barista#1309) (#1260)](https://github.com/eventespresso/cafe/pull/1260)
- - [Filter Value of Verify SSL Parameter for Remote Requests (#1286)](https://github.com/eventespresso/cafe/pull/1286)
- - [PUE to EDD Tweaks (#1268)](https://github.com/eventespresso/cafe/pull/1268)
- - MOD Add Hooks for Filtering Reg Status (#1193)](https://github.com/eventespresso/cafe/pull/1193)
- - [Fix Feature Flags Admin (Barista#1308) (#1257)](https://github.com/eventespresso/cafe/pull/1257)
- - [Add ItemCount to Datetime Registrations Link (Barista#1309) (#1260)](https://github.com/eventespresso/cafe/pull/1260)
- - [Filter Value of Verify SSL Parameter for Remote Requests (#1286)](https://github.com/eventespresso/cafe/pull/1286)
- - [PUE to EDD Tweaks (#1268)](https://github.com/eventespresso/cafe/pull/1268)
- - MOD Plugins (#1136)](https://github.com/eventespresso/cafe/pull/1136)
+ - [Improve Custom Post Type Defense Against Hostile Themes and Plugins (#1136)](https://github.com/eventespresso/cafe/pull/1136)
 
 
 ### [5.0.17]
@@ -117,7 +138,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Changed
  - [BuildMachine 5.0.16.p changes (#1088)](https://github.com/eventespresso/cafe/pull/1088)
- - [Prevent fatal error from get_edit_post_link returning null (#1097)](https://github.com/eventespresso/cafe/pull/1097)
 
 ### [5.0.16]
 
@@ -170,7 +190,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - [Dont Use Links to Close Notices (#1036)](https://github.com/eventespresso/cafe/pull/1036)
  - [PPC. Fix not ACDC eligible behaviour (#1040)](https://github.com/eventespresso/cafe/pull/1040)
  - [Protect Ticket Assignments Manager Layout from Other Plugin CSS  (#1065)](https://github.com/eventespresso/cafe/pull/1065)
- - [BM Changes 5.0.13.p (#1067)](https://github.com/eventespresso/cafe/pull/1067)
+ - [Build Machine Changes 5.0.13.p (#1067)](https://github.com/eventespresso/cafe/pull/1067)
 
 
 

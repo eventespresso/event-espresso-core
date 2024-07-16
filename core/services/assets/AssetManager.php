@@ -28,15 +28,9 @@ abstract class AssetManager implements AssetManagerInterface
      */
     protected $assets;
 
-    /**
-     * @var DomainInterface
-     */
-    protected $domain;
+    protected DomainInterface $domain;
 
-    /**
-     * @var Registry $registry
-     */
-    protected $registry;
+    protected Registry $registry;
 
 
     /**
@@ -48,12 +42,12 @@ abstract class AssetManager implements AssetManagerInterface
      */
     public function __construct(DomainInterface $domain, AssetCollection $assets, Registry $registry)
     {
-        $this->domain = $domain;
-        $this->assets = $assets;
+        $this->domain   = $domain;
+        $this->assets   = $assets;
         $this->registry = $registry;
         $this->registry->addAssetCollection($assets);
-        add_action('wp_enqueue_scripts', array($this, 'addAssets'), 2);
-        add_action('admin_enqueue_scripts', array($this, 'addAssets'), 2);
+        add_action('wp_enqueue_scripts', [$this, 'addAssets'], 2);
+        add_action('admin_enqueue_scripts', [$this, 'addAssets'], 2);
     }
 
 
@@ -67,10 +61,10 @@ abstract class AssetManager implements AssetManagerInterface
 
 
     /**
-     * @since 4.9.71.p
      * @return string
+     * @since 4.9.71.p
      */
-    public function assetNamespace()
+    public function assetNamespace(): string
     {
         return $this->domain->assetNamespace();
     }
@@ -90,12 +84,12 @@ abstract class AssetManager implements AssetManagerInterface
      * @since 4.9.62.p
      */
     public function addJavascript(
-        $handle,
-        $source,
-        array $dependencies = array(),
-        $load_in_footer = true,
-        $version = ''
-    ) {
+        string $handle,
+        string $source,
+        array $dependencies = [],
+        bool $load_in_footer = true,
+        string $version = ''
+    ): JavascriptAsset {
         $asset = new JavascriptAsset(
             $handle,
             $source,
@@ -120,14 +114,14 @@ abstract class AssetManager implements AssetManagerInterface
      * @throws InvalidEntityException
      * @throws DomainException
      */
-    public function addJs($handle, $extra_dependencies = [])
+    public function addJs(string $handle, $extra_dependencies = []): JavascriptAsset
     {
         $details = $this->getAssetDetails(
             Asset::TYPE_JS,
             $handle,
             $extra_dependencies
         );
-        $source = $this->registry->getJsUrl($this->domain->assetNamespace(), $handle);
+        $source  = $this->registry->getJsUrl($this->domain->assetNamespace(), $handle);
         return $this->addJavascript(
             $handle,
             $source,
@@ -151,16 +145,16 @@ abstract class AssetManager implements AssetManagerInterface
      * @since 4.9.71.p
      */
     public function addVendorJavascript(
-        $handle,
-        array $dependencies = array(),
-        $load_in_footer = true,
-        $version = ''
-    ) {
-        $dev_suffix = wp_scripts_get_suffix('dev');
+        string $handle,
+        array $dependencies = [],
+        bool $load_in_footer = true,
+        string $version = ''
+    ): JavascriptAsset {
+        $dev_suffix  = wp_scripts_get_suffix('dev');
         $vendor_path = $this->domain->pluginUrl() . 'assets/vendor/';
         return $this->addJavascript(
             $handle,
-            "{$vendor_path}{$handle}{$dev_suffix}". Asset::EXT_JS,
+            "$vendor_path$handle$dev_suffix" . Asset::EXT_JS,
             $dependencies,
             $load_in_footer,
             $version
@@ -182,12 +176,12 @@ abstract class AssetManager implements AssetManagerInterface
      * @since 4.9.62.p
      */
     public function addStylesheet(
-        $handle,
-        $source,
-        array $dependencies = array(),
-        $media = 'all',
-        $version = ''
-    ) {
+        string $handle,
+        string $source,
+        array $dependencies = [],
+        string $media = 'all',
+        string $version = ''
+    ): StylesheetAsset {
         $asset = new StylesheetAsset(
             $handle,
             $source,
@@ -212,7 +206,7 @@ abstract class AssetManager implements AssetManagerInterface
      * @throws InvalidEntityException
      * @throws DomainException
      */
-    public function addCss($handle, $extra_dependencies = [])
+    public function addCss(string $handle, $extra_dependencies = []): StylesheetAsset
     {
         $details = $this->getAssetDetails(
             Asset::TYPE_CSS,
@@ -234,7 +228,7 @@ abstract class AssetManager implements AssetManagerInterface
      * @return bool
      * @since 4.9.62.p
      */
-    public function enqueueAsset($handle)
+    public function enqueueAsset(string $handle): bool
     {
         if ($this->assets->has($handle)) {
             /** @var Asset $asset */
@@ -263,13 +257,13 @@ abstract class AssetManager implements AssetManagerInterface
 
 
     /**
-     * @param string $asset_type
-     * @param string $handle
-     * @param array  $extra_dependencies
+     * @param string       $asset_type
+     * @param string       $handle
+     * @param string|array $extra_dependencies
      * @return array
      * @since 4.10.2.p
      */
-    private function getAssetDetails($asset_type, $handle, $extra_dependencies = [])
+    private function getAssetDetails(string $asset_type, string $handle, $extra_dependencies = []): array
     {
         $getAssetDetails = '';
         switch ($asset_type) {
@@ -283,21 +277,16 @@ abstract class AssetManager implements AssetManagerInterface
         if ($getAssetDetails === '') {
             return ['dependencies' => [], 'version' => ''];
         }
-        $details = $this->registry->$getAssetDetails(
+        $details                 = $this->registry->$getAssetDetails(
             $this->domain->assetNamespace(),
             $handle
         );
-        $details['dependencies'] = isset($details['dependencies'])
-            ? $details['dependencies']
-            : [];
-        $details['version'] = isset($details['version'])
-            ? $details['version']
-            : '';
+        $details['dependencies'] = $details['dependencies'] ?? [];
+        $details['version']      = $details['version'] ?? '';
         $details['dependencies'] = ! empty($extra_dependencies)
             ? array_merge($details['dependencies'], (array) $extra_dependencies)
             : $details['dependencies'];
         return $details;
-
     }
 
 
@@ -306,7 +295,7 @@ abstract class AssetManager implements AssetManagerInterface
      * @return bool
      * @throws DomainException
      */
-    public function verifyAssetIsRegistered($handle)
+    public function verifyAssetIsRegistered(string $handle): bool
     {
         if (wp_script_is($handle, 'registered')) {
             return true;

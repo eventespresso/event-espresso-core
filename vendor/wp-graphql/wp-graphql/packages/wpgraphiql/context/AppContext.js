@@ -9,7 +9,7 @@ export const AppContext = createContext();
 export const useAppContext = () => useContext(AppContext);
 
 /**
- * Get the enpoint from the localized settings provided by WordPress when it enqueues the app
+ * Get the endpoint from the localized settings provided by WordPress when it enqueues the app
  * @returns
  */
 export const getEndpoint = () => {
@@ -39,6 +39,7 @@ export const AppContextProvider = ({
   queryParams,
 }) => {
   const [schema, setSchema] = useState(null);
+  const [schemaLoading, setSchemaLoading] = useState(true);
   const [nonce, setNonce] = useState(getNonce());
   const [endpoint, setEndpoint] = useState(getEndpoint());
   const [_queryParams, _setQueryParams] = useState(queryParams);
@@ -55,6 +56,8 @@ export const AppContextProvider = ({
     setNonce,
     schema,
     setSchema,
+    schemaLoading,
+    setSchemaLoading,
     queryParams: _queryParams,
     setQueryParams: updateQueryParams,
   };

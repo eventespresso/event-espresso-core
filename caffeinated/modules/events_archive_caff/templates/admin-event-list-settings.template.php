@@ -117,7 +117,7 @@ $description = EEH_Form_Fields::prep_answer_options(
             <?php echo wp_kses(
                 EEH_Form_Fields::select(
                     'display_status_banner',
-                    $display_status_banner,
+                    (int) $display_status_banner,
                     $values,
                     'EED_Events_Archive_display_status_banner',
                     'EED_Events_Archive_display_status_banner'
@@ -144,7 +144,7 @@ $description = EEH_Form_Fields::prep_answer_options(
             <?php echo wp_kses(
                 EEH_Form_Fields::select(
                     'description',
-                    $display_description,
+                    (int) $display_description,
                     $description,
                     'EED_Events_Archive_display_description',
                     'EED_Events_Archive_display_description'
@@ -171,7 +171,7 @@ $description = EEH_Form_Fields::prep_answer_options(
             <?php echo wp_kses(
                 EEH_Form_Fields::select(
                     'ticket_selector',
-                    $display_ticket_selector,
+                    (int) $display_ticket_selector,
                     $values,
                     'EED_Events_Archive_display_ticket_selector',
                     'EED_Events_Archive_display_ticket_selector'
@@ -198,7 +198,7 @@ $description = EEH_Form_Fields::prep_answer_options(
             <?php echo wp_kses(
                 EEH_Form_Fields::select(
                     'venue_details',
-                    $display_datetimes,
+                    (int) $display_datetimes,
                     $values,
                     'EED_Events_Archive_display_datetimes',
                     'EED_Events_Archive_display_datetimes'
@@ -225,7 +225,7 @@ $description = EEH_Form_Fields::prep_answer_options(
             <?php echo wp_kses(
                 EEH_Form_Fields::select(
                     'display_venue',
-                    $display_venue,
+                    (int) $display_venue,
                     $values,
                     'EED_Events_Archive_display_venue',
                     'EED_Events_Archive_display_venue'
@@ -252,7 +252,7 @@ $description = EEH_Form_Fields::prep_answer_options(
             <?php echo wp_kses(
                 EEH_Form_Fields::select(
                     'expired_events',
-                    $display_expired_events,
+                    (int) $display_expired_events,
                     $values,
                     'EED_Events_Archive_display_expired_events',
                     'EED_Events_Archive_display_expired_events'
@@ -277,7 +277,7 @@ $description = EEH_Form_Fields::prep_answer_options(
             <?php echo wp_kses(
                 EEH_Form_Fields::select(
                     'expired_tickets',
-                    $display_events_with_expired_tickets,
+                    (int) $display_events_with_expired_tickets,
                     $values,
                     'EED_Events_Archive_display_events_with_expired_tickets',
                     'EED_Events_Archive_display_events_with_expired_tickets'
@@ -309,7 +309,7 @@ $description = EEH_Form_Fields::prep_answer_options(
             <?php echo wp_kses(
                 EEH_Form_Fields::select(
                     'use_sortable_display_order',
-                    $use_sortable_display_order,
+                    (int) $use_sortable_display_order,
                     $values,
                     'EED_Events_Archive_use_sortable_display_order',
                     'EED_Events_Archive_use_sortable_display_order'

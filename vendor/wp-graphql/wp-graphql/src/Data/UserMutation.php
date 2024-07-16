@@ -17,19 +17,17 @@ class UserMutation {
 	/**
 	 * Stores the input fields static definition
 	 *
-	 * @var array $input_fields
+	 * @var array<string,array<string,mixed>>
 	 */
 	private static $input_fields = [];
 
 	/**
 	 * Defines the accepted input arguments
 	 *
-	 * @return array|null
+	 * @return array<string,array<string,mixed>>|null
 	 */
 	public static function input_fields() {
-
 		if ( empty( self::$input_fields ) ) {
-
 			$input_fields = [
 				'password'    => [
 					'type'        => 'String',
@@ -100,26 +98,24 @@ class UserMutation {
 			/**
 			 * Filters all of the fields available for input
 			 *
-			 * @var array $input_fields
+			 * @var array<string,array<string,mixed>> $input_fields
 			 */
 			self::$input_fields = apply_filters( 'graphql_user_mutation_input_fields', $input_fields );
-
 		}
 
 		return ( ! empty( self::$input_fields ) ) ? self::$input_fields : null;
-
 	}
 
 	/**
 	 * Maps the GraphQL input to a format that the WordPress functions can use
 	 *
-	 * @param array  $input         Data coming from the GraphQL mutation query input
-	 * @param string $mutation_name Name of the mutation being performed
+	 * @param array<string,mixed> $input         Data coming from the GraphQL mutation query input
+	 * @param string              $mutation_name Name of the mutation being performed
 	 *
-	 * @return array
+	 * @return array<string,mixed>
+	 * @throws \GraphQL\Error\UserError If the passed email address is invalid.
 	 */
 	public static function prepare_user_object( $input, $mutation_name ) {
-
 		$insert_user_args = [];
 
 		/**
@@ -170,7 +166,7 @@ class UserMutation {
 		 */
 		if ( ! empty( $input['email'] ) ) {
 			if ( false === is_email( apply_filters( 'pre_user_email', $input['email'] ) ) ) {
-				throw new UserError( __( 'The email address you are trying to use is invalid', 'wp-graphql' ) );
+				throw new UserError( esc_html__( 'The email address you are trying to use is invalid', 'wp-graphql' ) );
 			}
 			$insert_user_args['user_email'] = $input['email'];
 		}
@@ -197,31 +193,29 @@ class UserMutation {
 		/**
 		 * Filters the mappings for input to arguments
 		 *
-		 * @param array  $insert_user_args The arguments to ultimately be passed to the WordPress function
-		 * @param array  $input            Input data from the GraphQL mutation
-		 * @param string $mutation_name    What user mutation is being performed for context
+		 * @param array<string,mixed> $insert_user_args The arguments to ultimately be passed to the WordPress function
+		 * @param array<string,mixed> $input            Input data from the GraphQL mutation
+		 * @param string              $mutation_name    What user mutation is being performed for context
 		 */
 		$insert_user_args = apply_filters( 'graphql_user_insert_post_args', $insert_user_args, $input, $mutation_name );
 
 		return $insert_user_args;
-
 	}
 
 	/**
 	 * This updates additional data related to the user object after the initial mutation has
 	 * happened
 	 *
-	 * @param int         $user_id       The ID of the user being mutated
-	 * @param array       $input         The input data from the GraphQL query
-	 * @param string      $mutation_name Name of the mutation currently being run
-	 * @param AppContext  $context       The AppContext passed down the resolve tree
-	 * @param ResolveInfo $info          The ResolveInfo passed down the Resolve Tree
+	 * @param int                                  $user_id       The ID of the user being mutated
+	 * @param array<string,mixed>                  $input         The input data from the GraphQL query
+	 * @param string                               $mutation_name Name of the mutation currently being run
+	 * @param \WPGraphQL\AppContext                $context The AppContext passed down the resolve tree
+	 * @param \GraphQL\Type\Definition\ResolveInfo $info The ResolveInfo passed down the Resolve Tree
 	 *
 	 * @return void
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	public static function update_additional_user_object_data( $user_id, $input, $mutation_name, AppContext $context, ResolveInfo $info ) {
-
 		$roles = ! empty( $input['roles'] ) ? $input['roles'] : [];
 		self::add_user_roles( $user_id, $roles );
 
@@ -230,27 +224,25 @@ class UserMutation {
 		 * update additional data related to users, such as setting relationships, updating additional usermeta,
 		 * or sending emails to Kevin... whatever you need to do with the userObject.
 		 *
-		 * @param int         $user_id       The ID of the user being mutated
-		 * @param array       $input         The input for the mutation
-		 * @param string      $mutation_name The name of the mutation (ex: create, update, delete)
-		 * @param AppContext  $context       The AppContext passed down the resolve tree
-		 * @param ResolveInfo $info          The ResolveInfo passed down the Resolve Tree
+		 * @param int                                  $user_id       The ID of the user being mutated
+		 * @param array<string,mixed>                  $input         The input for the mutation
+		 * @param string                               $mutation_name The name of the mutation (ex: create, update, delete)
+		 * @param \WPGraphQL\AppContext                $context       The AppContext passed down the resolve tree
+		 * @param \GraphQL\Type\Definition\ResolveInfo $info          The ResolveInfo passed down the Resolve Tree
 		 */
 		do_action( 'graphql_user_object_mutation_update_additional_data', $user_id, $input, $mutation_name, $context, $info );
-
 	}
 
 	/**
 	 * Method to add user roles to a user object
 	 *
-	 * @param int   $user_id The ID of the user
-	 * @param array $roles   List of roles that need to get added to the user
+	 * @param int      $user_id The ID of the user
+	 * @param string[] $roles   List of roles that need to get added to the user
 	 *
 	 * @return void
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	private static function add_user_roles( $user_id, $roles ) {
-
 		if ( empty( $roles ) || ! is_array( $roles ) || ! current_user_can( 'edit_user', $user_id ) ) {
 			return;
 		}
@@ -258,23 +250,19 @@ class UserMutation {
 		$user = get_user_by( 'ID', $user_id );
 
 		if ( false !== $user ) {
-
 			foreach ( $roles as $role ) {
-
 				$verified = self::verify_user_role( $role, $user_id );
 
 				if ( true === $verified ) {
 					$user->add_role( $role );
 				} elseif ( is_wp_error( $verified ) ) {
-					$message = $verified->get_error_message();
-					throw new Exception( $message );
+					throw new Exception( esc_html( $verified->get_error_message() ) );
 				} elseif ( false === $verified ) {
 					// Translators: The placeholder is the name of the user role
-					throw new Exception( sprintf( __( 'The %s role cannot be added to this user', 'wp-graphql' ), $role ) );
+					throw new Exception( esc_html( sprintf( __( 'The %s role cannot be added to this user', 'wp-graphql' ), $role ) ) );
 				}
 			}
 		}
-
 	}
 
 	/**
@@ -284,10 +272,9 @@ class UserMutation {
 	 * @param string $role    Name of the role trying to get added to a user object
 	 * @param int    $user_id The ID of the user being mutated
 	 *
-	 * @return mixed|bool|\WP_Error
+	 * @return bool|\WP_Error
 	 */
 	private static function verify_user_role( $role, $user_id ) {
-
 		global $wp_roles;
 
 		$potential_role = isset( $wp_roles->role_objects[ $role ] ) ? $wp_roles->role_objects[ $role ] : '';
@@ -324,7 +311,5 @@ class UserMutation {
 		} else {
 			return true;
 		}
-
 	}
-
 }

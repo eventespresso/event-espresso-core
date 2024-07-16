@@ -19,14 +19,14 @@ class UserRole extends Model {
 	/**
 	 * Stores the incoming user role to be modeled
 	 *
-	 * @var array $data
+	 * @var array<string,mixed> $data
 	 */
 	protected $data;
 
 	/**
 	 * UserRole constructor.
 	 *
-	 * @param array $user_role The incoming user role to be modeled
+	 * @param array<string,mixed> $user_role The incoming user role to be modeled
 	 *
 	 * @return void
 	 * @throws \Exception
@@ -37,12 +37,9 @@ class UserRole extends Model {
 	}
 
 	/**
-	 * Method for determining if the data should be considered private or not
-	 *
-	 * @return bool
+	 * {@inheritDoc}
 	 */
 	protected function is_private() {
-
 		if ( current_user_can( 'list_users' ) ) {
 			return false;
 		}
@@ -57,17 +54,13 @@ class UserRole extends Model {
 	}
 
 	/**
-	 * Initializes the object
-	 *
-	 * @return void
+	 * {@inheritDoc}
 	 */
 	protected function init() {
-
 		if ( empty( $this->fields ) ) {
 			$this->fields = [
 				'id'           => function () {
-					$id = Relay::toGlobalId( 'user_role', $this->data['id'] );
-					return $id;
+					return Relay::toGlobalId( 'user_role', $this->data['id'] );
 				},
 				'name'         => function () {
 					return ! empty( $this->data['name'] ) ? esc_html( $this->data['name'] ) : null;
@@ -83,8 +76,6 @@ class UserRole extends Model {
 					}
 				},
 			];
-
 		}
 	}
-
 }

@@ -136,7 +136,7 @@ class EED_Feeds extends EED_Module
     {
         global $wp_query, $wpdb;
         if ($wp_query->is_comment_feed && apply_filters('EED_Feeds__comment_feed_where__espresso_attendees', false)) {
-            $SQL .= " AND $wpdb->posts.post_type != " . EspressoPostType::ATTENDEES;
+            $SQL .= " AND $wpdb->posts.post_type != '" . EspressoPostType::ATTENDEES . "'";
         }
         return $SQL;
     }

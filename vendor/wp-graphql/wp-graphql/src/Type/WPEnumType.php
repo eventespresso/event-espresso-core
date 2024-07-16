@@ -15,7 +15,7 @@ class WPEnumType extends EnumType {
 	/**
 	 * WPEnumType constructor.
 	 *
-	 * @param array $config
+	 * @param array<string,mixed> $config
 	 */
 	public function __construct( $config ) {
 		$name             = ucfirst( $config['name'] );
@@ -25,23 +25,23 @@ class WPEnumType extends EnumType {
 	}
 
 	/**
-	 * Generate a safe / sanitized name from a menu location slug.
+	 * Generate a safe / sanitized Enum value from a string.
 	 *
 	 * @param  string $value Enum value.
 	 * @return string
 	 */
 	public static function get_safe_name( string $value ) {
+		$sanitized_enum_name = graphql_format_name( $value, '_' );
 
-		$replaced = preg_replace( '#[^A-z0-9]#', '_', $value );
-
-		if ( ! empty( $replaced ) ) {
-			$value = $replaced;
+		// If the sanitized name is empty, we want to return the original value so it displays in the error.
+		if ( ! empty( $sanitized_enum_name ) ) {
+			$value = $sanitized_enum_name;
 		}
 
 		$safe_name = strtoupper( $value );
 
 		// Enum names must start with a letter or underscore.
-		if ( ! preg_match( '#^[_a-zA-Z]#', $value ) ) {
+		if ( ! preg_match( '#^[_a-zA-Z]#', $safe_name ) ) {
 			return '_' . $safe_name;
 		}
 
@@ -52,9 +52,9 @@ class WPEnumType extends EnumType {
 	 * This function sorts the values and applies a filter to allow for easily
 	 * extending/modifying the shape of the Schema for the enum.
 	 *
-	 * @param array  $values
-	 * @param string $type_name
-	 * @return mixed
+	 * @param array<string,mixed> $values
+	 * @param string              $type_name
+	 * @return array<string,mixed>
 	 * @since 0.0.5
 	 */
 	private static function prepare_values( $values, $type_name ) {
@@ -64,7 +64,7 @@ class WPEnumType extends EnumType {
 		 * This is useful when several different types need to be easily filtered at once. . .for example,
 		 * if ALL types with a field of a certain name needed to be adjusted, or something to that tune
 		 *
-		 * @param array $values
+		 * @param array<string,mixed> $values
 		 */
 		$values = apply_filters( 'graphql_enum_values', $values );
 
@@ -76,7 +76,7 @@ class WPEnumType extends EnumType {
 		 * This is useful for more targeted filtering, and is applied after the general filter, to allow for
 		 * more specific overrides
 		 *
-		 * @param array $values
+		 * @param array<string,mixed> $values
 		 *
 		 * @since 0.0.5
 		 */
@@ -96,7 +96,5 @@ class WPEnumType extends EnumType {
 		 * @since 0.0.5
 		 */
 		return $values;
-
 	}
-
 }

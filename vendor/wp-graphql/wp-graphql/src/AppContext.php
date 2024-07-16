@@ -3,7 +3,6 @@
 namespace WPGraphQL;
 
 use GraphQL\Error\UserError;
-use WP_User;
 use WPGraphQL\Data\Loader\CommentAuthorLoader;
 use WPGraphQL\Data\Loader\CommentLoader;
 use WPGraphQL\Data\Loader\EnqueuedScriptLoader;
@@ -17,7 +16,6 @@ use WPGraphQL\Data\Loader\ThemeLoader;
 use WPGraphQL\Data\Loader\UserLoader;
 use WPGraphQL\Data\Loader\UserRoleLoader;
 use WPGraphQL\Data\NodeResolver;
-use WPGraphQL\Registry\TypeRegistry;
 
 /**
  * Class AppContext
@@ -30,7 +28,16 @@ use WPGraphQL\Registry\TypeRegistry;
  *
  * @package WPGraphQL
  */
+// @phpcs:ignore
+#[\AllowDynamicProperties]
 class AppContext {
+
+	/**
+	 * Stores the class to use for the connection query.
+	 *
+	 * @var \WP_Query|null
+	 */
+	public $connection_query_class = null;
 
 	/**
 	 * Stores the url string for the current site
@@ -42,12 +49,12 @@ class AppContext {
 	/**
 	 * Stores the WP_User object of the current user
 	 *
-	 * @var WP_User $viewer
+	 * @var \WP_User $viewer
 	 */
 	public $viewer;
 
 	/**
-	 * @var TypeRegistry
+	 * @var \WPGraphQL\Registry\TypeRegistry
 	 */
 	public $type_registry;
 
@@ -68,32 +75,30 @@ class AppContext {
 	/**
 	 * Passes context about the current connection being resolved
 	 *
-	 * @var mixed|String|null
+	 * @var mixed|string|null
 	 */
 	public $currentConnection = null;
 
 	/**
 	 * Passes context about the current connection
 	 *
-	 * @var array
+	 * @var array<string,mixed>
 	 */
 	public $connectionArgs = [];
 
 	/**
 	 * Stores the loaders for the class
 	 *
-	 * @var array
+	 * @var array<string,\WPGraphQL\Data\Loader\AbstractDataLoader>
 	 */
 	public $loaders = [];
 
 	/**
 	 * Instance of the NodeResolver class to resolve nodes by URI
 	 *
-	 * @var NodeResolver
+	 * @var \WPGraphQL\Data\NodeResolver
 	 */
 	public $node_resolver;
-
-    public $connection_query_class;
 
 	/**
 	 * AppContext constructor.
@@ -132,7 +137,7 @@ class AppContext {
 		/**
 		 * This sets up the NodeResolver to allow nodes to be resolved by URI
 		 *
-		 * @param AppContext $app_context The AppContext instance
+		 * @param \WPGraphQL\AppContext $app_context The AppContext instance
 		 */
 		$this->node_resolver = new NodeResolver( $this );
 
@@ -152,11 +157,12 @@ class AppContext {
 	 *
 	 * @param string $key The name of the loader to get
 	 *
-	 * @return mixed
+	 * @return \WPGraphQL\Data\Loader\AbstractDataLoader|mixed
 	 *
 	 * @deprecated Use get_loader instead.
 	 */
 	public function getLoader( $key ) {
+		_deprecated_function( __METHOD__, '0.8.4', self::class . '::get_loader()' );
 		return $this->get_loader( $key );
 	}
 
@@ -165,11 +171,13 @@ class AppContext {
 	 *
 	 * @param string $key The name of the loader to get
 	 *
-	 * @return mixed
+	 * @return \WPGraphQL\Data\Loader\AbstractDataLoader|mixed
+	 * @throws \GraphQL\Error\UserError If the loader is not found.
 	 */
 	public function get_loader( $key ) {
 		if ( ! array_key_exists( $key, $this->loaders ) ) {
-			throw new UserError( sprintf( __( 'No loader assigned to the key %s', 'wp-graphql' ), $key ) );
+			// translators: %s is the key of the loader that was not found.
+			throw new UserError( esc_html( sprintf( __( 'No loader assigned to the key %s', 'wp-graphql' ), $key ) ) );
 		}
 
 		return $this->loaders[ $key ];
@@ -179,16 +187,17 @@ class AppContext {
 	 * Returns the $args for the connection the field is a part of
 	 *
 	 * @deprecated use get_connection_args() instead
-	 * @return array|mixed
+	 * @return mixed[]|mixed
 	 */
 	public function getConnectionArgs() {
+		_deprecated_function( __METHOD__, '0.8.4', self::class . '::get_connection_args()' );
 		return $this->get_connection_args();
 	}
 
 	/**
 	 * Returns the $args for the connection the field is a part of
 	 *
-	 * @return array|mixed
+	 * @return mixed[]|mixed
 	 */
 	public function get_connection_args() {
 		return isset( $this->currentConnection ) && isset( $this->connectionArgs[ $this->currentConnection ] ) ? $this->connectionArgs[ $this->currentConnection ] : [];
@@ -197,19 +206,17 @@ class AppContext {
 	/**
 	 * Returns the current connection
 	 *
-	 * @return mixed|null|String
+	 * @return mixed|string|null
 	 */
 	public function get_current_connection() {
 		return isset( $this->currentConnection ) ? $this->currentConnection : null;
-
 	}
 
 	/**
-	 * @return mixed|null|String
+	 * @return mixed|string|null
 	 * @deprecated use get_current_connection instead.
 	 */
 	public function getCurrentConnection() {
 		return $this->get_current_connection();
 	}
-
 }

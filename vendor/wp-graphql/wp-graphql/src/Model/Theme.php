@@ -43,9 +43,7 @@ class Theme extends Model {
 	}
 
 	/**
-	 * Method for determining if the data should be considered private or not
-	 *
-	 * @return bool
+	 * {@inheritDoc}
 	 */
 	protected function is_private() {
 		// Don't assume a capabilities hierarchy, since it's likely headless sites might disable some capabilities site-wide.
@@ -58,18 +56,13 @@ class Theme extends Model {
 		}
 
 		return false;
-
 	}
 
 	/**
-	 * Initialize the object
-	 *
-	 * @return void
+	 * {@inheritDoc}
 	 */
 	protected function init() {
-
 		if ( empty( $this->fields ) ) {
-
 			$this->fields = [
 				'id'          => function () {
 					$stylesheet = $this->data->get_stylesheet();
@@ -108,7 +101,6 @@ class Theme extends Model {
 					return ! empty( $this->data->version ) ? $this->data->version : null;
 				},
 			];
-
 		}
 	}
 }

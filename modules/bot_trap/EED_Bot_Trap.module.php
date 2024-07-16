@@ -41,7 +41,7 @@ class EED_Bot_Trap extends EED_Module
         ) {
             EED_Bot_Trap::set_trap();
             // redirect bots to bogus success page
-            EE_Config::register_route(
+            EED_Module::registerRoute(
                 'ticket_selection_received',
                 'EED_Bot_Trap',
                 'display_bot_trap_success'

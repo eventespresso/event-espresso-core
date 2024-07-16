@@ -5,6 +5,7 @@ namespace EventEspresso\core\domain\entities\routing\handlers\frontend;
 use EE_Config;
 use EE_Dependency_Map;
 use EventEspresso\core\services\routing\Route;
+use EventEspresso\core\services\shortcodes\ShortcodesManager;
 
 /**
  * Class ShortcodeRequests
@@ -75,13 +76,15 @@ class ShortcodeRequests extends Route
     protected function requestHandler(): bool
     {
         // load, register, and add shortcodes the new way
-        $this->loader->getShared(
-            'EventEspresso\core\services\shortcodes\ShortcodesManager',
+        /** @var ShortcodesManager $shortcodes_manager */
+        $shortcodes_manager = $this->loader->getShared(
+            ShortcodesManager::class,
             [
                 // and the old way, but we'll put it under control of the new system
                 EE_Config::getLegacyShortcodesManager(),
             ]
         );
+        $shortcodes_manager->setHooks();
         return true;
     }
 }

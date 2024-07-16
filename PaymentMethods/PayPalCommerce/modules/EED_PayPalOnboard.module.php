@@ -178,7 +178,7 @@ class EED_PayPalOnboard extends EED_Module
         $identifier_string = new OneTimeString($paypal_pm->debug_mode());
         $tracking_id       = $identifier_string->value();
         $request           = LoaderFactory::getLoader()->getShared(RequestInterface::class);
-        $checkout_type     = $request->getRequestParam('checkout_type', 'EXPRESS_CHECKOUT', DataType::STRING);
+        $checkout_type     = $request->getRequestParam('checkout_type', 'EXPRESS_CHECKOUT');
         // Save the identifier for future use.
         PayPalExtraMetaManager::savePmOption($paypal_pm, Domain::META_KEY_TRACKING_ID, $tracking_id);
         // Assemble the return URL.

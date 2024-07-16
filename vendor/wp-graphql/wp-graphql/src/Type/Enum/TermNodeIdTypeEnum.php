@@ -10,7 +10,6 @@ class TermNodeIdTypeEnum {
 	 * @return void
 	 */
 	public static function register_type() {
-
 		register_graphql_enum_type(
 			'TermNodeIdTypeEnum',
 			[
@@ -41,7 +40,7 @@ class TermNodeIdTypeEnum {
 	/**
 	 * Get the values for the Enum definitions
 	 *
-	 * @return array
+	 * @return array<string,array<string,string>>
 	 */
 	public static function get_values() {
 		return [

@@ -32,7 +32,7 @@ class UserDelete {
 	/**
 	 * Defines the mutation input field configuration.
 	 *
-	 * @return array
+	 * @return array<string,array<string,mixed>>
 	 */
 	public static function get_input_fields() {
 		return [
@@ -52,14 +52,14 @@ class UserDelete {
 	/**
 	 * Defines the mutation output field configuration.
 	 *
-	 * @return array
+	 * @return array<string,array<string,mixed>>
 	 */
 	public static function get_output_fields() {
 		return [
 			'deletedId' => [
 				'type'        => 'ID',
 				'description' => __( 'The ID of the user that you just deleted', 'wp-graphql' ),
-				'resolve'     => function ( $payload ) {
+				'resolve'     => static function ( $payload ) {
 					$deleted = (object) $payload['user'];
 					return ( ! empty( $deleted->ID ) ) ? Relay::toGlobalId( 'user', $deleted->ID ) : null;
 				},
@@ -67,7 +67,7 @@ class UserDelete {
 			'user'      => [
 				'type'        => 'User',
 				'description' => __( 'The deleted user object', 'wp-graphql' ),
-				'resolve'     => function ( $payload ) {
+				'resolve'     => static function ( $payload ) {
 					return new User( $payload['user'] );
 				},
 			],
@@ -77,7 +77,7 @@ class UserDelete {
 	/**
 	 * Defines the mutation data modification closure.
 	 *
-	 * @return callable
+	 * @return callable(array<string,mixed>$input,\WPGraphQL\AppContext $context,\GraphQL\Type\Definition\ResolveInfo $info):array<string,mixed>
 	 */
 	public static function mutate_and_get_payload() {
 		return static function ( $input ) {
@@ -85,11 +85,11 @@ class UserDelete {
 			$user_id = Utils::get_database_id_from_id( $input['id'] );
 
 			if ( empty( $user_id ) ) {
-				throw new UserError( __( 'The user ID passed is invalid', 'wp-graphql' ) );
+				throw new UserError( esc_html__( 'The user ID passed is invalid', 'wp-graphql' ) );
 			}
 
 			if ( ! current_user_can( 'delete_users', $user_id ) ) {
-				throw new UserError( __( 'Sorry, you are not allowed to delete users.', 'wp-graphql' ) );
+				throw new UserError( esc_html__( 'Sorry, you are not allowed to delete users.', 'wp-graphql' ) );
 			}
 
 			/**
@@ -101,7 +101,7 @@ class UserDelete {
 			 * Throw an error if the user we are trying to delete doesn't exist
 			 */
 			if ( false === $user_before_delete ) {
-				throw new UserError( __( 'Could not find an existing user to delete', 'wp-graphql' ) );
+				throw new UserError( esc_html__( 'Could not find an existing user to delete', 'wp-graphql' ) );
 			}
 
 			/**
@@ -112,7 +112,7 @@ class UserDelete {
 				$reassign_id = Utils::get_database_id_from_id( $input['reassignId'] );
 
 				if ( empty( $reassign_id ) ) {
-					throw new UserError( __( 'The user ID passed to `reassignId` is invalid', 'wp-graphql' ) );
+					throw new UserError( esc_html__( 'The user ID passed to `reassignId` is invalid', 'wp-graphql' ) );
 				}
 				/**
 			 * Retrieve the user object before it's deleted
@@ -120,7 +120,7 @@ class UserDelete {
 				$reassign_user = get_user_by( 'id', $reassign_id );
 
 				if ( false === $reassign_user ) {
-					throw new UserError( __( 'Could not find the existing user to reassign.', 'wp-graphql' ) );
+					throw new UserError( esc_html__( 'Could not find the existing user to reassign.', 'wp-graphql' ) );
 				}
 			}
 
@@ -152,13 +152,12 @@ class UserDelete {
 
 				// delete the user
 				$deleted_user = wpmu_delete_user( $user_id );
-
 			} else {
 				$deleted_user = wp_delete_user( $user_id, $reassign_id );
 			}
 
 			if ( true !== $deleted_user ) {
-				throw new UserError( __( 'Could not delete the user.', 'wp-graphql' ) );
+				throw new UserError( esc_html__( 'Could not delete the user.', 'wp-graphql' ) );
 			}
 
 			return [

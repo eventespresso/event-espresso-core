@@ -77,10 +77,12 @@ class EE_Datetime_Shortcodes extends EE_Shortcodes
         if (strpos($shortcode, '[ICAL_LINK_*') !== false) {
             $attrs = $this->_get_shortcode_attrs($shortcode);
 
-            $link_text = empty($attrs['link_text']) ? esc_html__('Add to iCal Calendar', 'event_espresso')
+            $link_text = empty($attrs['link_text'])
+                ? esc_html__('Add to iCal Calendar', 'event_espresso')
                 : $attrs['link_text'];
 
-            $URL = add_query_arg(array('ee' => 'download_ics_file', 'ics_id' => $this->_data->ID()), site_url());
+            $URL = add_query_arg(['ee' => 'download_ics_file', 'ics_id' => $this->_data->ID()], site_url());
+            $URL = esc_url_raw(str_replace('http://', 'https://', $URL));
 
             return '<a class="ee-ical" href="' . $URL . '">' . $link_text . '</a>';
         }

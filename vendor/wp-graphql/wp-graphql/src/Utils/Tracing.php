@@ -17,14 +17,14 @@ class Tracing {
 	/**
 	 * Whether Tracing is enabled
 	 *
-	 * @var boolean
+	 * @var bool
 	 */
 	public $tracing_enabled;
 
 	/**
 	 * Stores the logs for the trace
 	 *
-	 * @var array
+	 * @var array<string,mixed>[]
 	 */
 	public $trace_logs = [];
 
@@ -59,7 +59,7 @@ class Tracing {
 	/**
 	 * The trace for the current field being resolved
 	 *
-	 * @var array
+	 * @var array<string,mixed>
 	 */
 	public $field_trace = [];
 
@@ -95,12 +95,17 @@ class Tracing {
 		}
 
 		add_filter( 'do_graphql_request', [ $this, 'init_trace' ] );
-		add_action( 'graphql_execute', [ $this, 'end_trace' ], 99, 5 );
+		add_action( 'graphql_execute', [ $this, 'end_trace' ], 99, 0 );
 		add_filter( 'graphql_access_control_allow_headers', [ $this, 'return_tracing_headers' ] );
-		add_filter( 'graphql_request_results', [
-			$this,
-			'add_tracing_to_response_extensions',
-		], 10, 1 );
+		add_filter(
+			'graphql_request_results',
+			[
+				$this,
+				'add_tracing_to_response_extensions',
+			],
+			10,
+			1
+		);
 		add_action( 'graphql_before_resolve_field', [ $this, 'init_field_resolver_trace' ], 10, 4 );
 		add_action( 'graphql_after_resolve_field', [ $this, 'end_field_resolver_trace' ], 10 );
 	}
@@ -120,22 +125,20 @@ class Tracing {
 	/**
 	 * Sets the timestamp and microtime for the end of the request
 	 *
-	 * @return float
+	 * @return void
 	 */
 	public function end_trace() {
 		$this->request_end_microtime = microtime( true );
 		$this->request_end_timestamp = $this->format_timestamp( $this->request_end_microtime );
-
-		return $this->request_end_timestamp;
 	}
 
 	/**
 	 * Initialize tracing for an individual field
 	 *
-	 * @param mixed               $source         The source passed down the Resolve Tree
-	 * @param array               $args           The args for the field
-	 * @param AppContext          $context        The AppContext passed down the ResolveTree
-	 * @param ResolveInfo         $info           The ResolveInfo passed down the ResolveTree
+	 * @param mixed                                $source         The source passed down the Resolve Tree
+	 * @param array<string,mixed>                  $args           The args for the field
+	 * @param \WPGraphQL\AppContext                $context The AppContext passed down the ResolveTree
+	 * @param \GraphQL\Type\Definition\ResolveInfo $info The ResolveInfo passed down the ResolveTree
 	 *
 	 * @return void
 	 */
@@ -148,7 +151,6 @@ class Tracing {
 			'startOffset'    => $this->get_start_offset(),
 			'startMicrotime' => microtime( true ),
 		];
-
 	}
 
 	/**
@@ -157,7 +159,6 @@ class Tracing {
 	 * @return void
 	 */
 	public function end_field_resolver_trace() {
-
 		if ( ! empty( $this->field_trace ) ) {
 			$this->field_trace['duration'] = $this->get_field_resolver_duration();
 			$sanitized_trace               = $this->sanitize_resolver_trace( $this->field_trace );
@@ -189,17 +190,19 @@ class Tracing {
 	/**
 	 * Given a trace, sanitizes the values and returns the sanitized_trace
 	 *
-	 * @param array $trace
+	 * @param array<string,mixed> $trace
 	 *
-	 * @return mixed
+	 * @return array<string,mixed>
 	 */
 	public function sanitize_resolver_trace( array $trace ) {
-
 		$sanitized_trace                = [];
-		$sanitized_trace['path']        = ! empty( $trace['path'] ) && is_array( $trace['path'] ) ? array_map( [
-			$this,
-			'sanitize_trace_resolver_path',
-		], $trace['path'] ) : [];
+		$sanitized_trace['path']        = ! empty( $trace['path'] ) && is_array( $trace['path'] ) ? array_map(
+			[
+				$this,
+				'sanitize_trace_resolver_path',
+			],
+			$trace['path']
+		) : [];
 		$sanitized_trace['parentType']  = ! empty( $trace['parentType'] ) ? esc_html( $trace['parentType'] ) : '';
 		$sanitized_trace['fieldName']   = ! empty( $trace['fieldName'] ) ? esc_html( $trace['fieldName'] ) : '';
 		$sanitized_trace['returnType']  = ! empty( $trace['returnType'] ) ? esc_html( $trace['returnType'] ) : '';
@@ -214,7 +217,7 @@ class Tracing {
 	 *
 	 * @param mixed $input The input to sanitize
 	 *
-	 * @return int|null|string
+	 * @return int|string|null
 	 */
 	public static function sanitize_trace_resolver_path( $input ) {
 		$sanitized_input = null;
@@ -247,22 +250,22 @@ class Tracing {
 	 * Filter the headers that WPGraphQL returns to include headers that indicate the WPGraphQL
 	 * server supports Apollo Tracing and Credentials
 	 *
-	 * @param array $headers The headers to return
+	 * @param string[] $headers The headers to return
 	 *
-	 * @return array
+	 * @return string[]
 	 */
 	public function return_tracing_headers( array $headers ) {
 		$headers[] = 'X-Insights-Include-Tracing';
 		$headers[] = 'X-Apollo-Tracing';
 		$headers[] = 'Credentials';
 
-		return (array) $headers;
+		return $headers;
 	}
 
 	/**
 	 * Filter the results of the GraphQL Response to include the Query Log
 	 *
-	 * @param mixed|array|object $response       The response of the GraphQL Request
+	 * @param mixed|array<string,mixed>|object $response       The response of the GraphQL Request
 	 *
 	 * @return mixed $response
 	 */
@@ -298,45 +301,38 @@ class Tracing {
 
 	/**
 	 * Determine if the requesting user can see trace data
-	 *
-	 * @return boolean
 	 */
 	public function user_can_see_trace_data(): bool {
-
 		$can_see = false;
 
 		// If logs are disabled, user cannot see logs
 		if ( ! $this->tracing_enabled ) {
 			$can_see = false;
-		} else {
+		} elseif ( 'any' === $this->tracing_user_role ) {
 			// If "any" is the selected role, anyone can see the logs
-			if ( 'any' === $this->tracing_user_role ) {
-				$can_see = true;
-			} else {
-				// Get the current users roles
-				$user = wp_get_current_user();
+			$can_see = true;
+		} else {
+			// Get the current users roles
+			$user = wp_get_current_user();
 
-				// If the user doesn't have roles or the selected role isn't one the user has, the
-				// user cannot see roles;
-				if ( in_array( $this->tracing_user_role, $user->roles, true ) ) {
-					$can_see = true;
-				}
+			// If the user doesn't have roles or the selected role isn't one the user has, the user cannot see roles.
+			if ( in_array( $this->tracing_user_role, $user->roles, true ) ) {
+				$can_see = true;
 			}
 		}
 
 		/**
 		 * Filter whether the logs can be seen in the request results or not
 		 *
-		 * @param boolean $can_see Whether the requestor can see the logs or not
+		 * @param bool $can_see Whether the requester can see the logs or not
 		 */
 		return apply_filters( 'graphql_user_can_see_trace_data', $can_see );
-
 	}
 
 	/**
 	 * Get the trace to add to the response
 	 *
-	 * @return array
+	 * @return array<string,mixed>
 	 */
 	public function get_trace(): array {
 
@@ -354,9 +350,9 @@ class Tracing {
 		/**
 		 * Filter the trace
 		 *
-		 * @param array   $trace     The trace to return
-		 * @param Tracing $instance  The Tracing class instance
+		 * @param array<string,mixed>      $trace     The trace to return
+		 * @param \WPGraphQL\Utils\Tracing $instance The Tracing class instance
 		 */
-		return apply_filters( 'graphql_tracing_response', (array) $trace, $this );
+		return apply_filters( 'graphql_tracing_response', $trace, $this );
 	}
 }

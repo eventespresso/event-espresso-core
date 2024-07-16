@@ -18,6 +18,8 @@ class EE_DMS_4_6_0_gateways extends EE_Data_Migration_Script_Stage
 
     protected string $_currency_table_name;
 
+    protected string $_currency_payment_method_table_name;
+
     /**
      * each key is the name of a 4.1-style gateway we know how to migrate to 4.6
      *
@@ -170,7 +172,7 @@ class EE_DMS_4_6_0_gateways extends EE_Data_Migration_Script_Stage
                     'pdf_logo_image'         => $old_gateway_settings['invoice_logo_url'],
                     'page_confirmation_text' => $old_gateway_settings['page_instructions'] ?? '',
                     'page_extra_info'        => $old_gateway_settings['payment_address'] ?? '',
-                    'legacy_invoice_css'     => $old_gateway_settings['invoice_css'],
+                    'legacy_invoice_css'     => $old_gateway_settings['invoice_css'] ?? '',
                 ];
                 // if they didnt want the invoice gateway to show, pretend it was inactive
                 if (! $old_gateway_settings['show']) {

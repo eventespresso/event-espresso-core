@@ -683,7 +683,8 @@ class EE_Dependency_Map
                 'EventEspresso\core\services\database\ModelFieldFactory' => EE_Dependency_Map::load_from_cache,
             ],
             'EE_Module_Request_Router'                                                                                           => [
-                'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\request\Request'             => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\modules\ModuleRoutesManager' => EE_Dependency_Map::load_from_cache,
             ],
             'EE_Registration_Processor'                                                                                          => [
                 'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,

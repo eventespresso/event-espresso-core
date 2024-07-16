@@ -3,6 +3,7 @@
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\DataType;
 
 /**
  * EED_Events_Archive_Caff
@@ -157,56 +158,77 @@ class EED_Events_Archive_Caff extends EED_Events_Archive
      */
     public static function update_template_settings(EE_Template_Config $CFG, array $REQ): EE_Template_Config
     {
-        // unless we are resetting the config...
-        if (
-            ! isset($REQ['EED_Events_Archive_reset_event_list_settings'])
-            || absint($REQ['EED_Events_Archive_reset_event_list_settings']) !== 1
-        ) {
-            /** @var EE_Events_Archive_Config $config */
-            $config = $CFG->EED_Events_Archive instanceof EE_Events_Archive_Config
-                ? $CFG->EED_Events_Archive
-                : new EE_Events_Archive_Config();
-
-            $config->display_status_banner      = isset($REQ['EED_Events_Archive_display_status_banner'])
-                ? filter_var($REQ['EED_Events_Archive_display_status_banner'], FILTER_VALIDATE_BOOL)
-                : false;
-            $config->display_description        = isset($REQ['EED_Events_Archive_display_description'])
-                ? filter_var($REQ['EED_Events_Archive_display_description'], FILTER_VALIDATE_BOOL)
-                : true;
-            $config->display_ticket_selector    = isset($REQ['EED_Events_Archive_display_ticket_selector'])
-                ? filter_var($REQ['EED_Events_Archive_display_ticket_selector'], FILTER_VALIDATE_BOOL)
-                : false;
-            $config->display_datetimes          = isset($REQ['EED_Events_Archive_display_datetimes'])
-                ? filter_var($REQ['EED_Events_Archive_display_datetimes'], FILTER_VALIDATE_BOOL)
-                : true;
-            $config->display_venue              = isset($REQ['EED_Events_Archive_display_venue'])
-                ? filter_var($REQ['EED_Events_Archive_display_venue'], FILTER_VALIDATE_BOOL)
-                : false;
-            $config->display_expired_events     = isset($REQ['EED_Events_Archive_display_expired_events'])
-                ? filter_var($REQ['EED_Events_Archive_display_expired_events'], FILTER_VALIDATE_BOOL)
-                : false;
-            $config->display_events_with_expired_tickets     = isset($REQ['EED_Events_Archive_display_events_with_expired_tickets'])
-                ? filter_var($REQ['EED_Events_Archive_display_events_with_expired_tickets'], FILTER_VALIDATE_BOOL)
-                : false;
-            $config->use_sortable_display_order = isset($REQ['EED_Events_Archive_use_sortable_display_order'])
-                ? filter_var($REQ['EED_Events_Archive_use_sortable_display_order'], FILTER_VALIDATE_BOOL)
-                : false;
-            $config->display_order_event        = $config->use_sortable_display_order
-                ? $config->display_order_event
-                : EED_Events_Archive::EVENT_DETAILS_PRIORITY;
-            $config->display_order_datetimes    = $config->use_sortable_display_order
-                ? $config->display_order_datetimes
-                : EED_Events_Archive::EVENT_DATETIMES_PRIORITY;
-            $config->display_order_tickets      = $config->use_sortable_display_order
-                ? $config->display_order_tickets
-                : EED_Events_Archive::EVENT_TICKETS_PRIORITY;
-            $config->display_order_venue        = $config->use_sortable_display_order
-                ? $config->display_order_venue
-                : EED_Events_Archive::EVENT_VENUES_PRIORITY;
-        } else {
+        $request                   = EED_Module::getRequest();
+        $reset_event_list_settings = $request->getRequestParam(
+            'EED_Events_Archive_reset_event_list_settings',
+            false,
+            DataType::BOOL
+        );
+        if ($reset_event_list_settings) {
             $config = new EE_Events_Archive_Config();
+            return EED_Events_Archive_Caff::afterUpdateTemplateSettings($CFG, $config, $REQ);
+        }
+        /** @var EE_Events_Archive_Config $config */
+        $config = $CFG->EED_Events_Archive instanceof EE_Events_Archive_Config
+            ? $CFG->EED_Events_Archive
+            : new EE_Events_Archive_Config();
+
+        $config->display_status_banner               = $request->getRequestParam(
+            'EED_Events_Archive_display_status_banner',
+            false,
+            DataType::BOOL
+        );
+        $config->display_description                 = $request->getRequestParam(
+            'EED_Events_Archive_display_description',
+            1,
+            DataType::INT
+        );
+        $config->display_ticket_selector             = $request->getRequestParam(
+            'EED_Events_Archive_display_ticket_selector',
+            false,
+            DataType::BOOL
+        );
+        $config->display_datetimes                   = $request->getRequestParam(
+            'EED_Events_Archive_display_datetimes',
+            true,
+            DataType::BOOL
+        );
+        $config->display_venue                       = $request->getRequestParam(
+            'EED_Events_Archive_display_venue',
+            false,
+            DataType::BOOL
+        );
+        $config->display_expired_events              = $request->getRequestParam(
+            'EED_Events_Archive_display_expired_events',
+            false,
+            DataType::BOOL
+        );
+        $config->display_events_with_expired_tickets = $request->getRequestParam(
+            'EED_Events_Archive_display_events_with_expired_tickets',
+            false,
+            DataType::BOOL
+        );
+        $config->use_sortable_display_order          = $request->getRequestParam(
+            'EED_Events_Archive_use_sortable_display_order',
+            false,
+            DataType::BOOL
+        );
+        if (! $config->use_sortable_display_order) {
+            $config->display_order_event     = EED_Events_Archive::EVENT_DETAILS_PRIORITY;
+            $config->display_order_datetimes = EED_Events_Archive::EVENT_DATETIMES_PRIORITY;
+            $config->display_order_tickets   = EED_Events_Archive::EVENT_TICKETS_PRIORITY;
+            $config->display_order_venue     = EED_Events_Archive::EVENT_VENUES_PRIORITY;
         }
 
+        return EED_Events_Archive_Caff::afterUpdateTemplateSettings($CFG, $config, $REQ);
+    }
+
+
+    private static function afterUpdateTemplateSettings(
+        EE_Template_Config $CFG,
+        EE_Events_Archive_Config $config,
+        array $REQ
+    ): EE_Template_Config {
         $CFG->EED_Events_Archive = $config;
         do_action('AHEE__EED_Events_Archive__update_template_settings__after_update', $CFG, $REQ);
         return $CFG;

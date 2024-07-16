@@ -66,9 +66,9 @@ class EE_DMS_4_5_0_invoice_settings extends EE_Data_Migration_Script_Stage
                 )
             );
         } else {
-            $invoice_settings['template_payment_instructions'] = $invoice_settings['pdf_instructions'];
-            $invoice_settings['template_invoice_payee_name']   = $invoice_settings['payable_to'];
-            $invoice_settings['template_invoice_address']      = $invoice_settings['payment_address'];
+            $invoice_settings['template_payment_instructions'] = $invoice_settings['pdf_instructions'] ?? '';
+            $invoice_settings['template_invoice_payee_name']   = $invoice_settings['payable_to'] ?? '';
+            $invoice_settings['template_invoice_address']      = $invoice_settings['payment_address'] ?? '';
             $invoice_settings['template_invoice_email']        = '';
             $invoice_settings['template_invoice_tax_number']   = '';
             unset($invoice_settings['pdf_instructions']);
@@ -100,14 +100,14 @@ class EE_DMS_4_5_0_invoice_settings extends EE_Data_Migration_Script_Stage
             $templates_relative_path = 'modules/gateways/Invoice/lib/templates/';
             $overridden_invoice_body = EEH_Template::locate_template(
                 $templates_relative_path . 'invoice_body.template.php',
-                null,
+                [],
                 false,
                 false,
                 true
             );
             $overridden_receipt_body = EEH_Template::locate_template(
                 $templates_relative_path . 'receipt_body.template.php',
-                null,
+                [],
                 false,
                 false,
                 true

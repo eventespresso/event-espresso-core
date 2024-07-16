@@ -1261,7 +1261,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	__( 'price', 'event_espresso' ),
 
 	// Reference: packages/edtr-services/src/constants.ts:28
-	// Reference: packages/tpc/src/inputs/PriceTypeInput.tsx:20
+	// Reference: packages/tpc/src/components/price/input/Type.tsx:30
 	__( 'price type', 'event_espresso' ),
 
 	// Reference: packages/edtr-services/src/utils/dateAndTime.ts:38
@@ -2005,10 +2005,34 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	/* translators: %s ticket name */
 	__( 'Price Calculator for Ticket: %s', 'event_espresso' ),
 
-	// Reference: packages/tpc/src/components/table/useFooterRowGenerator.tsx:48
+	// Reference: packages/tpc/src/components/price/input/Description.tsx:15
+	__( 'price description', 'event_espresso' ),
+
+	// Reference: packages/tpc/src/components/price/input/Description.tsx:18
+	__( 'description…', 'event_espresso' ),
+
+	// Reference: packages/tpc/src/components/price/input/ID.tsx:7
+	__( 'price id', 'event_espresso' ),
+
+	// Reference: packages/tpc/src/components/price/input/Name.tsx:15
+	__( 'price name', 'event_espresso' ),
+
+	// Reference: packages/tpc/src/components/price/input/Name.tsx:18
+	__( 'label…', 'event_espresso' ),
+
+	// Reference: packages/tpc/src/components/price/input/Order.tsx:21
+	__( 'price order', 'event_espresso' ),
+
+	// Reference: packages/tpc/src/components/price/input/amount/Amount.tsx:85
+	__( 'amount', 'event_espresso' ),
+
+	// Reference: packages/tpc/src/components/price/input/amount/Amount.tsx:89
+	__( 'amount…', 'event_espresso' ),
+
+	// Reference: packages/tpc/src/components/table/useFooterRowGenerator.tsx:50
 	__( 'Total', 'event_espresso' ),
 
-	// Reference: packages/tpc/src/components/table/useFooterRowGenerator.tsx:57
+	// Reference: packages/tpc/src/components/table/useFooterRowGenerator.tsx:59
 	__( 'ticket total', 'event_espresso' ),
 
 	// Reference: packages/tpc/src/components/table/useHeaderRowGenerator.ts:29
@@ -2031,30 +2055,6 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 
 	// Reference: packages/tpc/src/hooks/useLockedTicketAction.ts:29
 	__( 'OK', 'event_espresso' ),
-
-	// Reference: packages/tpc/src/inputs/PriceAmountInput.tsx:34
-	__( 'amount', 'event_espresso' ),
-
-	// Reference: packages/tpc/src/inputs/PriceAmountInput.tsx:46
-	__( 'amount…', 'event_espresso' ),
-
-	// Reference: packages/tpc/src/inputs/PriceDescriptionInput.tsx:14
-	__( 'description…', 'event_espresso' ),
-
-	// Reference: packages/tpc/src/inputs/PriceDescriptionInput.tsx:9
-	__( 'price description', 'event_espresso' ),
-
-	// Reference: packages/tpc/src/inputs/PriceIdInput.tsx:6
-	__( 'price id', 'event_espresso' ),
-
-	// Reference: packages/tpc/src/inputs/PriceNameInput.tsx:13
-	__( 'label…', 'event_espresso' ),
-
-	// Reference: packages/tpc/src/inputs/PriceNameInput.tsx:8
-	__( 'price name', 'event_espresso' ),
-
-	// Reference: packages/tpc/src/inputs/PriceOrderInput.tsx:14
-	__( 'price order', 'event_espresso' ),
 
 	// Reference: packages/tpc/src/utils/constants.ts:8
 	__( 'Ticket price modifications are blocked for Tickets that have already been sold to registrants, because doing so would negatively affect internal accounting for the event. If you still need to modify ticket prices, then create a copy of those tickets, edit the prices for the new tickets, and then trash the old tickets.', 'event_espresso' ),

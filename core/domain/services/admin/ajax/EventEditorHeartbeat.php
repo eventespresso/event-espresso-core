@@ -58,7 +58,7 @@ class EventEditorHeartbeat
          */
         if (! empty($data['input_count'])) {
             $response['max_input_vars_check'] = $this->environment->max_input_vars_limit_check(
-                $data['input_count']
+                (int) $data['input_count']
             );
         }
         return $response;

@@ -9,23 +9,18 @@ use WPGraphQL\Model\User;
  *
  * @package WPGraphQL\Data\Resolvers
  * @since   0.0.5
+ * @extends \WPGraphQL\Data\Connection\AbstractConnectionResolver<string[]>
  */
 class UserRoleConnectionResolver extends AbstractConnectionResolver {
-	/**
-	 * {@inheritDoc}
-	 *
-	 * @var array
-	 */
-	protected $query;
-
 	/**
 	 * {@inheritDoc}
 	 */
 	public function get_ids_from_query() {
 
 		// Given a list of role slugs
-		if ( isset( $this->query_args['slugIn'] ) ) {
-			return $this->query_args['slugIn'];
+		$query_args = $this->get_query_args();
+		if ( isset( $query_args['slugIn'] ) ) {
+			return $query_args['slugIn'];
 		}
 
 		$ids     = [];
@@ -45,44 +40,38 @@ class UserRoleConnectionResolver extends AbstractConnectionResolver {
 	/**
 	 * {@inheritDoc}
 	 */
-	public function get_query_args() {
+	protected function prepare_query_args( array $args ): array {
 		// If any args are added to filter/sort the connection
 		return [];
 	}
 
 	/**
 	 * {@inheritDoc}
-	 *
-	 * @return array
 	 */
-	public function get_query() {
+	protected function query( array $query_args ) {
 		$wp_roles = wp_roles();
-		$roles    = ! empty( $wp_roles->get_names() ) ? array_keys( $wp_roles->get_names() ) : [];
 
-		return $roles;
+		return ! empty( $wp_roles->get_names() ) ? array_keys( $wp_roles->get_names() ) : [];
 	}
 
 	/**
 	 * {@inheritDoc}
 	 */
-	public function get_loader_name() {
+	protected function loader_name(): string {
 		return 'user_role';
 	}
 
 	/**
-	 * @param mixed $offset Whether the provided offset is valid for the connection
-	 *
-	 * @return bool
+	 * {@inheritDoc}
 	 */
 	public function is_valid_offset( $offset ) {
 		return (bool) get_role( $offset );
 	}
 
 	/**
-	 * @return bool
+	 * {@inheritDoc}
 	 */
 	public function should_execute() {
-
 		if (
 			current_user_can( 'list_users' ) ||
 			(
@@ -95,5 +84,4 @@ class UserRoleConnectionResolver extends AbstractConnectionResolver {
 
 		return false;
 	}
-
 }

@@ -278,12 +278,10 @@ class Text extends AbstractFrameReflower
             $text = ltrim($text, " ");
         }
 
-        // Exclude wrapped white space. This handles white space between block
-        // elements in case white space is collapsed
         if ($text === "") {
             $frame->set_text("");
             $style->set_used("width", 0.0);
-            return null;
+            return false;
         }
 
         // Determine the next line break
@@ -397,6 +395,10 @@ class Text extends AbstractFrameReflower
         $text = $this->pre_process_text($frame->get_text());
         $frame->set_text($text);
 
+        if ($block === null) {
+            return;
+        }
+
         $add_line = $this->layout_line($block);
 
         if ($add_line === null) {
@@ -405,20 +407,24 @@ class Text extends AbstractFrameReflower
 
         $frame->position();
 
-        if ($block) {
-            $line = $block->add_frame_to_line($frame);
-            $trimmed = trim($frame->get_text());
+        // Skip wrapped white space between block-level elements in case white
+        // space is collapsed
+        if ($frame->get_text() === "" && $frame->get_margin_width() === 0.0) {
+            return;
+        }
 
-            // Split the text into words (used to determine spacing between
-            // words on justified lines)
-            if ($trimmed !== "") {
-                $words = preg_split(self::$_whitespace_pattern, $trimmed);
-                $line->wc += count($words);
-            }
+        $line = $block->add_frame_to_line($frame);
+        $trimmed = trim($frame->get_text());
 
-            if ($add_line) {
-                $block->add_line();
-            }
+        // Split the text into words (used to determine spacing between
+        // words on justified lines)
+        if ($trimmed !== "") {
+            $words = preg_split(self::$_whitespace_pattern, $trimmed);
+            $line->wc += count($words);
+        }
+
+        if ($add_line) {
+            $block->add_line();
         }
     }
 

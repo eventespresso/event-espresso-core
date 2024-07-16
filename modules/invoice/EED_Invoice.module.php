@@ -29,8 +29,8 @@ class EED_Invoice extends EED_Module
      */
     public static function set_hooks()
     {
-        EE_Config::register_route('download_invoice', 'EED_Invoice', 'download_invoice');
-        EE_Config::register_route('launch_invoice', 'EED_Invoice', 'launch_invoice');
+        EED_Module::registerRoute('download_invoice', 'EED_Invoice', 'download_invoice');
+        EED_Module::registerRoute('launch_invoice', 'EED_Invoice', 'launch_invoice');
     }
 
 

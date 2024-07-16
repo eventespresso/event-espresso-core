@@ -2,11 +2,8 @@
 
 namespace WPGraphQL\Mutation;
 
-use Exception;
 use GraphQL\Error\UserError;
-use GraphQL\Type\Definition\ResolveInfo;
 use GraphQLRelay\Relay;
-use WPGraphQL\AppContext;
 use WPGraphQL\Model\Comment;
 use WPGraphQL\Utils\Utils;
 
@@ -15,7 +12,7 @@ class CommentDelete {
 	 * Registers the CommentDelete mutation.
 	 *
 	 * @return void
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	public static function register_mutation() {
 		register_graphql_mutation(
@@ -31,7 +28,7 @@ class CommentDelete {
 	/**
 	 * Defines the mutation input field configuration.
 	 *
-	 * @return array
+	 * @return array<string,array<string,mixed>>
 	 */
 	public static function get_input_fields() {
 		return [
@@ -51,14 +48,14 @@ class CommentDelete {
 	/**
 	 * Defines the mutation output field configuration.
 	 *
-	 * @return array
+	 * @return array<string,array<string,mixed>>
 	 */
 	public static function get_output_fields() {
 		return [
 			'deletedId' => [
 				'type'        => 'Id',
 				'description' => __( 'The deleted comment ID', 'wp-graphql' ),
-				'resolve'     => function ( $payload ) {
+				'resolve'     => static function ( $payload ) {
 					$deleted = (object) $payload['commentObject'];
 
 					return ! empty( $deleted->comment_ID ) ? Relay::toGlobalId( 'comment', $deleted->comment_ID ) : null;
@@ -67,7 +64,7 @@ class CommentDelete {
 			'comment'   => [
 				'type'        => 'Comment',
 				'description' => __( 'The deleted comment object', 'wp-graphql' ),
-				'resolve'     => function ( $payload, $args, AppContext $context, ResolveInfo $info ) {
+				'resolve'     => static function ( $payload ) {
 					return $payload['commentObject'] ? $payload['commentObject'] : null;
 				},
 			],
@@ -77,10 +74,10 @@ class CommentDelete {
 	/**
 	 * Defines the mutation data modification closure.
 	 *
-	 * @return callable
+	 * @return callable(array<string,mixed>$input,\WPGraphQL\AppContext $context,\GraphQL\Type\Definition\ResolveInfo $info):array<string,mixed>
 	 */
 	public static function mutate_and_get_payload() {
-		return function ( $input ) {
+		return static function ( $input ) {
 			// Get the database ID for the comment.
 			$comment_id = Utils::get_database_id_from_id( $input['id'] );
 
@@ -88,7 +85,7 @@ class CommentDelete {
 			$comment_before_delete = ! empty( $comment_id ) ? get_comment( $comment_id ) : false;
 
 			if ( empty( $comment_before_delete ) ) {
-				throw new UserError( __( 'The Comment could not be deleted', 'wp-graphql' ) );
+				throw new UserError( esc_html__( 'The Comment could not be deleted', 'wp-graphql' ) );
 			}
 
 			/**
@@ -116,7 +113,7 @@ class CommentDelete {
 			 * If the mutation has been prevented
 			 */
 			if ( true === $not_allowed ) {
-				throw new UserError( __( 'Sorry, you are not allowed to delete this comment.', 'wp-graphql' ) );
+				throw new UserError( esc_html__( 'Sorry, you are not allowed to delete this comment.', 'wp-graphql' ) );
 			}
 
 			/**

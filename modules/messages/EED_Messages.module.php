@@ -171,10 +171,10 @@ class EED_Messages extends EED_Module
      */
     protected static function _register_routes()
     {
-        EE_Config::register_route('msg_url_trigger', 'Messages', 'run');
-        EE_Config::register_route('msg_cron_trigger', 'Messages', 'execute_batch_request');
-        EE_Config::register_route('msg_browser_trigger', 'Messages', 'browser_trigger');
-        EE_Config::register_route('msg_browser_error_trigger', 'Messages', 'browser_error_trigger');
+        EED_Module::registerRoute('msg_url_trigger', 'Messages', 'run');
+        EED_Module::registerRoute('msg_cron_trigger', 'Messages', 'execute_batch_request');
+        EED_Module::registerRoute('msg_browser_trigger', 'Messages', 'browser_trigger');
+        EED_Module::registerRoute('msg_browser_error_trigger', 'Messages', 'browser_error_trigger');
         do_action('AHEE__EED_Messages___register_routes');
     }
 

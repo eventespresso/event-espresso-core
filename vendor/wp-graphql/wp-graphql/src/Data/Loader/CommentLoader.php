@@ -2,7 +2,6 @@
 
 namespace WPGraphQL\Data\Loader;
 
-use Exception;
 use WPGraphQL\Model\Comment;
 
 /**
@@ -13,14 +12,12 @@ use WPGraphQL\Model\Comment;
 class CommentLoader extends AbstractDataLoader {
 
 	/**
-	 * @param mixed $entry The User Role object
-	 * @param mixed $key The Key to identify the user role by
+	 * {@inheritDoc}
 	 *
-	 * @return mixed|Comment|null
-	 * @throws Exception
+	 * @return ?\WPGraphQL\Model\Comment
+	 * @throws \Exception
 	 */
 	protected function get_model( $entry, $key ) {
-
 		if ( ! $entry instanceof \WP_Comment ) {
 			return null;
 		}
@@ -34,19 +31,9 @@ class CommentLoader extends AbstractDataLoader {
 	}
 
 	/**
-	 * Given array of keys, loads and returns a map consisting of keys from `keys` array and loaded
-	 * comments as the values
+	 * {@inheritDoc}
 	 *
-	 * Note that order of returned values must match exactly the order of keys.
-	 * If some entry is not available for given key - it must include null for the missing key.
-	 *
-	 * For example:
-	 * loadKeys(['a', 'b', 'c']) -> ['a' => 'value1, 'b' => null, 'c' => 'value3']
-	 *
-	 * @param array $keys
-	 *
-	 * @return array
-	 * @throws Exception
+	 * @param int[] $keys Array of IDs to load
 	 */
 	public function loadKeys( array $keys = [] ) {
 
@@ -74,5 +61,4 @@ class CommentLoader extends AbstractDataLoader {
 		}
 		return $loaded;
 	}
-
 }

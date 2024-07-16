@@ -1,7 +1,9 @@
 <?php
 
+use EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\cache\TemplateCache;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\core\services\request\sanitizers\AllowedTags;
@@ -15,7 +17,7 @@ if (! function_exists('espresso_get_template_part')) {
      * @param string $slug The slug name for the generic template.
      * @param string $name The name of the specialised template.
      */
-    function espresso_get_template_part($slug = null, $name = null)
+    function espresso_get_template_part($slug = '', $name = '')
     {
         EEH_Template::get_template_part($slug, $name);
     }
@@ -50,7 +52,7 @@ if (! function_exists('espresso_get_object_css_class')) {
  */
 class EEH_Template
 {
-    private static $_espresso_themes = [];
+    private static array $_espresso_themes = [];
 
 
     /**
@@ -85,7 +87,7 @@ class EEH_Template
      *
      * @return array
      */
-    public static function get_espresso_themes()
+    public static function get_espresso_themes(): array
     {
         if (empty(EEH_Template::$_espresso_themes)) {
             $espresso_themes = glob(EE_PUBLIC . '*', GLOB_ONLYDIR);
@@ -117,21 +119,22 @@ class EEH_Template
      * @return string        the html output for the formatted money value
      */
     public static function get_template_part(
-        $slug = null,
-        $name = null,
+        $slug = '',
+        $name = '',
         $template_args = [],
         $return_string = false
     ) {
-        do_action("get_template_part_{$slug}-{$name}", $slug, $name);
-        $templates = [];
+        do_action("get_template_part_$slug-$name", $slug, $name);
+        $template = $slug;
         $name      = (string) $name;
         if ($name != '') {
-            $templates[] = "{$slug}-{$name}.php";
+            $template .= "-$name";
         }
+        $template .= ".php";
         // allow template parts to be turned off via something like:
         // add_filter( 'FHEE__content_espresso_events_tickets_template__display_datetimes', '__return_false' );
-        if (apply_filters("FHEE__EEH_Template__get_template_part__display__{$slug}_{$name}", true)) {
-            return EEH_Template::locate_template($templates, $template_args, true, $return_string);
+        if (apply_filters("FHEE__EEH_Template__get_template_part__display__{$slug}_$name", true)) {
+            return EEH_Template::locate_template($template, $template_args, true, $return_string);
         }
         return '';
     }
@@ -177,7 +180,7 @@ class EEH_Template
      * @param boolean      $check_if_custom If TRUE, this flags this method to return boolean for whether this will
      *                                      generate a custom template or not. Used in places where you don't actually
      *                                      load the template, you just want to know if there's a custom version of it.
-     * @return mixed
+     * @return string|true
      * @throws DomainException
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -190,13 +193,44 @@ class EEH_Template
         bool $return_string = true,
         bool $check_if_custom = false
     ) {
-        // first use WP locate_template to check for template in the current theme folder
-        $template_path = locate_template($templates);
+        $cache_id      = TemplateCache::generateCacheID(__FUNCTION__, func_get_args());
+        $template_path = TemplateCache::get($cache_id);
+        $template_path = $template_path ?: self::resolveTemplatePath($cache_id, (array) $templates, $check_if_custom);
 
         if ($check_if_custom && ! empty($template_path)) {
             return true;
         }
 
+        // if we got it and you want to see it...
+        if ($template_path && $load && ! $check_if_custom) {
+            if ($return_string) {
+                return EEH_Template::display_template($template_path, $template_args, true);
+            }
+            EEH_Template::display_template($template_path, $template_args);
+        }
+        return $check_if_custom && ! empty($template_path) ? true : $template_path;
+    }
+
+
+    /**
+     * Resolves the path of a template by checking various possible locations.
+     *
+     * This method checks for the existence of a template in several locations,
+     * including the current theme folder, the uploads directory, and the plugin's own template directory.
+     * It uses the provided cache ID to store and retrieve the resolved path from a cache for performance.
+     * If the template is not found in any of the checked locations, an empty string is returned.
+     *
+     * @param string $cache_id        The ID used for caching the resolved path.
+     * @param array  $templates       An array of template file names to search for.
+     * @param bool $check_if_custom   If true, the method will only check if a custom template exists
+     *                                and won't include core plugin folders.
+     * @return string The resolved template path, or an empty string if the template was not found.
+     * @since $VID:$
+     */
+    private static function resolveTemplatePath(string $cache_id, array $templates, bool $check_if_custom): string
+    {
+        // first use WP locate_template to check for template in the current theme folder
+        $template_path = $templates ? locate_template($templates) : '';
         // not in the theme
         if (empty($template_path)) {
             // not even a template to look for ?
@@ -206,29 +240,21 @@ class EEH_Template
                 $request = $loader->getShared(RequestInterface::class);
                 // get post_type
                 $post_type = $request->getRequestParam('post_type');
-                /** @var EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions $custom_post_types */
-                $custom_post_types = $loader->getShared(
-                    'EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions'
-                );
+                /** @var CustomPostTypeDefinitions $custom_post_types */
+                $custom_post_types = $loader->getShared(CustomPostTypeDefinitions::class);
                 // get array of EE Custom Post Types
                 $EE_CPTs = $custom_post_types->getDefinitions();
                 // build template name based on request
                 if (isset($EE_CPTs[ $post_type ])) {
                     $archive_or_single = is_archive() ? 'archive' : '';
                     $archive_or_single = is_single() ? 'single' : $archive_or_single;
-                    $templates         = $archive_or_single . '-' . $post_type . '.php';
+                    $templates[]       = $archive_or_single . '-' . $post_type . '.php';
                 }
             }
             // currently active EE template theme
             $current_theme = EE_Config::get_current_theme();
-
             // array of paths to folders that may contain templates
-            $template_folder_paths = [
-                // first check the /wp-content/uploads/espresso/templates/(current EE theme)/  folder for an EE theme template file
-                EVENT_ESPRESSO_TEMPLATE_DIR . $current_theme,
-                // then in the root of the /wp-content/uploads/espresso/templates/ folder
-                EVENT_ESPRESSO_TEMPLATE_DIR,
-            ];
+            $template_folder_paths = [];
 
             // add core plugin folders for checking only if we're not $check_if_custom
             if (! $check_if_custom) {
@@ -244,13 +270,11 @@ class EEH_Template
             }
 
             // now filter that array
-            $template_folder_paths = apply_filters(
+            $template_folder_paths = (array) apply_filters(
                 'FHEE__EEH_Template__locate_template__template_folder_paths',
                 $template_folder_paths
             );
-            $templates             = is_array($templates) ? $templates : [$templates];
-            $template_folder_paths =
-                is_array($template_folder_paths) ? $template_folder_paths : [$template_folder_paths];
+
             // array to hold all possible template paths
             $full_template_paths = [];
             $file_name           = '';
@@ -294,6 +318,7 @@ class EEH_Template
             foreach ((array) $full_template_paths as $full_template_path) {
                 if (is_readable($full_template_path)) {
                     $template_path = str_replace(['\\', '/'], DIRECTORY_SEPARATOR, $full_template_path);
+                    TemplateCache::set($cache_id, $template_path);
                     break;
                 }
             }
@@ -314,14 +339,7 @@ class EEH_Template
         // hook that can be used to display the full template path that will be used
         do_action('AHEE__EEH_Template__locate_template__full_template_path', $template_path);
 
-        // if we got it and you want to see it...
-        if ($template_path && $load && ! $check_if_custom) {
-            if ($return_string) {
-                return EEH_Template::display_template($template_path, $template_args, true);
-            }
-            EEH_Template::display_template($template_path, $template_args);
-        }
-        return $check_if_custom && ! empty($template_path) ? true : $template_path;
+        return $template_path;
     }
 
 
@@ -364,7 +382,7 @@ class EEH_Template
      * @throws DomainException
      */
     public static function display_template(
-        $template_path = false,
+        $template_path = '',
         $template_args = [],
         $return_string = false,
         $throw_exceptions = false
@@ -391,19 +409,17 @@ class EEH_Template
             }
             return '';
         }
-        // if $template_args are not in an array, then make it so
-        if (! is_array($template_args) && ! is_object($template_args)) {
-            $template_args = [$template_args];
-        }
+
         extract($template_args, EXTR_SKIP);
+        // because we might want to return a string, we are going to capture the output
+        ob_start();
+        include($template_path);
+        $template = ob_get_clean();
 
         if ($return_string) {
-            // because we want to return a string, we are going to capture the output
-            ob_start();
-            include($template_path);
-            return ob_get_clean();
+            return $template;
         }
-        include($template_path);
+        echo wp_kses($template, AllowedTags::getWithFullTags());
         return '';
     }
 
@@ -431,12 +447,9 @@ class EEH_Template
             // grab the exact type of object
             $obj_class = get_class($object);
             // depending on the type of object...
-            switch ($obj_class) {
-                // no specifics just yet...
-                default:
-                    $class = strtolower(str_replace('_', '-', $obj_class));
-                    $class .= method_exists($obj_class, 'name') ? '-' . sanitize_title($object->name()) : '';
-            }
+            // no specifics just yet...
+            $class = strtolower(str_replace('_', '-', $obj_class));
+            $class .= method_exists($obj_class, 'name') ? '-' . sanitize_title($object->name()) : '';
         }
         return $prefix . $class . $suffix;
     }
@@ -450,7 +463,7 @@ class EEH_Template
      * @param float   $amount       raw money value
      * @param boolean $return_raw   whether to return the formatted float value only with no currency sign or code
      * @param boolean $display_code whether to display the country code (USD). Default = TRUE
-     * @param string  $CNT_ISO      2 letter ISO code for a country
+     * @param string  $CNT_ISO      2-letter ISO code for a country
      * @param string  $cur_code_span_class
      * @return string        the html output for the formatted money value
      */
@@ -606,7 +619,6 @@ class EEH_Template
         $icon_style = false,
         $help_text = false
     ) {
-        $allowedtags = AllowedTags::getAllowedTags();
         /** @var RequestInterface $request */
         $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
         $page    = $page ?: $request->getRequestParam('page', '', 'key');
@@ -620,11 +632,11 @@ class EEH_Template
             <a id="' . esc_attr($help_tab_lnk) . '"
                class="espresso-help-tab-lnk ee-help-btn ee-aria-tooltip dashicons ' . esc_attr($icon) . '"
                aria-label="' . esc_attr__(
-                   'Click to open the \'Help\' tab for more information about this feature.',
-                   'event_espresso'
-               ) . '"
+                'Click to open the \'Help\' tab for more information about this feature.',
+                'event_espresso'
+            ) . '"
             >
-                ' . wp_kses($help_text, $allowedtags) . '
+                ' . wp_kses($help_text, AllowedTags::getAllowedTags()) . '
             </a>';
     }
 
@@ -828,7 +840,7 @@ class EEH_Template
         $disable_first = $current === 1 ? 'disabled' : '';
         $disable_last  = $current === $total_pages ? 'disabled' : '';
 
-        $button_size = in_array($button_size, ['tiny', 'small', 'default', 'big']) ? $button_size : 'small';
+        $button_size    = in_array($button_size, ['tiny', 'small', 'default', 'big']) ? $button_size : 'small';
         $button_classes = "button button--secondary button--icon-only button--$button_size";
 
         $page_links[] = sprintf(
@@ -898,10 +910,20 @@ class EEH_Template
     /**
      * @param string $wrap_class
      * @param string $wrap_id
+     * @param array  $query_args
      * @return string
      */
-    public static function powered_by_event_espresso($wrap_class = '', $wrap_id = '', array $query_args = [])
-    {
+    public static function powered_by_event_espresso(
+        string $wrap_class = '',
+        string $wrap_id = '',
+        array $query_args = []
+    ): string {
+        $cache_id = TemplateCache::generateCacheID(__FUNCTION__, func_get_args());
+        $cache    = TemplateCache::get($cache_id);
+        if ($cache) {
+            return $cache;
+        }
+
         $admin = is_admin() && ! (defined('DOING_AJAX') && DOING_AJAX);
         if (
             ! $admin
@@ -933,7 +955,7 @@ class EEH_Template
         );
         $url        = add_query_arg($query_args, 'https://eventespresso.com/');
         $url        = apply_filters('FHEE__EEH_Template__powered_by_event_espresso__url', $url);
-        return (string) apply_filters(
+        $template   = (string) apply_filters(
             'FHEE__EEH_Template__powered_by_event_espresso__html',
             sprintf(
                 esc_html_x(
@@ -941,13 +963,15 @@ class EEH_Template
                     'Online event registration and ticketing powered by [link to eventespresso.com]',
                     'event_espresso'
                 ),
-                "<{$tag}{$attributes}>",
-                "<a href=\"{$url}\" target=\"_blank\" rel=\"nofollow\">{$powered_by}</a></{$tag}>",
+                "<$tag$attributes>",
+                "<a href=\"$url\" target=\"_blank\" rel=\"nofollow\">$powered_by</a></$tag>",
                 $admin ? '' : '<br />'
             ),
             $wrap_class,
             $wrap_id
         );
+        TemplateCache::set($cache_id, $template);
+        return $template;
     }
 
 

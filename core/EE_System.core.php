@@ -244,7 +244,7 @@ final class EE_System implements ResettableInterface
             'AHEE__EE_Bootstrap__load_core_configuration',
             [$this, 'loadCustomPostTypes']
         );
-        // load EE_Config, EE_Textdomain, etc
+        // register shortcodes, modules, and widgets
         add_action(
             'AHEE__EE_Bootstrap__register_shortcodes_modules_and_widgets',
             [$this, 'register_shortcodes_modules_and_widgets'],

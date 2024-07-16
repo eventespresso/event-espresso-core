@@ -84,13 +84,13 @@ class EE_DMS_4_6_0_payments extends EE_Data_Migration_Script_Stage_Table
      *
      * @param string $gateway_name
      * @param string $old_pay_method_column
-     * @return string
+     * @return string|null
      * @global wpdb  $wpdb
      */
     protected function _get_payment_method_id_by_gateway_name(
         string $gateway_name,
         string $old_pay_method_column
-    ): string {
+    ): ?string {
         global $wpdb;
         // convert from old known PAY_method values to their corresponding
         // PMD_type or default PMD_name

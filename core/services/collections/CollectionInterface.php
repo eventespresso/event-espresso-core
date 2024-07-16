@@ -115,7 +115,7 @@ interface CollectionInterface extends Countable, Iterator, Serializable, ArrayAc
         /**
      * Returns the index of a given object, or false if not found
      *
-     * @see http://stackoverflow.com/a/8736013
+     * @see https://stackoverflow.com/a/8736013
      * @param $object
      * @return boolean|int|string
      */
@@ -125,7 +125,7 @@ interface CollectionInterface extends Countable, Iterator, Serializable, ArrayAc
     /**
      * Returns the object at the given index
      *
-     * @see http://stackoverflow.com/a/8736013
+     * @see https://stackoverflow.com/a/8736013
      * @param $index
      * @return mixed
      */
@@ -134,7 +134,7 @@ interface CollectionInterface extends Countable, Iterator, Serializable, ArrayAc
     /**
      * Returns the sequence of objects as specified by the offset and length
      *
-     * @see http://stackoverflow.com/a/8736013
+     * @see https://stackoverflow.com/a/8736013
      * @param int $offset
      * @param int $length
      * @return array
@@ -144,7 +144,7 @@ interface CollectionInterface extends Countable, Iterator, Serializable, ArrayAc
     /**
      * Inserts an object (or an array of objects) at a certain point
      *
-     * @see http://stackoverflow.com/a/8736013
+     * @see https://stackoverflow.com/a/8736013
      * @param mixed   $objects A single object or an array of objects
      * @param integer $index
      */
@@ -153,7 +153,7 @@ interface CollectionInterface extends Countable, Iterator, Serializable, ArrayAc
     /**
      * Removes the object at the given index
      *
-     * @see http://stackoverflow.com/a/8736013
+     * @see https://stackoverflow.com/a/8736013
      * @param integer $index
      */
     public function removeAt($index);

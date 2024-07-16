@@ -356,7 +356,7 @@ class Collection extends SplObjectStorage implements CollectionInterface
     /**
      * Returns the index of a given object, or false if not found
      *
-     * @see http://stackoverflow.com/a/8736013
+     * @see https://stackoverflow.com/a/8736013
      * @param $object
      * @return boolean|int|string
      */
@@ -377,7 +377,7 @@ class Collection extends SplObjectStorage implements CollectionInterface
     /**
      * Returns the object at the given index
      *
-     * @see http://stackoverflow.com/a/8736013
+     * @see https://stackoverflow.com/a/8736013
      * @param int $index
      * @return mixed
      */
@@ -392,7 +392,7 @@ class Collection extends SplObjectStorage implements CollectionInterface
     /**
      * Returns the sequence of objects as specified by the offset and length
      *
-     * @see http://stackoverflow.com/a/8736013
+     * @see https://stackoverflow.com/a/8736013
      * @param int $offset
      * @param int $length
      * @return array
@@ -411,7 +411,7 @@ class Collection extends SplObjectStorage implements CollectionInterface
     /**
      * Inserts an object at a certain point
      *
-     * @see http://stackoverflow.com/a/8736013
+     * @see https://stackoverflow.com/a/8736013
      * @param mixed $object A single object
      * @param int   $index
      * @param mixed $identifier
@@ -451,7 +451,7 @@ class Collection extends SplObjectStorage implements CollectionInterface
     /**
      * Inserts an object (or an array of objects) at a certain point
      *
-     * @see http://stackoverflow.com/a/8736013
+     * @see https://stackoverflow.com/a/8736013
      * @param mixed $objects A single object or an array of objects
      * @param int   $index
      */
@@ -492,7 +492,7 @@ class Collection extends SplObjectStorage implements CollectionInterface
     /**
      * Removes the object at the given index
      *
-     * @see http://stackoverflow.com/a/8736013
+     * @see https://stackoverflow.com/a/8736013
      * @param int $index
      */
     public function removeAt($index)

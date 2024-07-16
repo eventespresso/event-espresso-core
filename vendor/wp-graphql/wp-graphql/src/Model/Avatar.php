@@ -2,8 +2,6 @@
 
 namespace WPGraphQL\Model;
 
-use Exception;
-
 /**
  * Class Avatar - Models data for avatars
  *
@@ -25,16 +23,14 @@ class Avatar extends Model {
 	/**
 	 * Stores the incoming avatar to be modeled
 	 *
-	 * @var array $data
+	 * @var array<string,mixed>
 	 */
 	protected $data;
 
 	/**
 	 * Avatar constructor.
 	 *
-	 * @param array $avatar The incoming avatar to be modeled
-	 *
-	 * @throws Exception Throws Exception.
+	 * @param array<string,mixed> $avatar The incoming avatar to be modeled.
 	 */
 	public function __construct( array $avatar ) {
 		$this->data = $avatar;
@@ -42,14 +38,18 @@ class Avatar extends Model {
 	}
 
 	/**
-	 * Initializes the object
-	 *
-	 * @return void
+	 * @return bool
+	 */
+	protected function is_private() {
+		$show_avatars = get_option( 'show_avatars' );
+		return ! (bool) $show_avatars;
+	}
+
+	/**
+	 * {@inheritDoc}
 	 */
 	protected function init() {
-
 		if ( empty( $this->fields ) ) {
-
 			$this->fields = [
 				'size'         => function () {
 					return ! empty( $this->data['size'] ) ? absint( $this->data['size'] ) : null;
@@ -82,7 +82,6 @@ class Avatar extends Model {
 					return ! empty( $this->data['url'] ) ? $this->data['url'] : null;
 				},
 			];
-
 		}
 	}
 }

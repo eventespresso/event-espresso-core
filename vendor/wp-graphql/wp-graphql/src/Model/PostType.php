@@ -48,12 +48,9 @@ class PostType extends Model {
 	/**
 	 * PostType constructor.
 	 *
-	 * @param \WP_Post_Type $post_type The incoming post type to model
-	 *
-	 * @throws \Exception
+	 * @param \WP_Post_Type $post_type The incoming post type to model.
 	 */
 	public function __construct( \WP_Post_Type $post_type ) {
-
 		$this->data = $post_type;
 
 		$allowed_restricted_fields = [
@@ -78,33 +75,24 @@ class PostType extends Model {
 		$capability = isset( $post_type->cap->edit_posts ) ? $post_type->cap->edit_posts : 'edit_posts';
 
 		parent::__construct( $capability, $allowed_restricted_fields );
-
 	}
 
 	/**
-	 * Method for determining if the data should be considered private or not
-	 *
-	 * @return bool
+	 * {@inheritDoc}
 	 */
 	protected function is_private() {
-
 		if ( false === $this->data->public && ( ! isset( $this->data->cap->edit_posts ) || ! current_user_can( $this->data->cap->edit_posts ) ) ) {
 			return true;
 		}
 
 		return false;
-
 	}
 
 	/**
-	 * Initializes the object
-	 *
-	 * @return void
+	 * {@inheritDoc}
 	 */
 	protected function init() {
-
 		if ( empty( $this->fields ) ) {
-
 			$this->fields = [
 				'id'                  => function () {
 					return ! empty( $this->data->name ) ? Relay::toGlobalId( 'post_type', $this->data->name ) : null;
@@ -125,25 +113,25 @@ class PostType extends Model {
 					return ! empty( $this->data->public ) ? (bool) $this->data->public : null;
 				},
 				'hierarchical'        => function () {
-					return ( true === $this->data->hierarchical || ! empty( $this->data->hierarchical ) ) ? true : false;
+					return true === $this->data->hierarchical || ! empty( $this->data->hierarchical );
 				},
 				'excludeFromSearch'   => function () {
-					return ( true === $this->data->exclude_from_search ) ? true : false;
+					return true === $this->data->exclude_from_search;
 				},
 				'publiclyQueryable'   => function () {
-					return ( true === $this->data->publicly_queryable ) ? true : false;
+					return true === $this->data->publicly_queryable;
 				},
 				'showUi'              => function () {
-					return ( true === $this->data->show_ui ) ? true : false;
+					return true === $this->data->show_ui;
 				},
 				'showInMenu'          => function () {
-					return ( true === $this->data->show_in_menu ) ? true : false;
+					return true === $this->data->show_in_menu;
 				},
 				'showInNavMenus'      => function () {
-					return ( true === $this->data->show_in_nav_menus ) ? true : false;
+					return true === $this->data->show_in_nav_menus;
 				},
 				'showInAdminBar'      => function () {
-					return ( true === $this->data->show_in_admin_bar ) ? true : false;
+					return true === $this->data->show_in_admin_bar;
 				},
 				'menuPosition'        => function () {
 					return ! empty( $this->data->menu_position ) ? $this->data->menu_position : null;
@@ -152,20 +140,20 @@ class PostType extends Model {
 					return ! empty( $this->data->menu_icon ) ? $this->data->menu_icon : null;
 				},
 				'hasArchive'          => function () {
-					return ! empty( $this->uri ) ? true : false;
+					return ! empty( $this->uri );
 				},
 				'canExport'           => function () {
-					return ( true === $this->data->can_export ) ? true : false;
+					return true === $this->data->can_export;
 				},
 				'deleteWithUser'      => function () {
-					return ( true === $this->data->delete_with_user ) ? true : false;
+					return true === $this->data->delete_with_user;
 				},
 				'taxonomies'          => function () {
 					$object_taxonomies = get_object_taxonomies( $this->data->name );
 					return ( ! empty( $object_taxonomies ) ) ? $object_taxonomies : null;
 				},
 				'showInRest'          => function () {
-					return ( true === $this->data->show_in_rest ) ? true : false;
+					return true === $this->data->show_in_rest;
 				},
 				'restBase'            => function () {
 					return ! empty( $this->data->rest_base ) ? $this->data->rest_base : null;
@@ -174,7 +162,7 @@ class PostType extends Model {
 					return ! empty( $this->data->rest_controller_class ) ? $this->data->rest_controller_class : null;
 				},
 				'showInGraphql'       => function () {
-					return ( true === $this->data->show_in_graphql ) ? true : false;
+					return true === $this->data->show_in_graphql;
 				},
 				'graphqlSingleName'   => function () {
 					return ! empty( $this->data->graphql_single_name ) ? $this->data->graphql_single_name : null;
@@ -192,22 +180,12 @@ class PostType extends Model {
 					$link = get_post_type_archive_link( $this->name );
 					return ! empty( $link ) ? trailingslashit( str_ireplace( home_url(), '', $link ) ) : null;
 				},
-				// If the homepage settings are ot set to
+				// If the homepage settings are to set to
 				'isPostsPage'         => function () {
-
-					if (
-						'post' === $this->name &&
-						(
-							'posts' === get_option( 'show_on_front', 'posts' ) ||
-							empty( (int) get_option( 'page_for_posts', 0 ) ) )
-					) {
-						return true;
-					}
-
-					return false;
+					// the "post" ContentType is always represented as isPostsPage
+					return 'post' === $this->name;
 				},
 				'isFrontPage'         => function () {
-
 					if (
 						'post' === $this->name &&
 						(
@@ -221,7 +199,6 @@ class PostType extends Model {
 					return false;
 				},
 			];
-
 		}
 	}
 }

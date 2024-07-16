@@ -53,7 +53,7 @@ class EED_Venues_Archive extends EED_Module
             'EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions'
         );
         $custom_post_types = $custom_post_type_definitions->getDefinitions();
-        EE_Config::register_route(
+        EED_Module::registerRoute(
             $custom_post_types[EspressoPostType::VENUES]['plural_slug'],
             'Venues_Archive',
             'run'

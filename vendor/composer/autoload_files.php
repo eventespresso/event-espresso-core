@@ -7,7 +7,4 @@ $baseDir = dirname($vendorDir);
 
 return array(
     'a4a119a56e50fbb293281d9a48007e0e' => $vendorDir . '/symfony/polyfill-php80/bootstrap.php',
-    'a3ed03db03d57650e139da3e8903943c' => $vendorDir . '/wp-graphql/wp-graphql/access-functions.php',
-    'f23fb2f3f8f0b37aeaa2e54bba971cf2' => $vendorDir . '/wp-graphql/wp-graphql/activation.php',
-    '041a301cb7808aeb8a9086a5113fbadc' => $vendorDir . '/wp-graphql/wp-graphql/deactivation.php',
 );

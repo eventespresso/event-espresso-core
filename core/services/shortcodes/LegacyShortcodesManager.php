@@ -245,7 +245,7 @@ class LegacyShortcodesManager
             $this->current_page->postName()
         );
         $show_on_front = get_option('show_on_front');
-        // if it's not set, then check if frontpage is blog
+        // if it's not set, then check if frontpage is the blog
         if (empty($current_post)) {
             // yup.. this is the posts page, prepare to load all shortcode modules
             $current_post = 'posts';
@@ -271,7 +271,7 @@ class LegacyShortcodesManager
         $current_post = basename($current_post);
         if (
             // is current page/post the "blog" page ?
-            $current_post === EE_Config::get_page_for_posts()
+            $current_post === $this->getPageForPosts()
             // or are we on a category page?
             || (
                 is_array(term_exists($current_post, 'category'))
@@ -479,5 +479,28 @@ class LegacyShortcodesManager
             }
         }
         return do_shortcode($content);
+    }
+
+
+    /**
+     *    get_page_for_posts
+     *    if the wp-option "show_on_front" is set to "page", then this is the post_name for the post set in the
+     *    wp-option "page_for_posts", or "posts" if no page is selected
+     *
+     * @return string|null
+     */
+    public function getPageForPosts(): ?string
+    {
+        $page_for_posts = get_option('page_for_posts');
+        if (! $page_for_posts) {
+            return 'posts';
+        }
+        global $wpdb;
+        $SQL = "
+        SELECT post_name from $wpdb->posts
+        WHERE (post_type='posts' OR post_type='page')
+          AND post_status='publish'
+          AND ID=%d";
+        return $wpdb->get_var($wpdb->prepare($SQL, $page_for_posts));
     }
 }

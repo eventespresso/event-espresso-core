@@ -2,8 +2,6 @@
 
 namespace WPGraphQL\Data\Loader;
 
-use Exception;
-use WPGraphQL\Model\Model;
 use WPGraphQL\Model\Plugin;
 
 /**
@@ -14,23 +12,24 @@ use WPGraphQL\Model\Plugin;
 class PluginLoader extends AbstractDataLoader {
 
 	/**
-	 * @param mixed $entry The User Role object
-	 * @param mixed $key The Key to identify the user role by
+	 * {@inheritDoc}
 	 *
-	 * @return Model|Plugin
-	 * @throws Exception
+	 * @param array<string,mixed> $entry The plugin data
+	 *
+	 * @return \WPGraphQL\Model\Plugin
+	 * @throws \Exception
 	 */
 	protected function get_model( $entry, $key ) {
 		return new Plugin( $entry );
 	}
 
 	/**
-	 * Given an array of plugin names, load the associated plugins from the plugin registry.
+	 * {@inheritDoc}
 	 *
-	 * @param array $keys
+	 * @param string[] $keys Array of plugin names to load
 	 *
-	 * @return array
-	 * @throws Exception
+	 * @return array<string,array<string,mixed>|null>
+	 * @throws \Exception
 	 */
 	public function loadKeys( array $keys ) {
 		if ( empty( $keys ) ) {
@@ -45,7 +44,7 @@ class PluginLoader extends AbstractDataLoader {
 		$plugins = array_merge( $site_plugins, $mu_plugins, $dropin_plugins );
 
 		$loaded = [];
-		if ( ! empty( $plugins ) && is_array( $plugins ) ) {
+		if ( ! empty( $plugins ) ) {
 			foreach ( $keys as $key ) {
 				if ( isset( $plugins[ $key ] ) ) {
 					$plugin         = $plugins[ $key ];

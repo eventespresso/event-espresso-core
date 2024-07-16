@@ -16,12 +16,11 @@ interface CacheStorageInterface
      * if an expiration is set, then it automatically schedules the cache for deletion
      *
      * @param string $key        [required]
-     * @param string $data       [required]
+     * @param mixed  $data       [required]
      * @param int    $expiration number of seconds until the cache expires
      * @return bool
      */
-    public function add($key, $data, $expiration = 0);
-
+    public function add(string $key, $data, int $expiration = 0): bool;
 
 
     /**
@@ -35,8 +34,7 @@ interface CacheStorageInterface
      * @param bool   $standard_cache
      * @return mixed
      */
-    public function get($key, $standard_cache = true);
-
+    public function get(string $key, bool $standard_cache = true);
 
 
     /**
@@ -44,8 +42,7 @@ interface CacheStorageInterface
      *
      * @param string $key [required] full or partial cache key to be deleted
      */
-    public function delete($key);
-
+    public function delete(string $key);
 
 
     /**
@@ -54,7 +51,7 @@ interface CacheStorageInterface
      * @param array $keys           [required] array of full or partial cache keys to be deleted
      * @param bool  $force_delete   [optional] if true, then will not check incoming keys against those being tracked
      *                              and proceed directly to deleting those entries from the cache storage
-     * @return
+     * @return void
      */
-    public function deleteMany(array $keys, $force_delete = false);
+    public function deleteMany(array $keys, bool $force_delete = false);
 }

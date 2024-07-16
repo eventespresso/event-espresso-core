@@ -424,9 +424,15 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
      * @return string
      * @throws EE_Error
      * @throws ReflectionException
+     * @throws Exception
      */
     public function column_start_date_time(EE_Event $event): string
     {
+        $month_range = $this->request->getRequestParam('month_range');
+        if ($month_range) {
+            $where = ['DTT_EVT_start' => $this->_admin_page->whereParamsForDatetimeMonthRange($month_range)];
+            $this->_dtt = $event->get_first_related('Datetime', [$where]);
+        }
         $content = $this->_dtt instanceof EE_Datetime
             ? $this->_dtt->get_i18n_datetime('DTT_EVT_start')
             : esc_html__('No Date was saved for this Event', 'event_espresso');
@@ -442,7 +448,11 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
      */
     public function column_reg_begins(EE_Event $event): string
     {
-        $reg_start = $event->get_ticket_with_earliest_start_time();
+        if ($this->_dtt instanceof EE_Datetime) {
+            $reg_start = $this->_dtt->get_first_related('Ticket');
+        } else {
+            $reg_start = $event->get_ticket_with_earliest_start_time();
+        }
         $content   = $reg_start instanceof EE_Ticket
             ? $reg_start->get_i18n_datetime('TKT_start_date')
             : esc_html__('No Tickets have been setup for this Event', 'event_espresso');

@@ -2,7 +2,6 @@
 
 namespace WPGraphQL\Type\Union;
 
-use Exception;
 use WPGraphQL\Model\Post;
 use WPGraphQL\Model\Term;
 use WPGraphQL\Registry\TypeRegistry;
@@ -18,36 +17,36 @@ class MenuItemObjectUnion {
 	/**
 	 * Registers the Type
 	 *
-	 * @param TypeRegistry $type_registry
+	 * @param \WPGraphQL\Registry\TypeRegistry $type_registry
 	 *
 	 * @return void
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	public static function register_type( TypeRegistry $type_registry ) {
-
 		register_graphql_union_type(
 			'MenuItemObjectUnion',
 			[
 				'typeNames'   => self::get_possible_types(),
 				'description' => __( 'Deprecated in favor of MenuItemLinkeable Interface', 'wp-graphql' ),
-				'resolveType' => function ( $object ) use ( $type_registry ) {
+				'resolveType' => static function ( $obj ) use ( $type_registry ) {
+					_doing_it_wrong( 'MenuItemObjectUnion', esc_attr__( 'The MenuItemObjectUnion GraphQL type is deprecated in favor of MenuItemLinkeable Interface', 'wp-graphql' ), '0.10.3' );
 					// Post object
-					if ( $object instanceof Post && isset( $object->post_type ) && ! empty( $object->post_type ) ) {
+					if ( $obj instanceof Post && isset( $obj->post_type ) && ! empty( $obj->post_type ) ) {
 						/** @var \WP_Post_Type $post_type_object */
-						$post_type_object = get_post_type_object( $object->post_type );
+						$post_type_object = get_post_type_object( $obj->post_type );
 
 						return $type_registry->get_type( $post_type_object->graphql_single_name );
 					}
 
 					// Taxonomy term
-					if ( $object instanceof Term && ! empty( $object->taxonomyName ) ) {
+					if ( $obj instanceof Term && ! empty( $obj->taxonomyName ) ) {
 						/** @var \WP_Taxonomy $tax_object */
-						$tax_object = get_taxonomy( $object->taxonomyName );
+						$tax_object = get_taxonomy( $obj->taxonomyName );
 
 						return $type_registry->get_type( $tax_object->graphql_single_name );
 					}
 
-					return $object;
+					return $obj;
 				},
 			]
 		);
@@ -56,7 +55,7 @@ class MenuItemObjectUnion {
 	/**
 	 * Returns a list of possible types for the union
 	 *
-	 * @return array
+	 * @return string[]
 	 */
 	public static function get_possible_types() {
 

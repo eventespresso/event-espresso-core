@@ -23,16 +23,14 @@ class Plugin extends Model {
 	/**
 	 * Stores the incoming plugin data to be modeled
 	 *
-	 * @var array $data
+	 * @var array<string,mixed> $data
 	 */
 	protected $data;
 
 	/**
 	 * Plugin constructor.
 	 *
-	 * @param array $plugin The incoming Plugin data to be modeled
-	 *
-	 * @throws \Exception
+	 * @param array<string,mixed> $plugin The incoming Plugin data to be modeled.
 	 */
 	public function __construct( $plugin ) {
 		$this->data = $plugin;
@@ -40,12 +38,9 @@ class Plugin extends Model {
 	}
 
 	/**
-	 * Method for determining if the data should be considered private or not
-	 *
-	 * @return bool
+	 * {@inheritDoc}
 	 */
 	protected function is_private() {
-
 		if ( is_multisite() ) {
 				// update_, install_, and delete_ are handled above with is_super_admin().
 				$menu_perms = get_site_option( 'menu_items', [] );
@@ -57,18 +52,13 @@ class Plugin extends Model {
 		}
 
 		return false;
-
 	}
 
 	/**
-	 * Initializes the object
-	 *
-	 * @return void
+	 * {@inheritDoc}
 	 */
 	protected function init() {
-
 		if ( empty( $this->fields ) ) {
-
 			$this->fields = [
 				'id'          => function () {
 					return ! empty( $this->data['Path'] ) ? Relay::toGlobalId( 'plugin', $this->data['Path'] ) : null;
@@ -95,7 +85,6 @@ class Plugin extends Model {
 					return ! empty( $this->data['Path'] ) ? $this->data['Path'] : null;
 				},
 			];
-
 		}
 	}
 }

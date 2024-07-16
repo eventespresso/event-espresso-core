@@ -17,26 +17,13 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
  */
 class JavascriptAsset extends BrowserAsset
 {
+    private bool $load_in_footer = false;
 
-    /**
-     * @var boolean $load_in_footer
-     */
-    private $load_in_footer = false;
+    private bool $requires_translation = false;
 
-    /**
-     * @var boolean $requires_translation
-     */
-    private $requires_translation = false;
+    private bool $has_inline_data = false;
 
-    /**
-     * @var boolean $has_inline_data
-     */
-    private $has_inline_data = false;
-
-    /**
-     * @var Closure $inline_data_callback
-     */
-    private $inline_data_callback;
+    private ?Closure $inline_data_callback = null;
 
 
     /**
@@ -52,12 +39,12 @@ class JavascriptAsset extends BrowserAsset
      * @throws DomainException
      */
     public function __construct(
-        $handle,
-        $source,
+        string $handle,
+        string $source,
         array $dependencies,
-        $load_in_footer,
+        bool $load_in_footer,
         DomainInterface $domain,
-        $version = ''
+        string $version = ''
     ) {
         parent::__construct(Asset::TYPE_JS, $handle, $source, $dependencies, $domain, $version);
         $this->setLoadInFooter($load_in_footer);
@@ -67,14 +54,14 @@ class JavascriptAsset extends BrowserAsset
     /**
      * @return bool
      */
-    public function loadInFooter()
+    public function loadInFooter(): bool
     {
         return $this->load_in_footer;
     }
 
 
     /**
-     * @param bool $load_in_footer
+     * @param bool|int|string $load_in_footer
      */
     private function setLoadInFooter($load_in_footer = true)
     {
@@ -85,7 +72,7 @@ class JavascriptAsset extends BrowserAsset
     /**
      * @return bool
      */
-    public function requiresTranslation()
+    public function requiresTranslation(): bool
     {
         return $this->requires_translation;
     }
@@ -94,17 +81,17 @@ class JavascriptAsset extends BrowserAsset
     /**
      * @return bool
      */
-    public function hasInlineData()
+    public function hasInlineData(): bool
     {
         return $this->has_inline_data;
     }
 
 
     /**
-     * @param bool $has_inline_data
+     * @param bool|int|string $has_inline_data
      * @return JavascriptAsset
      */
-    public function setHasInlineData($has_inline_data = true)
+    public function setHasInlineData($has_inline_data = true): JavascriptAsset
     {
         $this->has_inline_data = filter_var($has_inline_data, FILTER_VALIDATE_BOOLEAN);
         return $this;
@@ -114,7 +101,7 @@ class JavascriptAsset extends BrowserAsset
     /**
      * @return Closure
      */
-    public function inlineDataCallback()
+    public function inlineDataCallback(): ?Closure
     {
         return $this->inline_data_callback;
     }
@@ -123,7 +110,7 @@ class JavascriptAsset extends BrowserAsset
     /**
      * @return bool
      */
-    public function hasInlineDataCallback()
+    public function hasInlineDataCallback(): bool
     {
         return $this->inline_data_callback instanceof Closure;
     }
@@ -133,7 +120,7 @@ class JavascriptAsset extends BrowserAsset
      * @param Closure $inline_data_callback
      * @return JavascriptAsset
      */
-    public function setInlineDataCallback(Closure $inline_data_callback)
+    public function setInlineDataCallback(Closure $inline_data_callback): JavascriptAsset
     {
         $this->inline_data_callback = $inline_data_callback;
         $this->setHasInlineData();
@@ -150,23 +137,23 @@ class JavascriptAsset extends BrowserAsset
             return;
         }
         $attributes = $this->getAttributes();
-        if (!empty($attributes)) {
+        if (! empty($attributes)) {
             add_filter('script_loader_tag', [$this, 'addAttributeTagsToScript'], 10, 2);
         }
         wp_enqueue_script($this->handle());
     }
 
 
-    public function addAttributeTagsToScript($tag, $handle)
+    public function addAttributeTagsToScript(string $tag, string $handle): string
     {
         if ($handle === $this->handle()) {
-            $attributes = $this->getAttributes();
+            $attributes        = $this->getAttributes();
             $attributes_string = '';
             foreach ($attributes as $key => $value) {
                 if (is_int($key)) {
-                    $attributes_string .= " {$value}";
+                    $attributes_string .= " $value";
                 } else {
-                    $attributes_string .= " {$key}='{$value}'";
+                    $attributes_string .= " $key='$value'";
                 }
             }
             $tag = str_replace('></script>', $attributes_string . '></script>', $tag);
@@ -177,11 +164,11 @@ class JavascriptAsset extends BrowserAsset
 
 
     /**
-     * @deprecated 5.0.0.p
-     * @param bool $requires_translation
+     * @param bool|int|string $requires_translation
      * @return JavascriptAsset
+     * @deprecated 5.0.0.p
      */
-    public function setRequiresTranslation($requires_translation = true)
+    public function setRequiresTranslation($requires_translation = true): JavascriptAsset
     {
         $this->requires_translation = filter_var($requires_translation, FILTER_VALIDATE_BOOLEAN);
         return $this;

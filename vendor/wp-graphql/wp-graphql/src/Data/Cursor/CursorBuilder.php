@@ -10,7 +10,7 @@ class CursorBuilder {
 	/**
 	 * The field by which the cursor should order the results
 	 *
-	 * @var array
+	 * @var array<string,mixed>[]
 	 */
 	public $fields;
 
@@ -46,14 +46,14 @@ class CursorBuilder {
 	 *
 	 * @return void
 	 */
-	public function add_field( string $key, $value, string $type = null, string $order = null, $object_cursor = null ) {
+	public function add_field( string $key, $value, ?string $type = null, ?string $order = null, $object_cursor = null ) {
 
 		/**
 		 * Filters the field used for ordering when cursors are used for pagination
 		 *
-		 * @param array         $field          The field key, value, type and order
-		 * @param CursorBuilder $cursor_builder The CursorBuilder class
-		 * @param ?object        $object_cursor  The Cursor class
+		 * @param array<string,mixed>                  $field          The field key, value, type and order
+		 * @param \WPGraphQL\Data\Cursor\CursorBuilder $cursor_builder The CursorBuilder class
+		 * @param ?object                              $object_cursor  The Cursor class
 		 */
 		$field = apply_filters(
 			'graphql_cursor_ordering_field',
@@ -85,13 +85,12 @@ class CursorBuilder {
 		}
 
 		$this->fields[] = $escaped_field;
-
 	}
 
 	/**
 	 * Returns true at least one ordering field has been added
 	 *
-	 * @return boolean
+	 * @return bool
 	 */
 	public function has_fields() {
 		return count( $this->fields ) > 0;
@@ -100,12 +99,11 @@ class CursorBuilder {
 	/**
 	 * Generate the final SQL string to be appended to WHERE clause
 	 *
-	 * @param mixed|array|null $fields
+	 * @param mixed|array<string,mixed>[]|null $fields
 	 *
 	 * @return string
 	 */
 	public function to_sql( $fields = null ) {
-
 		if ( null === $fields ) {
 			$fields = $this->fields;
 		}
@@ -138,7 +136,7 @@ class CursorBuilder {
 		}
 
 		if ( count( $fields ) === 1 ) {
-			return " {$key} {$compare} {$value}";
+			return " {$key} {$compare} {$value} ";
 		}
 
 		$nest = $this->to_sql( \array_slice( $fields, 1 ) );
@@ -147,7 +145,6 @@ class CursorBuilder {
 
 		return sprintf( $sql, $key, $compare, $value, $nest );
 	}
-
 
 	/**
 	 * Copied from

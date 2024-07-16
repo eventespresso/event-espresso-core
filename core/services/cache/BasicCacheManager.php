@@ -8,9 +8,9 @@ use Closure;
  * Class BasicCacheManager
  * Controls the creation and deletion of cached content
  *
- * @package       Event Espresso
- * @author        Brent Christensen
- * @since         4.9.31
+ * @package Event Espresso
+ * @author  Brent Christensen
+ * @since   4.9.31
  */
 class BasicCacheManager implements CacheManagerInterface
 {
@@ -19,11 +19,7 @@ class BasicCacheManager implements CacheManagerInterface
      */
     const CACHE_PREFIX = 'ee_cache_';
 
-
-    /**
-     * @var CacheStorageInterface $cache_storage
-     */
-    private $cache_storage;
+    private CacheStorageInterface $cache_storage;
 
 
     /**
@@ -42,7 +38,7 @@ class BasicCacheManager implements CacheManagerInterface
      *
      * @return string
      */
-    public function cachePrefix()
+    public function cachePrefix(): string
     {
         return BasicCacheManager::CACHE_PREFIX;
     }
@@ -66,9 +62,9 @@ class BasicCacheManager implements CacheManagerInterface
      * @param int     $expiration
      * @return Closure|mixed
      */
-    public function get($id_prefix, $cache_id, Closure $callback, $expiration = HOUR_IN_SECONDS)
+    public function get(string $id_prefix, string $cache_id, Closure $callback, int $expiration = HOUR_IN_SECONDS)
     {
-        $content = '';
+        $content    = '';
         $expiration = absint(
             apply_filters(
                 'FHEE__CacheManager__get__cache_expiration',
@@ -77,7 +73,7 @@ class BasicCacheManager implements CacheManagerInterface
                 $cache_id
             )
         );
-        $cache_id = $this->generateCacheIdentifier($id_prefix, $cache_id);
+        $cache_id   = $this->generateCacheIdentifier($id_prefix, $cache_id);
         // is caching enabled for this content ?
         if ($expiration) {
             $content = $this->cache_storage->get($cache_id);
@@ -109,14 +105,14 @@ class BasicCacheManager implements CacheManagerInterface
      * @param string $cache_id  [required] see BasicCacheManager::get()
      * @return string
      */
-    private function generateCacheIdentifier($id_prefix, $cache_id)
+    private function generateCacheIdentifier(string $id_prefix, string $cache_id): string
     {
         // let's make the cached content unique for this "page"
         $cache_id .= filter_input(INPUT_SERVER, 'REQUEST_URI', FILTER_SANITIZE_URL);
         // with these parameters
         $cache_id .= filter_input(INPUT_SERVER, 'QUERY_STRING', FILTER_SANITIZE_URL);
-        // then md5 the above to control it's length, add all of our prefixes, and truncate
-        return substr($this->cachePrefix() . $id_prefix . '-' . md5($cache_id), 0, 182);
+        // then md5 the above to control its length, add all of our prefixes, and truncate
+        return substr($this->cachePrefix() . $id_prefix . '-' . md5($cache_id), 0, 172);
     }
 
 
@@ -128,19 +124,19 @@ class BasicCacheManager implements CacheManagerInterface
     public function clear($cache_id)
     {
         // ensure incoming arg is in an array
-        $cache_id = is_array($cache_id) ? $cache_id : array($cache_id);
+        $cache_id = is_array($cache_id) ? $cache_id : [$cache_id];
         // delete corresponding transients for the supplied id prefix
         $this->cache_storage->deleteMany($cache_id);
     }
 
 
     /**
-     * @param array|string $cache_id [required] Could be an ID prefix affecting many caches
-     *                               or a specific ID targeting a single cache item
-     * @param string       $type
+     * @param string $cache_id [required] Could be an ID prefix affecting many caches
+     *                         or a specific ID targeting a single cache item
+     * @param string $type     [required] either 'REFRESH CACHE' or 'CACHED CONTENT'
      * @return string
      */
-    private function displayCacheNotice($cache_id, $type)
+    private function displayCacheNotice(string $cache_id, string $type): string
     {
         return '
 <div class="ee-cached-content-notice" style="position:fixed; bottom:0; left: 0;">

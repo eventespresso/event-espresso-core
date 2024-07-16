@@ -107,21 +107,29 @@ class espresso_events_Messages_Hooks_Extend extends espresso_events_Messages_Hoo
      */
     public function attach_evt_message_templates(EE_Event $event, array $data): bool
     {
-        $success = true;
+		$success = true;
         if (isset($data['event_message_templates_relation'])) {
             // first get all existing relations on the Event for message types.
             $existing_templates = EEM_Event_Message_Template::instance()->messageTemplateGroupIDsForEvent($event);
-            $current_templates  = $data['event_message_templates_relation'];
+			$current_templates  = $data['event_message_templates_relation'];
             // new templates are those in the $current_templates array that don't exist in $existing_templates
             $templates_to_add = array_diff($current_templates, $existing_templates);
-            foreach ($templates_to_add as $template_to_add) {
-                $added_template = $event->_add_relation_to($template_to_add, 'Message_Template_Group');
+			foreach ($templates_to_add as $template_ID) {
+				$template_to_add = EEM_Message_Template_Group::instance()->get_one_by_ID($template_ID);
+                if (! $template_to_add instanceof EE_Base_Class) {
+                    continue;
+                }
+				$added_template = $event->_add_relation_to($template_to_add, 'Message_Template_Group');
                 // toggle success to false if we don't get back a template group object
                 $success = $added_template instanceof EE_Message_Template_Group ? $success : false;
             }
             // templates to remove are those in the $existing_templates array that don't exist in $current_templates
             $templates_to_remove = array_diff($existing_templates, $current_templates);
-            foreach ($templates_to_remove as $template_to_remove) {
+            foreach ($templates_to_remove as $template_ID) {
+				$template_to_remove = EEM_Message_Template_Group::instance()->get_one_by_ID($template_ID);
+                if (! $template_to_remove instanceof EE_Base_Class) {
+                    continue;
+                }
                 $removed_template = $event->_remove_relation_to($template_to_remove, 'Message_Template_Group');
                 // toggle success to false if we don't get back a template group object
                 $success = $removed_template instanceof EE_Message_Template_Group ? $success : false;

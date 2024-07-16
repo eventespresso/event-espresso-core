@@ -106,6 +106,12 @@ class EE_DMS_4_1_0_answers extends EE_Data_Migration_Script_Stage_Table
                 $this->_new_question_table
             );
 
+        // If we don't have a mapped question_id we don't have an EE4 question to migrate this answer to.
+        // The EE3 question may have been deleted but registration answers remain in the DB.
+        if(empty($new_question_id)) {
+            return;
+        }
+
         $question_row = $this->_get_question_type_and_system($new_question_id);
         if ($question_row['QST_system']) {
             // It's an answer to a system question? EE3 used to store that on both the attendee and the answers column,

@@ -2,8 +2,7 @@
 
 namespace WPGraphQL\Type\InterfaceType;
 
-use WP_Post_Type;
-use WP_Taxonomy;
+use WPGraphQL\Model\Comment;
 use WPGraphQL\Model\Post;
 use WPGraphQL\Model\PostType;
 use WPGraphQL\Model\Term;
@@ -15,7 +14,7 @@ class UniformResourceIdentifiable {
 	/**
 	 * Registers the UniformResourceIdentifiable Interface to the Schema.
 	 *
-	 * @param TypeRegistry $type_registry
+	 * @param \WPGraphQL\Registry\TypeRegistry $type_registry
 	 * @return void
 	 */
 	public static function register_type( TypeRegistry $type_registry ) {
@@ -31,33 +30,53 @@ class UniformResourceIdentifiable {
 					],
 					'id'            => [
 						'type'        => [ 'non_null' => 'ID' ],
-						'description' => __( 'The unique resource identifier path', 'wp-graphql' ),
+						'description' => __( 'The globally unique ID for the object', 'wp-graphql' ),
 					],
 					'isContentNode' => [
 						'type'        => [ 'non_null' => 'Boolean' ],
 						'description' => __( 'Whether the node is a Content Node', 'wp-graphql' ),
-						'resolve'     => function ( $node ) {
+						'resolve'     => static function ( $node ) {
 							return $node instanceof Post;
 						},
 					],
 					'isTermNode'    => [
 						'type'        => [ 'non_null' => 'Boolean' ],
 						'description' => __( 'Whether the node is a Term', 'wp-graphql' ),
-						'resolve'     => function ( $node ) {
+						'resolve'     => static function ( $node ) {
 							return $node instanceof Term;
 						},
 					],
+					'isFrontPage'   => [
+						'type'        => [ 'non_null' => 'Bool' ],
+						'description' => __( 'Whether the node represents the front page.', 'wp-graphql' ),
+						'resolve'     => static function ( $node, $args, $context, $info ) {
+							return isset( $node->isFrontPage ) && (bool) $node->isFrontPage;
+						},
+					],
+					'isPostsPage'   => [
+						'type'        => [ 'non_null' => 'Bool' ],
+						'description' => __( 'Whether  the node represents the blog page.', 'wp-graphql' ),
+						'resolve'     => static function ( $node, $args, $context, $info ) {
+							return isset( $node->isPostsPage ) && (bool) $node->isPostsPage;
+						},
+					],
+					'isComment'     => [
+						'type'        => [ 'non_null' => 'Boolean' ],
+						'description' => __( 'Whether the node is a Comment', 'wp-graphql' ),
+						'resolve'     => static function ( $node ) {
+							return $node instanceof Comment;
+						},
+					],
 				],
-				'resolveType' => function ( $node ) use ( $type_registry ) {
-
+				'resolveType' => static function ( $node ) use ( $type_registry ) {
 					switch ( true ) {
 						case $node instanceof Post:
-							/** @var WP_Post_Type $post_type_object */
+							/** @var \WP_Post_Type $post_type_object */
 							$post_type_object = get_post_type_object( $node->post_type );
 							$type             = $type_registry->get_type( $post_type_object->graphql_single_name );
 							break;
 						case $node instanceof Term:
-							/** @var WP_Taxonomy $tax_object */
+							/** @var \WP_Taxonomy $tax_object */
 							$tax_object = get_taxonomy( $node->taxonomyName );
 							$type       = $type_registry->get_type( $tax_object->graphql_single_name );
 							break;
@@ -66,6 +85,9 @@ class UniformResourceIdentifiable {
 							break;
 						case $node instanceof PostType:
 							$type = $type_registry->get_type( 'ContentType' );
+							break;
+						case $node instanceof Comment:
+							$type = $type_registry->get_type( 'Comment' );
 							break;
 						default:
 							$type = null;

@@ -1573,6 +1573,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 [
                     'html_label_text' => esc_html__('Change Registration Status to', 'event_espresso'),
                     'default'         => $this->_registration->status_ID(),
+                    'html_class'      => 'ee-input-width--small',
                 ]
             );
             $reg_status_change_form_array['subsections']['send_notifications'] = new EE_Yes_No_Input(

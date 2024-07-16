@@ -5,6 +5,8 @@ namespace EventEspresso\PaymentMethods;
 use EE_Config;
 use EE_Error;
 use EEH_Autoloader;
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\modules\LegacyModulesManager;
 
 define('EEP_PAYPAL_COMMERCE_DIR', __DIR__ . DS);
 define('EEP_PAYPAL_COMMERCE_PATH', __DIR__ . DS . 'PayPalCheckout' . DS);
@@ -46,8 +48,11 @@ class PayPalCommerce
         );
 
         // Load modules.
-        EE_Config::register_module(__DIR__ . DS . 'modules' . DS . 'EED_PayPalCommerce.module.php');
-        EE_Config::register_module(__DIR__ . DS . 'modules' . DS . 'EED_PayPalOnboard.module.php');
+        /** @var LegacyModulesManager $legacy_modules_manager */
+        $legacy_modules_manager = LoaderFactory::getShared(LegacyModulesManager::class);
+        $legacy_modules_manager->registerModule(__DIR__ . '/modules/EED_PayPalCommerce.module.php');
+        $legacy_modules_manager->registerModule(__DIR__ . '/modules/EED_PayPalOnboard.module.php');
+
         // Setup auto loaders.
         EEH_Autoloader::instance()->register_autoloader([
             'SettingsForm'   => EEP_PAYPAL_COMMERCE_PATH . 'forms' . DS . 'SettingsForm.php',

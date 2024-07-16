@@ -461,12 +461,12 @@ final class EE_Front_Controller
 
 
     /**
-     * @param string $template_include_path
+     * @param bool|string $template_include_path
      * @return string
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function template_include($template_include_path = null)
+    public function template_include($template_include_path = '')
     {
         if ($this->current_page->isEspressoPage()) {
             // despite all helpers having autoloaders set, we need to manually load the template loader
@@ -474,10 +474,8 @@ final class EE_Front_Controller
             $this->Registry->load_helper('EEH_Template');
             $this->_template_path = ! empty($this->_template_path)
                 ? basename($this->_template_path)
-                : basename(
-                    $template_include_path
-                );
-            $template_path = EEH_Template::locate_template($this->_template_path, array(), false);
+                : basename((string) $template_include_path);
+            $template_path = EEH_Template::locate_template($this->_template_path, [], false);
             $this->_template_path = ! empty($template_path) ? $template_path : $template_include_path;
             $this->_template = basename($this->_template_path);
             return $this->_template_path;

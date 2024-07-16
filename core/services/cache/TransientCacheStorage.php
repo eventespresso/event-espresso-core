@@ -20,44 +20,49 @@ class TransientCacheStorage implements CacheStorageInterface
      *
      * @type string
      */
-    const TRANSIENT_SCHEDULE_OPTIONS_KEY = 'ee_transient_schedule';
+    private const TRANSIENT_SCHEDULE_OPTIONS_KEY = 'ee_transient_schedule';
 
-    /**
-     * @var int $current_time
-     */
-    private $current_time;
+    public const  FREQUENCY_OFF                  = 'off';
+
+    public const  FREQUENCY_5_MINUTES            = '5-minutes';
+
+    public const  FREQUENCY_15_MINUTES           = '15-minutes';
+
+    public const  FREQUENCY_HOUR                 = 'hour';
+
+    public const  FREQUENCY_12_HOURS             = '12-hours';
+
+    public const  FREQUENCY_DAY                  = 'day';
+
+
+    private int $current_time;
+
+    private array $transients;
 
     /**
      * how often to perform transient cleanup
      *
      * @var string $transient_cleanup_frequency
      */
-    private $transient_cleanup_frequency;
-
-    /**
-     * options for how often to perform transient cleanup
-     *
-     * @var array $transient_cleanup_frequency_options
-     */
-    private $transient_cleanup_frequency_options = array();
-
-    /**
-     * @var array $transients
-     */
-    private $transients;
+    private string $transient_cleanup_frequency;
 
 
     /**
      * TransientCacheStorage constructor.
+     *
+     * @param string $transient_cleanup_frequency one of the FREQUENCY_* constants
      */
-    public function __construct()
+    public function __construct(string $transient_cleanup_frequency = TransientCacheStorage::FREQUENCY_HOUR)
     {
-        $this->transient_cleanup_frequency = $this->setTransientCleanupFrequency();
+        $this->setTransientCleanupFrequency($transient_cleanup_frequency);
         // round current time down to closest 5 minutes to simplify scheduling
-        $this->current_time = $this->roundTimestamp(time(), '5-minutes', false);
-        $this->transients = (array) get_option(TransientCacheStorage::TRANSIENT_SCHEDULE_OPTIONS_KEY, array());
-        if (! (defined('DOING_AJAX') && DOING_AJAX) && $this->transient_cleanup_frequency !== 'off') {
-            add_action('shutdown', array($this, 'checkTransientCleanupSchedule'), 999);
+        $this->current_time = $this->roundTimestamp(time(), TransientCacheStorage::FREQUENCY_5_MINUTES, false);
+        $this->transients   = (array) get_option(TransientCacheStorage::TRANSIENT_SCHEDULE_OPTIONS_KEY, []);
+        if (
+            ! (defined('DOING_AJAX') && DOING_AJAX)
+            && $this->transient_cleanup_frequency !== TransientCacheStorage::FREQUENCY_OFF
+        ) {
+            add_action('shutdown', [$this, 'checkTransientCleanupSchedule'], 999);
         }
     }
 
@@ -65,32 +70,34 @@ class TransientCacheStorage implements CacheStorageInterface
     /**
      * Sets how often transient cleanup occurs
      *
-     * @return string
+     * @param string $transient_cleanup_frequency one of the FREQUENCY_* constants
+     * @return void
      */
-    private function setTransientCleanupFrequency()
+    private function setTransientCleanupFrequency(string $transient_cleanup_frequency)
     {
         // sets how often transients are cleaned up
-        $this->transient_cleanup_frequency_options = apply_filters(
+        $transient_cleanup_frequency_options = apply_filters(
             'FHEE__TransientCacheStorage__transient_cleanup_schedule_options',
-            array(
-                'off',
-                '15-minutes',
-                'hour',
-                '12-hours',
-                'day',
-            )
+            [
+                TransientCacheStorage::FREQUENCY_OFF,
+                TransientCacheStorage::FREQUENCY_5_MINUTES,
+                TransientCacheStorage::FREQUENCY_15_MINUTES,
+                TransientCacheStorage::FREQUENCY_HOUR,
+                TransientCacheStorage::FREQUENCY_12_HOURS,
+                TransientCacheStorage::FREQUENCY_DAY,
+            ]
         );
-        $transient_cleanup_frequency = apply_filters(
+        $transient_cleanup_frequency         = apply_filters(
             'FHEE__TransientCacheStorage__transient_cleanup_schedule',
-            'hour'
+            $transient_cleanup_frequency
         );
-        return in_array(
-            $transient_cleanup_frequency,
-            $this->transient_cleanup_frequency_options,
+        $this->transient_cleanup_frequency =  in_array(
+            (string) $transient_cleanup_frequency,
+            (array) $transient_cleanup_frequency_options,
             true
         )
             ? $transient_cleanup_frequency
-            : 'hour';
+            : TransientCacheStorage::FREQUENCY_HOUR;
     }
 
 
@@ -102,14 +109,17 @@ class TransientCacheStorage implements CacheStorageInterface
      * We also round off the current time timestamp to the closest 5 minutes
      * just to make the timestamps a little easier to round which helps with debugging.
      *
-     * @param int    $timestamp [required]
-     * @param string $cleanup_frequency
-     * @param bool   $round_up
+     * @param int    $timestamp         [required] the timestamp to round
+     * @param string $cleanup_frequency one of the FREQUENCY_* constants
+     * @param bool   $round_up          if true, then the timestamp is rounded up to the next interval
      * @return int
      */
-    private function roundTimestamp($timestamp, $cleanup_frequency = 'hour', $round_up = true)
-    {
-        $cleanup_frequency = $cleanup_frequency ? $cleanup_frequency : $this->transient_cleanup_frequency;
+    private function roundTimestamp(
+        int $timestamp,
+        string $cleanup_frequency = TransientCacheStorage::FREQUENCY_HOUR,
+        bool $round_up = true
+    ): int {
+        $cleanup_frequency = $cleanup_frequency ?: $this->transient_cleanup_frequency;
         // in order to round the time to the closest xx minutes (or hours),
         // we take the minutes (or hours) portion of the timestamp and divide it by xx,
         // round down to a whole number, then multiply by xx to bring us almost back up to where we were
@@ -118,35 +128,35 @@ class TransientCacheStorage implements CacheStorageInterface
         // which would be bad because we don't always want to round up,
         // but when we do we can easily achieve that by simply adding the desired offset,
         $minutes = '00';
-        $hours = 'H';
+        $hours   = 'H';
         switch ($cleanup_frequency) {
-            case '5-minutes':
+            case TransientCacheStorage::FREQUENCY_5_MINUTES:
                 $minutes = floor((int) date('i', $timestamp) / 5) * 5;
                 $minutes = str_pad($minutes, 2, '0', STR_PAD_LEFT);
-                $offset = MINUTE_IN_SECONDS * 5;
+                $offset  = MINUTE_IN_SECONDS * 5;
                 break;
-            case '15-minutes':
+            case TransientCacheStorage::FREQUENCY_15_MINUTES:
                 $minutes = floor((int) date('i', $timestamp) / 15) * 15;
                 $minutes = str_pad($minutes, 2, '0', STR_PAD_LEFT);
-                $offset = MINUTE_IN_SECONDS * 15;
+                $offset  = MINUTE_IN_SECONDS * 15;
                 break;
-            case '12-hours':
-                $hours = floor((int) date('H', $timestamp) / 12) * 12;
-                $hours = str_pad($hours, 2, '0', STR_PAD_LEFT);
+            case TransientCacheStorage::FREQUENCY_12_HOURS:
+                $hours  = floor((int) date('H', $timestamp) / 12) * 12;
+                $hours  = str_pad($hours, 2, '0', STR_PAD_LEFT);
                 $offset = HOUR_IN_SECONDS * 12;
                 break;
-            case 'day':
-                $hours = '03'; // run cleanup at 3:00 am (or first site hit after that)
+            case TransientCacheStorage::FREQUENCY_DAY:
+                $hours  = '03'; // run cleanup at 3:00 am (or first site hit after that)
                 $offset = DAY_IN_SECONDS;
                 break;
-            case 'hour':
+            case TransientCacheStorage::FREQUENCY_HOUR:
             default:
                 $offset = HOUR_IN_SECONDS;
                 break;
         }
-        $rounded_timestamp = (int) strtotime(date("Y-m-d {$hours}:{$minutes}:00", $timestamp));
+        $rounded_timestamp = (int) strtotime(date("Y-m-d $hours:$minutes:00", $timestamp));
         $rounded_timestamp += $round_up ? $offset : 0;
-        return apply_filters(
+        return (int) apply_filters(
             'FHEE__TransientCacheStorage__roundTimestamp__timestamp',
             $rounded_timestamp,
             $timestamp,
@@ -160,17 +170,17 @@ class TransientCacheStorage implements CacheStorageInterface
      * Saves supplied data to a transient
      * if an expiration is set, then it automatically schedules the transient for cleanup
      *
-     * @param string $transient_key [required]
-     * @param string $data          [required]
-     * @param int    $expiration    number of seconds until the cache expires
+     * @param string $key        [required] the transient key to track
+     * @param mixed  $data       [required] the data to store in the transient
+     * @param int    $expiration number of seconds until the cache expires
      * @return bool
      */
-    public function add($transient_key, $data, $expiration = 0)
+    public function add(string $key, $data, int $expiration = 0): bool
     {
         $expiration = (int) abs($expiration);
-        $saved = set_transient($transient_key, $data, $expiration);
+        $saved      = set_transient($key, $data, $expiration);
         if ($saved && $expiration) {
-            $this->scheduleTransientCleanup($transient_key, $expiration);
+            $this->scheduleTransientCleanup($key, $expiration);
         }
         return $saved;
     }
@@ -183,65 +193,65 @@ class TransientCacheStorage implements CacheStorageInterface
      * For non-standard cache items like PHP Session data where early refreshing is not wanted,
      * the $standard_cache parameter should be set to false when retrieving data
      *
-     * @param string $transient_key [required]
-     * @param bool   $standard_cache
-     * @return mixed|null
+     * @param string $key            [required] the transient key to track
+     * @param bool   $standard_cache [optional] if true, then will trigger early cache refresh
+     * @return string|null
      */
-    public function get($transient_key, $standard_cache = true)
+    public function get(string $key, bool $standard_cache = true): ?string
     {
-        if (isset($this->transients[ $transient_key ])) {
-            // to avoid cache stampedes (AKA:dogpiles) for standard cache items,
+        if (isset($this->transients[ $key ])) {
+            // to avoid cache stampedes (AKA: dog piles) for standard cache items,
             // check if known cache expires within the next minute,
-            // and if so, remove it from our tracking and and return nothing.
+            // and if so, remove it from our tracking and return nothing.
             // this should trigger the cache content to be regenerated during this request,
             // while allowing any following requests to still access the existing cache
             // until it gets replaced with the refreshed content
             if (
                 $standard_cache
-                && $this->transients[ $transient_key ] - time() <= MINUTE_IN_SECONDS
+                && $this->transients[ $key ] - time() <= MINUTE_IN_SECONDS
             ) {
-                unset($this->transients[ $transient_key ]);
+                unset($this->transients[ $key ]);
                 $this->updateTransients();
                 return null;
             }
 
-            // for non standard cache items, remove the key from our tracking,
+            // for non-standard cache items, remove the key from our tracking,
             // but proceed to retrieve the transient so that it also gets removed from the db
-            if ($this->transients[ $transient_key ] <= time()) {
-                unset($this->transients[ $transient_key ]);
+            if ($this->transients[ $key ] <= time()) {
+                unset($this->transients[ $key ]);
                 $this->updateTransients();
             }
         }
 
-        $content = get_transient($transient_key);
-        return $content !== false ? $content : null;
+        $content = (string) get_transient($key);
+        return $content ?: null;
     }
 
 
     /**
      * delete a single transient and remove tracking
      *
-     * @param string $transient_key [required] full or partial transient key to be deleted
+     * @param string $key [required] full or partial transient key to be deleted
      */
-    public function delete($transient_key)
+    public function delete(string $key)
     {
-        $this->deleteMany(array($transient_key));
+        $this->deleteMany([$key]);
     }
 
 
     /**
      * delete multiple transients and remove tracking
      *
-     * @param array $transient_keys [required] array of full or partial transient keys to be deleted
+     * @param array $keys           [required] array of full or partial transient keys to be deleted
      * @param bool  $force_delete   [optional] if true, then will not check incoming keys against those being tracked
      *                              and proceed directly to deleting those entries from the cache storage
      */
-    public function deleteMany(array $transient_keys, $force_delete = false)
+    public function deleteMany(array $keys, bool $force_delete = false)
     {
-        $full_transient_keys = $force_delete ? $transient_keys : array();
+        $full_transient_keys = $force_delete ? $keys : [];
         if (empty($full_transient_keys)) {
             foreach ($this->transients as $transient_key => $expiration) {
-                foreach ($transient_keys as $transient_key_to_delete) {
+                foreach ($keys as $transient_key_to_delete) {
                     if (strpos($transient_key, $transient_key_to_delete) !== false) {
                         $full_transient_keys[] = $transient_key;
                     }
@@ -271,10 +281,10 @@ class TransientCacheStorage implements CacheStorageInterface
     /**
      * schedules a transient for cleanup by adding it to the transient tracking
      *
-     * @param string $transient_key [required]
-     * @param int    $expiration    [required]
+     * @param string $transient_key [required] the transient key to track
+     * @param int    $expiration    [required] the timestamp when the transient should be cleaned up
      */
-    private function scheduleTransientCleanup($transient_key, $expiration)
+    private function scheduleTransientCleanup(string $transient_key, int $expiration)
     {
         // make sure a valid future timestamp is set
         $expiration += $expiration < time() ? time() : 0;
@@ -316,7 +326,7 @@ class TransientCacheStorage implements CacheStorageInterface
      *
      * @return bool
      */
-    private function cleanupExpiredTransients()
+    private function cleanupExpiredTransients(): bool
     {
         $update = false;
         // filter the query limit. Set to 0 to turn off garbage collection
@@ -328,7 +338,7 @@ class TransientCacheStorage implements CacheStorageInterface
         );
         // non-zero LIMIT means take out the trash
         if ($limit) {
-            $transient_keys = array();
+            $transient_keys = [];
             foreach ($this->transients as $transient_key => $expiration) {
                 if ($expiration > $this->current_time) {
                     continue;
@@ -351,11 +361,11 @@ class TransientCacheStorage implements CacheStorageInterface
     /**
      * calls delete_transient() on each transient key provided, up to the specified limit
      *
-     * @param array $transient_keys [required]
-     * @param int   $limit
+     * @param array $transient_keys [required] array of transient keys to delete
+     * @param int   $limit          [optional] number of transients to delete per call
      * @return bool
      */
-    private function deleteTransientKeys(array $transient_keys, $limit = 50)
+    private function deleteTransientKeys(array $transient_keys, int $limit = 50): bool
     {
         if (empty($transient_keys)) {
             return false;

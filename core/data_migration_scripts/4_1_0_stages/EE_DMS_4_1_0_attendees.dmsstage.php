@@ -1050,6 +1050,11 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table
             $primary_attendee =
                 $this->_find_mer_primary_attendee_using_mer_tables($old_attendee_row['registration_id']);
 
+            // No primary attendee to work with? Return the count.
+            if (is_null($primary_attendee)) {
+                return (int) $count;
+            }
+
             $count_using_mer_table =
                 $wpdb->get_var(
                     $wpdb->prepare(
@@ -1060,7 +1065,7 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table
                 );
             $count                 = max($count_using_mer_table, $count);
         }
-        return $count;
+        return (int) $count;
     }
 
 
@@ -1140,11 +1145,11 @@ class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table
     /**
      * If MER is active, if you want ot find the other registrations on that attendee row
      *
-     * @param int   $old_registration_id
+     * @param string   $old_registration_id
      * @return array|null
      * @global wpdb $wpdb
      */
-    private function _find_mer_primary_attendee_using_mer_tables(int $old_registration_id): ?array
+    private function _find_mer_primary_attendee_using_mer_tables(string $old_registration_id): ?array
     {
         if (! $this->_mer_tables_exist()) {
             return null;

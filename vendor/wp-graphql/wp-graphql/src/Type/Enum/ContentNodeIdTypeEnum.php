@@ -10,7 +10,6 @@ class ContentNodeIdTypeEnum {
 	 * @return void
 	 */
 	public static function register_type() {
-
 		register_graphql_enum_type(
 			'ContentNodeIdTypeEnum',
 			[
@@ -58,7 +57,7 @@ class ContentNodeIdTypeEnum {
 	/**
 	 * Get the values for the Enum definitions
 	 *
-	 * @return array
+	 * @return array<string,array<string,string>>
 	 */
 	public static function get_values() {
 		return [

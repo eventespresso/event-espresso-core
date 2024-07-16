@@ -3,7 +3,6 @@
 namespace WPGraphQL\Model;
 
 use Exception;
-use WP_User;
 
 /**
  * Class Model - Abstract class for modeling data for all core types
@@ -15,14 +14,14 @@ abstract class Model {
 	/**
 	 * Stores the name of the type the child class extending this one represents
 	 *
-	 * @var string $model_name
+	 * @var string
 	 */
 	protected $model_name;
 
 	/**
 	 * Stores the raw data passed to the child class when it's instantiated before it's transformed
 	 *
-	 * @var array|object|mixed $data
+	 * @var mixed[]|object|mixed
 	 */
 	protected $data;
 
@@ -30,28 +29,28 @@ abstract class Model {
 	 * Stores the capability name for what to check on the user if the data should be considered
 	 * "Restricted"
 	 *
-	 * @var string $restricted_cap
+	 * @var string
 	 */
 	protected $restricted_cap;
 
 	/**
 	 * Stores the array of allowed fields to show if the data is restricted
 	 *
-	 * @var array $allowed_restricted_fields
+	 * @var string[]
 	 */
 	protected $allowed_restricted_fields;
 
 	/**
 	 * Stores the DB ID of the user that owns this piece of data, or null if there is no owner
 	 *
-	 * @var int|null $owner
+	 * @var int|null
 	 */
 	protected $owner;
 
 	/**
 	 * Stores the WP_User object for the current user in the session
 	 *
-	 * @var WP_User $current_user
+	 * @var \WP_User $current_user
 	 */
 	protected $current_user;
 
@@ -65,7 +64,7 @@ abstract class Model {
 	/**
 	 * The fields for the modeled object. This will be populated in the child class
 	 *
-	 * @var array $fields
+	 * @var array<string,mixed>
 	 */
 	public $fields;
 
@@ -74,18 +73,17 @@ abstract class Model {
 	 *
 	 * @param string   $restricted_cap            The capability to check against to determine if
 	 *                                            the data should be restricted or not
-	 * @param array    $allowed_restricted_fields The allowed fields if the data is in fact
-	 *                                            restricted
-	 * @param null|int $owner                     Database ID of the user that owns this piece of
+	 * @param string[] $allowed_restricted_fields The allowed fields if the data is in fact restricted
+	 * @param int|null $owner                     Database ID of the user that owns this piece of
 	 *                                            data to compare with the current user ID
 	 *
 	 * @return void
-	 * @throws Exception Throws Exception.
+	 * @throws \Exception Throws Exception.
 	 */
 	protected function __construct( $restricted_cap = '', $allowed_restricted_fields = [], $owner = null ) {
-
 		if ( empty( $this->data ) ) {
-			throw new Exception( sprintf( __( 'An empty data set was used to initialize the modeling of this %s object', 'wp-graphql' ), $this->get_model_name() ) );
+			// translators: %s is the name of the model.
+			throw new Exception( esc_html( sprintf( __( 'An empty data set was used to initialize the modeling of this %s object', 'wp-graphql' ), $this->get_model_name() ) ) );
 		}
 
 		$this->restricted_cap            = $restricted_cap;
@@ -99,7 +97,6 @@ abstract class Model {
 
 		$this->init();
 		$this->prepare_fields();
-
 	}
 
 	/**
@@ -160,7 +157,7 @@ abstract class Model {
 	}
 
 	/**
-	 * Generic model setup before the resolver function executes
+	 * Setup the global data for the model to have proper context when resolving.
 	 *
 	 * @return void
 	 */
@@ -182,7 +179,6 @@ abstract class Model {
 	 * @return string
 	 */
 	protected function get_model_name() {
-
 		$name = static::class;
 
 		if ( empty( $this->model_name ) ) {
@@ -196,7 +192,6 @@ abstract class Model {
 		}
 
 		return ! empty( $this->model_name ) ? $this->model_name : $name;
-
 	}
 
 	/**
@@ -205,7 +200,6 @@ abstract class Model {
 	 * @return string|null
 	 */
 	public function get_visibility() {
-
 		if ( null === $this->visibility ) {
 
 			/**
@@ -215,8 +209,8 @@ abstract class Model {
 			 * @param string      $model_name     Name of the model the filter is currently being executed in
 			 * @param mixed       $data           The un-modeled incoming data
 			 * @param string|null $visibility     The visibility that has currently been set for the data at this point
-			 * @param null|int    $owner          The user ID for the owner of this piece of data
-			 * @param WP_User     $current_user   The current user for the session
+			 * @param int|null    $owner          The user ID for the owner of this piece of data
+			 * @param \WP_User $current_user The current user for the session
 			 *
 			 * @return string
 			 */
@@ -230,8 +224,8 @@ abstract class Model {
 			 * @param string      $model_name   Name of the model the filter is currently being executed in
 			 * @param mixed       $data         The un-modeled incoming data
 			 * @param string|null $visibility   The visibility that has currently been set for the data at this point
-			 * @param null|int    $owner        The user ID for the owner of this piece of data
-			 * @param WP_User     $current_user The current user for the session
+			 * @param int|null    $owner        The user ID for the owner of this piece of data
+			 * @param \WP_User $current_user The current user for the session
 			 *
 			 * @return bool|null
 			 */
@@ -248,12 +242,12 @@ abstract class Model {
 			/**
 			 * Filter to determine if the data should be considered private or not
 			 *
-			 * @param boolean     $is_private   Whether the model is private
+			 * @param bool     $is_private   Whether the model is private
 			 * @param string      $model_name   Name of the model the filter is currently being executed in
 			 * @param mixed       $data         The un-modeled incoming data
 			 * @param string|null $visibility   The visibility that has currently been set for the data at this point
-			 * @param null|int    $owner        The user ID for the owner of this piece of data
-			 * @param WP_User     $current_user The current user for the session
+			 * @param int|null    $owner        The user ID for the owner of this piece of data
+			 * @param \WP_User $current_user The current user for the session
 			 *
 			 * @return bool
 			 */
@@ -276,13 +270,12 @@ abstract class Model {
 		 * @param string|null $visibility   The visibility that has currently been set for the data at this point
 		 * @param string      $model_name   Name of the model the filter is currently being executed in
 		 * @param mixed       $data         The un-modeled incoming data
-		 * @param null|int    $owner        The user ID for the owner of this piece of data
-		 * @param WP_User     $current_user The current user for the session
+		 * @param int|null    $owner        The user ID for the owner of this piece of data
+		 * @param \WP_User $current_user The current user for the session
 		 *
 		 * @return string
 		 */
 		return apply_filters( 'graphql_object_visibility', $this->visibility, $this->get_model_name(), $this->data, $this->owner, $this->current_user );
-
 	}
 
 	/**
@@ -320,14 +313,12 @@ abstract class Model {
 			/**
 			 * Filter for the allowed restricted fields
 			 *
-			 * @param array       $allowed_restricted_fields The fields to allow when the data is designated as restricted to the current user
+			 * @param string[]    $allowed_restricted_fields The fields to allow when the data is designated as restricted to the current user
 			 * @param string      $model_name                Name of the model the filter is currently being executed in
 			 * @param mixed       $data                      The un-modeled incoming data
 			 * @param string|null $visibility                The visibility that has currently been set for the data at this point
-			 * @param null|int    $owner                     The user ID for the owner of this piece of data
-			 * @param WP_User     $current_user              The current user for the session
-			 *
-			 * @return array
+			 * @param int|null    $owner                     The user ID for the owner of this piece of data
+			 * @param \WP_User $current_user The current user for the session
 			 */
 				apply_filters( 'graphql_allowed_fields_on_restricted_type', $this->allowed_restricted_fields, $this->get_model_name(), $this->data, $this->visibility, $this->owner, $this->current_user )
 			)
@@ -340,16 +331,13 @@ abstract class Model {
 	 * @return void
 	 */
 	protected function wrap_fields() {
-
 		if ( ! is_array( $this->fields ) || empty( $this->fields ) ) {
 			return;
 		}
 
 		$clean_array = [];
-		$self        = $this;
 		foreach ( $this->fields as $key => $data ) {
-
-			$clean_array[ $key ] = function () use ( $key, $data, $self ) {
+			$clean_array[ $key ] = function () use ( $key, $data ) {
 				if ( is_array( $data ) ) {
 					$callback = ( ! empty( $data['callback'] ) ) ? $data['callback'] : null;
 
@@ -361,8 +349,8 @@ abstract class Model {
 					 * @param string   $model_name   Name of the model the filter is currently being executed in
 					 * @param mixed    $data         The un-modeled incoming data
 					 * @param string   $visibility   The visibility setting for this piece of data
-					 * @param null|int $owner        The user ID for the owner of this piece of data
-					 * @param WP_User  $current_user The current user for the session
+					 * @param int|null $owner        The user ID for the owner of this piece of data
+					 * @param \WP_User $current_user The current user for the session
 					 *
 					 * @return string
 					 */
@@ -386,10 +374,10 @@ abstract class Model {
 				 * @param string   $model_name   Name of the model the filter is currently being executed in
 				 * @param mixed    $data         The un-modeled incoming data
 				 * @param string   $visibility   The visibility setting for this piece of data
-				 * @param null|int $owner        The user ID for the owner of this piece of data
-				 * @param WP_User  $current_user The current user for the session
+				 * @param int|null $owner        The user ID for the owner of this piece of data
+				 * @param \WP_User $current_user The current user for the session
 				 *
-				 * @return null|callable|int|string|array|mixed
+				 * @return callable|int|string|mixed[]|mixed|null
 				 */
 				$pre = apply_filters( 'graphql_pre_return_field_from_model', null, $key, $this->get_model_name(), $this->data, $this->visibility, $this->owner, $this->current_user );
 
@@ -397,9 +385,9 @@ abstract class Model {
 					$result = $pre;
 				} else {
 					if ( is_callable( $callback ) ) {
-						$self->setup();
+						$this->setup();
 						$field = call_user_func( $callback );
-						$self->tear_down();
+						$this->tear_down();
 					} else {
 						$field = $callback;
 					}
@@ -412,8 +400,8 @@ abstract class Model {
 					 * @param string   $model_name   Name of the model the filter is currently being executed in
 					 * @param mixed    $data         The un-modeled incoming data
 					 * @param string   $visibility   The visibility setting for this piece of data
-					 * @param null|int $owner        The user ID for the owner of this piece of data
-					 * @param WP_User  $current_user The current user for the session
+					 * @param int|null $owner        The user ID for the owner of this piece of data
+					 * @param \WP_User $current_user The current user for the session
 					 *
 					 * @return mixed
 					 */
@@ -428,8 +416,8 @@ abstract class Model {
 				 * @param string   $model_name   Name of the model the filter is currently being executed in
 				 * @param mixed    $data         The un-modeled incoming data
 				 * @param string   $visibility   The visibility setting for this piece of data
-				 * @param null|int $owner        The user ID for the owner of this piece of data
-				 * @param WP_User  $current_user The current user for the session
+				 * @param int|null $owner        The user ID for the owner of this piece of data
+				 * @param \WP_User $current_user The current user for the session
 				 */
 				do_action( 'graphql_after_return_field_from_model', $result, $key, $this->get_model_name(), $this->data, $this->visibility, $this->owner, $this->current_user );
 
@@ -438,7 +426,6 @@ abstract class Model {
 		}
 
 		$this->fields = $clean_array;
-
 	}
 
 	/**
@@ -449,7 +436,7 @@ abstract class Model {
 	private function add_model_visibility() {
 
 		/**
-		 * @TODO: potentially abstract this out into a more central spot
+		 * @todo: potentially abstract this out into a more central spot
 		 */
 		$this->fields['isPublic']     = function () {
 			return 'public' === $this->get_visibility();
@@ -460,7 +447,6 @@ abstract class Model {
 		$this->fields['isPrivate']    = function () {
 			return 'private' === $this->get_visibility();
 		};
-
 	}
 
 	/**
@@ -469,7 +455,6 @@ abstract class Model {
 	 * @return void
 	 */
 	protected function prepare_fields() {
-
 		if ( 'restricted' === $this->get_visibility() ) {
 			$this->restrict_fields();
 		}
@@ -477,13 +462,11 @@ abstract class Model {
 		/**
 		 * Add support for the deprecated "graphql_return_modeled_data" filter.
 		 *
-		 * @param array    $fields       The array of fields for the model
-		 * @param string   $model_name   Name of the model the filter is currently being executed in
-		 * @param string   $visibility   The visibility setting for this piece of data
-		 * @param null|int $owner        The user ID for the owner of this piece of data
-		 * @param WP_User  $current_user The current user for the session
-		 *
-		 * @return array
+		 * @param array<string,mixed>    $fields       The array of fields for the model
+		 * @param string                 $model_name   Name of the model the filter is currently being executed in
+		 * @param string                 $visibility   The visibility setting for this piece of data
+		 * @param ?int                   $owner        The user ID for the owner of this piece of data
+		 * @param \WP_User               $current_user The current user for the session
 		 *
 		 * @deprecated 1.7.0 use "graphql_model_prepare_fields" filter instead, which passes additional context to the filter
 		 */
@@ -492,14 +475,12 @@ abstract class Model {
 		/**
 		 * Filter the array of fields for the Model before the object is hydrated with it
 		 *
-		 * @param array    $fields       The array of fields for the model
-		 * @param string   $model_name   Name of the model the filter is currently being executed in
-		 * @param mixed    $data         The un-modeled incoming data
-		 * @param string   $visibility   The visibility setting for this piece of data
-		 * @param null|int $owner        The user ID for the owner of this piece of data
-		 * @param WP_User  $current_user The current user for the session
-		 *
-		 * @return array
+		 * @param array<string,mixed>    $fields       The array of fields for the model
+		 * @param string                 $model_name   Name of the model the filter is currently being executed in
+		 * @param mixed                  $data         The un-modeled incoming data
+		 * @param string                 $visibility   The visibility setting for this piece of data
+		 * @param ?int                   $owner        The user ID for the owner of this piece of data
+		 * @param \WP_User               $current_user The current user for the session
 		 */
 		$this->fields = apply_filters( 'graphql_model_prepare_fields', $this->fields, $this->get_model_name(), $this->data, $this->visibility, $this->owner, $this->current_user );
 		$this->wrap_fields();
@@ -510,45 +491,42 @@ abstract class Model {
 	 * Given a string, and optional context, this decodes html entities if html_entity_decode is
 	 * enabled.
 	 *
-	 * @param string $string     The string to decode
+	 * @param string $str        The string to decode
 	 * @param string $field_name The name of the field being encoded
 	 * @param bool   $enabled    Whether decoding is enabled by default for the string passed in
 	 *
 	 * @return string
 	 */
-	public function html_entity_decode( $string, $field_name, $enabled = false ) {
+	public function html_entity_decode( $str, $field_name, $enabled = false ) {
 
 		/**
 		 * Determine whether html_entity_decode should be applied to the string
 		 *
 		 * @param bool                   $enabled    Whether decoding is enabled by default for the string passed in
-		 * @param string                 $string     The string to decode
+		 * @param string                 $str        The string to decode
 		 * @param string                 $field_name The name of the field being encoded
 		 * @param \WPGraphQL\Model\Model $model      The Model the field is being decoded on
 		 */
-		$decoding_enabled = apply_filters( 'graphql_html_entity_decoding_enabled', $enabled, $string, $field_name, $this );
+		$decoding_enabled = apply_filters( 'graphql_html_entity_decoding_enabled', $enabled, $str, $field_name, $this );
 
 		if ( false === $decoding_enabled ) {
-			return $string;
+			return $str;
 		}
 
-		return html_entity_decode( $string );
-
+		return html_entity_decode( $str, ENT_QUOTES | ENT_SUBSTITUTE | ENT_HTML401, 'UTF-8' );
 	}
 
 	/**
 	 * Filter the fields returned for the object
 	 *
-	 * @param null|string|array $fields The field or fields to build in the modeled object. You can
+	 * @param string|mixed[]|null $fields The field or fields to build in the modeled object. You can
 	 *                                  pass null to build all of the fields, a string to only
 	 *                                  build an object with one field, or an array of field keys
-	 *                                  to build an object with those keys and their respective
-	 *                                  values.
+	 *                                  to build an object with those keys and their respective values.
 	 *
 	 * @return void
 	 */
 	public function filter( $fields ) {
-
 		if ( is_string( $fields ) ) {
 			$fields = [ $fields ];
 		}
@@ -556,12 +534,12 @@ abstract class Model {
 		if ( is_array( $fields ) ) {
 			$this->fields = array_intersect_key( $this->fields, array_flip( $fields ) );
 		}
-
 	}
 
 	/**
-	 * @return mixed
+	 * Initialized the object.
+	 *
+	 * @return void
 	 */
 	abstract protected function init();
-
 }

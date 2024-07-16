@@ -2,7 +2,6 @@
 
 namespace WPGraphQL\Utils;
 
-use Exception;
 use GraphQL\Error\UserError;
 use GraphQL\Executor\Executor;
 use GraphQL\Type\Definition\FieldDefinition;
@@ -18,13 +17,10 @@ use WPGraphQL\AppContext;
 class InstrumentSchema {
 
 	/**
-	 * @param Type $type Instance of the Schema.
-	 * @param string $type_name Name of the Type
-	 *
-	 * @return Type
+	 * @param \GraphQL\Type\Definition\Type $type Instance of the Schema.
+	 * @param string                        $type_name Name of the Type
 	 */
 	public static function instrument_resolvers( Type $type, string $type_name ): Type {
-
 		if ( ! method_exists( $type, 'getFields' ) ) {
 			return $type;
 		}
@@ -37,7 +33,6 @@ class InstrumentSchema {
 		$type->config['fields'] = $fields;
 
 		return $type;
-
 	}
 
 	/**
@@ -46,14 +41,13 @@ class InstrumentSchema {
 	 * This wraps fields to provide sanitization on fields output by introspection queries
 	 * (description/deprecation reason) and provides hooks to resolvers.
 	 *
-	 * @param array  $fields    The fields configured for a Type
-	 * @param string $type_name The Type name
+	 * @param mixed[] $fields    The fields configured for a Type
+	 * @param string  $type_name The Type name
 	 *
-	 * @return mixed
+	 * @return mixed[]
 	 */
 	protected static function wrap_fields( array $fields, string $type_name ) {
-
-		if ( empty( $fields ) || ! is_array( $fields ) ) {
+		if ( empty( $fields ) ) {
 			return $fields;
 		}
 
@@ -62,7 +56,7 @@ class InstrumentSchema {
 			/**
 			 * Filter the field definition
 			 *
-			 * @param FieldDefinition $field     The field definition
+			 * @param \GraphQL\Type\Definition\FieldDefinition $field The field definition
 			 * @param string          $type_name The name of the Type the field belongs to
 			 */
 			$field = apply_filters( 'graphql_field_definition', $field, $type_name );
@@ -88,13 +82,13 @@ class InstrumentSchema {
 			 * Replace the existing field resolve method with a new function that captures data about
 			 * the resolver to be stored in the resolver_report
 			 *
-			 * @param mixed       $source  The source passed down the Resolve Tree
-			 * @param array       $args    The args for the field
-			 * @param AppContext  $context The AppContext passed down the ResolveTree
-			 * @param ResolveInfo $info    The ResolveInfo passed down the ResolveTree
+			 * @param mixed                                $source  The source passed down the Resolve Tree
+			 * @param array<string,mixed>                  $args    The args for the field
+			 * @param \WPGraphQL\AppContext                $context The AppContext passed down the ResolveTree
+			 * @param \GraphQL\Type\Definition\ResolveInfo $info The ResolveInfo passed down the ResolveTree
 			 *
 			 * @return mixed
-			 * @throws Exception
+			 * @throws \Exception
 			 * @since 0.0.1
 			 */
 			$field->resolveFn = static function ( $source, array $args, AppContext $context, ResolveInfo $info ) use ( $field_resolver, $type_name, $field_key, $field ) {
@@ -102,14 +96,14 @@ class InstrumentSchema {
 				/**
 				 * Fire an action BEFORE the field resolves
 				 *
-				 * @param mixed           $source         The source passed down the Resolve Tree
-				 * @param array           $args           The args for the field
-				 * @param AppContext      $context        The AppContext passed down the ResolveTree
-				 * @param ResolveInfo     $info           The ResolveInfo passed down the ResolveTree
-				 * @param ?callable       $field_resolver The Resolve function for the field
-				 * @param string          $type_name      The name of the type the fields belong to
-				 * @param string          $field_key      The name of the field
-				 * @param FieldDefinition $field          The Field Definition for the resolving field
+				 * @param mixed                                    $source         The source passed down the Resolve Tree
+				 * @param array<string,mixed>                      $args           The args for the field
+				 * @param \WPGraphQL\AppContext                    $context        The AppContext passed down the ResolveTree
+				 * @param \GraphQL\Type\Definition\ResolveInfo     $info           The ResolveInfo passed down the ResolveTree
+				 * @param ?callable                                $field_resolver The Resolve function for the field
+				 * @param string                                   $type_name      The name of the type the fields belong to
+				 * @param string                                   $field_key      The name of the field
+				 * @param \GraphQL\Type\Definition\FieldDefinition $field          The Field Definition for the resolving field
 				 */
 				do_action( 'graphql_before_resolve_field', $source, $args, $context, $info, $field_resolver, $type_name, $field_key, $field );
 
@@ -125,15 +119,15 @@ class InstrumentSchema {
 				 * and the execution of the actual resolved is skipped. This filter can be used to implement
 				 * field level caches or for efficiently hiding data by returning null.
 				 *
-				 * @param mixed           $nil            Unique nil value
-				 * @param mixed           $source         The source passed down the Resolve Tree
-				 * @param array           $args           The args for the field
-				 * @param AppContext      $context        The AppContext passed down the ResolveTree
-				 * @param ResolveInfo     $info           The ResolveInfo passed down the ResolveTree
-				 * @param string          $type_name      The name of the type the fields belong to
-				 * @param string          $field_key      The name of the field
-				 * @param FieldDefinition $field          The Field Definition for the resolving field
-				 * @param mixed           $field_resolver The default field resolver
+				 * @param mixed                                    $nil            Unique nil value
+				 * @param mixed                                    $source         The source passed down the Resolve Tree
+				 * @param array<string,mixed>                      $args           The args for the field
+				 * @param \WPGraphQL\AppContext                    $context        The AppContext passed down the ResolveTree
+				 * @param \GraphQL\Type\Definition\ResolveInfo     $info           The ResolveInfo passed down the ResolveTree
+				 * @param string                                   $type_name      The name of the type the fields belong to
+				 * @param string                                   $field_key      The name of the field
+				 * @param \GraphQL\Type\Definition\FieldDefinition $field          The Field Definition for the resolving field
+				 * @param ?callable                                $field_resolver The default field resolver
 				 */
 				$result = apply_filters( 'graphql_pre_resolve_field', $nil, $source, $args, $context, $info, $type_name, $field_key, $field, $field_resolver );
 
@@ -145,46 +139,44 @@ class InstrumentSchema {
 					 * If the current field doesn't have a resolve function, use the defaultFieldResolver,
 					 * otherwise use the $field_resolver
 					 */
-					if ( null === $field_resolver || ! is_callable( $field_resolver ) ) {
+					if ( null === $field_resolver ) {
 						$result = Executor::defaultFieldResolver( $source, $args, $context, $info );
 					} else {
 						$result = $field_resolver( $source, $args, $context, $info );
-
 					}
 				}
 
 				/**
 				 * Fire an action before the field resolves
 				 *
-				 * @param mixed           $result         The result of the field resolution
-				 * @param mixed           $source         The source passed down the Resolve Tree
-				 * @param array           $args           The args for the field
-				 * @param AppContext      $context        The AppContext passed down the ResolveTree
-				 * @param ResolveInfo     $info           The ResolveInfo passed down the ResolveTree
-				 * @param string          $type_name      The name of the type the fields belong to
-				 * @param string          $field_key      The name of the field
-				 * @param FieldDefinition $field          The Field Definition for the resolving field
-				 * @param mixed           $field_resolver The default field resolver
+				 * @param mixed                                    $result          The result of the field resolution
+				 * @param mixed                                    $source          The source passed down the Resolve Tree
+				 * @param array<string,mixed>                      $args            The args for the field
+				 * @param \WPGraphQL\AppContext                    $context         The AppContext passed down the ResolveTree
+				 * @param \GraphQL\Type\Definition\ResolveInfo     $info            The ResolveInfo passed down the ResolveTree
+				 * @param string                                   $type_name       The name of the type the fields belong to
+				 * @param string                                   $field_key       The name of the field
+				 * @param \GraphQL\Type\Definition\FieldDefinition $field The Field Definition for the resolving field
+				 * @param ?callable                                $field_resolver  The default field resolver
 				 */
 				$result = apply_filters( 'graphql_resolve_field', $result, $source, $args, $context, $info, $type_name, $field_key, $field, $field_resolver );
 
 				/**
 				 * Fire an action AFTER the field resolves
 				 *
-				 * @param mixed           $source         The source passed down the Resolve Tree
-				 * @param array           $args           The args for the field
-				 * @param AppContext      $context        The AppContext passed down the ResolveTree
-				 * @param ResolveInfo     $info           The ResolveInfo passed down the ResolveTree
-				 * @param ?callable        $field_resolver The Resolve function for the field
-				 * @param string          $type_name      The name of the type the fields belong to
-				 * @param string          $field_key      The name of the field
-				 * @param FieldDefinition $field          The Field Definition for the resolving field
-				 * @param mixed           $result         The result of the field resolver
+				 * @param mixed                                    $source         The source passed down the Resolve Tree
+				 * @param array<string,mixed>                      $args           The args for the field
+				 * @param \WPGraphQL\AppContext                    $context        The AppContext passed down the ResolveTree
+				 * @param \GraphQL\Type\Definition\ResolveInfo     $info           The ResolveInfo passed down the ResolveTree
+				 * @param ?callable                                $field_resolver The Resolve function for the field
+				 * @param string                                   $type_name      The name of the type the fields belong to
+				 * @param string                                   $field_key      The name of the field
+				 * @param \GraphQL\Type\Definition\FieldDefinition $field          The Field Definition for the resolving field
+				 * @param mixed                                    $result         The result of the field resolver
 				 */
 				do_action( 'graphql_after_resolve_field', $source, $args, $context, $info, $field_resolver, $type_name, $field_key, $field, $result );
 
 				return $result;
-
 			};
 		}
 
@@ -192,33 +184,29 @@ class InstrumentSchema {
 		 * Return the fields
 		 */
 		return $fields;
-
 	}
 
 	/**
-	 * Check field permissions when resolving.
+	 * Check field permissions when resolving. If the check fails, an error will be thrown.
 	 *
 	 * This takes into account auth params defined in the Schema
 	 *
-	 * @param mixed                 $source         The source passed down the Resolve Tree
-	 * @param array                 $args           The args for the field
-	 * @param AppContext            $context        The AppContext passed down the ResolveTree
-	 * @param ResolveInfo           $info           The ResolveInfo passed down the ResolveTree
-	 * @param mixed|callable|string $field_resolver The Resolve function for the field
-	 * @param string                $type_name      The name of the type the fields belong to
-	 * @param string                $field_key      The name of the field
-	 * @param FieldDefinition       $field          The Field Definition for the resolving field
+	 * @param mixed                                    $source         The source passed down the Resolve Tree
+	 * @param array<string,mixed>                      $args           The args for the field
+	 * @param \WPGraphQL\AppContext                    $context        The AppContext passed down the ResolveTree
+	 * @param \GraphQL\Type\Definition\ResolveInfo     $info           The ResolveInfo passed down the ResolveTree
+	 * @param mixed|callable|string                    $field_resolver The Resolve function for the field
+	 * @param string                                   $type_name      The name of the type the fields belong to
+	 * @param string                                   $field_key      The name of the field
+	 * @param \GraphQL\Type\Definition\FieldDefinition $field          The Field Definition for the resolving field
 	 *
-	 * @return bool|mixed
+	 * @return void
+	 *
+	 * @throws \GraphQL\Error\UserError
 	 */
 	public static function check_field_permissions( $source, array $args, AppContext $context, ResolveInfo $info, $field_resolver, string $type_name, string $field_key, FieldDefinition $field ) {
-
-		if ( ! $field instanceof FieldDefinition ) {
-			return true;
-		}
-
 		if ( ( ! isset( $field->config['auth'] ) || ! is_array( $field->config['auth'] ) ) && ! isset( $field->config['isPrivate'] ) ) {
-			return true;
+			return;
 		}
 
 		/**
@@ -239,15 +227,14 @@ class InstrumentSchema {
 		 * execute the callback before continuing resolution
 		 */
 		if ( isset( $field->config['auth']['callback'] ) && is_callable( $field->config['auth']['callback'] ) ) {
-
 			$authorized = call_user_func( $field->config['auth']['callback'], $field, $field_key, $source, $args, $context, $info, $field_resolver );
 
 			// If callback returns explicit false throw.
 			if ( false === $authorized ) {
-				throw new UserError( $auth_error );
+				throw new UserError( esc_html( $auth_error ) );
 			}
 
-			return $authorized;
+			return;
 		}
 
 		/**
@@ -255,7 +242,7 @@ class InstrumentSchema {
 		 * make sure the user is authenticated before resolving the field
 		 */
 		if ( isset( $field->config['isPrivate'] ) && true === $field->config['isPrivate'] && empty( get_current_user_id() ) ) {
-			throw new UserError( $auth_error );
+			throw new UserError( esc_html( $auth_error ) );
 		}
 
 		/**
@@ -265,7 +252,7 @@ class InstrumentSchema {
 		if ( isset( $field->config['auth']['allowedCaps'] ) && is_array( $field->config['auth']['allowedCaps'] ) ) {
 			$caps = ! empty( wp_get_current_user()->allcaps ) ? wp_get_current_user()->allcaps : [];
 			if ( empty( array_intersect( array_keys( $caps ), array_values( $field->config['auth']['allowedCaps'] ) ) ) ) {
-				throw new UserError( $auth_error );
+				throw new UserError( esc_html( $auth_error ) );
 			}
 		}
 
@@ -277,10 +264,8 @@ class InstrumentSchema {
 			$roles         = ! empty( wp_get_current_user()->roles ) ? wp_get_current_user()->roles : [];
 			$allowed_roles = array_values( $field->config['auth']['allowedRoles'] );
 			if ( empty( array_intersect( array_values( $roles ), array_values( $allowed_roles ) ) ) ) {
-				throw new UserError( $auth_error );
+				throw new UserError( esc_html( $auth_error ) );
 			}
 		}
-
 	}
-
 }

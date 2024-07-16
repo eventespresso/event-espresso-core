@@ -22,7 +22,7 @@ interface AssetManagerInterface
      * @since 4.9.71.p
      * @return string
      */
-    public function assetNamespace();
+    public function assetNamespace(): string;
 
     /**
      * @since 4.9.62.p
@@ -35,6 +35,7 @@ interface AssetManagerInterface
      * @param string $source
      * @param array  $dependencies
      * @param bool   $load_in_footer
+     * @param string $version
      * @return JavascriptAsset
      * @throws DuplicateCollectionIdentifierException
      * @throws InvalidDataTypeException
@@ -42,25 +43,28 @@ interface AssetManagerInterface
      * @since 4.9.62.p
      */
     public function addJavascript(
-        $handle,
-        $source,
+        string $handle,
+        string $source,
         array $dependencies = array(),
-        $load_in_footer = true
-    );
+        bool $load_in_footer = true,
+        string $version = ''
+    ): JavascriptAsset;
 
 
     /**
-     * @since 4.9.71.p
      * @param string $handle
      * @param array  $dependencies
      * @param bool   $load_in_footer
+     * @param string $version
      * @return JavascriptAsset
+     *@since 4.9.71.p
      */
     public function addVendorJavascript(
-        $handle,
+        string $handle,
         array $dependencies = array(),
-        $load_in_footer = true
-    );
+        bool $load_in_footer = true,
+        string $version = ''
+    ): JavascriptAsset;
 
 
 
@@ -69,6 +73,7 @@ interface AssetManagerInterface
      * @param string $source
      * @param array  $dependencies
      * @param string $media
+     * @param string $version
      * @return StylesheetAsset
      * @throws DuplicateCollectionIdentifierException
      * @throws InvalidDataTypeException
@@ -76,11 +81,12 @@ interface AssetManagerInterface
      * @since 4.9.62.p
      */
     public function addStylesheet(
-        $handle,
-        $source,
+        string $handle,
+        string $source,
         array $dependencies = array(),
-        $media = 'all'
-    );
+        string $media = 'all',
+        string $version = ''
+    ): StylesheetAsset;
 
 
     /**
@@ -88,5 +94,5 @@ interface AssetManagerInterface
      * @return bool
      * @since 4.9.62.p
      */
-    public function enqueueAsset($handle);
+    public function enqueueAsset(string $handle): bool;
 }

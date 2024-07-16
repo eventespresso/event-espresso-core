@@ -4,6 +4,8 @@ namespace EventEspresso\core\services\routing;
 
 use EE_Dependency_Map;
 use EventEspresso\core\services\loaders\LoaderInterface;
+use EventEspresso\core\services\modules\LegacyModulesManager;
+use EventEspresso\core\services\widgets\LegacyWidgetsManager;
 use Exception;
 
 /**
@@ -14,8 +16,8 @@ use Exception;
  * parameter, then loaded and executed directly.
  * In WordPress however, due to how actions are used all over the place for loading functionality, we can not simply
  * connect a route to a single endpoint as we run the risk of missing other logic getting loaded at the appropriate
- * hookpoint. Typically WordPress plugins solve this by just loading up EVERYTHING they could possibly need at the
- * begining of EVERY request and adding ALL the actions and filters that could possibly ever be required.
+ * hook point. Typically WordPress plugins solve this by just loading up EVERYTHING they could possibly need at the
+ * beginning of EVERY request and adding ALL the actions and filters that could possibly ever be required.
  * Event Espresso is too big for that.  We need to be able to load only the functionality that is required for the
  * current request. So Event Espresso Routes work like the classic "Price is Right" game "Plinko" where the request is
  * dropped in at the top of the board and then bounces around until it lands in the correct slot at the bottom.
@@ -97,6 +99,11 @@ class Router
             $this->route_request_type,
             $this->dependency_map
         );
+
+        /** @var LegacyModulesManager $legacy_modules_manager */
+        $legacy_modules_manager = $this->loader->getShared(LegacyModulesManager::class);
+        $legacy_modules_manager->setHooks();
+
         switch ($this->route_request_type) {
             case PrimaryRoute::ROUTE_REQUEST_TYPE_ACTIVATION:
                 break;
@@ -104,6 +111,9 @@ class Router
                 $this->route_handler->addRoute(
                     'EventEspresso\core\domain\entities\routing\handlers\frontend\ShortcodeRequests'
                 );
+                /** @var LegacyWidgetsManager $legacy_widgets_manager */
+                $legacy_widgets_manager = $this->loader->getShared(LegacyWidgetsManager::class);
+                $legacy_widgets_manager->setHooks();
                 break;
         }
         $this->routes_loaded[ __FUNCTION__ ] = true;
@@ -187,6 +197,9 @@ class Router
                 );
                 $this->route_handler->addRoute(
                     'EventEspresso\core\domain\entities\routing\handlers\admin\WordPressProfilePage'
+                );
+                $this->route_handler->addRoute(
+                    'EventEspresso\core\domain\entities\routing\handlers\admin\WordPressPostsPage'
                 );
                 $this->route_handler->addRoute(
                     'EventEspresso\core\domain\entities\routing\handlers\shared\WordPressHeartbeat'

@@ -2,7 +2,6 @@
 
 namespace EventEspresso\core\CPTs;
 
-use EE_Config;
 use EE_CPT_Attendee_Strategy;
 use EE_CPT_Default_Strategy;
 use EE_CPT_Event_Strategy;
@@ -16,6 +15,7 @@ use EEM_CPT_Base;
 use EventEspresso\core\domain\entities\custom_post_types\CustomTaxonomyDefinitions;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
+use EventEspresso\core\services\modules\ModuleRoutesManager;
 use EventEspresso\core\services\request\CurrentPage;
 use EventEspresso\core\services\request\RequestInterface;
 use WP_Post;
@@ -310,12 +310,14 @@ class CptQueryModifier
     {
         // check if ee action var has been set
         if (! $this->request->requestParamIsSet('ee')) {
+            /** @var ModuleRoutesManager $module_routes_manager */
+            $module_routes_manager = $this->loader->getShared(ModuleRoutesManager::class);
             // check that route exists for CPT archive slug
-            if (is_archive() && EE_Config::get_route($this->cpt_details['plural_slug'])) {
+            if (is_archive() && $module_routes_manager->getRoute($this->cpt_details['plural_slug'])) {
                 // ie: set "ee" to "events"
                 $this->request->setRequestParam('ee', $this->cpt_details['plural_slug']);
                 // or does it match a single page CPT like /event/
-            } elseif (is_single() && EE_Config::get_route($this->cpt_details['singular_slug'])) {
+            } elseif (is_single() && $module_routes_manager->getRoute($this->cpt_details['singular_slug'])) {
                 // ie: set "ee" to "event"
                 $this->request->setRequestParam('ee', $this->cpt_details['singular_slug']);
             }

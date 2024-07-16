@@ -219,7 +219,7 @@ jQuery(document).ready(function ($) {
                 // Finalize the transaction after payer approval
                 onApprove: function (data, actions) {
                     this_pm.hideACDCForm();
-                    return this_pm.captureOrder(data);
+                    return this_pm.captureOrder(data, this_pm.getBillingInfo());
                 },
                 onError: function (error) {
                     console.error(eeaPPCommerceParameters.general_pp_error, error);
@@ -325,16 +325,10 @@ jQuery(document).ready(function ($) {
                     }
                 });
                 if (form_valid) {
-                    let bill_state = '';
-                    let bill_state_id = this.bill_state.val();
-                    for (const key in eeaPPCommerceParameters.active_states) {
-                        if (bill_state_id === key) {
-                            bill_state = eeaPPCommerceParameters.active_states[key];
-                        }
-                    }
-                    let bill_address_2 = this.bill_address_2.val();
-                    if (!bill_address_2) {
-                        bill_address_2 = '';
+                    const billing_info = this.getBillingInfo();
+                    billing_info.card_holder_name = $(this_pm.card_holder_name_input_id).val();
+                    if (! billing_info.address_2) {
+                        billing_info.address_2 = '';
                     }
                     // Make sure that we don't already have a Complete order. In which case we don't want to make PP re-capture this order.
                     if (this_pm.pp_order_id && this_pm.pp_order_status && this_pm.pp_order_status === 'COMPLETED') {
@@ -349,25 +343,17 @@ jQuery(document).ready(function ($) {
                     }
                     // Submit the card form to PP for processing the order.
                     cardFields.submit({
-                        // Cardholder's first and last name
-                        cardholderName: $(this_pm.card_holder_name_input_id).val(),
-                        // Billing Address
+                        cardholderName: billing_info.card_holder_name,
                         billingAddress: {
-                            // Street address, line 1
-                            streetAddress: this.bill_address.val(),
-                            // Street address, line 2 (Ex: Unit, Apartment, etc.)
-                            extendedAddress: bill_address_2,
-                            // State
-                            region: bill_state,
-                            // City
-                            locality: this.bill_city.val(),
-                            // Postal Code
-                            postalCode: this.bill_zip.val(),
-                            // Country Code
-                            countryCodeAlpha2: this.bill_country.val()
+                            streetAddress: billing_info.address,
+                            extendedAddress: billing_info.address_2,
+                            region: billing_info.state,
+                            locality: billing_info.city,
+                            postalCode: billing_info.zip,
+                            countryCodeAlpha2: billing_info.country
                         }
                     }).then(function () {
-                        return this_pm.captureOrder([]);
+                        return this_pm.captureOrder([], billing_info);
                     }).catch(function (err) {
                         this_pm.throwError(
                             eeaPPCommerceParameters.pm_capture_error + ' ' + JSON.stringify(err),
@@ -383,6 +369,30 @@ jQuery(document).ready(function ($) {
                 }
             });
         }
+
+
+        this.getBillingInfo = function () {
+            const state_id = this.bill_state.val();
+            let state = '';
+            for (const key in eeaPPCommerceParameters.active_states) {
+                if (state_id === key) {
+                    state = eeaPPCommerceParameters.active_states[key];
+                }
+            }
+            let bill_address_2 = this.bill_address_2.val();
+            if (!bill_address_2) {
+                bill_address_2 = '';
+            }
+            return {
+                address: this.bill_address.val(),
+                address_2: bill_address_2,
+                city: this.bill_city.val(),
+                state: state,
+                state_id: state_id,
+                country: this.bill_country.val(),
+                zip: this.bill_zip.val(),
+            };
+        };
 
 
         /**
@@ -437,7 +447,7 @@ jQuery(document).ready(function ($) {
          * Send a request to the server side to capture the Order through the PayPal API.
          * @function
          */
-        this.captureOrder = function (order_data) {
+        this.captureOrder = function (order_data, billing_info) {
             console.log('function captureOrder()');
             const this_pm = this;
             this_pm.spco.do_before_sending_ajax();
@@ -450,6 +460,7 @@ jQuery(document).ready(function ($) {
             request_data.append('payment_method', this.slug);
             request_data.append('txn_id', this_pm.transaction['TXN_ID']);
             request_data.append('order_id', order_id);
+            request_data.append('billing_info', JSON.stringify(billing_info));
 
             // Do a request to capture the Order.
             return fetch(eei18n.ajax_url, {
@@ -573,15 +584,6 @@ jQuery(document).ready(function ($) {
          */
         this.getOrderId = function () {
             return this.pp_order_id;
-        };
-
-
-        /**
-         * Get pp_order_nonce.
-         * @function
-         */
-        this.getOrderNonce = function () {
-            return this.pp_order_nonce;
         };
 
 

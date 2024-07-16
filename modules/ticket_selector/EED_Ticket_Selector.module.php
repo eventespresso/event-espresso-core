@@ -10,9 +10,9 @@ use EventEspresso\modules\ticket_selector\TicketSelectorIframeEmbedButton;
 /**
  * Ticket Selector  class
  *
- * @package        Event Espresso
- * @subpackage     includes/classes/EE_Ticket_Selector.class.php
- * @author         Brent Christensen
+ * @package    Event Espresso
+ * @subpackage includes/classes/EE_Ticket_Selector.class.php
+ * @author     Brent Christensen
  * @method EED_Ticket_Selector get_instance($module_name)
  * @method EE_Ticket_Selector_Config config()
  */
@@ -74,18 +74,18 @@ class EED_Ticket_Selector extends EED_Module
     public static function set_hooks()
     {
         // routing
-        EE_Config::register_route(
+        EED_Module::registerRoute(
             'iframe',
             'EED_Ticket_Selector',
             'ticket_selector_iframe',
             'ticket_selector'
         );
-        EE_Config::register_route(
+        EED_Module::registerRoute(
             'process_ticket_selections',
             'EED_Ticket_Selector',
             'process_ticket_selections'
         );
-        EE_Config::register_route(
+        EED_Module::registerRoute(
             'cancel_ticket_selections',
             'EED_Ticket_Selector',
             'cancel_ticket_selections'

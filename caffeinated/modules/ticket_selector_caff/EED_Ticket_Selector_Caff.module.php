@@ -7,20 +7,22 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
  *
  * EED_Ticket_Selector_Caff
  *
- * @package        Event Espresso
- * @subpackage     /modules/events_archive_caff/
- * @author         Brent Christensen
- *
- * ------------------------------------------------------------------------
+ * @package    Event Espresso
+ * @subpackage /modules/events_archive_caff/
+ * @author     Brent Christensen
+ * @method EED_Ticket_Selector_Caff get_instance($module_name)
+ * @method EE_Ticket_Selector_Config config()
  */
 class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
 {
     /**
      * @return EED_Module|EED_Ticket_Selector_Caff
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function instance()
     {
-        return parent::get_instance(__CLASS__);
+        return EED_Module::get_instance(__CLASS__);
     }
 
 
@@ -54,8 +56,7 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
         );
         add_action(
             'AHEE__template_settings__template__before_settings_form',
-            array('EED_Ticket_Selector_Caff', 'template_settings_form'),
-            10
+            array('EED_Ticket_Selector_Caff', 'template_settings_form')
         );
         add_filter(
             'FHEE__General_Settings_Admin_Page__update_template_settings__data',
@@ -67,7 +68,7 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
 
 
     /**
-     * @param \WP $WP
+     * @param WP $WP
      */
     public function run($WP)
     {
@@ -79,9 +80,7 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
      * @static
      * @return void
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public static function template_settings_form()
     {
@@ -90,12 +89,12 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
 
 
     /**
-     * @return \EE_Form_Section_Proper
-     * @throws \EE_Error
+     * @return EE_Form_Section_Proper
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public static function _ticket_selector_settings_form()
+    public static function _ticket_selector_settings_form(): EE_Form_Section_Proper
     {
-
         return new EE_Form_Section_Proper(
             array(
                 'name'            => 'ticket_selector_settings_form',
@@ -117,10 +116,11 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
 
 
     /**
-     * @return \EE_Form_Section_Proper
-     * @throws \EE_Error
+     * @return EE_Form_Section_Proper
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public static function _ticket_selector_appearance_settings()
+    public static function _ticket_selector_appearance_settings(): EE_Form_Section_Proper
     {
         if (
             ! EE_Registry::instance()->CFG->template_settings->EED_Ticket_Selector instanceof EE_Ticket_Selector_Config
@@ -256,7 +256,6 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
     /**
      * callback for updating template settings
      *
-     * @since 4.6.18.rc.006
      * @param EE_Template_Config $CFG
      * @param array              $REQ incoming request
      * @return EE_Template_Config
@@ -265,8 +264,9 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
      * @throws ReflectionException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
+     *@since 4.6.18.rc.006
      */
-    public static function update_template_settings(EE_Template_Config $CFG, $REQ)
+    public static function update_template_settings(EE_Template_Config $CFG, array $REQ): EE_Template_Config
     {
         if (! $CFG->EED_Ticket_Selector instanceof EE_Ticket_Selector_Config) {
             EED_Ticket_Selector::instance()->set_config();
@@ -318,11 +318,11 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
 
 
     /**
-     * @param \EE_Ticket $ticket
-     * @param int        $ticket_price
-     * @param bool       $display_ticket_price
+     * @param EE_Ticket $ticket
+     * @param float     $ticket_price
+     * @param bool      $display_ticket_price
      */
-    public static function ticket_price_details(EE_Ticket $ticket, $ticket_price = 0, $display_ticket_price = false)
+    public static function ticket_price_details(EE_Ticket $ticket, float $ticket_price = 0, bool $display_ticket_price = false)
     {
         require str_replace('\\', '/', plugin_dir_path(__FILE__))
                 . 'templates/ticket_selector_price_details.template.php';

@@ -16,6 +16,7 @@ use EventEspresso\core\services\collections\CollectionInterface;
 use EventEspresso\core\services\collections\CollectionLoader;
 use EventEspresso\core\services\request\CurrentPage;
 use Exception;
+use Throwable;
 use WP_Post;
 
 /**
@@ -30,15 +31,9 @@ use WP_Post;
  */
 class ShortcodesManager
 {
-    /**
-     * @type CurrentPage
-     */
-    protected $current_page;
+    protected CurrentPage $current_page;
 
-    /**
-     * @var LegacyShortcodesManager $legacy_shortcodes_manager
-     */
-    private $legacy_shortcodes_manager;
+    private LegacyShortcodesManager $legacy_shortcodes_manager;
 
     /**
      * @var CollectionInterface|ShortcodeInterface[] $shortcodes
@@ -56,6 +51,11 @@ class ShortcodesManager
     {
         $this->legacy_shortcodes_manager = $legacy_shortcodes_manager;
         $this->current_page              = $current_page;
+    }
+
+
+    public function setHooks()
+    {
         // assemble a list of installed and active shortcodes
         add_action(
             'AHEE__EE_System__register_shortcodes_modules_and_widgets',
@@ -131,6 +131,7 @@ class ShortcodesManager
      * @throws InvalidDataTypeException
      * @throws InvalidClassException
      * @throws Exception
+     * @throws Throwable
      */
     public function registerShortcodes()
     {
@@ -162,6 +163,7 @@ class ShortcodesManager
     /**
      * @return void
      * @throws Exception
+     * @throws Throwable
      */
     public function addShortcodes()
     {
@@ -169,7 +171,7 @@ class ShortcodesManager
             // cycle thru shortcode folders
             foreach ($this->shortcodes as $shortcode) {
                 if ($shortcode instanceof EnqueueAssetsInterface) {
-                    add_action('wp_enqueue_scripts', [$shortcode, 'registerScriptsAndStylesheets'], 10);
+                    add_action('wp_enqueue_scripts', [$shortcode, 'registerScriptsAndStylesheets']);
                     add_action('wp_enqueue_scripts', [$shortcode, 'enqueueStylesheets'], 11);
                 }
                 // add_shortcode() if it has not already been added
@@ -202,6 +204,7 @@ class ShortcodesManager
         $posts = is_array($wp_query->posts) ? $wp_query->posts : [$wp_query->posts];
         foreach ($posts as $post) {
             // now check post content and excerpt for EE shortcodes
+            // and typcast to string despite WP_Post object typehint because it is not always correct
             $load_assets = $this->parseContentForShortcodes((string) $post->post_content, $post)
                 ? true
                 : $load_assets;

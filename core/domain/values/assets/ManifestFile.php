@@ -31,7 +31,7 @@ class ManifestFile extends Asset
     /**
      * @return string
      */
-    public function urlBase()
+    public function urlBase(): string
     {
         return $this->domain->distributionAssetsUrl();
     }
@@ -40,7 +40,7 @@ class ManifestFile extends Asset
     /**
      * @return string
      */
-    public function filepath()
+    public function filepath(): string
     {
         return $this->domain->distributionAssetsPath();
     }

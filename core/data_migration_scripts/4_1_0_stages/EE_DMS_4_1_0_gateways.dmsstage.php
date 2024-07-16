@@ -182,12 +182,12 @@ class EE_DMS_4_1_0_gateways extends EE_Data_Migration_Script_Stage
 
 
     /**
-     * Figures out the correct 3.1 gateway settings option name for the given 4.1 gateway
+     * Returns the 3.1 gateway settings for the given 4.1 gateway
      *
      * @param string $new_gateway_slug
-     * @return string
+     * @return null|array
      */
-    private function _get_old_gateway_option(string $new_gateway_slug): ?string
+    private function _get_old_gateway_option(string $new_gateway_slug): ?array
     {
         return get_option(
             $this->_get_old_gateway_option_name($new_gateway_slug),
@@ -197,7 +197,7 @@ class EE_DMS_4_1_0_gateways extends EE_Data_Migration_Script_Stage
 
 
     /**
-     * Just gets the old gateways slug
+     * Figures out the correct 3.1 gateway settings option name for the given 4.1 gateway
      *
      * @param string $new_gateway_slug
      * @return string

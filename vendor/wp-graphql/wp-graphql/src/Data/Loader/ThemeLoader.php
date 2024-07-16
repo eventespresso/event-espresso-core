@@ -1,8 +1,6 @@
 <?php
 namespace WPGraphQL\Data\Loader;
 
-use Exception;
-use WPGraphQL\Model\Model;
 use WPGraphQL\Model\Theme;
 
 /**
@@ -13,21 +11,20 @@ use WPGraphQL\Model\Theme;
 class ThemeLoader extends AbstractDataLoader {
 
 	/**
-	 * @param mixed $entry The User Role object
-	 * @param mixed $key The Key to identify the user role by
+	 * {@inheritDoc}
 	 *
-	 * @return Model|Theme
-	 * @throws Exception
+	 * @param mixed|\WP_Theme $entry The User Role object
+	 *
+	 * @return \WPGraphQL\Model\Theme
 	 */
 	protected function get_model( $entry, $key ) {
 		return new Theme( $entry );
 	}
 
 	/**
-	 * @param array $keys
+	 * {@inheritDoc}
 	 *
-	 * @return array
-	 * @throws Exception
+	 * @return array<int|string,?\WP_Theme>
 	 */
 	public function loadKeys( array $keys ) {
 		$themes = wp_get_themes();
@@ -35,7 +32,6 @@ class ThemeLoader extends AbstractDataLoader {
 
 		if ( is_array( $themes ) && ! empty( $themes ) ) {
 			foreach ( $keys as $key ) {
-
 				$loaded[ $key ] = null;
 
 				if ( isset( $themes[ $key ] ) ) {

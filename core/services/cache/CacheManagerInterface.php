@@ -8,9 +8,9 @@ use Closure;
  * CacheManagerInterface
  * Controls the creation and deletion of cached content
  *
- * @package       Event Espresso
- * @author        Brent Christensen
- * @since         4.9.31
+ * @package Event Espresso
+ * @author  Brent Christensen
+ * @since   4.9.31
  */
 interface CacheManagerInterface
 {
@@ -19,8 +19,7 @@ interface CacheManagerInterface
      *
      * @return string
      */
-    public function cachePrefix();
-
+    public function cachePrefix(): string;
 
 
     /**
@@ -41,8 +40,7 @@ interface CacheManagerInterface
      * @param int     $expiration
      * @return Closure|mixed
      */
-    public function get($id_prefix, $cache_id, Closure $callback, $expiration = HOUR_IN_SECONDS);
-
+    public function get(string $id_prefix, string $cache_id, Closure $callback, int $expiration = HOUR_IN_SECONDS);
 
 
     /**

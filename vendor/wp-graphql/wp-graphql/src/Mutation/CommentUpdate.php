@@ -2,10 +2,8 @@
 
 namespace WPGraphQL\Mutation;
 
-use Exception;
 use GraphQL\Error\UserError;
 use GraphQL\Type\Definition\ResolveInfo;
-use GraphQLRelay\Relay;
 use WPGraphQL\AppContext;
 use WPGraphQL\Data\CommentMutation;
 use WPGraphQL\Utils\Utils;
@@ -20,7 +18,7 @@ class CommentUpdate {
 	 * Registers the CommentUpdate mutation.
 	 *
 	 * @return void
-	 * @throws Exception
+	 * @throws \Exception
 	 */
 	public static function register_mutation() {
 		register_graphql_mutation(
@@ -36,7 +34,7 @@ class CommentUpdate {
 	/**
 	 * Defines the mutation input field configuration.
 	 *
-	 * @return array
+	 * @return array<string,array<string,mixed>>
 	 */
 	public static function get_input_fields() {
 		return array_merge(
@@ -55,7 +53,7 @@ class CommentUpdate {
 	/**
 	 * Defines the mutation output field configuration.
 	 *
-	 * @return array
+	 * @return array<string,array<string,mixed>>
 	 */
 	public static function get_output_fields() {
 		return CommentCreate::get_output_fields();
@@ -64,10 +62,10 @@ class CommentUpdate {
 	/**
 	 * Defines the mutation data modification closure.
 	 *
-	 * @return callable
+	 * @return callable(array<string,mixed>$input,\WPGraphQL\AppContext $context,\GraphQL\Type\Definition\ResolveInfo $info):array<string,mixed>
 	 */
 	public static function mutate_and_get_payload() {
-		return function ( $input, AppContext $context, ResolveInfo $info ) {
+		return static function ( $input, AppContext $context, ResolveInfo $info ) {
 			// Get the database ID for the comment.
 			$comment_id = ! empty( $input['id'] ) ? Utils::get_database_id_from_id( $input['id'] ) : null;
 
@@ -75,13 +73,14 @@ class CommentUpdate {
 			$comment_args = ! empty( $comment_id ) ? get_comment( $comment_id, ARRAY_A ) : null;
 
 			if ( empty( $comment_id ) || empty( $comment_args ) ) {
-				throw new UserError( __( 'The Comment could not be updated', 'wp-graphql' ) );
+				throw new UserError( esc_html__( 'The Comment could not be updated', 'wp-graphql' ) );
 			}
 
 			/**
 			 * Map all of the args from GraphQL to WordPress friendly args array
 			 */
-			$user_id = isset( $comment_args['user_id'] ) ? $comment_args['user_id'] : null;
+			$user_id          = $comment_args['user_id'] ?? null;
+			$raw_comment_args = $comment_args;
 			CommentMutation::prepare_comment_object( $input, $comment_args, 'update', true );
 
 			// Prevent comment deletions by default
@@ -104,20 +103,25 @@ class CommentUpdate {
 			 * If the mutation has been prevented
 			 */
 			if ( true === $not_allowed ) {
-				throw new UserError( __( 'Sorry, you are not allowed to update this comment.', 'wp-graphql' ) );
+				throw new UserError( esc_html__( 'Sorry, you are not allowed to update this comment.', 'wp-graphql' ) );
+			}
+
+			// If there are no changes between the existing comment and the incoming comment
+			if ( $comment_args === $raw_comment_args ) {
+				throw new UserError( esc_html__( 'No changes have been provided to the comment.', 'wp-graphql' ) );
 			}
 
 			/**
 			 * Update comment
 			 * $success   int   1 on success and 0 on fail
 			 */
-			$success = wp_update_comment( $comment_args );
+			$success = wp_update_comment( $comment_args, true );
 
 			/**
 			 * Throw an exception if the comment failed to be created
 			 */
-			if ( ! $success ) {
-				throw new UserError( __( 'The comment failed to update', 'wp-graphql' ) );
+			if ( is_wp_error( $success ) ) {
+				throw new UserError( esc_html( $success->get_error_message() ) );
 			}
 
 			/**
@@ -132,7 +136,8 @@ class CommentUpdate {
 			 * Return the comment object
 			 */
 			return [
-				'id' => $comment_id,
+				'id'      => $comment_id,
+				'success' => (bool) $success,
 			];
 		};
 	}

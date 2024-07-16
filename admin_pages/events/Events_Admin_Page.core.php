@@ -1927,16 +1927,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         $orderby     = $this->request->getRequestParam('orderby', 'EVT_ID');
         $order       = $this->request->getRequestParam('order', 'DESC');
         $month_range = $this->request->getRequestParam('month_range');
-        if ($month_range) {
-            $pieces = explode(' ', $month_range, 3);
-            // simulate the FIRST day of the month, that fixes issues for months like February
-            // where PHP doesn't know what to assume for date.
-            // @see https://events.codebasehq.com/projects/event-espresso/tickets/10437
-            $month_r = ! empty($pieces[0]) ? date('m', EEH_DTT_Helper::first_of_month_timestamp($pieces[0])) : '';
-            $year_r  = ! empty($pieces[1]) ? $pieces[1] : '';
-        }
         $where  = [];
         $status = $this->request->getRequestParam('status');
+        $timezone_string = EEH_DTT_Helper::get_valid_timezone_string();
         // determine what post_status our condition will have for the query.
         switch ($status) {
             case 'month':
@@ -1959,23 +1952,11 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         // date where conditions
         $start_formats = EEM_Datetime::instance()->get_formats_for('DTT_EVT_start');
         if ($month_range) {
-            $DateTime = new DateTime(
-                $year_r . '-' . $month_r . '-01 00:00:00',
-                new DateTimeZone('UTC')
-            );
-            $start    = $DateTime->getTimestamp();
-            // set the datetime to be the end of the month
-            $DateTime->setDate(
-                $year_r,
-                $month_r,
-                $DateTime->format('t')
-            )->setTime(23, 59, 59);
-            $end                             = $DateTime->getTimestamp();
-            $where['Datetime.DTT_EVT_start'] = ['BETWEEN', [$start, $end]];
+            $where['Datetime.DTT_EVT_start'] = $this->whereParamsForDatetimeMonthRange($month_range, $timezone_string);
         } elseif ($status === 'today') {
             $DateTime                        = new DateTime(
                 'now',
-                new DateTimeZone(EEM_Event::instance()->get_timezone())
+                new DateTimeZone($timezone_string)
             );
             $start                           = $DateTime->setTime(0, 0)->format(implode(' ', $start_formats));
             $end                             = $DateTime->setTime(23, 59, 59)->format(implode(' ', $start_formats));
@@ -1984,7 +1965,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             $now                             = date('Y-m-01');
             $DateTime                        = new DateTime(
                 $now,
-                new DateTimeZone(EEM_Event::instance()->get_timezone())
+                new DateTimeZone($timezone_string)
             );
             $start                           = $DateTime->setTime(0, 0)->format(implode(' ', $start_formats));
             $end                             = $DateTime->setDate(date('Y'), date('m'), $DateTime->format('t'))
@@ -2060,6 +2041,38 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         }
 
         return $count ? $EEM_Event->count([$where], 'EVT_ID', true) : $EEM_Event->get_all($query_params);
+    }
+
+
+    /**
+     * @param string $month_range
+     * @param string $timezone_string
+     * @return array
+     * @throws Exception
+     * @since $VID:$
+     */
+    public function whereParamsForDatetimeMonthRange(string $month_range, string $timezone_string = ''): array
+    {
+        $timezone_string = $timezone_string ?: EEH_DTT_Helper::get_valid_timezone_string();
+        $pieces = explode(' ', $month_range, 3);
+        // simulate the FIRST day of the month, that fixes issues for months like February
+        // where PHP doesn't know what to assume for date.
+        // @see https://events.codebasehq.com/projects/event-espresso/tickets/10437
+        $month_r = ! empty($pieces[0]) ? date('m', EEH_DTT_Helper::first_of_month_timestamp($pieces[0])) : '';
+        $year_r  = ! empty($pieces[1]) ? $pieces[1] : '';
+        $DateTime = new DateTime(
+            "$year_r-$month_r-01 00:00:00",
+            new DateTimeZone($timezone_string)
+        );
+        $start    = $DateTime->getTimestamp();
+        // set the datetime to be the end of the month
+        $DateTime->setDate(
+            $year_r,
+            $month_r,
+            $DateTime->format('t')
+        )->setTime(23, 59, 59);
+        $end                             = $DateTime->getTimestamp();
+        return ['BETWEEN', [$start, $end]];
     }
 
 

@@ -214,10 +214,13 @@ class BillingForm extends EE_Billing_Attendee_Info_Form
     ): EE_Billing_Info_Form {
         $request        = LoaderFactory::getShared(Request::class);
         $request_params = $request->requestParams();
-        if (
-            // Only the PPC billing form.
-            $billing_form instanceof BillingForm
-            && ! empty($request_params['process_form_submission'])
+        // Only the PPC billing form.
+        if (! $billing_form instanceof BillingForm) {
+            return $billing_form;
+        }
+        // Make sure the billing form subsections have correct names.
+        $inputs = $billing_form->inputs_in_subsections();
+        if (! empty($request_params['process_form_submission'])
             && $request_params['process_form_submission'] === '1'
             && ! empty($request_params['eep_ppc_skip_form_validation'])
         ) {

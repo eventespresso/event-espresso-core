@@ -1,4 +1,63 @@
-# Revision History
+# Changelog
+
+All notable changes to this project will be documented in this file.
+This project adheres to [Semantic Versioning](https://semver.org/).
+
+## x.y.z
+
+### Added
+
+### Changed
+
+### Deprecated
+
+### Removed
+
+### Fixed
+
+## 8.6.0
+
+### Added
+- Support arithmetic operators in CSS function arguments (#607)
+- Add support for inserting an item in a CSS list (#545)
+- Add support for the `dvh`, `lvh` and `svh` length units (#415)
+
+### Changed
+
+- Improve performance of Value::parseValue with many delimiters by refactoring to remove array_search() (#413)
+
+## 8.5.2
+
+### Changed
+
+- Mark all class constants as `@internal` (#500)
+
+### Fixed
+
+- Fix undefined local variable in `CalcFunction::parse()` (#593)
+
+## 8.5.1
+
+### Fixed
+
+- Fix PHP notice caused by parsing invalid color values having less than 6 characters (#485)
+- Fix (regression) failure to parse at-rules with strict parsing (#456)
+
+## 8.5.0
+
+### Added
+
+- Add a method to get an import's media queries (#384)
+- Add more unit tests (#381, #382)
+
+### Fixed
+
+- Retain CSSList and Rule comments when rendering CSS (#351)
+- Replace invalid `turns` unit with `turn` (#350)
+- Also allow string values for rules (#348)
+- Fix invalid calc parsing (#169)
+- Handle scientific notation when parsing sizes (#179)
+- Fix PHP 8.1 compatibility in `ParserState::strsplit()` (#344)
 
 ## 8.4.0
 

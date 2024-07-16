@@ -58,52 +58,39 @@ abstract class Asset
     /**
      * indicates a JSON asset
      */
-    CONST TYPE_JSON = 'json';
+    const TYPE_JSON = 'json';
+
     /**
      * indicates a PHP asset
      */
-    CONST TYPE_PHP = 'php';
+    const TYPE_PHP = 'php';
 
     /**
      * indicates a Javascript manifest file
      */
     const TYPE_MANIFEST = 'manifest';
 
-    /**
-     * @var DomainInterface $domain
-     */
-    protected $domain;
 
-    /**
-     * @var string $type
-     */
-    private $type;
+    protected DomainInterface $domain;
 
-    /**
-     * @var string $handle
-     */
-    private $handle;
+    private string $type;
 
-    /**
-     * @var bool $registered
-     */
-    private $registered = false;
+    private string $handle;
 
-    /**
-     * @var bool $enqueue_immediately
-     */
-    private $enqueue_immediately = false;
+    protected bool $registered = false;
+
+    private bool $enqueue_immediately = false;
 
 
     /**
      * Asset constructor.
      *
-     * @param                 $type
+     * @param string          $type
      * @param string          $handle
      * @param DomainInterface $domain
      * @throws InvalidDataTypeException
      */
-    public function __construct($type, $handle, DomainInterface $domain)
+    public function __construct(string $type, string $handle, DomainInterface $domain)
     {
         $this->domain = $domain;
         $this->setType($type);
@@ -114,13 +101,13 @@ abstract class Asset
     /**
      * @return array
      */
-    public function validAssetTypes()
+    public function validAssetTypes(): array
     {
-        return array(
+        return [
             Asset::TYPE_CSS,
             Asset::TYPE_JS,
             Asset::TYPE_MANIFEST,
-        );
+        ];
     }
 
 
@@ -128,7 +115,7 @@ abstract class Asset
      * @param string $type
      * @throws InvalidDataTypeException
      */
-    private function setType($type)
+    private function setType(string $type)
     {
         if (! in_array($type, $this->validAssetTypes(), true)) {
             throw new InvalidDataTypeException(
@@ -145,15 +132,8 @@ abstract class Asset
      * @param string $handle
      * @throws InvalidDataTypeException
      */
-    private function setHandle($handle)
+    private function setHandle(string $handle)
     {
-        if (! is_string($handle)) {
-            throw new InvalidDataTypeException(
-                '$handle',
-                $handle,
-                'string'
-            );
-        }
         $this->handle = $handle;
     }
 
@@ -161,7 +141,7 @@ abstract class Asset
     /**
      * @return string
      */
-    public function assetNamespace()
+    public function assetNamespace(): string
     {
         return $this->domain->assetNamespace();
     }
@@ -170,7 +150,7 @@ abstract class Asset
     /**
      * @return string
      */
-    public function type()
+    public function type(): string
     {
         return $this->type;
     }
@@ -179,21 +159,25 @@ abstract class Asset
     /**
      * @return string
      */
-    public function handle()
+    public function handle(): string
     {
         return $this->handle;
     }
 
+
     /**
      * @return bool
      */
-    public function isRegistered()
+    public function isRegistered(): bool
     {
-        return $this->registered;
+        return $this->registered
+            || ($this instanceof JavascriptAsset && wp_script_is($this->handle(), 'registered'))
+            || ($this instanceof StylesheetAsset && wp_style_is($this->handle(), 'registered'));
     }
 
+
     /**
-     * @param bool $registered
+     * @param bool|int|string $registered
      */
     public function setRegistered($registered = true)
     {
@@ -204,14 +188,14 @@ abstract class Asset
     /**
      * @return bool
      */
-    public function enqueueImmediately()
+    public function enqueueImmediately(): bool
     {
         return $this->enqueue_immediately;
     }
 
 
     /**
-     * @param bool $enqueue_immediately
+     * @param bool|int|string $enqueue_immediately
      */
     public function setEnqueueImmediately($enqueue_immediately = true)
     {
