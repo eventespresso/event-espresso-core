@@ -43,7 +43,7 @@ class LicenseData
 
     /**
      * @return bool
-     * @since $VID:$
+     * @since 5.0.22.p
      */
     protected function isDecaf(): bool
     {

@@ -19,7 +19,7 @@ use Exception;
  * @package     Event Espresso
  * @subpackage  EventEspresso\core\domain\values\gateways
  * @author      Brent Christensen
- * @since       $VID:$
+ * @since       5.0.22.p
  */
 class GracePeriod extends WordPressOption
 {

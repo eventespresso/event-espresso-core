@@ -12,7 +12,7 @@ use stdClass;
  * @package     Event Espresso
  * @subpackage  EventEspresso\core\services\licensing
  * @author      Brent Christensen
- * @since       $VID:$
+ * @since       5.0.22.p
  */
 class LicenseKeyData extends WordPressOption
 {

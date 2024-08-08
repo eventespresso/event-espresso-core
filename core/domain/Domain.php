@@ -74,7 +74,7 @@ class Domain extends DomainBase implements CaffeinatedInterface
 
     /**
      * @return bool
-     * @since $VID:$
+     * @since 5.0.22.p
      */
     public function isDecaf(): bool
     {

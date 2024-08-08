@@ -24,7 +24,7 @@ use stdClass;
  * @package     Event Espresso
  * @subpackage  EventEspresso\core\services\payments
  * @author      Brent Christensen
- * @since       $VID:$
+ * @since       5.0.22.p
  */
 class PaymentProcessorFees
 {

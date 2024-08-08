@@ -10,7 +10,7 @@ use EE_Network_Core_Config;
  * @package     Event Espresso
  * @subpackage  EventEspresso\core\domain\services\licensing
  * @author      Brent Christensen
- * @since       $VID:$
+ * @since       5.0.22.p
  */
 class LicenseDataPue implements LicenseDataStrategy
 {

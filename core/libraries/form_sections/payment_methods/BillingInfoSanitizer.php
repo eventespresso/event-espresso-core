@@ -17,7 +17,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
  * @package     Event Espresso
  * @subpackage  EventEspresso\core\services\payment_methods\gateways
  * @author      Brent Christensen
- * @since       $VID:$
+ * @since       5.0.22.p
  */
 class BillingInfoSanitizer
 {

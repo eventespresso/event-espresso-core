@@ -351,7 +351,7 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
      * @param bool           $IPN
      * @throws EE_Error
      * @throws ReflectionException
-     * @depecated $VID:$
+     * @depecated 5.0.22.p
      */
     protected function _post_payment_processing(EE_Transaction $transaction, EE_Payment $payment, $IPN = false)
     {
@@ -368,7 +368,7 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
      * @return void
      * @throws EE_Error
      * @throws ReflectionException
-     * @depecated $VID:$
+     * @depecated 5.0.22.p
      */
     protected function _apply_registration_payment(
         EE_Registration $registration,
@@ -403,7 +403,7 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
      *
      * @param array $request_data
      * @return array
-     * @depecated $VID:$
+     * @depecated 5.0.22.p
      */
     protected function _remove_unusable_characters_from_array(array $request_data)
     {
@@ -423,7 +423,7 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
      *
      * @param string $request_data
      * @return string
-     * @depecated $VID:$
+     * @depecated 5.0.22.p
      */
     protected function _remove_unusable_characters($request_data)
     {

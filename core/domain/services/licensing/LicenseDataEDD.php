@@ -11,7 +11,7 @@ use EventEspresso\core\services\licensing\LicenseKeyData;
  * @package     Event Espresso
  * @subpackage  EventEspresso\core\domain\services\licensing
  * @author      Brent Christensen
- * @since       $VID:$
+ * @since       5.0.22.p
  */
 class LicenseDataEDD implements LicenseDataStrategy
 {
