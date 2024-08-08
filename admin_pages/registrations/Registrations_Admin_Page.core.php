@@ -512,6 +512,17 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 'capability' => 'ee_delete_contacts',
                 'obj_id'     => $ATT_ID,
             ],
+            'delete_attendee'                  => [
+                'func'       => [$this, 'deleteAttendees'],
+                'capability' => 'ee_delete_contacts',
+                'obj_id'     => $ATT_ID,
+                'noheader'   => true,
+            ],
+            'delete_attendees'                 => [
+                'func'       => [$this, 'deleteAttendees'],
+                'capability' => 'ee_delete_contacts',
+                'noheader'   => true,
+            ],
             'resend_registration'                 => [
                 'func'       => '_resend_registration',
                 'noheader'   => true,
@@ -1042,6 +1053,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 'count'       => 0,
                 'bulk_action' => [
                     'restore_attendees' => esc_html__('Restore from Trash', 'event_espresso'),
+                    'delete_attendees' => esc_html__('Permanently Delete', 'event_espresso'),
                 ],
             ];
         }
@@ -3742,8 +3754,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         do_action('AHEE_log', __FILE__, __FUNCTION__, '');
         $status = $trash ? 'trash' : 'publish';
         // Checkboxes
-        if ($this->request->requestParamIsSet('checkbox')) {
-            $ATT_IDs = $this->request->getRequestParam('checkbox', [], 'int', true);
+        if ($this->request->requestParamIsSet('ATT_IDs')) {
+            $ATT_IDs = $this->request->getRequestParam('ATT_IDs', [], 'int', true);
             // if array has more than one element than success message should be plural
             $success = count($ATT_IDs) > 1 ? 2 : 1;
             // cycle thru checkboxes
@@ -3766,6 +3778,56 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             ? esc_html__('moved to the trash', 'event_espresso')
             : esc_html__('restored', 'event_espresso');
         $this->_redirect_after_action($success, $what, $action_desc, ['action' => 'contact_list']);
+    }
+
+
+    /**
+     * @return void
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since  :VID:
+     */
+    protected function deleteAttendees()
+    {
+        $success = 0;
+        $att_ids = $this->getAttIdsFromRequest();
+        foreach ($att_ids as $att_id) {
+            $attendee = $this->getAttendeeModel()->get_one_by_ID($att_id);
+            if ($attendee instanceof EE_Attendee) {
+                $deleted = $attendee->delete_permanently();
+                if($deleted) {
+                    $success++;
+                }
+            }
+        }
+        $what = $success > 1
+            ? esc_html__('Contacts', 'event_espresso')
+            : esc_html__('Contact', 'event_espresso');
+
+        $this->_redirect_after_action(
+            $success,
+            $what,
+            esc_html__('deleted', 'event_espresso'),
+            [
+                'action' => 'contact_list',
+                'status' => 'trash',
+            ],
+            $success == 0 ? true : false
+        );
+    }
+
+
+    /**
+     * @return array
+     * @since  :VID:
+     */
+    private function getAttIdsFromRequest(): array
+    {
+        if ($this->request->requestParamIsSet('ATT_IDs')) {
+            return $this->request->getRequestParam('ATT_IDs', [], 'int', true);
+        } else {
+            return $this->request->getRequestParam('ATT_ID', [], 'int', true);
+        }
     }
 
 

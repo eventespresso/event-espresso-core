@@ -19,75 +19,75 @@ interface DomainInterface extends InterminableInterface
      * @return void
      * @since 5.0.0.p
      */
-    public function initialize($asset_namespace = 'eventespresso');
+    public function initialize(string $asset_namespace = 'eventespresso');
 
 
     /**
      * @param string $asset_namespace
      * @return void
      */
-    public function setAssetNamespace($asset_namespace = 'eventespresso');
+    public function setAssetNamespace(string $asset_namespace = 'eventespresso');
 
 
     /**
      * @return string
      */
-    public function pluginFile();
+    public function pluginFile(): string;
 
 
     /**
      * @return string
      */
-    public function pluginBasename();
+    public function pluginBasename(): string;
 
 
     /**
      * @param string $additional_path
      * @return string
      */
-    public function pluginPath($additional_path = '');
+    public function pluginPath(string $additional_path = ''): string;
 
 
     /**
      * @return string
      */
-    public function pluginUrl();
+    public function pluginUrl(): string;
 
 
     /**
      * @return string
      */
-    public function version();
+    public function version(): string;
 
 
     /**
      * @return Version
      */
-    public function versionValueObject();
+    public function versionValueObject(): Version;
 
 
     /**
      * @return string
      */
-    public function distributionAssetsFolder();
-
-
-    /**
-     * @param string $additional_path
-     * @return string
-     */
-    public function distributionAssetsPath($additional_path = '');
+    public function distributionAssetsFolder(): string;
 
 
     /**
      * @param string $additional_path
      * @return string
      */
-    public function distributionAssetsUrl($additional_path = '');
+    public function distributionAssetsPath(string $additional_path = ''): string;
+
+
+    /**
+     * @param string $additional_path
+     * @return string
+     */
+    public function distributionAssetsUrl(string $additional_path = ''): string;
 
 
     /**
      * @return string
      */
-    public function assetNamespace();
+    public function assetNamespace(): string;
 }

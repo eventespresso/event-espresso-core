@@ -895,6 +895,39 @@ class EE_Dependency_Map
                 'EventEspresso\core\services\licensing\PluginLicense'  => EE_Dependency_Map::not_registered,
                 'EventEspresso\core\services\licensing\LicenseManager' => EE_Dependency_Map::load_from_cache,
             ],
+            'EventEspresso\core\services\payments\IpnHandler' => [
+                'EEM_Payment_Method'                                    => EE_Dependency_Map::not_registered,
+                'EEM_Transaction'                                       => EE_Dependency_Map::load_from_cache,
+                'EE_Core_Config'                                        => EE_Dependency_Map::load_from_cache,
+                'EE_Organization_Config'                                => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\payments\PaymentProcessor' => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\services\payments\PaymentProcessor' => [
+                'EEM_Payment_Method'                                           => EE_Dependency_Map::not_registered,
+                'EEM_Transaction'                                              => EE_Dependency_Map::load_from_cache,
+                'EE_Organization_Config'                                       => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\services\capabilities\FeatureFlags' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\payments\PaymentProcessorFees'    => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\payments\PostPaymentProcessor'    => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\payments\RegistrationPayments'    => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\services\payments\PostPaymentProcessor' => [
+                'EE_Transaction_Processor' => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\services\payments\PaymentProcessorFees' => [
+                'EventEspresso\core\domain\values\gateways\GracePeriod'    => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\services\licensing\LicenseData' => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\domain\services\licensing\LicenseData'  => [
+                'EventEspresso\core\domain\Domain'                             => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\services\capabilities\FeatureFlags' => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\domain\services\licensing\LicenseDataEDD' => [
+                'EventEspresso\core\services\licensing\LicenseKeyData' => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\domain\services\licensing\LicenseDataPue' => [
+                'EE_Network_Core_Config' => EE_Dependency_Map::load_from_cache,
+            ],
         ];
     }
 

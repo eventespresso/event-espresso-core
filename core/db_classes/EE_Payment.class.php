@@ -570,7 +570,7 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment
      */
     public function is_a_refund()
     {
-        return $this->amount() < 0 ? true : false;
+        return $this->amount() < 0;
     }
 
 

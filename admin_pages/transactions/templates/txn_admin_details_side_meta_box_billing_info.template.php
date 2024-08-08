@@ -1,49 +1,14 @@
 <?php
 
-use EventEspresso\core\services\request\sanitizers\AllowedTags;
+use EventEspresso\core\libraries\form_sections\payment_methods\BillingInfoSanitizer;
 
 /**
- * @param EE_Form_Section_Proper $form_section
- * @param bool                   $found_cc_data
- * @return bool|mixed
- * @throws EE_Error
+ * @var EE_Form_Section_Proper|null $billing_form
  */
-function ee_show_billing_info_cleaned(EE_Form_Section_Proper $form_section, $found_cc_data = false)
-{
-    foreach ($form_section->subsections() as $subsection) {
-        if ($subsection instanceof EE_Form_Input_Base) {
-            if (
-                $subsection->get_sensitive_data_removal_strategy() instanceof EE_All_Sensitive_Data_Removal
-                || $subsection->get_sensitive_data_removal_strategy() instanceof EE_CCV_Sensitive_Data_Removal
-                || $subsection->get_display_strategy() instanceof EE_Hidden_Display_Strategy
-            ) {
-                continue;
-            }
-            if ($subsection->get_sensitive_data_removal_strategy() instanceof EE_Credit_Card_Sensitive_Data_Removal) {
-                $found_cc_data = true;
-            }
-            $subsection->add_html_label_class('admin-side-mbox-label-spn lt-grey-txt');
-            echo wp_kses($subsection->get_html_for_label(), AllowedTags::getWithFormTags());
-            echo "<span class='admin-side-mbox-value-spn'>";
-            echo wp_kses($subsection->pretty_value(), AllowedTags::getWithFormTags());
-            echo "</span>";
-        } elseif ($subsection instanceof EE_Form_Section_Proper) {
-            $found_cc_data = ee_show_billing_info_cleaned($subsection, $found_cc_data);
-        }
-    }
-    return $found_cc_data;
-}
-
-
 ?>
-
 <div id="admin-side-mbox-billing-info-dv" class="admin-side-mbox-dv">
-    <?php if (empty($billing_form)) : ?>
-        <div class="clearfix">
-            <?php esc_html_e('There is no billing info for this transaction.', 'event_espresso'); ?><br/>
-        </div>
-    <?php else :
-        $found_cc_data = ee_show_billing_info_cleaned($billing_form);
+    <?php if ($billing_form instanceof EE_Form_Section_Proper) :
+        $found_cc_data = BillingInfoSanitizer::displaySanitizedBillingInfo($billing_form);
         if (
             apply_filters(
                 'FHEE__txn_admin_details_side_meta_box_billing_info__show_default_note',
@@ -60,5 +25,9 @@ function ee_show_billing_info_cleaned(EE_Form_Section_Proper $form_section, $fou
             <?php
         }
         do_action('AHEE__txn_admin_details_side_meta_box_billing_info__billing_form_footer', $billing_form);
-    endif; ?>
+    else : // invalid billing form ?>
+        <div class="clearfix">
+            <?php esc_html_e('There is no billing info for this transaction.', 'event_espresso'); ?><br/>
+        </div>
+    <?php endif; ?>
 </div>

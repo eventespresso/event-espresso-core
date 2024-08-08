@@ -104,7 +104,8 @@ class Manager
         if (! class_exists($pm_object)) {
             return false;
         }
-        new $pm_object();
+        $payment_menthod = new $pm_object();
+        $payment_menthod->initialize();
         return true;
     }
 

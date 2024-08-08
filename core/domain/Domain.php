@@ -18,23 +18,27 @@ class Domain extends DomainBase implements CaffeinatedInterface
     /**
      * URL path component used to denote an API request
      */
-    const API_NAMESPACE   = 'ee/v';
+    public const API_NAMESPACE   = 'ee/v';
 
-    const ASSET_NAMESPACE = 'eventespresso';
+    public const ASSET_NAMESPACE = 'eventespresso';
 
-    const TEXT_DOMAIN     = 'event_espresso';
+    public const LICENSE_PLUGIN_NAME = 'Event Espresso Core';
+
+    public const LICENSE_PLUGIN_SLUG = 'event_espresso_core';
+
+    public const TEXT_DOMAIN     = 'event_espresso';
 
     /**
      * Slug used for the context where a registration status is changed from a manual trigger in the Registration Admin
      * Page ui.
      */
-    const CONTEXT_REGISTRATION_STATUS_CHANGE_REGISTRATION_ADMIN        = 'manual_registration_status_change_from_registration_admin';
+    public const CONTEXT_REGISTRATION_STATUS_CHANGE_REGISTRATION_ADMIN        = 'manual_registration_status_change_from_registration_admin';
 
-    const CONTEXT_REGISTRATION_STATUS_CHANGE_REGISTRATION_ADMIN_NOTIFY = 'manual_registration_status_change_from_registration_admin_and_notify';
+    public const CONTEXT_REGISTRATION_STATUS_CHANGE_REGISTRATION_ADMIN_NOTIFY = 'manual_registration_status_change_from_registration_admin_and_notify';
 
 
     /**
-     * Whether or not EE core is the full premium version.
+     * Whether EE core is the full premium version.
      *
      * @since 4.9.59.p
      * @var bool
@@ -57,7 +61,7 @@ class Domain extends DomainBase implements CaffeinatedInterface
 
 
     /**
-     * Whether or not EE core is the full premium version.
+     * Whether EE core is the full premium version.
      *
      * @return bool
      * @since 4.9.59.p
@@ -69,10 +73,19 @@ class Domain extends DomainBase implements CaffeinatedInterface
 
 
     /**
+     * @return bool
+     * @since $VID:$
+     */
+    public function isDecaf(): bool
+    {
+        return ! $this->isCaffeinated();
+    }
+
+
+    /**
      * Setter for $is_caffeinated property.
      *
-     * @since        4.9.59.p
-     * @noinspection PhpUndefinedConstantInspection
+     * @since 4.9.59.p
      */
     private function setCaffeinated()
     {
@@ -100,5 +113,16 @@ class Domain extends DomainBase implements CaffeinatedInterface
     public function isMultiSite(): bool
     {
         return $this->multisite;
+    }
+
+
+    public static function pluginName(): string
+    {
+        return self::LICENSE_PLUGIN_NAME;
+    }
+
+    public static function pluginSlug(): string
+    {
+        return self::LICENSE_PLUGIN_SLUG;
     }
 }

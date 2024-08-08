@@ -3,6 +3,8 @@
 use EventEspresso\core\domain\services\registration\RegStatus;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\payments\RegistrationPayments;
 use EventEspresso\core\services\request\DataType;
 
 /**
@@ -1558,16 +1560,20 @@ class Transactions_Admin_Page extends EE_Admin_Page
      * @access public
      * @return void
      * @throws DomainException
-     * @throws EE_Error
-     * @throws ReflectionException
      */
     public function txn_billing_info_side_meta_box()
     {
-        $this->_template_args['billing_form']     = $this->_transaction->billing_info();
-        $this->_template_args['billing_form_url'] = add_query_arg(
-            ['action' => 'edit_transaction', 'process' => 'billing'],
-            TXN_ADMIN_URL
-        );
+        try {
+            $this->_template_args['billing_form']     = $this->_transaction->billing_info();
+            $this->_template_args['billing_form_url'] = add_query_arg(
+                ['action' => 'edit_transaction', 'process' => 'billing'],
+                TXN_ADMIN_URL
+            );
+        } catch (Exception $e) {
+            $this->_template_args['billing_form'] = [];
+            $this->_template_args['billing_form_url'] = '';
+            EE_Error::add_error($e->getMessage(), __FILE__, __FUNCTION__, __LINE__);
+        }
 
         $template_path = TXN_TEMPLATE_PATH . 'txn_admin_details_side_meta_box_billing_info.template.php';
         echo EEH_Template::display_template($template_path, $this->_template_args, true);
@@ -2091,7 +2097,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
         EE_Payment $payment,
         $REG_IDs = []
     ) {
-        // we can pass our own custom set of registrations to EE_Payment_Processor::process_registration_payments()
+        // we can pass our own custom set of registrations to RegistrationPayments::processRegistrationPayments()
         // so let's do that using our set of REG_IDs from the form
         $registration_query_where_params = [
             'REG_ID' => ['IN', $REG_IDs],
@@ -2105,9 +2111,9 @@ class Transactions_Admin_Page extends EE_Admin_Page
         }
         $registrations = $transaction->registrations([$registration_query_where_params]);
         if (! empty($registrations)) {
-            /** @type EE_Payment_Processor $payment_processor */
-            $payment_processor = EE_Registry::instance()->load_core('Payment_Processor');
-            $payment_processor->process_registration_payments($transaction, $payment, $registrations);
+            /** @var RegistrationPayments $payment_processor */
+            $payment_processor = LoaderFactory::getShared(RegistrationPayments::class);
+            $payment_processor->processRegistrationPayments($transaction, $payment, $registrations);
         }
     }
 

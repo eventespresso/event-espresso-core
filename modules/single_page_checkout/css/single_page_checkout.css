@@ -675,3 +675,12 @@ table.spco-ticket-details td.jst-rght {
 table.spco-ticket-details tbody td:first-child {
     font-size: clamp(1.25rem, 125%, 1.5rem);
 }
+
+
+.ee-payment-processing-fee {
+    background: hsla(61 72% 66% / 50%);
+    border-radius: .25rem;
+    font-size: 1rem;
+    padding: .5rem 1rem;
+    text-align: center;
+}

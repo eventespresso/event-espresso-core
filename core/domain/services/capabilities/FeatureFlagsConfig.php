@@ -30,6 +30,10 @@ class FeatureFlagsConfig extends JsonDataWordpressOption
      */
     public const  USE_EVENT_EDITOR_BULK_EDIT = FeatureFlag::USE_EVENT_EDITOR_BULK_EDIT;
 
+    private static array $removed = [
+        FeatureFlag::USE_ADVANCED_EVENT_EDITOR,
+    ];
+
 
 
     protected Domain $domain;
@@ -52,16 +56,19 @@ class FeatureFlagsConfig extends JsonDataWordpressOption
     public function getDefaultFeatureFlagOptions(): stdClass
     {
         return (object) [
-            FeatureFlag::USE_ADVANCED_EVENT_EDITOR     => $this->domain->isCaffeinated() && ! $this->domain->isMultiSite(),
+            FeatureFlag::USE_DATETIME_STATUS_CONTROLS  => false,
             FeatureFlag::USE_DEFAULT_TICKET_MANAGER    => true,
-            FeatureFlag::USE_EDD_PLUGIN_LICENSING      => defined('EE_USE_EDD_PLUGIN_LICENSING') && EE_USE_EDD_PLUGIN_LICENSING,
+            FeatureFlag::USE_EDD_PLUGIN_LICENSING      => defined('EE_USE_EDD_PLUGIN_LICENSING')
+                                                            && EE_USE_EDD_PLUGIN_LICENSING,
             FeatureFlag::USE_EVENT_DESCRIPTION_RTE     => false,
-            FeatureFlag::USE_EVENT_EDITOR_BULK_EDIT    => $this->domain->isCaffeinated() && ! $this->domain->isMultiSite(),
+            FeatureFlag::USE_EVENT_EDITOR_BULK_EDIT    => $this->domain->isCaffeinated()
+                                                            && ! $this->domain->isMultiSite(),
             FeatureFlag::USE_EXPERIMENTAL_RTE          => false,
             FeatureFlag::USE_REG_FORM_BUILDER          => false,
             FeatureFlag::USE_REG_FORM_TICKET_QUESTIONS => false,
             FeatureFlag::USE_REG_OPTIONS_META_BOX      => false,
             FeatureFlag::USE_SPCO_FORM_REFACTOR        => false,
+            FeatureFlag::USE_PAYMENT_PROCESSOR_FEES    => true,
         ];
     }
 
@@ -76,7 +83,7 @@ class FeatureFlagsConfig extends JsonDataWordpressOption
     {
         $overrides = [];
         if (defined('EE_USE_EDD_PLUGIN_LICENSING')) {
-            $overrides[FeatureFlag::USE_EDD_PLUGIN_LICENSING] = EE_USE_EDD_PLUGIN_LICENSING;
+            $overrides[ FeatureFlag::USE_EDD_PLUGIN_LICENSING ] = EE_USE_EDD_PLUGIN_LICENSING;
         }
         return (object) $overrides;
     }
@@ -90,17 +97,13 @@ class FeatureFlagsConfig extends JsonDataWordpressOption
         if ($this->feature_flags) {
             return $this->feature_flags;
         }
-        $default_options = $this->getDefaultFeatureFlagOptions();
-        if (apply_filters('FHEE__FeatureFlagsConfig__getFeatureFlags__use_default_feature_flags', true)) {
-            $this->feature_flags = $default_options;
-            return $this->feature_flags;
-        }
+        $default_options     = $this->getDefaultFeatureFlagOptions();
         $this->feature_flags = $this->getAll();
-        $overrides = $this->getOverrides();
+        $overrides           = $this->getOverrides();
         // ensure that all feature flags are set
         foreach ($default_options as $key => $value) {
             // if the feature flag is not set, use the default value
-            if (!isset($this->feature_flags->$key)) {
+            if (! isset($this->feature_flags->$key)) {
                 $this->feature_flags->$key = $value;
             }
             // ensure that all overrides are set
@@ -115,6 +118,9 @@ class FeatureFlagsConfig extends JsonDataWordpressOption
     public function saveFeatureFlagsConfig(?stdClass $feature_flags = null): int
     {
         $feature_flags = $feature_flags ?? $this->feature_flags;
+        foreach (FeatureFlagsConfig::$removed as $feature_flag) {
+            unset($feature_flags->{$feature_flag});
+        }
         return $this->updateOption($feature_flags);
     }
 
@@ -134,15 +140,12 @@ class FeatureFlagsConfig extends JsonDataWordpressOption
             $this->getFeatureFlags();
         }
         if (! property_exists($this->feature_flags, $feature_flag) && ! $add_if_missing) {
-                return WordPressOption::UPDATE_ERROR;
+            return WordPressOption::UPDATE_ERROR;
         }
         $this->feature_flags->{$feature_flag} = true;
-        // if feature flag is the advanced event editor or bulk edit options
+        // if feature flag is the advanced event editor bulk edit options
         // then only enabled if the site is Caffeinated and not MultiSite
-        if (
-            $feature_flag === FeatureFlag::USE_ADVANCED_EVENT_EDITOR
-            || $feature_flag === FeatureFlag::USE_EVENT_EDITOR_BULK_EDIT
-        ) {
+        if ( $feature_flag === FeatureFlag::USE_EVENT_EDITOR_BULK_EDIT ) {
             $this->feature_flags->{$feature_flag} = $this->domain->isCaffeinated() && ! $this->domain->isMultiSite();
         }
         if ($save) {

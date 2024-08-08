@@ -140,6 +140,9 @@ abstract class WordPressOption
         if (! $force_update && $this->valueIsUnchanged($value)) {
             return WordPressOption::UPDATE_NONE;
         }
+        if ($force_update) {
+            $this->option_engine->updateOption($this->getOptionName(), null);
+        }
         $this->value = $value;
         // because the options for updating differ when adding an option for the first time
         // we use the WordPressOption::NOT_SET_YET to determine if things already exist in the db

@@ -3,6 +3,7 @@
 namespace EventEspresso\PaymentMethods;
 
 use EE_Config;
+use EE_Dependency_Map;
 use EE_Error;
 use EEH_Autoloader;
 use EventEspresso\core\services\loaders\LoaderFactory;
@@ -21,14 +22,8 @@ define('EEP_PAYPAL_COMMERCE_URL', plugin_dir_url(__FILE__));
  */
 class PayPalCommerce
 {
-    /**
-     * PayPalCommerce constructor.
-     *
-     * @throws EE_Error
-     */
     public function __construct()
     {
-        $this->load();
     }
 
 
@@ -38,15 +33,15 @@ class PayPalCommerce
      * @return void
      * @throws EE_Error
      */
-    public function load()
+    public function initialize()
     {
+        $this->registerDependencies();
         // Register payment method through a legacy manager.
         add_filter(
             'FHEE__EE_Payment_Method_Manager__register_payment_methods__payment_methods_to_register',
             [__CLASS__, 'injectPaymentMethod'],
             10
         );
-
         // Load modules.
         /** @var LegacyModulesManager $legacy_modules_manager */
         $legacy_modules_manager = LoaderFactory::getShared(LegacyModulesManager::class);
@@ -72,5 +67,31 @@ class PayPalCommerce
     {
         $pms_to_register[] = EEP_PAYPAL_COMMERCE_PATH;
         return $pms_to_register;
+    }
+
+
+    /**
+     * Register class dependencies.
+     *
+     * @return void
+     * @since 5.0.22.p
+     */
+    protected function registerDependencies(): void
+    {
+        EE_Dependency_Map::instance()->registerDependencies(
+            'EventEspresso\PaymentMethods\PayPalCommerce\api\orders\CreateOrder',
+            [
+                null,
+                null,
+                null,
+                'EventEspresso\core\domain\services\capabilities\FeatureFlags' => EE_Dependency_Map::load_from_cache,
+            ]
+        );
+        EE_Dependency_Map::instance()->registerDependencies(
+            'EventEspresso\PaymentMethods\PayPalCommerce\tools\fees\PartnerPaymentFees',
+            [
+                'EventEspresso\core\services\payments\PaymentProcessorFees' => EE_Dependency_Map::load_from_cache,
+            ]
+        );
     }
 }

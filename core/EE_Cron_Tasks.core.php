@@ -5,6 +5,7 @@ use EventEspresso\core\domain\services\registration\RegStatus;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\payments\PaymentProcessor;
 
 /**
  * Class EE_Cron_Tasks
@@ -267,10 +268,12 @@ class EE_Cron_Tasks extends EE_Base
         ) {
             return;
         }
-        /** @type EE_Payment_Processor $payment_processor */
-        $payment_processor = EE_Registry::instance()->load_core('Payment_Processor');
-        // set revisit flag for payment processor
-        $payment_processor->set_revisit();
+        /** @var EE_Transaction_Processor $transaction_processor */
+        $transaction_processor = LoaderFactory::getShared(EE_Transaction_Processor::class);
+        if ($transaction_processor instanceof EE_Transaction_Processor) {
+            // set revisit flag for payment processor
+            $transaction_processor->set_revisit();
+        }
         // load EEM_Transaction
         EE_Registry::instance()->load_model('Transaction');
         foreach (self::$_update_transactions_with_payment as $TXN_ID => $PAY_ID) {
@@ -286,10 +289,11 @@ class EE_Cron_Tasks extends EE_Base
             }
             $transaction = EEM_Transaction::instance()->get_one_by_ID($TXN_ID);
             $payment = EEM_Payment::instance()->get_one_by_ID($PAY_ID);
-            // verify transaction
+            // verify transaction && try to update the TXN with any payments
             if ($transaction instanceof EE_Transaction && $payment instanceof EE_Payment) {
-                // now try to update the TXN with any payments
-                $payment_processor->update_txn_based_on_payment($transaction, $payment, true, true);
+                /** @var PaymentProcessor $payment_processor */
+                $payment_processor = LoaderFactory::getShared(PaymentProcessor::class);
+                $payment_processor->updateTransactionBasedOnPayment($transaction, $payment, true, true);
             }
             unset(self::$_update_transactions_with_payment[ $TXN_ID ]);
         }
@@ -443,10 +447,10 @@ class EE_Cron_Tasks extends EE_Base
                         );
                         // don't finalize the TXN if it has already been completed
                         if ($transaction->all_reg_steps_completed() !== true) {
-                            /** @type EE_Payment_Processor $payment_processor */
-                            $payment_processor = EE_Registry::instance()->load_core('Payment_Processor');
+                            /** @var PaymentProcessor $payment_processor */
+                            $payment_processor = LoaderFactory::getShared(PaymentProcessor::class);
                             // let's simulate an IPN here which will trigger any notifications that need to go out
-                            $payment_processor->update_txn_based_on_payment(
+                            $payment_processor->updateTransactionBasedOnPayment(
                                 $transaction,
                                 $transaction->last_payment(),
                                 true,

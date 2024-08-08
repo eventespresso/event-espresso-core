@@ -84,7 +84,7 @@ final class EE_Admin implements InterminableInterface
         // load EE_Request_Handler early
         add_action('AHEE__EE_System__initialize_last', [$this, 'init']);
         add_action('admin_init', [$this, 'admin_init'], 100);
-        if (! $this->request->isAjax()) {
+        if (! $this->request->isActivation() && ! $this->request->isAjax()) {
             // admin hooks
             add_action('admin_notices', [$this, 'display_admin_notices']);
             add_action('network_admin_notices', [$this, 'display_admin_notices']);

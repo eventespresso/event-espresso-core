@@ -11,13 +11,13 @@ use EE_Form_Section_Proper;
 use EE_Hidden_Input;
 use EE_Organization_Config;
 use EE_Payment_Method;
-use EE_PMT_PayPalCheckout;
 use EE_Registry;
 use EE_Submit_Input;
 use EE_Template_Layout;
 use EE_Text_Input;
 use EE_Transaction;
 use EED_PayPalCommerce;
+use EEG_PayPalCheckout;
 use EEH_HTML;
 use EEM_Payment_Method;
 use EventEspresso\core\services\loaders\LoaderFactory;
@@ -38,38 +38,30 @@ use ReflectionException;
  */
 class BillingForm extends EE_Billing_Attendee_Info_Form
 {
+
+    protected EE_Payment_Method $paypal_pmt;
+
+    protected ?EE_Transaction $transaction = null;
+
+    protected string $checkout_type;
+
     /**
      * Filepath to template files
      *
-     * @var @template_path
+     * @var string $template_path
      */
-    protected $template_path;
-
-    /**
-     * @var EE_Transaction
-     */
-    protected $transaction;
-
-    /**
-     * @var EE_PMT_PayPalCheckout
-     */
-    protected $paypal_pmt;
-
-    /**
-     * @var string
-     */
-    protected $checkout_type;
+    protected string $template_path;
 
 
     /**
      * Class constructor.
      *
-     * @param EE_Payment_Method $payment_method
-     * @param array             $options
+     * @param EE_Payment_Method    $payment_method
+     * @param array                $options
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function __construct(EE_Payment_Method $payment_method, array $options = [])
+    public function __construct(EE_Payment_Method $payment_method, array $options)
     {
         $this->paypal_pmt    = $payment_method;
         // Can't be too careful.
@@ -142,11 +134,13 @@ class BillingForm extends EE_Billing_Attendee_Info_Form
     public function addPaymentSections(): void
     {
         // Exclude the default billing form fields.
-        $this->exclude([
-            'first_name',
-            'last_name',
-            'email',
-        ]);
+        $this->exclude(
+            [
+                'first_name',
+                'last_name',
+                'email',
+            ]
+        );
         // Add PayPal Hosted Fields.
         if ($this->checkout_type !== 'express_checkout') {
             $this->addAdvancedCardFields();
@@ -165,15 +159,17 @@ class BillingForm extends EE_Billing_Attendee_Info_Form
         }
         // Exclude the rest billing form fields if the payment type is express checkout.
         if ($this->checkout_type === 'express_checkout') {
-            $this->exclude([
-                'address',
-                'address2',
-                'state',
-                'phone',
-                'city',
-                'country',
-                'zip',
-            ]);
+            $this->exclude(
+                [
+                    'address',
+                    'address2',
+                    'state',
+                    'phone',
+                    'city',
+                    'country',
+                    'zip',
+                ]
+            );
             // Remove the Info subsection.
             add_filter('FHEE__EE_Form_Section_Proper___construct__options_array', [$this, 'excludeInfoSubsection']);
         }
@@ -210,7 +206,7 @@ class BillingForm extends EE_Billing_Attendee_Info_Form
      */
     public static function excludeBillingFormFields(
         EE_Billing_Info_Form $billing_form,
-        EE_Payment_Method    $payment_method
+        EE_Payment_Method $payment_method
     ): EE_Billing_Info_Form {
         $request        = LoaderFactory::getShared(Request::class);
         $request_params = $request->requestParams();
@@ -225,16 +221,18 @@ class BillingForm extends EE_Billing_Attendee_Info_Form
             && ! empty($request_params['eep_ppc_skip_form_validation'])
         ) {
             // Hide card info fields.
-            $billing_form->exclude([
-                'pp_name_on_card',
-                'address',
-                'address2',
-                'state',
-                'phone',
-                'city',
-                'country',
-                'zip',
-            ]);
+            $billing_form->exclude(
+                [
+                    'pp_name_on_card',
+                    'address',
+                    'address2',
+                    'state',
+                    'phone',
+                    'city',
+                    'country',
+                    'zip',
+                ]
+            );
         }
         return $billing_form;
     }
@@ -366,7 +364,8 @@ class BillingForm extends EE_Billing_Attendee_Info_Form
      */
     public function excludeInfoSubsection(array $options_array): array
     {
-        if (! empty($options_array['html_id'])
+        if (
+            ! empty($options_array['html_id'])
             && $options_array['html_id'] === 'spco-payment-method-info-' . $this->paypal_pmt->slug()
         ) {
             if (! empty($options_array['subsections']) && isset($options_array['subsections']['info'])) {
@@ -407,10 +406,12 @@ class BillingForm extends EE_Billing_Attendee_Info_Form
      *
      * @return EE_Form_Section_Proper
      * @throws EE_Error
+     * @throws ReflectionException
+     * @throws Exception
      */
     public function addPayPalCheckout(): EE_Form_Section_Proper
     {
-        $template_args['pm_slug'] = $this->paypal_pmt->slug();
+        $template_args['pm_slug']     = $this->paypal_pmt->slug();
         return new EE_Form_Section_Proper(
             [
                 'layout_strategy' => new EE_Template_Layout(
@@ -430,6 +431,8 @@ class BillingForm extends EE_Billing_Attendee_Info_Form
      * @param $tag
      * @param $handle
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function addDataTagsToScript($tag, $handle): string
     {
@@ -468,7 +471,7 @@ class BillingForm extends EE_Billing_Attendee_Info_Form
                 $this->_pm_instance,
                 Domain::META_KEY_SELLER_MERCHANT_ID
             );
-            $scripts_src .= "&merchant-id=$merchant_id";
+            $scripts_src   .= "&merchant-id=$merchant_id";
         }
         $client_id   = PayPalExtraMetaManager::getPmOption($this->_pm_instance, $client_id_key);
         $scripts_src .= "&client-id=$client_id&currency=$currency";
@@ -491,29 +494,6 @@ class BillingForm extends EE_Billing_Attendee_Info_Form
         $parameters = $this->localizeParameters();
         wp_localize_script('eea_paypal_commerce_js', 'eeaPPCommerceParameters', $parameters);
         parent::enqueue_js();
-    }
-
-
-    /**
-     * Get PayPal order if already created for this transaction and saved.
-     *
-     * @param string $transaction_id
-     * @return array
-     */
-    public function getPpOrder(string $transaction_id): array
-    {
-        try {
-            $pp_order        = PayPalExtraMetaManager::getPmOption($this->paypal_pmt, Domain::META_KEY_LAST_ORDER);
-            $pp_order_txn_id = $pp_order['ee_txn_id'] ?? false;
-            if ($pp_order_txn_id !== $transaction_id) {
-                // Old order data, delete it.
-                PayPalExtraMetaManager::deletePmOption($this->paypal_pmt, Domain::META_KEY_LAST_ORDER);
-                return [];
-            }
-        } catch (Exception $exception) {
-            return [];
-        }
-        return (array) $pp_order;
     }
 
 
@@ -541,21 +521,16 @@ class BillingForm extends EE_Billing_Attendee_Info_Form
         // Convert money for a display format.
         $decimal_places = CurrencyManager::getDecimalPlaces();
         $org_country    = isset(EE_Registry::instance()->CFG->organization)
-                          && EE_Registry::instance()->CFG->organization instanceof EE_Organization_Config
+        && EE_Registry::instance()->CFG->organization instanceof EE_Organization_Config
             ? EE_Registry::instance()->CFG->organization->CNT_ISO
             : 'US';
         $transaction_id = $this->transaction instanceof EE_Transaction ? $this->transaction->ID() : 0;
         $currency_code  = CurrencyManager::currencyCode();
-        $paypal_order   = empty($transaction_id) ? [] : $this->getPpOrder($transaction_id);
-        $order_amount   = $paypal_order['purchase_units'][0]['payments']['captures'][0]['amount']['value'] ?? '';
         return [
             'pm_versions'            => $pm_versions,
             'payment_currency'       => $currency_code,
             'checkout_type'          => $this->checkout_type,
             'currency_sign'          => EE_Registry::instance()->CFG->currency->sign,
-            'pp_order_id'            => $paypal_order['id'] ?? '',
-            'pp_order_status'        => $paypal_order['status'] ?? 'ORDER_STATUS_UNKNOWN',
-            'pp_order_amount'        => $order_amount,
             'pp_order_nonce'         => wp_create_nonce(Domain::CAPTURE_ORDER_NONCE_NAME),
             // The transaction ID is only used for logging errors.
             'txn_id'                 => $transaction_id,
@@ -581,7 +556,7 @@ class BillingForm extends EE_Billing_Attendee_Info_Form
             ),
             'form_validation_notice' => esc_html__('Billing form information not valid.', 'event_espresso'),
             'no_verification_token'  => esc_html__('Missing the Verification token.', 'event_espresso'),
-            'error_response'         => esc_html__('Got an error response (AJAX)', 'event_espresso'),
+            'error_response'         => esc_html__('Error response received', 'event_espresso'),
             'payment_error'          => esc_html__(
                 'There was an error with this payment. See the logs for details.',
                 'event_espresso'
@@ -590,7 +565,10 @@ class BillingForm extends EE_Billing_Attendee_Info_Form
             'general_pp_error'       => esc_html__('PayPal form threw an error.', 'event_espresso'),
             'hf_render_error'        => esc_html__('Hosted fields could not be rendered!', 'event_espresso'),
             'pm_capture_error'       => esc_html__('Payment could not be captured!', 'event_espresso'),
-            'not_acdc_eligible'      => esc_html__('This merchant is not eligible for Advanced Card Fields checkout type.', 'event_espresso'),
+            'not_acdc_eligible'      => esc_html__(
+                'This merchant is not eligible for Advanced Card Fields checkout type.',
+                'event_espresso'
+            ),
         ];
     }
 }

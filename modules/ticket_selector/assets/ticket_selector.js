@@ -1,7 +1,7 @@
 jQuery(document).ready(function ($) {
     // collection of ALL datetime selectors for ALL Events on the page
-    var $datetime_options = $('.datetime-selector-option'),
-        $ticket_selector_submit_btn = $('.ticket-selector-submit-btn');
+    const $datetime_options = $('.datetime-selector-option');
+    const $ticket_selector_submit_btn = $('.ticket-selector-submit-btn');
 	// reset by unchecking everything
 	$.each( $datetime_options, function() {
 		$( this ).prop( 'checked', false );
@@ -15,19 +15,19 @@ jQuery(document).ready(function ($) {
         'click',
         '.datetime-selector-option',
         function () {
-            var $datetime_selector_option = $(this);
-            var event_id = $datetime_selector_option.data('tkt_slctr_evt');
-            var $submit_button = $('#ticket-selector-submit-' + event_id + '-btn');
+            const $datetime_selector_option = $(this);
+            const event_id = $datetime_selector_option.data('tkt_slctr_evt');
+            const $submit_button = $('#ticket-selector-submit-' + event_id + '-btn');
             // track how many ticket selector rows are active ? ie: being displayed
-            var active_rows = 0;
-            var datetimes = [];
-            var $ticket_selector = $('#tkt-slctr-tbl-' + event_id);
+            let active_rows = 0;
+            const datetimes = [];
+            const $ticket_selector = $('#tkt-slctr-tbl-' + event_id);
             if (object_exists($ticket_selector, '$ticket_selector', false)) {
                 // first let's put together an array of ALL checked datetime options for this event
-                $datetime_options = $datetime_selector_option.parents('ul').find('.datetime-selector-option');
-                if (object_exists($datetime_options, '$datetime_options', false)) {
+                const $ticket_datetime_options = $datetime_selector_option.parents('ul').find('.datetime-selector-option');
+                if (object_exists($ticket_datetime_options, '$datetime_options', false)) {
                     // add each datetime options to our array of datetimes
-                    $.each($datetime_options, function (index) {
+                    $.each($ticket_datetime_options, function () {
                         // if checked, then display row and increment active_rows count
                         if ($(this).prop('checked')) {
                             datetimes.push('ee-ticket-datetimes-' + $(this).val());
@@ -35,19 +35,19 @@ jQuery(document).ready(function ($) {
                     });
                 }
                 // find all ticket rows for this event
-                var $ticket_selector_rows = $ticket_selector.find('.tckt-slctr-tbl-tr');
+                const $ticket_selector_rows = $ticket_selector.find('.tckt-slctr-tbl-tr');
                 $.each($ticket_selector_rows, function () {
-                    var $ticket_selector_row = $(this);
-					var $ticket_details_row = $ticket_selector_row.next('.tckt-slctr-tkt-details-tr');
-                    // get all of the specific datetime related classes assigned to this ticket row
-                    var ticket_row_datetime_classes = $ticket_selector_row.attr('class').split(' ').filter(
+                    const $ticket_selector_row = $(this);
+                    const $ticket_details_row = $ticket_selector_row.next('.tckt-slctr-tkt-details-tr');
+                    // get all the specific datetime related classes assigned to this ticket row
+                    const ticket_row_datetime_classes = $ticket_selector_row.attr('class').split(' ').filter(
                         function(element) {
                             return element.indexOf('ee-ticket-datetimes-') !== -1;
                         }
                     );
                     // because a ticket can have multiple datetimes,
-                    // we need to compare ALL of the ticket's datetimes to see if it will be displayed
-                    var display = false;
+                    // we need to compare ALL the ticket's datetimes to see if it will be displayed
+                    let display = false;
                     $.each(ticket_row_datetime_classes, function (index, element) {
                         if ($.inArray(element, datetimes) !== -1) {
                             display = true;
@@ -60,9 +60,7 @@ jQuery(document).ready(function ($) {
                     } else {
 						$ticket_selector_row.addClass( 'ee-hidden-ticket-tr' );
 						$ticket_details_row.addClass( 'ee-hidden-ticket-tr' );
-						var $qty_input = $ticket_selector_row.find(
-							'.ticket-selector-tbl-qty-slct'
-						);
+                        const $qty_input = $ticket_selector_row.find('.ticket-selector-tbl-qty-slct');
 						// set qty to zero for non-radio inputs
 						if ( $qty_input.attr( 'type' ) !== 'radio' ) {
 							$qty_input.val( 0 );
@@ -91,16 +89,14 @@ jQuery(document).ready(function ($) {
 		}
 	});
 
-	var maxChecked = typeof eeDTS !== 'undefined' && eeDTS.maxChecked ?
-		eeDTS.maxChecked :
-		10;
-	var counter = 0;
-	var prevCounter = 0;
-	var dtsEvent = 0;
-	var thisEvent = 0;
-	var prevEvent = 0;
-	var noticeID = '';
-	var $notice;
+    const maxChecked = typeof eeDTS !== 'undefined' && eeDTS.maxChecked ? eeDTS.maxChecked : 10;
+	let counter = 0;
+	let prevCounter = 0;
+    let dtsEvent = 0;
+    let thisEvent = 0;
+    let prevEvent = 0;
+    let noticeID = '';
+    let $notice;
 	$.each( $datetime_options, function() {
 		// need to track previous state
 		prevEvent = thisEvent;
@@ -131,11 +127,11 @@ jQuery(document).ready(function ($) {
 
 	$('.display-tckt-slctr-tkt-details').on(
 		'click',
-		function () {
+		function (e) {
 			// get target element from "this" (the control element's) "rel" attribute
-			var target = $(this).attr("rel");
+            const target = $(this).attr("rel");
 			if (target.length) {
-				var $ticket_details_row = $('#' + target + '-dv').closest('.tckt-slctr-tkt-details-tr');
+                const $ticket_details_row = $('#' + target + '-dv').closest('.tckt-slctr-tkt-details-tr');
 				$ticket_details_row.removeClass('ee-hidden-ticket-tr');
 				if ($ticket_details_row.length) {
 					$ticket_details_row.removeClass('ee-hidden-ticket-tr');
@@ -149,11 +145,11 @@ jQuery(document).ready(function ($) {
 
 	$('.hide-tckt-slctr-tkt-details').on(
 		'click',
-		function () {
+		function (e) {
 			// get target element from "this" (the control element's) "rel" attribute
-			var target = $(this).attr("rel");
+            const target = $(this).attr("rel");
 			if (target.length) {
-				var $ticket_details_row = $('#' + target + '-dv').closest('.tckt-slctr-tkt-details-tr');
+                const $ticket_details_row = $('#' + target + '-dv').closest('.tckt-slctr-tkt-details-tr');
 				if ($ticket_details_row.length){
 					$ticket_details_row.addClass('ee-hidden-ticket-tr');
 				}

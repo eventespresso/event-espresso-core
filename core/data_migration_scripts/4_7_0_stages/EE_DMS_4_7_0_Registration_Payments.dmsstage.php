@@ -117,7 +117,7 @@ class EE_DMS_4_7_0_Registration_Payments extends EE_Data_Migration_Script_Stage_
     /**
      * _process_registration_payments
      * basically a copy of the "Sequential Registration Payment Application Strategy"  logic
-     * currently in EE_Payment_Processor::process_registration_payments()
+     * currently in EventEspresso\core\services\payments\RegistrationPayments::processRegistrationPayments()
      *
      * @param stdClass $payment
      * @param array    $registrations

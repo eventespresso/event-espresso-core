@@ -64,10 +64,24 @@ class EE_Datepicker_Input extends EE_Form_Input_Base
      */
     public function raw_value_in_form(): string
     {
-        if ($this->use_jquery_ui || ! $this->raw_value()) {
+        $raw_value = $this->raw_value();
+        if ($this->use_jquery_ui || ! $raw_value) {
             return parent::raw_value_in_form();
         }
-        $date = DateTime::createFromFormat(get_option('date_format', 'Y-m-d'), $this->raw_value());
-        return $date instanceof DateTime ? $date->format('Y-m-d') : $this->raw_value();
+        // load the CURRENT WordPress date format and try that
+        $date = DateTime::createFromFormat(get_option('date_format', 'Y-m-d'), $raw_value);
+        if ($date instanceof DateTime) {
+            return $date->format('Y-m-d');
+        }
+        // nope? ok check if date format can just be parsed as is
+        $timestamp = strtotime($raw_value);
+        if ($timestamp) {
+            $date = date('Y-m-d', $timestamp);
+            if ($date) {
+                return $date;
+            }
+        }
+        // ... errr... ok... just return the raw value
+        return $raw_value;
     }
 }

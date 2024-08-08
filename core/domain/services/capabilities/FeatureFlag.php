@@ -81,6 +81,12 @@ class FeatureFlag
      */
     public const USE_DATETIME_STATUS_CONTROLS = 'use_datetime_status_controls';
 
+    /**
+     * Whether to apply Gateway Partner fees to transactions
+     * default: Disabled
+     */
+    public const USE_PAYMENT_PROCESSOR_FEES = 'use_payment_processor_fees';
+
 
     public static function getFormOptions(): array
     {
@@ -177,10 +183,13 @@ class FeatureFlag
                     'Whether to use the EDD Plugin Licensing system to manage licenses for the EE plugins. default: Disabled',
                     'event_espresso'
                 ),
-                'overridden'      => defined('EE_USE_EDD_PLUGIN_LICENSING') && EE_USE_EDD_PLUGIN_LICENSING,
-                'overridden_by'      => defined('EE_USE_EDD_PLUGIN_LICENSING') && EE_USE_EDD_PLUGIN_LICENSING
+                'overridden'      => defined('EE_USE_EDD_PLUGIN_LICENSING'),
+                'overridden_by'   => defined('EE_USE_EDD_PLUGIN_LICENSING')
                     ? sprintf(
-                        esc_html__('%1$sCurrently overriden by the %2$s constant in wp-config.php%3$s', 'event_espresso'),
+                        esc_html__(
+                            '%1$sCurrently overriden by the %2$s constant in wp-config.php%3$s',
+                            'event_espresso'
+                        ),
                         '<br><span class="ee-status--warning">',
                         'EE_USE_EDD_PLUGIN_LICENSING',
                         '</span>'
@@ -192,6 +201,16 @@ class FeatureFlag
                 'html_label_text' => esc_html__('Use Datetime Status Controls', 'event_espresso'),
                 'help_text'       => esc_html__(
                     'Whether to use the new Datetime Status Controls in the EDTR. default: Disabled',
+                    'event_espresso'
+                ),
+                'overridden'      => false,
+                'overridden_by'   => '',
+            ],
+            FeatureFlag::USE_PAYMENT_PROCESSOR_FEES    => [
+                'name'            => esc_html__('Gateway Partner Fees', 'event_espresso'),
+                'html_label_text' => esc_html__('Apply Payment Processor Fees', 'event_espresso'),
+                'help_text'       => esc_html__(
+                    'Whether to apply Gateway Partner fees to transactions. default: Disabled',
                     'event_espresso'
                 ),
                 'overridden'      => false,

@@ -4,7 +4,6 @@ namespace EventEspresso\core\domain\services\cron\jobs;
 
 use DomainException;
 use EE_Error;
-use EE_Payment_Processor;
 use EE_Registration;
 use EE_Transaction;
 use EE_Transaction_Processor;
@@ -12,12 +11,13 @@ use EEM_Transaction;
 use EventEspresso\core\domain\services\cron\CronJob;
 use EventEspresso\core\domain\services\cron\CronUtilities;
 use EventEspresso\core\domain\services\registration\RegStatus;
+use EventEspresso\core\services\payments\PaymentProcessor;
 use ReflectionException;
 use RuntimeException;
 
 class ExpiredTransactionCheck extends CronJob
 {
-    private ?EE_Payment_Processor $payment_processor = null;
+    private ?PaymentProcessor $payment_processor = null;
 
     private ?EE_Transaction_Processor $transaction_processor = null;
 
@@ -37,7 +37,7 @@ class ExpiredTransactionCheck extends CronJob
 
     private function loadPaymentProcessor()
     {
-        $this->payment_processor = $this->loader->getShared(EE_Payment_Processor::class);
+        $this->payment_processor = $this->loader->getShared(PaymentProcessor::class);
     }
 
 
@@ -227,7 +227,7 @@ class ExpiredTransactionCheck extends CronJob
         if ($transaction->all_reg_steps_completed() !== true) {
             $this->loadPaymentProcessor();
             // let's simulate an IPN here which will trigger any notifications that need to go out
-            $this->payment_processor->update_txn_based_on_payment(
+            $this->payment_processor->updateTransactionBasedOnPayment(
                 $transaction,
                 $transaction->last_payment(),
                 true,

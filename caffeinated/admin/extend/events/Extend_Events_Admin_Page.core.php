@@ -219,19 +219,20 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
      */
     public function admin_init()
     {
-        EE_Registry::$i18n_js_strings = array_merge(
-            EE_Registry::$i18n_js_strings,
-            [
-                'image_confirm'          => esc_html__(
-                    'Do you really want to delete this image? Please remember to update your event to complete the removal.',
-                    'event_espresso'
-                ),
-                'event_starts_on'        => esc_html__('Event Starts on', 'event_espresso'),
-                'event_ends_on'          => esc_html__('Event Ends on', 'event_espresso'),
-                'event_datetime_actions' => esc_html__('Actions', 'event_espresso'),
-                'event_clone_dt_msg'     => esc_html__('Clone this Event Date and Time', 'event_espresso'),
-                'remove_event_dt_msg'    => esc_html__('Remove this Event Time', 'event_espresso'),
-            ]
+        EE_Registry::$i18n_js_strings['image_confirm']          = esc_html__(
+            'Do you really want to delete this image? Please remember to update your event to complete the removal.',
+            'event_espresso'
+        );
+        EE_Registry::$i18n_js_strings['event_starts_on']        = esc_html__('Event Starts on', 'event_espresso');
+        EE_Registry::$i18n_js_strings['event_ends_on']          = esc_html__('Event Ends on', 'event_espresso');
+        EE_Registry::$i18n_js_strings['event_datetime_actions'] = esc_html__('Actions', 'event_espresso');
+        EE_Registry::$i18n_js_strings['event_clone_dt_msg']     = esc_html__(
+            'Clone this Event Date and Time',
+            'event_espresso'
+        );
+        EE_Registry::$i18n_js_strings['remove_event_dt_msg']    = esc_html__(
+            'Remove this Event Time',
+            'event_espresso'
         );
     }
 

@@ -1,8 +1,5 @@
 <?php
 
-use EventEspresso\core\services\loaders\LoaderFactory;
-use EventEspresso\core\services\request\DataType;
-use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\PaymentMethods\PayPalCommerce\domain\Domain;
 use EventEspresso\PaymentMethods\PayPalCommerce\tools\extra_meta\PayPalExtraMetaManager;
 use EventEspresso\PaymentMethods\PayPalCommerce\tools\logging\PayPalLogger;
@@ -62,91 +59,7 @@ class EEG_PayPalCheckout extends EE_Onsite_Gateway
     public function do_direct_payment($payment, $billing_info = null)
     {
         // Normally we shouldn't be getting here because the payment should have been processed
-        // along with the PP Order Charge. But we should double-check just to be safe.
-        if ($payment->status() === EEM_Payment::status_id_approved) {
-            // Looks like the Payment was already approved. This is a success.
-            return $payment;
-        }
-        $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
-        // Check the payment.
-        $payment = $this->validatePayment($payment, $request);
-        if ($payment->details() === 'error' && $payment->status() === EEM_Payment::status_id_failed) {
-            return $payment;
-        }
-        $transaction    = $payment->transaction();
-        $payment_method = $transaction->payment_method();
-        // Get saved order details.
-        try {
-            $order = PayPalExtraMetaManager::getPmOption($payment_method, Domain::META_KEY_LAST_ORDER);
-        } catch (Exception $exception) {
-            return EEG_PayPalCheckout::updatePaymentStatus(
-                $payment,
-                EEM_Payment::status_id_failed,
-                $request->postParams(),
-                $exception->getMessage()
-            );
-        }
-        $order_id     = $request->getRequestParam('pp_order_id');
-        $order_status = $this->isOrderCompleted($order, $order_id);
-        if (! $order_status['completed']) {
-            return EEG_PayPalCheckout::updatePaymentStatus(
-                $payment,
-                EEM_Payment::status_id_failed,
-                [$order, $request->postParams()],
-                $order_status['message']
-            );
-        }
-        // Remove the saved order data.
-        PayPalExtraMetaManager::deletePmOption($payment_method, Domain::META_KEY_LAST_ORDER);
-        // Looks like all is good. Do a payment success.
-        $this->saveBillingDetails($payment, $transaction, $order, $billing_info);
-        return EEG_PayPalCheckout::updatePaymentStatus($payment, EEM_Payment::status_id_approved, $order);
-    }
-
-
-    /**
-     * Validate the payment.
-     *
-     * @param mixed            $payment
-     * @param RequestInterface $request
-     * @return EE_Payment
-     * @throws EE_Error
-     * @throws ReflectionException
-     */
-    public function validatePayment(?EE_Payment $payment, RequestInterface $request): EE_Payment
-    {
-        $failed_status = $this->_pay_model->failed_status();
-        // Check the payment.
-        if (! $payment instanceof EE_Payment) {
-            $payment       = EE_Payment::new_instance();
-            $error_message = esc_html__('Error. No associated payment was found.', 'event_espresso');
-            return EEG_PayPalCheckout::updatePaymentStatus(
-                $payment,
-                $failed_status,
-                $request->postParams(),
-                $error_message
-            );
-        }
-        // Check the transaction.
-        $transaction = $payment->transaction();
-        if (! $transaction instanceof EE_Transaction) {
-            $error_message = esc_html__(
-                'Could not process this payment because it has no associated transaction.',
-                'event_espresso'
-            );
-            return EEG_PayPalCheckout::updatePaymentStatus(
-                $payment,
-                $failed_status,
-                $request->postParams(),
-                $error_message
-            );
-        }
-        // Check for the payment nonce.
-        // $order_nonce = $request->getRequestParam('pp_order_nonce');
-        // if (empty($order_nonce) || ! wp_verify_nonce($order_nonce, Domain::CAPTURE_ORDER_NONCE_NAME)) {
-        //     $error_message = esc_html__('No or incorrect order capture nonce provided !', 'event_espresso');
-        //     return EEG_PayPalCheckout::updatePaymentStatus($payment, $failed_status, $request->postParams(), $error_message);
-        // }
+        // along with the PP Order Charge.
         return $payment;
     }
 
@@ -164,7 +77,7 @@ class EEG_PayPalCheckout extends EE_Onsite_Gateway
             'completed' => false,
             'message'   => esc_html__('Could not validate this Order.', 'event_espresso'),
         ];
-        if (! empty($provided_order_id) && $order['id'] !== $provided_order_id) {
+        if (! empty($order) && ! empty($provided_order_id) && $order['id'] !== $provided_order_id) {
             $conclusion['message'] = esc_html__('Order ID mismatch.', 'event_espresso');
         }
         if (! $order || ! is_array($order)) {
@@ -263,12 +176,69 @@ class EEG_PayPalCheckout extends EE_Onsite_Gateway
             );
         }
         $log_message = $update_message ?: $default_message;
-        PayPalLogger::errorLog($log_message, $response_data, $paypal_pm);
+        PayPalLogger::errorLog($log_message, $response_data, $paypal_pm, false, $payment->transaction());
         $payment->set_status($status);
         $payment->set_details($log_message);
         $payment->set_gateway_response($log_message);
         $payment->save();
         return $payment;
+    }
+
+
+    /**
+     * Get PayPal order if already created for this transaction and saved.
+     *
+     * @param EE_Payment_Method $paypal_pm
+     * @param int               $TXN_ID
+     * @return array
+     */
+    public static function getPpOrder(EE_Payment_Method $paypal_pm, int $TXN_ID): array
+    {
+        try {
+            $pp_orders = PayPalExtraMetaManager::getPmOption($paypal_pm, Domain::META_KEY_PAYPAL_ORDERS) ?? [];
+            return $pp_orders[ $TXN_ID ] ?? [];
+        } catch (Exception $exception) {
+            return [];
+        }
+    }
+
+
+    /**
+     * Update PayPal order for this transaction.
+     *
+     * @param                   $order
+     * @param EE_Payment_Method $paypal_pm
+     * @param int               $TXN_ID
+     * @return bool
+     */
+    public static function updatePpOrder($order, EE_Payment_Method $paypal_pm, int $TXN_ID): bool
+    {
+        try {
+            $pp_orders = PayPalExtraMetaManager::getPmOption($paypal_pm, Domain::META_KEY_PAYPAL_ORDERS) ?? [];
+            $pp_orders[ $TXN_ID ] = $order;
+            return PayPalExtraMetaManager::savePmOption($paypal_pm, Domain::META_KEY_PAYPAL_ORDERS, $pp_orders);
+        } catch (Exception $exception) {
+            return false;
+        }
+    }
+
+
+    /**
+     * Delete PP Order associated with the provided transaction.
+     *
+     * @param EE_Payment_Method $paypal_pm
+     * @param int               $TXN_ID
+     * @return bool
+     */
+    public static function deletePpOrder(EE_Payment_Method $paypal_pm, int $TXN_ID): bool
+    {
+        try {
+            $pp_orders = PayPalExtraMetaManager::getPmOption($paypal_pm, Domain::META_KEY_PAYPAL_ORDERS) ?? [];
+            unset($pp_orders[ $TXN_ID ]);
+            return PayPalExtraMetaManager::savePmOption($paypal_pm, Domain::META_KEY_PAYPAL_ORDERS, $pp_orders);
+        } catch (Exception $exception) {
+            return false;
+        }
     }
 
 

@@ -100,7 +100,7 @@ class EE_PMT_PayPalCheckout extends EE_PMT_Base
             ],
             $extra_args
         );
-        return new BillingForm($this->_pm_instance, $options);
+        return LoaderFactory::getNew(BillingForm::class, [$this->_pm_instance, $options]);
     }
 
 

@@ -166,10 +166,6 @@ class EE_Admin_Page_Loader
             $this->_menu_slugs[ $menu_slug ] = $page;
             $menu_pages[ $menu_slug ] = $admin_page_init;
 
-			// if we're not caffeinated, then we don't need to do any of the following.
-			if (! $isCaffeinated) {
-				continue;
-			}
             // now that we've got the admin_init objects...
             // let's see if there are any caffeinated pages extending the originals.
             // If there are then let's hook into the init admin filter and load our extentions instead.
@@ -186,7 +182,11 @@ class EE_Admin_Page_Loader
         $hooks_ref = array_unique($hooks_ref);
         // now let's loop and require!
         foreach ($hooks_ref as $path) {
-			require_once($path);
+            // if we're not caffeinated, then we don't need to do any of the following.
+            if (! $isCaffeinated && strpos($path, 'caffeinated') !== false) {
+            	continue;
+            }
+            require_once($path);
         }
         // make sure we have menu slugs global setup. Used in EE_Admin_Page->page_setup() to ensure we don't do a full class load for an admin page that isn't requested.
         global $ee_menu_slugs;

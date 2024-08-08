@@ -23,12 +23,14 @@ use EEH_HTML;
 use EEH_Template;
 use EEM_Country;
 use EEM_State;
+use EventEspresso\core\domain\Domain;
 use EventEspresso\core\domain\services\capabilities\FeatureFlags;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidFormSubmissionException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\libraries\form_sections\form_handlers\FormHandler;
 use EventEspresso\core\services\address\CountrySubRegionDao;
+use EventEspresso\core\services\loaders\LoaderFactory;
 use InvalidArgumentException;
 use LogicException;
 use ReflectionException;
@@ -338,7 +340,10 @@ class OrganizationSettings extends FormHandler
             ),
         ];
 
-        if ($this->feature->allowed('use_edd_plugin_licensing')) {
+
+        /** @var Domain $domain */
+        $domain = LoaderFactory::getShared(Domain::class);
+        if ($domain->isCaffeinated() && $this->feature->allowed('use_edd_plugin_licensing')) {
             $subsections = EEH_Array::insert_into_array(
                 $subsections,
                 [

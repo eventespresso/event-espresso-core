@@ -125,7 +125,7 @@ class PluginLicense
         if (! $this->license_key_data instanceof LicenseKeyData) {
             $this->license_key_data = LoaderFactory::getShared(LicenseKeyData::class);
         }
-        return $this->license_key_data->getLicense($this->pluginSlug());
+        return $this->license_key_data->getLicenseDataForPlugin($this->pluginSlug());
     }
 
 

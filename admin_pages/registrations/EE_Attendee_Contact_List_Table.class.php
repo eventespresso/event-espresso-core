@@ -143,7 +143,7 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
             return '';
         }
         return sprintf(
-            '<input type="checkbox" name="checkbox[%1$s]" value="%1$s" />',
+            '<input type="checkbox" name="ATT_IDs[%1$s]" value="%1$s" />',
             $item->ID()
         );
     }
@@ -287,6 +287,30 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
                         aria-label="' . esc_attr__('Restore Contact', 'event_espresso') . '"
                     >
                         ' . esc_html__('Restore', 'event_espresso') . '
+                    </a>';
+            }
+            if (
+                EE_Registry::instance()->CAP->current_user_can(
+                    'ee_delete_contacts',
+                    'espresso_registrations_delete_attendees',
+                    $attendee->ID()
+                ) 
+                && $attendee->count_related('Registration') === 0
+            ) {
+                // perm delete attendee
+                $delete_attendee_link       = EE_Admin_Page::add_query_args_and_nonce(
+                    [
+                        'action' => 'delete_attendee',
+                        'ATT_ID' => $attendee->ID(),
+                    ],
+                    REG_ADMIN_URL
+                );
+                $actions['delete'] = '
+                    <a  href="' . $delete_attendee_link . '"
+                        class="ee-aria-tooltip"
+                        aria-label="' . esc_attr__('Delete Permanently', 'event_espresso') . '"
+                    >
+                        ' . esc_attr__('Delete Permanently', 'event_espresso') . '
                     </a>';
             }
         }

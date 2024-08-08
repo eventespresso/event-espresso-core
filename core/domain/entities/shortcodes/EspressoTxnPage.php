@@ -5,12 +5,12 @@ namespace EventEspresso\core\domain\entities\shortcodes;
 use EE_Error;
 use EE_Offsite_Gateway;
 use EE_Payment_Method;
-use EE_Payment_Processor;
 use EE_Registry;
 use EE_Transaction;
 use EEM_Payment_Method;
 use EEM_Transaction;
 use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\payments\IpnHandler;
 use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\core\services\shortcodes\EspressoShortcode;
 use Exception;
@@ -81,11 +81,11 @@ class EspressoTxnPage extends EspressoShortcode
                         true
                     )
                 ) {
-                    /** @type EE_Payment_Processor $payment_processor */
-                    $payment_processor = EE_Registry::instance()->load_core('Payment_Processor');
                     /** @var RequestInterface $request */
                     $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
-                    $payment_processor->process_ipn($request->requestParams(), $transaction, $payment_method);
+                    /** @var IpnHandler $payment_processor */
+                    $payment_processor = LoaderFactory::getShared(IpnHandler::class);
+                    $payment_processor->processIPN($request->requestParams(), $transaction, $payment_method);
                 }
             }
             // allow gateways to add a filter to stop rendering the page

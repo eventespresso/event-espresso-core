@@ -18,10 +18,7 @@ class EspressoCoreDomain extends JsonDataNode
 {
     const NODE_NAME = 'coreDomain';
 
-    /**
-     * @var Domain $domain
-     */
-    private $domain;
+    private Domain $domain;
 
 
     /**
@@ -48,6 +45,9 @@ class EspressoCoreDomain extends JsonDataNode
         $this->addData('coreVersion', $this->domain->version());
         $this->addData('distributionAssetsPath', $this->domain->distributionAssetsPath());
         $this->addData('distributionAssetsUrl', $this->domain->distributionAssetsUrl());
+        $this->addData('isCaffeinated', $this->domain->isCaffeinated());
+        $this->addData('isDecaf', $this->domain->isDecaf());
+        $this->addData('isMultiSite', $this->domain->isMultiSite());
         $this->addData('pluginPath', $this->domain->pluginPath());
         $this->addData('pluginUrl', $this->domain->pluginUrl());
         $this->setInitialized(true);

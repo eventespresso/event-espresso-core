@@ -23,44 +23,44 @@ abstract class DomainBase implements DomainInterface
      *
      * @var FilePath
      */
-    private $plugin_file;
+    private FilePath $plugin_file;
 
     /**
      * String indicating version for plugin
      *
-     * @var string
+     * @var Version
      */
-    private $version;
+    private Version $version;
 
     /**
      * @var string $plugin_basename
      */
-    private $plugin_basename;
+    private string $plugin_basename = '';
 
     /**
      * @var string $plugin_path
      */
-    private $plugin_path;
+    private string $plugin_path = '';
 
     /**
      * @var string $plugin_url
      */
-    private $plugin_url;
+    private string $plugin_url = '';
 
     /**
      * @var string $asset_namespace
      */
-    private $asset_namespace;
+    private string $asset_namespace = '';
 
     /**
      * @var string $assets_path
      */
-    private $assets_path;
+    private string $assets_path = '';
 
     /**
      * @var bool
      */
-    protected $initialized = false;
+    protected bool $initialized = false;
 
 
     /**
@@ -68,7 +68,7 @@ abstract class DomainBase implements DomainInterface
      *
      * @param FilePath $plugin_file
      * @param Version  $version
-     * @param string $asset_namespace
+     * @param string   $asset_namespace
      */
     public function __construct(
         FilePath $plugin_file,
@@ -86,7 +86,7 @@ abstract class DomainBase implements DomainInterface
      * @return void
      * @since 5.0.0.p
      */
-    public function initialize($asset_namespace = Domain::ASSET_NAMESPACE)
+    public function initialize(string $asset_namespace = Domain::ASSET_NAMESPACE)
     {
         if (! $this->initialized) {
             $this->plugin_basename = plugin_basename($this->pluginFile());
@@ -103,11 +103,11 @@ abstract class DomainBase implements DomainInterface
      * @param string $asset_namespace
      * @return void
      */
-    public function setAssetNamespace($asset_namespace = Domain::ASSET_NAMESPACE)
+    public function setAssetNamespace(string $asset_namespace = Domain::ASSET_NAMESPACE)
     {
         if (! $this->asset_namespace) {
             $this->asset_namespace = sanitize_key(
-                // convert directory separators to dashes and remove file extension
+            // convert directory separators to dashes and remove file extension
                 str_replace(['/', '.php'], ['-', ''], $asset_namespace)
             );
         }
@@ -165,7 +165,7 @@ abstract class DomainBase implements DomainInterface
      * @param string $additional_path
      * @return string
      */
-    public function pluginPath($additional_path = ''): string
+    public function pluginPath(string $additional_path = ''): string
     {
         return is_string($additional_path) && $additional_path !== ''
             ? $this->plugin_path . $additional_path
@@ -177,7 +177,7 @@ abstract class DomainBase implements DomainInterface
      * @param string $additional_path
      * @return string
      */
-    public function pluginUrl($additional_path = ''): string
+    public function pluginUrl(string $additional_path = ''): string
     {
         return is_string($additional_path) && $additional_path !== ''
             ? $this->plugin_url . $additional_path
@@ -197,7 +197,7 @@ abstract class DomainBase implements DomainInterface
     /**
      * @return Version
      */
-    public function versionValueObject()
+    public function versionValueObject(): Version
     {
         return $this->version;
     }
@@ -216,7 +216,7 @@ abstract class DomainBase implements DomainInterface
      * @param string $additional_path
      * @return string
      */
-    public function distributionAssetsPath($additional_path = ''): string
+    public function distributionAssetsPath(string $additional_path = ''): string
     {
         return is_string($additional_path) && $additional_path !== ''
             ? $this->assets_path . $additional_path
@@ -228,7 +228,7 @@ abstract class DomainBase implements DomainInterface
      * @param string $additional_path
      * @return string
      */
-    public function distributionAssetsUrl($additional_path = ''): string
+    public function distributionAssetsUrl(string $additional_path = ''): string
     {
         return is_string($additional_path) && $additional_path !== ''
             ? $this->plugin_url . DomainBase::ASSETS_FOLDER . $additional_path

@@ -96,7 +96,7 @@ class PayPalExtraMeta
     public function getMetaData(): array
     {
         try {
-            return $this->pm->get_extra_meta($this->metadata_key, true, []);
+            return (array) $this->pm->get_extra_meta($this->metadata_key, true, []);
         } catch (EE_Error | ReflectionException $e) {
             $err_msg = sprintf(
                 esc_html__('Error getting the PM meta data: %1$s', 'event_espresso'),

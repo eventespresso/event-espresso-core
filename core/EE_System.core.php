@@ -382,8 +382,8 @@ final class EE_System implements ResettableInterface
             new EventEspresso\core\services\licensing\PluginLicense(
                 EVENT_ESPRESSO_MAIN_FILE,
                 0,
-                'Event Espresso Core',
-                'event_espresso_core',
+                Domain::pluginName(),
+                Domain::pluginSlug(),
                 espresso_version()
             );
         }

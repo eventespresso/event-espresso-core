@@ -13,7 +13,8 @@
 
 use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
-?>
+if ($payment_log instanceof EE_Change_Log): ?>
+
 <div class="padding">
     <table class="ee-payment-log-details widefat">
         <tbody>
@@ -74,3 +75,21 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
         </tbody>
     </table>
 </div>
+
+<?php else: ?>
+
+<div class="padding">
+    <table class="ee-payment-log-details widefat">
+        <tbody>
+            <tr>
+                <td>
+                    <p class="ee-status-outline ee-status-bg--attention">
+                        <?php esc_html_e("Payment Log No Longer Exists", 'event_espresso'); ?>
+                    </p>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+<?php endif; ?>

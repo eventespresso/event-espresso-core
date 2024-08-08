@@ -3,6 +3,8 @@
 use EventEspresso\core\domain\entities\custom_post_types\EspressoPostType;
 use EventEspresso\core\domain\services\admin\events\default_settings\AdvancedEditorAdminFormSection;
 use EventEspresso\core\domain\services\admin\events\editor\ui\TicketSelectorShortcodeButton;
+use EventEspresso\core\domain\services\assets\EspressoLegacyAdminAssetManager;
+use EventEspresso\core\domain\services\assets\JqueryAssetManager;
 use EventEspresso\core\domain\services\registration\RegStatus;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -569,25 +571,27 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      */
     public function load_scripts_styles()
     {
-        wp_register_style(
+        wp_enqueue_style(
             'events-admin-css',
             EVENTS_ASSETS_URL . 'events-admin-page.css',
             [],
             EVENT_ESPRESSO_VERSION
         );
-        wp_register_style(
+        wp_enqueue_style(
             'ee-cat-admin',
             EVENTS_ASSETS_URL . 'ee-cat-admin.css',
             [],
             EVENT_ESPRESSO_VERSION
         );
-        wp_enqueue_style('events-admin-css');
-        wp_enqueue_style('ee-cat-admin');
         // scripts
-        wp_register_script(
+        wp_enqueue_script(
             'event_editor_js',
             EVENTS_ASSETS_URL . 'event_editor.js',
-            ['ee_admin_js', 'jquery-ui-slider', 'jquery-ui-timepicker-addon'],
+            [
+                EspressoLegacyAdminAssetManager::JS_HANDLE_EE_ADMIN,
+                JqueryAssetManager::JS_HANDLE_JQUERY_UI_SLIDER,
+                JqueryAssetManager::JS_HANDLE_JQUERY_UI_TIMEPICKER_ADDON
+            ],
             EVENT_ESPRESSO_VERSION,
             true
         );
@@ -610,22 +614,20 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     {
         // styles
         wp_enqueue_style('espresso-ui-theme');
-        wp_register_style(
+        wp_enqueue_style(
             'event-editor-css',
             EVENTS_ASSETS_URL . 'event-editor.css',
             ['ee-admin-css'],
             EVENT_ESPRESSO_VERSION
         );
-        wp_enqueue_style('event-editor-css');
         // scripts
         if (! $this->admin_config->useAdvancedEditor()) {
-            wp_register_script(
+            wp_enqueue_script(
                 'event-datetime-metabox',
                 EVENTS_ASSETS_URL . 'event-datetime-metabox.js',
                 ['event_editor_js', 'ee-datepicker'],
                 EVENT_ESPRESSO_VERSION
             );
-            wp_enqueue_script('event-datetime-metabox');
         }
     }
 
@@ -653,9 +655,18 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      */
     public function admin_init()
     {
-        EE_Registry::$i18n_js_strings['image_confirm'] = esc_html__(
-            'Do you really want to delete this image? Please remember to update your event to complete the removal.',
-            'event_espresso'
+        EE_Registry::$i18n_js_strings['image_confirm'] = wp_strip_all_tags(
+            esc_html__(
+                'Do you really want to delete this image? Please remember to update your event to complete the removal.',
+                'event_espresso'
+            )
+        );
+
+        EE_Registry::$i18n_js_strings['entity_locked'] = wp_strip_all_tags(
+            __(
+                'This item can not be deleted because it it as locked. It may be in use by the system or have been sold.',
+                'event_espresso'
+            )
         );
     }
 
@@ -1333,7 +1344,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 'TKT_min'         => ! empty($ticket_data['TKT_min']) ? $ticket_data['TKT_min'] : 0,
                 'TKT_max'         => ! empty($ticket_data['TKT_max']) ? $ticket_data['TKT_max'] : EE_INF,
                 'TKT_order'       => $ticket_data['TKT_order'] ?? $row,
-                'TKT_price'       => $ticket_price,
+                'TKT_price'       => (float) $ticket_price,
                 'TKT_row'         => $row,
             ];
             // if this is a default ticket, then we need to set the TKT_ID to 0 and update accordingly,
@@ -1376,7 +1387,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 // if they are different then we create a new ticket (if $ticket_sold)
                 // if they aren't different then we go ahead and modify existing ticket.
                 $create_new_ticket = $ticket_sold
-                                     && $ticket_price !== $existing_ticket->price()
+                                     && EEH_Money::compare_floats($ticket_price, $existing_ticket->price(), '!=')
                                      && ! $existing_ticket->deleted();
                 $existing_ticket->set_date_format($date_formats[0]);
                 $existing_ticket->set_time_format($date_formats[1]);
@@ -1789,7 +1800,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
     {
         $template_args = [
             'tkt_status_class'    => ' tkt-status-' . $ticket->ticket_status(),
-            'tkt_archive_class'   => $ticket->ticket_status() === EE_Ticket::archived && ! $skeleton ? ' tkt-archived'
+            'tkt_archive_class'   => $ticket->ticket_status() === EE_Ticket::archived && ! $skeleton
+                ? ' tkt-archived'
                 : '',
             'ticketrow'           => $skeleton ? 'TICKETNUM' : $row,
             'TKT_ID'              => $ticket->get('TKT_ID'),
@@ -1803,10 +1815,11 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             'trash_icon'          => ($skeleton || (! $ticket->get('TKT_deleted')))
                                      && (! empty($ticket) && $ticket->get('TKT_sold') === 0)
                 ? 'dashicons dashicons-post-trash clickable'
-                : 'dashicons dashicons-lock',
+                : 'dashicons dashicons-lock entity-locked',
             'disabled'            => $skeleton || (! empty($ticket) && ! $ticket->get('TKT_deleted')) ? ''
                 : ' disabled=disabled',
         ];
+
         $price         = $ticket->ID() !== 0
             ? $ticket->get_first_related('Price', ['default_where_conditions' => 'none'])
             : null;

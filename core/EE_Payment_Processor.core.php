@@ -1,8 +1,11 @@
 <?php
 
-use EventEspresso\core\exceptions\InvalidDataTypeException;
-use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\interfaces\ResettableInterface;
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\payments\IpnHandler;
+use EventEspresso\core\services\payments\PaymentProcessor;
+use EventEspresso\core\services\payments\PostPaymentProcessor;
+use EventEspresso\core\services\payments\RegistrationPayments;
 
 EE_Registry::instance()->load_class('Processor_Base');
 
@@ -17,48 +20,79 @@ EE_Registry::instance()->load_class('Processor_Base');
  */
 class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterface
 {
-    /**
-     * @var EE_Payment_Processor $_instance
-     * @access    private
-     */
-    private static $_instance;
+    private static ?EE_Payment_Processor $_instance;
+
+    private IpnHandler $ipn_handler;
+
+    private PaymentProcessor $payment_processor;
+
+    private PostPaymentProcessor $post_payment_processor;
+
+    private RegistrationPayments $registration_payments;
 
 
     /**
      * @singleton method used to instantiate class object
-     * @access    public
+     * @param PaymentProcessor|null     $payment_processor
+     * @param PostPaymentProcessor|null $post_payment_processor
+     * @param RegistrationPayments|null $registration_payments
+     * @param IpnHandler|null           $ipn_handler
      * @return EE_Payment_Processor instance
      */
-    public static function instance()
-    {
+    public static function instance(
+        ?PaymentProcessor $payment_processor = null,
+        ?PostPaymentProcessor $post_payment_processor = null,
+        ?RegistrationPayments $registration_payments = null,
+        ?IpnHandler $ipn_handler = null
+    ): EE_Payment_Processor {
         // check if class object is instantiated
-        if (! self::$_instance instanceof EE_Payment_Processor) {
-            self::$_instance = new self();
+        if (! EE_Payment_Processor::$_instance instanceof EE_Payment_Processor) {
+            EE_Payment_Processor::$_instance = new EE_Payment_Processor(
+                $payment_processor,
+                $post_payment_processor,
+                $registration_payments,
+                $ipn_handler
+            );
         }
-        return self::$_instance;
+        return EE_Payment_Processor::$_instance;
     }
 
 
     /**
      * @return EE_Payment_Processor
      */
-    public static function reset()
+    public static function reset(): EE_Payment_Processor
     {
-        self::$_instance = null;
-        return self::instance();
+        EE_Payment_Processor::$_instance = null;
+        return EE_Payment_Processor::instance();
     }
 
 
     /**
-     *private constructor to prevent direct creation
-     *
-     * @Constructor
-     * @access private
+     * @param PaymentProcessor|null     $payment_processor
+     * @param PostPaymentProcessor|null $post_payment_processor
+     * @param RegistrationPayments|null $registration_payments
+     * @param IpnHandler|null           $ipn_handler
      */
-    private function __construct()
-    {
+    private function __construct(
+        ?PaymentProcessor $payment_processor,
+        ?PostPaymentProcessor $post_payment_processor,
+        ?RegistrationPayments $registration_payments,
+        ?IpnHandler $ipn_handler
+    ) {
+        $this->payment_processor      = $payment_processor instanceof PaymentProcessor
+            ? $payment_processor
+            : LoaderFactory::getShared(PaymentProcessor::class);
+        $this->post_payment_processor = $post_payment_processor instanceof PostPaymentProcessor
+            ? $post_payment_processor
+            : LoaderFactory::getShared(PostPaymentProcessor::class);
+        $this->registration_payments  = $registration_payments instanceof RegistrationPayments
+            ? $registration_payments
+            : LoaderFactory::getShared(RegistrationPayments::class);
+        $this->ipn_handler            = $ipn_handler instanceof IpnHandler
+            ? $ipn_handler
+            : LoaderFactory::getShared(IpnHandler::class);
         do_action('AHEE__EE_Payment_Processor__construct');
-        add_action('http_api_curl', [$this, '_curl_requests_to_paypal_use_tls'], 10, 3);
     }
 
 
@@ -78,16 +112,12 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
      *                                                where to go AFTER the offsite gateway
      * @param string                    $method       like 'CART', indicates who the client who called this was
      * @param bool                      $by_admin     TRUE if payment is being attempted from the admin
-     * @param bool                      $update_txn   whether or not to call
+     * @param bool                      $update_txn   whether to call
      *                                                EE_Transaction_Processor::update_transaction_and_registrations_after_checkout_or_payment()
      * @param string                    $cancel_url   URL to return to if off-site payments are cancelled
      * @return EE_Payment
      * @throws EE_Error
-     * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @throws RuntimeException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      */
     public function process_payment(
         EE_Payment_Method $payment_method,
@@ -100,58 +130,17 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
         bool $update_txn = true,
         string $cancel_url = ''
     ): ?EE_Payment {
-        if ((float) $amount < 0) {
-            throw new EE_Error(
-                sprintf(
-                    esc_html__(
-                        'Attempting to make a payment for a negative amount of %1$d for transaction %2$d. That should be a refund',
-                        'event_espresso'
-                    ),
-                    $amount,
-                    $transaction->ID()
-                )
-            );
-        }
-        // verify payment method
-        $payment_method = EEM_Payment_Method::instance()->ensure_is_obj(
+        return $this->payment_processor->processPayment(
             $payment_method,
-            true
+            $transaction,
+            $billing_form,
+            (float) $amount,
+            $by_admin,
+            $update_txn,
+            (string) $return_url,
+            $cancel_url,
+            $method
         );
-        // verify transaction
-        EEM_Transaction::instance()->ensure_is_obj($transaction);
-        $transaction->set_payment_method_ID($payment_method->ID());
-        // verify payment method type
-        if ($payment_method->type_obj() instanceof EE_PMT_Base) {
-            $payment = $payment_method->type_obj()->process_payment(
-                $transaction,
-                min($amount, $transaction->remaining()), // make sure we don't overcharge
-                $billing_form,
-                $return_url,
-                add_query_arg(['ee_cancel_payment' => true], $cancel_url),
-                $method,
-                $by_admin
-            );
-            // check if payment method uses an off-site gateway
-            if ($payment_method->type_obj()->payment_occurs() !== EE_PMT_Base::offsite) {
-                // don't process payments for off-site gateways yet because no payment has occurred yet
-                $this->update_txn_based_on_payment($transaction, $payment, $update_txn);
-            }
-            return $payment;
-        }
-        EE_Error::add_error(
-            sprintf(
-                esc_html__(
-                    'A valid payment method could not be determined due to a technical issue.%sPlease try again or contact %s for assistance.',
-                    'event_espresso'
-                ),
-                '<br/>',
-                EE_Registry::instance()->CFG->organization->get_pretty('email')
-            ),
-            __FILE__,
-            __FUNCTION__,
-            __LINE__
-        );
-        return null;
     }
 
 
@@ -160,38 +149,13 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
      * @param EE_Payment_Method  $payment_method
      * @return string
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
-    public function get_ipn_url_for_payment_method($transaction, $payment_method)
+    public function get_ipn_url_for_payment_method($transaction, $payment_method): string
     {
-        /** @type \EE_Transaction $transaction */
+        /** @type EE_Transaction $transaction */
         $transaction = EEM_Transaction::instance()->ensure_is_obj($transaction);
-        $primary_reg = $transaction->primary_registration();
-        if (! $primary_reg instanceof EE_Registration) {
-            throw new EE_Error(
-                sprintf(
-                    esc_html__(
-                        'Cannot get IPN URL for transaction with ID %d because it has no primary registration',
-                        'event_espresso'
-                    ),
-                    $transaction->ID()
-                )
-            );
-        }
-        $payment_method = EEM_Payment_Method::instance()->ensure_is_obj(
-            $payment_method,
-            true
-        );
-        $url            = add_query_arg(
-            [
-                'e_reg_url_link'    => $primary_reg->reg_url_link(),
-                'ee_payment_method' => $payment_method->slug(),
-            ],
-            EE_Registry::instance()->CFG->core->txn_page_url()
-        );
-        return $url;
+        return $this->ipn_handler->getIpnUrlForPaymentMethod($transaction, $payment_method);
     }
 
 
@@ -204,18 +168,14 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
      * @param array              $_req_data            form post data
      * @param EE_Transaction|int $transaction          optional (or a transactions id)
      * @param EE_Payment_Method  $payment_method       (or a slug or id of one)
-     * @param boolean            $update_txn           whether or not to call
+     * @param boolean            $update_txn           whether to call
      *                                                 EE_Transaction_Processor::update_transaction_and_registrations_after_checkout_or_payment()
      * @param bool               $separate_IPN_request whether the IPN uses a separate request (true, like PayPal)
      *                                                 or is processed manually (false, like Authorize.net)
      * @return EE_Payment
      * @throws EE_Error
      * @throws Exception
-     * @throws \RuntimeException
-     * @throws \ReflectionException
-     * @throws \InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
+     * @throws ReflectionException
      */
     public function process_ipn(
         $_req_data,
@@ -224,213 +184,13 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
         $update_txn = true,
         $separate_IPN_request = true
     ) {
-        EE_Registry::instance()->load_model('Change_Log');
-        $_req_data = $this->_remove_unusable_characters_from_array((array) $_req_data);
-        EE_Processor_Base::set_IPN($separate_IPN_request);
-        $obj_for_log = null;
-        if ($transaction instanceof EE_Transaction) {
-            $obj_for_log = $transaction;
-            if ($payment_method instanceof EE_Payment_Method) {
-                $obj_for_log = EEM_Payment::instance()->get_one(
-                    [
-                        ['TXN_ID' => $transaction->ID(), 'PMD_ID' => $payment_method->ID()],
-                        'order_by' => ['PAY_timestamp' => 'desc'],
-                    ]
-                );
-            }
-        } elseif ($payment_method instanceof EE_Payment) {
-            $obj_for_log = $payment_method;
-        }
-        $log = EEM_Change_Log::instance()->log(
-            EEM_Change_Log::type_gateway,
-            ['IPN data received' => $_req_data],
-            $obj_for_log
+        return $this->ipn_handler->processIPN(
+            (array) $_req_data,
+            $transaction,
+            $payment_method,
+            $update_txn,
+            $separate_IPN_request
         );
-        try {
-            /**
-             * @var EE_Payment $payment
-             */
-            $payment = null;
-            if ($transaction && $payment_method) {
-                /** @type EE_Transaction $transaction */
-                $transaction = EEM_Transaction::instance()->ensure_is_obj($transaction);
-                /** @type EE_Payment_Method $payment_method */
-                $payment_method = EEM_Payment_Method::instance()->ensure_is_obj($payment_method);
-                if ($payment_method->type_obj() instanceof EE_PMT_Base) {
-                    try {
-                        $payment = $payment_method->type_obj()->handle_ipn($_req_data, $transaction);
-                        $log->set_object($payment);
-                    } catch (EventEspresso\core\exceptions\IpnException $e) {
-                        EEM_Change_Log::instance()->log(
-                            EEM_Change_Log::type_gateway,
-                            [
-                                'message'     => 'IPN Exception: ' . $e->getMessage(),
-                                'current_url' => EEH_URL::current_url(),
-                                'payment'     => $e->getPaymentProperties(),
-                                'IPN_data'    => $e->getIpnData(),
-                            ],
-                            $obj_for_log
-                        );
-                        return $e->getPayment();
-                    }
-                } else {
-                    // not a payment
-                    EE_Error::add_error(
-                        sprintf(
-                            esc_html__(
-                                'A valid payment method could not be determined due to a technical issue.%sPlease refresh your browser and try again or contact %s for assistance.',
-                                'event_espresso'
-                            ),
-                            '<br/>',
-                            EE_Registry::instance()->CFG->organization->get_pretty('email')
-                        ),
-                        __FILE__,
-                        __FUNCTION__,
-                        __LINE__
-                    );
-                }
-            } else {
-                // that's actually pretty ok. The IPN just wasn't able
-                // to identify which transaction or payment method this was for
-                // give all active payment methods a chance to claim it
-                $active_payment_methods = EEM_Payment_Method::instance()->get_all_active();
-                foreach ($active_payment_methods as $active_payment_method) {
-                    try {
-                        $payment        = $active_payment_method->type_obj()->handle_unclaimed_ipn($_req_data);
-                        $payment_method = $active_payment_method;
-                        EEM_Change_Log::instance()->log(
-                            EEM_Change_Log::type_gateway,
-                            ['IPN data' => $_req_data],
-                            $payment
-                        );
-                        break;
-                    } catch (EventEspresso\core\exceptions\IpnException $e) {
-                        EEM_Change_Log::instance()->log(
-                            EEM_Change_Log::type_gateway,
-                            [
-                                'message'     => 'IPN Exception: ' . $e->getMessage(),
-                                'current_url' => EEH_URL::current_url(),
-                                'payment'     => $e->getPaymentProperties(),
-                                'IPN_data'    => $e->getIpnData(),
-                            ],
-                            $obj_for_log
-                        );
-                        return $e->getPayment();
-                    } catch (EE_Error $e) {
-                        // that's fine- it apparently couldn't handle the IPN
-                    }
-                }
-            }
-            // EEM_Payment_Log::instance()->log("got to 7",$transaction,$payment_method);
-            if ($payment instanceof EE_Payment) {
-                $payment->save();
-                //  update the TXN
-                $this->update_txn_based_on_payment(
-                    $transaction,
-                    $payment,
-                    $update_txn,
-                    $separate_IPN_request
-                );
-            } else {
-                // we couldn't find the payment for this IPN... let's try and log at least SOMETHING
-                if ($payment_method) {
-                    EEM_Change_Log::instance()->log(
-                        EEM_Change_Log::type_gateway,
-                        ['IPN data' => $_req_data],
-                        $payment_method
-                    );
-                } elseif ($transaction) {
-                    EEM_Change_Log::instance()->log(
-                        EEM_Change_Log::type_gateway,
-                        ['IPN data' => $_req_data],
-                        $transaction
-                    );
-                }
-            }
-            return $payment;
-        } catch (EE_Error $e) {
-            do_action(
-                'AHEE__log',
-                __FILE__,
-                __FUNCTION__,
-                sprintf(
-                    esc_html__(
-                        'Error occurred while receiving IPN. Transaction: %1$s, req data: %2$s. The error was "%3$s"',
-                        'event_espresso'
-                    ),
-                    print_r($transaction, true),
-                    print_r($_req_data, true),
-                    $e->getMessage()
-                )
-            );
-            throw $e;
-        }
-    }
-
-
-    /**
-     * Removes any non-printable illegal characters from the input,
-     * which might cause a raucous when trying to insert into the database
-     *
-     * @param array $request_data
-     * @return array
-     */
-    protected function _remove_unusable_characters_from_array(array $request_data)
-    {
-        $return_data = [];
-        foreach ($request_data as $key => $value) {
-            $return_data[ $this->_remove_unusable_characters($key) ] = $this->_remove_unusable_characters(
-                $value
-            );
-        }
-        return $return_data;
-    }
-
-
-    /**
-     * Removes any non-printable illegal characters from the input,
-     * which might cause a raucous when trying to insert into the database
-     *
-     * @param string $request_data
-     * @return string
-     */
-    protected function _remove_unusable_characters($request_data)
-    {
-        return preg_replace('/[^[:print:]]/', '', $request_data);
-    }
-
-
-    /**
-     * Should be called just before displaying the payment attempt results to the user,
-     * when the payment attempt has finished. Some payment methods may have special
-     * logic to perform here. For example, if process_payment() happens on a special request
-     * and then the user is redirected to a page that displays the payment's status, this
-     * should be called while loading the page that displays the payment's status. If the user is
-     * sent to an offsite payment provider, this should be called upon returning from that offsite payment
-     * provider.
-     *
-     * @param EE_Transaction|int $transaction
-     * @param bool               $update_txn whether to call
-     *                                       EE_Transaction_Processor::update_transaction_and_registrations_after_checkout_or_payment()
-     * @return EE_Payment
-     * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws ReflectionException
-     * @throws RuntimeException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     * @deprecated 4.6.24 method is no longer used. Instead it is up to client code, like SPCO,
-     *                                       to call handle_ipn() for offsite gateways that don't receive separate IPNs
-     */
-    public function finalize_payment_for(EE_Transaction $transaction, bool $update_txn = true): ?EE_Payment
-    {
-        $last_payment_method = $transaction->payment_method();
-        if ($last_payment_method instanceof EE_Payment_Method) {
-            $payment = $last_payment_method->type_obj()->finalize_payment_for($transaction);
-            $this->update_txn_based_on_payment($transaction, $payment, $update_txn);
-            return $payment;
-        }
-        return null;
     }
 
 
@@ -448,12 +208,8 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
         ?EE_Payment_Method $payment_method,
         EE_Payment $payment_to_refund,
         array $refund_info = []
-    ) {
-        if ($payment_method instanceof EE_Payment_Method && $payment_method->type_obj()->supports_sending_refunds()) {
-            $payment_method->type_obj()->process_refund($payment_to_refund, $refund_info);
-            $this->update_txn_based_on_payment($payment_to_refund->transaction(), $payment_to_refund);
-        }
-        return $payment_to_refund;
+    ): EE_Payment {
+        return $this->payment_processor->processRefund($payment_method, $payment_to_refund, $refund_info);
     }
 
 
@@ -470,81 +226,31 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
      * this logic to be separate from 'normal' plain-jane saving and updating
      * of transactions and payments, and to be tied to payment processing.
      * Note: this method DOES NOT save the payment passed into it. It is the responsibility
-     * of previous code to decide whether or not to save (because the payment passed into
+     * of previous code to decide whether to save (because the payment passed into
      * this method might be a temporary, never-to-be-saved payment from an offline gateway,
      * in which case we only want that payment object for some temporary usage during this request,
      * but we don't want it to be saved).
      *
      * @param EE_Transaction|int $transaction
      * @param EE_Payment         $payment
-     * @param boolean            $update_txn
-     *                        whether or not to call
-     *                        EE_Transaction_Processor::
-     *                        update_transaction_and_registrations_after_checkout_or_payment()
-     *                        (you can save 1 DB query if you know you're going
-     *                        to save it later instead)
-     * @param bool               $IPN
-     *                        if processing IPNs or other similar payment
-     *                        related activities that occur in alternate
-     *                        requests than the main one that is processing the
-     *                        TXN, then set this to true to check whether the
-     *                        TXN is locked before updating
+     * @param bool               $update_txn whether to call
+     *                                       EE_Transaction_Processor::update_transaction_and_registrations_after_checkout_or_payment()
+     *                                       (you can save 1 DB query if you know you're going to save it later
+     *                                       instead)
+     * @param bool               $IPN        if processing IPNs or other similar payment related activities that occur
+     *                                       in alternate requests than the main one that is processing the TXN,
+     *                                       then set this to true to check whether the TXN is locked before updating
      * @throws EE_Error
-     * @throws InvalidArgumentException
      * @throws ReflectionException
-     * @throws RuntimeException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      */
     public function update_txn_based_on_payment($transaction, $payment, $update_txn = true, $IPN = false)
     {
-        $do_action = 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__not_successful';
-        /** @type EE_Transaction $transaction */
-        $transaction = EEM_Transaction::instance()->ensure_is_obj($transaction);
-        // can we freely update the TXN at this moment?
-        if ($IPN && $transaction->is_locked()) {
-            // don't update the transaction at this exact moment
-            // because the TXN is active in another request
-            EE_Cron_Tasks::schedule_update_transaction_with_payment(
-                time(),
-                $transaction->ID(),
-                $payment->ID()
-            );
-        } else {
-            // verify payment and that it has been saved
-            if ($payment instanceof EE_Payment && $payment->ID()) {
-                if (
-                    $payment->payment_method() instanceof EE_Payment_Method
-                    && $payment->payment_method()->type_obj() instanceof EE_PMT_Base
-                ) {
-                    $payment->payment_method()->type_obj()->update_txn_based_on_payment($payment);
-                    // update TXN registrations with payment info
-                    $this->process_registration_payments($transaction, $payment);
-                }
-                $do_action = $payment->just_approved()
-                    ? 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__successful'
-                    : $do_action;
-            } else {
-                // send out notifications
-                add_filter('FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true');
-                $do_action = 'AHEE__EE_Payment_Processor__update_txn_based_on_payment__no_payment_made';
-            }
-            if ($payment instanceof EE_Payment && $payment->status() !== EEM_Payment::status_id_failed) {
-                /** @type EE_Transaction_Payments $transaction_payments */
-                $transaction_payments = EE_Registry::instance()->load_class('Transaction_Payments');
-                // set new value for total paid
-                $transaction_payments->calculate_total_payments_and_update_status($transaction);
-                // call EE_Transaction_Processor::update_transaction_and_registrations_after_checkout_or_payment() ???
-                if ($update_txn) {
-                    $this->_post_payment_processing($transaction, $payment, $IPN);
-                }
-            }
-            // granular hook for others to use.
-            do_action($do_action, $transaction, $payment);
-            do_action('AHEE_log', __CLASS__, __FUNCTION__, $do_action, '$do_action');
-            // global hook for others to use.
-            do_action('AHEE__EE_Payment_Processor__update_txn_based_on_payment', $transaction, $payment);
-        }
+        $this->payment_processor->updateTransactionBasedOnPayment(
+            $transaction,
+            $payment,
+            (bool) $update_txn,
+            (bool) $IPN
+        );
     }
 
 
@@ -555,91 +261,14 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
      * @param EE_Payment        $payment
      * @param EE_Registration[] $registrations
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws RuntimeException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function process_registration_payments(
         EE_Transaction $transaction,
         EE_Payment $payment,
         array $registrations = []
     ) {
-        // only process if payment was successful
-        if ($payment->status() !== EEM_Payment::status_id_approved) {
-            return;
-        }
-        // EEM_Registration::instance()->show_next_x_db_queries();
-        if (empty($registrations)) {
-            // find registrations with monies owing that can receive a payment
-            $registrations = $transaction->registrations(
-                [
-                    [
-                        // only these reg statuses can receive payments
-                        'STS_ID'           => ['IN', EEM_Registration::reg_statuses_that_allow_payment()],
-                        'REG_final_price'  => ['!=', 0],
-                        'REG_final_price*' => ['!=', 'REG_paid', true],
-                    ],
-                ]
-            );
-        }
-        // still nothing ??!??
-        if (empty($registrations)) {
-            return;
-        }
-        // todo: break out the following logic into a separate strategy class
-        // todo: named something like "Sequential_Reg_Payment_Strategy"
-        // todo: which would apply payments using the capitalist "first come first paid" approach
-        // todo: then have another strategy class like "Distributed_Reg_Payment_Strategy"
-        // todo: which would be the socialist "everybody gets a piece of pie" approach,
-        // todo: which would be better for deposits, where you want a bit of the payment applied to each registration
-        $refund = $payment->is_a_refund();
-        // how much is available to apply to registrations?
-        $available_payment_amount = (float) abs($payment->amount());
-        foreach ($registrations as $registration) {
-            if ($registration instanceof EE_Registration) {
-                // nothing left?
-                if ($available_payment_amount <= 0) {
-                    break;
-                }
-                if ($refund) {
-                    $available_payment_amount = $this->process_registration_refund(
-                        $registration,
-                        $payment,
-                        $available_payment_amount
-                    );
-                } else {
-                    $available_payment_amount = $this->process_registration_payment(
-                        $registration,
-                        $payment,
-                        $available_payment_amount
-                    );
-                }
-            }
-        }
-        if (
-            $available_payment_amount > 0
-            && apply_filters(
-                'FHEE__EE_Payment_Processor__process_registration_payments__display_notifications',
-                false
-            )
-        ) {
-            EE_Error::add_attention(
-                sprintf(
-                    esc_html__(
-                        'A remainder of %1$s exists after applying this payment to Registration(s) %2$s.%3$sPlease verify that the original payment amount of %4$s is correct. If so, you should edit this payment and select at least one additional registration in the "Registrations to Apply Payment to" section, so that the remainder of this payment can be applied to the additional registration(s).',
-                        'event_espresso'
-                    ),
-                    EEH_Template::format_currency($available_payment_amount),
-                    implode(', ', array_keys($registrations)),
-                    '<br/>',
-                    EEH_Template::format_currency($payment->amount())
-                ),
-                __FILE__,
-                __FUNCTION__,
-                __LINE__
-            );
-        }
+        $this->registration_payments->processRegistrationPayments($transaction, $payment, $registrations);
     }
 
 
@@ -651,10 +280,6 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
      * @param float|int|string $available_payment_amount
      * @return float
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws RuntimeException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function process_registration_payment(
@@ -662,9 +287,75 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
         EE_Payment $payment,
         $available_payment_amount = 0.00
     ) {
-        // update $available_payment_amount
-        $available_payment_amount -= $registration->applyPayment($payment, $available_payment_amount);
-        return $available_payment_amount;
+        return $this->registration_payments->processRegistrationPayment(
+            $registration,
+            $payment,
+            (float) $available_payment_amount
+        );
+    }
+
+
+    /**
+     * update registration REG_paid field after refund and link registration with payment
+     *
+     * @param EE_Registration $registration
+     * @param EE_Payment      $payment
+     * @param float           $available_refund_amount - IMPORTANT !!! SEND AVAILABLE REFUND AMOUNT AS A POSITIVE NUMBER
+     * @return float
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function process_registration_refund(
+        EE_Registration $registration,
+        EE_Payment $payment,
+        float $available_refund_amount = 0.00
+    ): float {
+        return $this->registration_payments->processRegistrationRefund(
+            $registration,
+            $payment,
+            $available_refund_amount
+        );
+    }
+
+
+    /**
+     * Force posts to PayPal to use TLS v1.2. See:
+     * https://core.trac.wordpress.org/ticket/36320
+     * https://core.trac.wordpress.org/ticket/34924#comment:15
+     * https://www.paypal-knowledge.com/infocenter/index?page=content&widgetview=true&id=FAQ1914&viewlocale=en_US
+     * This will affect PayPal standard, pro, express, and Payflow.
+     *
+     * @param $handle
+     * @param $r
+     * @param $url
+     */
+    public static function _curl_requests_to_paypal_use_tls($handle, $r, $url)
+    {
+        if (strpos($url, 'https://') !== false && strpos($url, '.paypal.com') !== false) {
+            // Use the value of the constant CURL_SSLVERSION_TLSv1 = 1
+            // instead of the constant because it might not be defined
+            curl_setopt($handle, CURLOPT_SSLVERSION, 6);
+        }
+    }
+
+
+    /**
+     * Process payments and transaction after payment process completed.
+     * ultimately this will send the TXN and payment details off so that notifications can be sent out.
+     * if this request happens to be processing an IPN,
+     * then we will also set the Payment Options Reg Step to completed,
+     * and attempt to completely finalize the TXN if all the other Reg Steps are completed as well.
+     *
+     * @param EE_Transaction $transaction
+     * @param EE_Payment     $payment
+     * @param bool           $IPN
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @depecated $VID:$
+     */
+    protected function _post_payment_processing(EE_Transaction $transaction, EE_Payment $payment, $IPN = false)
+    {
+        $this->post_payment_processor->updateTransactionAndPayment($transaction, $payment, (bool) $IPN);
     }
 
 
@@ -676,9 +367,8 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
      * @param float           $payment_amount
      * @return void
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     * @depecated $VID:$
      */
     protected function _apply_registration_payment(
         EE_Registration $registration,
@@ -708,132 +398,35 @@ class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterf
 
 
     /**
-     * update registration REG_paid field after refund and link registration with payment
+     * Removes any non-printable illegal characters from the input,
+     * which might cause a raucous when trying to insert into the database
      *
-     * @param EE_Registration $registration
-     * @param EE_Payment      $payment
-     * @param float           $available_refund_amount - IMPORTANT !!! SEND AVAILABLE REFUND AMOUNT AS A POSITIVE NUMBER
-     * @return float
-     * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws RuntimeException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     * @throws ReflectionException
+     * @param array $request_data
+     * @return array
+     * @depecated $VID:$
      */
-    public function process_registration_refund(
-        EE_Registration $registration,
-        EE_Payment $payment,
-        float $available_refund_amount = 0.00
-    ) {
-        // update $available_payment_amount
-        $available_refund_amount -= $registration->applyPayment($payment, $available_refund_amount);
-        return $available_refund_amount;
+    protected function _remove_unusable_characters_from_array(array $request_data)
+    {
+        $return_data = [];
+        foreach ($request_data as $key => $value) {
+            $return_data[ $this->_remove_unusable_characters($key) ] = $this->_remove_unusable_characters(
+                $value
+            );
+        }
+        return $return_data;
     }
 
 
     /**
-     * Process payments and transaction after payment process completed.
-     * ultimately this will send the TXN and payment details off so that notifications can be sent out.
-     * if this request happens to be processing an IPN,
-     * then we will also set the Payment Options Reg Step to completed,
-     * and attempt to completely finalize the TXN if all of the other Reg Steps are completed as well.
+     * Removes any non-printable illegal characters from the input,
+     * which might cause a raucous when trying to insert into the database
      *
-     * @param EE_Transaction $transaction
-     * @param EE_Payment     $payment
-     * @param bool           $IPN
-     * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws ReflectionException
-     * @throws RuntimeException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
+     * @param string $request_data
+     * @return string
+     * @depecated $VID:$
      */
-    protected function _post_payment_processing(EE_Transaction $transaction, EE_Payment $payment, $IPN = false)
+    protected function _remove_unusable_characters($request_data)
     {
-        /** @type EE_Transaction_Processor $transaction_processor */
-        $transaction_processor = EE_Registry::instance()->load_class('Transaction_Processor');
-        // is the Payment Options Reg Step completed ?
-        $payment_options_step_completed = $transaction->reg_step_completed('payment_options');
-        // if the Payment Options Reg Step is completed...
-        $revisit = $payment_options_step_completed === true;
-        // then this is kinda sorta a revisit with regards to payments at least
-        $transaction_processor->set_revisit($revisit);
-        // if this is an IPN, let's consider the Payment Options Reg Step completed if not already
-        if (
-            $IPN
-            && $payment_options_step_completed !== true
-            && ($payment->is_approved() || $payment->is_pending())
-        ) {
-            $payment_options_step_completed = $transaction->set_reg_step_completed(
-                'payment_options'
-            );
-        }
-        // maybe update status, but don't save transaction just yet
-        $transaction->update_status_based_on_total_paid(false);
-        // check if 'finalize_registration' step has been completed...
-        $finalized = $transaction->reg_step_completed('finalize_registration');
-        //  if this is an IPN and the final step has not been initiated
-        if ($IPN && $payment_options_step_completed && $finalized === false) {
-            // and if it hasn't already been set as being started...
-            $finalized = $transaction->set_reg_step_initiated('finalize_registration');
-        }
-        $transaction->save();
-        // because the above will return false if the final step was not fully completed, we need to check again...
-        if ($IPN && $finalized !== false) {
-            // and if we are all good to go, then send out notifications
-            add_filter('FHEE__EED_Messages___maybe_registration__deliver_notifications', '__return_true');
-            // ok, now process the transaction according to the payment
-            $transaction_processor->update_transaction_and_registrations_after_checkout_or_payment(
-                $transaction,
-                $payment
-            );
-        }
-        // DEBUG LOG
-        $payment_method = $payment->payment_method();
-        if ($payment_method instanceof EE_Payment_Method) {
-            $payment_method_type_obj = $payment_method->type_obj();
-            if ($payment_method_type_obj instanceof EE_PMT_Base) {
-                $gateway = $payment_method_type_obj->get_gateway();
-                if ($gateway instanceof EE_Gateway) {
-                    $gateway->log(
-                        [
-                            'message'               => (string) esc_html__(
-                                'Post Payment Transaction Details',
-                                'event_espresso'
-                            ),
-                            'transaction'           => $transaction->model_field_array(),
-                            'finalized'             => $finalized,
-                            'IPN'                   => $IPN,
-                            'deliver_notifications' => has_filter(
-                                'FHEE__EED_Messages___maybe_registration__deliver_notifications'
-                            ),
-                        ],
-                        $payment
-                    );
-                }
-            }
-        }
-    }
-
-
-    /**
-     * Force posts to PayPal to use TLS v1.2. See:
-     * https://core.trac.wordpress.org/ticket/36320
-     * https://core.trac.wordpress.org/ticket/34924#comment:15
-     * https://www.paypal-knowledge.com/infocenter/index?page=content&widgetview=true&id=FAQ1914&viewlocale=en_US
-     * This will affect PayPal standard, pro, express, and Payflow.
-     *
-     * @param $handle
-     * @param $r
-     * @param $url
-     */
-    public static function _curl_requests_to_paypal_use_tls($handle, $r, $url)
-    {
-        if (strpos($url, 'https://') !== false && strpos($url, '.paypal.com') !== false) {
-            // Use the value of the constant CURL_SSLVERSION_TLSv1 = 1
-            // instead of the constant because it might not be defined
-            curl_setopt($handle, CURLOPT_SSLVERSION, 6);
-        }
+        return preg_replace('/[^[:print:]]/', '', $request_data);
     }
 }

@@ -460,38 +460,38 @@ $generated_i18n_strings = array(
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/Details.tsx:37
 	__( 'click to edit description…', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/config.ts:10
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/config.ts:14
+	__( 'View Registrations for this Date', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/config.ts:19
+	__( 'Manage Ticket Assignments', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/config.ts:24
 	__( 'Move Date to Trash', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/config.ts:13
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/config.ts:29
 	// Reference: packages/constants/src/datetime.ts:6
 	__( 'Active', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/config.ts:14
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/config.ts:13
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/config.ts:30
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/config.ts:29
 	__( 'Trashed', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/config.ts:15
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/config.ts:14
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/config.ts:31
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/config.ts:30
 	// Reference: packages/constants/src/datetime.ts:8
 	__( 'Expired', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/config.ts:16
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/config.ts:16
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/config.ts:32
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/config.ts:32
 	__( 'Sold Out', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/config.ts:17
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/config.ts:33
 	// Reference: packages/constants/src/datetime.ts:12
 	__( 'Upcoming', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/config.ts:7
-	__( 'Edit Event Date Details', 'event_espresso' ),
-
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/config.ts:8
-	__( 'View Registrations for this Date', 'event_espresso' ),
-
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/config.ts:9
-	__( 'Manage Ticket Assignments', 'event_espresso' ),
+	__( 'Edit Event Date Details', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/editable/EditableName.tsx:41
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/editable/EditableName.tsx:41
@@ -1007,25 +1007,25 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/TicketQuantity.tsx:51
 	__( 'edit quantity of tickets available…', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/config.ts:10
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/config.ts:14
+	__( 'Manage Date Assignments', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/config.ts:19
+	// Reference: packages/tpc/src/components/table/Table.tsx:43
+	__( 'Ticket Price Calculator', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/config.ts:24
 	__( 'Move Ticket to Trash', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/config.ts:15
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/config.ts:31
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:54
 	__( 'On Sale', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/config.ts:17
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/config.ts:33
 	__( 'Pending', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/config.ts:7
-	__( 'Edit Ticket Details', 'event_espresso' ),
-
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/config.ts:8
-	__( 'Manage Date Assignments', 'event_espresso' ),
-
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/config.ts:9
-	// Reference: packages/tpc/src/components/table/Table.tsx:43
-	__( 'Ticket Price Calculator', 'event_espresso' ),
+	__( 'Edit Ticket Details', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/editable/EditablePrice.tsx:39
 	__( 'edit ticket total…', 'event_espresso' ),

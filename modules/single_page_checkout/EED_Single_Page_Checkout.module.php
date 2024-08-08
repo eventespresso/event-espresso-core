@@ -1589,7 +1589,7 @@ class EED_Single_Page_Checkout extends EED_Module
      */
     public function unlock_transaction()
     {
-        if ($this->checkout->transaction instanceof EE_Transaction) {
+        if ($this->checkout instanceof EE_Checkout && $this->checkout->transaction instanceof EE_Transaction) {
             $this->checkout->transaction->unlock();
         }
     }

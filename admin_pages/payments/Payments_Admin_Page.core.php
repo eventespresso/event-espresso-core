@@ -871,8 +871,9 @@ class Payments_Admin_Page extends EE_Admin_Page
     {
         return new EE_Form_Section_HTML(
             EEH_HTML::tr(
-                EEH_HTML::th() .
-                EEH_HTML::td(
+                EEH_HTML::th()
+                . EEH_HTML::thx()
+                . EEH_HTML::td(
                     EEH_HTML::p(
                         esc_html__('All fields marked with a * are required fields', 'event_espresso'),
                         '',

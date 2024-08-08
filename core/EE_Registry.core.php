@@ -260,13 +260,16 @@ class EE_Registry implements ResettableInterface
      */
     public static function sanitize_i18n_js_strings(): array
     {
-        $i18n_js_strings = (array) self::$i18n_js_strings;
-        foreach ($i18n_js_strings as $key => $value) {
+        array_walk(EE_Registry::$i18n_js_strings, function (&$value) {
             if (is_scalar($value)) {
-                $i18n_js_strings[ $key ] = html_entity_decode((string) $value, ENT_QUOTES, 'UTF-8');
+                $value = html_entity_decode((string) $value, ENT_QUOTES, 'UTF-8');
+                // replace all escaped instances of \n with actual new lines
+                $value = str_replace("\\n", "\n", $value);
             }
-        }
-        return $i18n_js_strings;
+        });
+        // sort the array by key in a case-insensitive manner
+        ksort(EE_Registry::$i18n_js_strings, SORT_NATURAL | SORT_FLAG_CASE);
+        return EE_Registry::$i18n_js_strings;
     }
 
 
@@ -277,8 +280,8 @@ class EE_Registry implements ResettableInterface
      */
     public static function localize_i18n_js_strings(): string
     {
-        $i18n_js_strings = EE_Registry::sanitize_i18n_js_strings();
-        return '/* <![CDATA[ */ var eei18n = ' . wp_json_encode($i18n_js_strings) . '; /* ]]> */';
+        $i18n_js_strings = wp_json_encode(EE_Registry::sanitize_i18n_js_strings());
+        return "/* <![CDATA[ */ var eei18n = $i18n_js_strings; /* ]]> */";
     }
 
 

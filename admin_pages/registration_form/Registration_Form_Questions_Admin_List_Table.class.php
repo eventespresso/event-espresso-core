@@ -154,7 +154,7 @@ class Registration_Form_Questions_Admin_List_Table extends EE_Admin_List_Table
     public function column_display_text(EE_Question $question, bool $prep_content = true): string
     {
         if ($this->caps_handler->userCanEditQuestion($question)) {
-            $content = $this->$this->getActionLink(
+            $content = $this->getActionLink(
                 $this->getActionUrl($question, self::ACTION_EDIT),
                 $prep_content ? $question->display_text() : $question->admin_label(),
                 esc_attr__('Edit Question', 'event_espresso'),

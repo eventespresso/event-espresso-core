@@ -823,7 +823,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      */
     public function primary_registration()
     {
-        if($this->_primary_registrant instanceof EE_Registration) {
+        if ($this->_primary_registrant instanceof EE_Registration) {
             return $this->_primary_registrant;
         }
 
@@ -1106,14 +1106,14 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     /**
      * Gets the array of billing info for the gateway and for this transaction's primary registration's attendee.
      *
-     * @return EE_Form_Section_Proper
+     * @return EE_Form_Section_Proper|null
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function billing_info()
+    public function billing_info(): ?EE_Form_Section_Proper
     {
         $payment_method = $this->payment_method();
         if (! $payment_method) {

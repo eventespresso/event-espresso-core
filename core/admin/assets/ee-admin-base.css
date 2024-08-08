@@ -2,31 +2,31 @@
 * Event Espresso admin menu styles
 */
 :root {
-    --ee-base-ui-scale: 1rem;
-}
-
-.espresso-admin-font-size-tiny {
-    --ee-base-ui-scale: .7rem;
-}
-
-.espresso-admin-font-size-smaller {
-    --ee-base-ui-scale: .8rem;
-}
-
-.espresso-admin-font-size-small {
     --ee-base-ui-scale: .9rem;
 }
 
+.espresso-admin-font-size-tiny {
+    --ee-base-ui-scale: .6rem;
+}
+
+.espresso-admin-font-size-smaller {
+    --ee-base-ui-scale: .7rem;
+}
+
+.espresso-admin-font-size-small {
+    --ee-base-ui-scale: .8rem;
+}
+
 .espresso-admin-font-size-default {
-    --ee-base-ui-scale: 1rem;
+    --ee-base-ui-scale: .9rem;
 }
 
 .espresso-admin-font-size-big {
-    --ee-base-ui-scale: 1.1rem;
+    --ee-base-ui-scale: 1rem;
 }
 
 .espresso-admin-font-size-bigger {
-    --ee-base-ui-scale: 1.2rem;
+    --ee-base-ui-scale: 1.1rem;
 }
 
 /* CONSTANTS */

@@ -240,6 +240,22 @@ class PayPalExtraMetaManager
         if (! $checkout_type) {
             $paypal_pm->update_extra_meta(Domain::META_KEY_CHECKOUT_TYPE, $allowed_checkout_type);
         }
+        // Save the scopes that were authorized.
+        if (! empty($data['response']['oauth_integrations'][0]['oauth_third_party'][0]['scopes'])) {
+            $scopes = [];
+            foreach ($data['response']['oauth_integrations'][0]['oauth_third_party'][0]['scopes'] as $scope) {
+                // Scope will look like: 'https://uri.paypal.com/services/payments/partnerfee'
+                $split       = explode('/', $scope);
+                $split_count = count($split);
+                // Get the scope itself.
+                $scopes    []= $split[ $split_count - 1 ];
+            }
+            if (empty($scopes)) {
+                // In case the there's a change in how scopes come in just save the list.
+                $scopes = $data['response']['oauth_integrations'][0]['oauth_third_party'][0]['scopes'];
+            }
+            PayPalExtraMetaManager::savePmOption($paypal_pm, Domain::META_KEY_AUTHORIZED_SCOPES, $scopes);
+        }
         return PayPalExtraMetaManager::savePmOption(
             $paypal_pm,
             Domain::META_KEY_ALLOWED_CHECKOUT_TYPE,

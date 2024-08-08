@@ -191,7 +191,8 @@ class RequestTypeContextDetector
             'enable-auto-update-selected',
             'update-selected',
         ];
-        return $this->uriPathMatches('wp-admin/plugins.php') && in_array($action, $plugins_page_actions, true);
+        return ($this->uriPathMatches('wp-admin/update.php') && $action === 'upload-plugin')
+            || ($this->uriPathMatches('wp-admin/plugins.php') && in_array($action, $plugins_page_actions, true));
     }
 
 

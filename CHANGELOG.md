@@ -6,6 +6,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Releases
 
+### [5.0.22]
+
+#### Added
+ - [PPC. Add partner Fees (#1355)](https://github.com/eventespresso/cafe/pull/1355)
+ - [Allow Advanced Editor in Decaf (#1430)](https://github.com/eventespresso/cafe/pull/1430)
+
+#### Fixed
+ - [Fix Merge Garbage (#1396)](https://github.com/eventespresso/cafe/pull/1396)
+ - [Remove Return Type From create_attendee_from_billing_form_data() (#1386)](https://github.com/eventespresso/cafe/pull/1386)
+ - [Fix Decaf Issues (#1410)](https://github.com/eventespresso/cafe/pull/1410)
+ - [PPC. Fix payments getting mixed (#1415)](https://github.com/eventespresso/cafe/pull/1415)
+ - [Remove EE version number form PayPal Commerce fee notice (#1418)](https://github.com/eventespresso/cafe/pull/1418)
+ - [Fix Ticket Selector JS Missing Event Var (#1424)](https://github.com/eventespresso/cafe/pull/1424)
+ - [Fix Fatal Error if Payment Log is Missing (#1426)](https://github.com/eventespresso/cafe/pull/1426)
+ - [Fix Log Key (#1420)](https://github.com/eventespresso/cafe/pull/1420)
+ - [Fix Legacy Event Editor Duplicating Tickets on Update (#1435)](https://github.com/eventespresso/cafe/pull/1435)
+ - [Fix Trash Ticket UI in Decaf (#1417)](https://github.com/eventespresso/cafe/pull/1417)
+ - [Fix Errors During Plugin Update (#1437)](https://github.com/eventespresso/cafe/pull/1437)
+ - [PPC. Fix for the re-try payments (#1436)](https://github.com/eventespresso/cafe/pull/1436)
+ - [Son of Fix Datepicker Input Format (#1392)](https://github.com/eventespresso/cafe/pull/1392)
+ - [Fix Event Editor Timezone Selector (#1442)](https://github.com/eventespresso/cafe/pull/1442)
+
+#### Changed
+ - [Remove Use Advanced EDTR Feature Flag (#1388)](https://github.com/eventespresso/cafe/pull/1388)
+ - [Toggle EDD Licensing within PUE when ready (#1353)](https://github.com/eventespresso/cafe/pull/1353)
+ - [Set USE_PAYMENT_PROCESSOR_FEES feature flag to be true by default (#1416)](https://github.com/eventespresso/cafe/pull/1416)
+ - [Update Cafe Readme file for Decaf (#1397)](https://github.com/eventespresso/cafe/pull/1397)
+ - [Add option to delete contacts if the contact has no related registrations (#1378)](https://github.com/eventespresso/cafe/pull/1378)
+ - [Catch Billing Form Errors if Payment Method Deactivated (#1434)](https://github.com/eventespresso/cafe/pull/1434)
+ - [Advanced Editor Changes for Decaf (Barista#1330) (#1439)](https://github.com/eventespresso/cafe/pull/1439)
+ - [Decaf 5.0.22 Update readme.txt (#1448)](https://github.com/eventespresso/cafe/pull/1448)
+
+
 ### [5.0.21]
 
 #### Fixed
@@ -35,6 +68,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - [Use get_post_meta() for Featured Image Alt Tag (#1342)](https://github.com/eventespresso/cafe/pull/1342)
  - [Optimize Event list table datetime and ticket query (#1348)](https://github.com/eventespresso/cafe/pull/1348)
  - [Reduce Vendor Folder Size (#1349)](https://github.com/eventespresso/cafe/pull/1349)
+ - [BuildMachine 5.0.21 changes (#1374)](https://github.com/eventespresso/cafe/pull/1374)
+ - [PPC. Add partner Fees (#1355)](https://github.com/eventespresso/cafe/pull/1355)
 
 
 ### [5.0.20]

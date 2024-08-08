@@ -60,6 +60,7 @@ class EE_Payment_Method_Manager implements ResettableInterface
                 [$this, 'addPaymentMethodCapsDuringReset']
             );
         }
+        add_action('http_api_curl', ['EE_Payment_Method_Manager', 'curlRequestsToPaypalUseTls'], 10, 3);
     }
 
 
@@ -93,6 +94,27 @@ class EE_Payment_Method_Manager implements ResettableInterface
     {
         self::$_instance = null;
         return self::instance();
+    }
+
+
+    /**
+     * Force posts to PayPal to use TLS v1.2. See:
+     * https://core.trac.wordpress.org/ticket/36320
+     * https://core.trac.wordpress.org/ticket/34924#comment:15
+     * https://www.paypal-knowledge.com/infocenter/index?page=content&widgetview=true&id=FAQ1914&viewlocale=en_US
+     * This will affect PayPal standard, pro, express, and Payflow.
+     *
+     * @param $handle
+     * @param $r
+     * @param $url
+     */
+    public static function curlRequestsToPaypalUseTls($handle, $r, $url)
+    {
+        if (strpos($url, 'https://') !== false && strpos($url, '.paypal.com') !== false) {
+            // Use the value of the constant CURL_SSLVERSION_TLSv1 = 1
+            // instead of the constant because it might not be defined
+            curl_setopt($handle, CURLOPT_SSLVERSION, 6);
+        }
     }
 
 

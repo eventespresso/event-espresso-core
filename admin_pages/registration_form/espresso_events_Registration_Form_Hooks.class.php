@@ -127,7 +127,13 @@ class espresso_events_Registration_Form_Hooks extends EE_Admin_Hooks
             </p>
             <?php
 
-            $qsg_where['QSG_deleted'] = false;
+            $qsg_where = [ 'QSG_deleted' => false ];
+            if (
+                (defined('EE_DECAF') && EE_DECAF)
+                || ! is_dir(EE_PLUGIN_DIR_PATH . 'caffeinated/admin')
+            ) {
+                $qsg_where['QSG_system'] = ['!=', 0];
+            }
             $query_params             = apply_filters(
                 'FHEE__espresso_events_Registration_Form_Hooks__primary_questions__question_group_query_parameters',
                 [$qsg_where, 'order_by' => ['QSG_order' => 'ASC']]

@@ -66,7 +66,15 @@ jQuery(document).ready(function($) {
 		e.preventDefault();
 		e.stopPropagation();
 
-		var this_row = $(this).parent().parent();
-		this_row.remove();
+        const locked = $(this).hasClass('entity-locked');
+        if (locked) {
+            alert(eei18n.entity_locked);
+            return;
+        }
+        if (! locked && confirm(eei18n.confirm_delete)) {
+            const this_row = $(this).parent().parent();
+            this_row.remove();
+        }
+
 	});
 });

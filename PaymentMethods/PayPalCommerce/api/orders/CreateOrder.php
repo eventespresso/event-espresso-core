@@ -5,11 +5,18 @@ namespace EventEspresso\PaymentMethods\PayPalCommerce\api\orders;
 use EE_Error;
 use EE_Line_Item;
 use EE_Transaction;
+use EventEspresso\core\domain\services\capabilities\FeatureFlag;
+use EventEspresso\core\domain\services\capabilities\FeatureFlags;
 use EventEspresso\core\domain\services\validation\email\strategies\Basic;
+use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\sanitizers\RequestSanitizer;
 use EventEspresso\PaymentMethods\PayPalCommerce\api\PayPalApi;
+use EventEspresso\PaymentMethods\PayPalCommerce\domain\Domain;
 use EventEspresso\PaymentMethods\PayPalCommerce\tools\currency\CurrencyManager;
+use EventEspresso\PaymentMethods\PayPalCommerce\tools\extra_meta\PayPalExtraMetaManager;
+use EventEspresso\PaymentMethods\PayPalCommerce\tools\fees\PartnerPaymentFees;
 use EventEspresso\PaymentMethods\PayPalCommerce\tools\logging\PayPalLogger;
+use Exception;
 use ReflectionException;
 
 /**
@@ -65,6 +72,8 @@ class CreateOrder extends OrdersApi
      */
     protected EE_Transaction $transaction;
 
+    private FeatureFlags $feature;
+
 
     /**
      * CreateOrder constructor.
@@ -72,11 +81,13 @@ class CreateOrder extends OrdersApi
      * @param PayPalApi      $api
      * @param EE_Transaction $transaction
      * @param array          $billing_info
+     * @param FeatureFlags   $feature
      */
-    public function __construct(PayPalApi $api, EE_Transaction $transaction, array $billing_info)
+    public function __construct(PayPalApi $api, EE_Transaction $transaction, array $billing_info, FeatureFlags $feature)
     {
         parent::__construct($api);
         $this->transaction   = $transaction;
+        $this->feature       = $feature;
         $this->currency_code = CurrencyManager::currencyCode();
         $this->sanitizeRequestParameters($billing_info);
     }
@@ -92,8 +103,7 @@ class CreateOrder extends OrdersApi
     {
         $email_validator = new Basic();
         $sanitizer       = new RequestSanitizer($email_validator);
-        foreach ($billing_info as $item => $value)
-        {
+        foreach ($billing_info as $item => $value) {
             $this->billing_info[ $item ] = $sanitizer->clean($value);
         }
     }
@@ -121,6 +131,7 @@ class CreateOrder extends OrdersApi
      * @return array
      * @throws EE_Error
      * @throws ReflectionException
+     * @throws Exception
      */
     protected function getParameters(): array
     {
@@ -131,7 +142,7 @@ class CreateOrder extends OrdersApi
             esc_html__('Tickets for an event at %1$s', 'event_espresso'),
             get_bloginfo('name')
         );
-        return [
+        $parameters  = [
             'intent'              => 'CAPTURE',
             'purchase_units'      => [
                 [
@@ -158,6 +169,33 @@ class CreateOrder extends OrdersApi
                 ],
             ],
         ];
+        // Do we have the permissions for the fees ?
+        $scopes = PayPalExtraMetaManager::getPmOption(
+            $this->transaction->payment_method(),
+            Domain::META_KEY_AUTHORIZED_SCOPES
+        );
+        if (
+            (
+                (defined('EE_PPC_USE_PAYMENT_FEES') && EE_PPC_USE_PAYMENT_FEES)
+                || (! defined('EE_PPC_USE_PAYMENT_FEES')
+                    && $this->feature->allowed(FeatureFlag::USE_PAYMENT_PROCESSOR_FEES)
+                )
+            )
+            && ! empty($scopes) && in_array('partnerfee', $scopes)
+        ) {
+            $payment_fees = LoaderFactory::getShared(PartnerPaymentFees::class);
+            $parameters['purchase_units'][0]['payment_instruction'] = [
+                'platform_fees' => [
+                    [
+                        'amount' => [
+                            'value'         => (string) $payment_fees->getPartnerFee($this->transaction),
+                            'currency_code' => $this->currency_code,
+                        ],
+                    ],
+                ]
+            ];
+        }
+        return $parameters;
     }
 
 
@@ -174,13 +212,14 @@ class CreateOrder extends OrdersApi
         $event_line_items = $this->transaction->items_purchased();
         // List actual line items.
         foreach ($event_line_items as $line_item) {
-            if ($line_item instanceof EE_Line_Item
+            if (
+                $line_item instanceof EE_Line_Item
                 && $line_item->OBJ_type() !== 'Promotion'
                 && $line_item->quantity() > 0
             ) {
                 $item_money     = $line_item->unit_price();
                 $li_description = $line_item->desc() ?? esc_html__('Event Ticket', 'event_espresso');
-                $line_items [] = [
+                $line_items []  = [
                     'name'        => substr(wp_strip_all_tags($line_item->name()), 0, 126),
                     'quantity'    => $line_item->quantity(),
                     'description' => substr(wp_strip_all_tags($li_description), 0, 125),

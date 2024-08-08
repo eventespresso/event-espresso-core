@@ -62,6 +62,8 @@ class SettingsForm extends EE_Payment_Method_Form
         parent::__construct($form_parameters);
         // Add a form for PayPal Onboard.
         $this->addOnboardingForm($payment_method, $pm_instance);
+        // Add a form for PayPal Onboard.
+        $this->addFeesNotice();
         // Add the clear data button.
         $this->clearMetadataButton($pm_instance);
         // Disable inputs if needed.
@@ -94,10 +96,65 @@ class SettingsForm extends EE_Payment_Method_Form
 
 
     /**
+     * Add fees notice.
+     *
+     * @return void
+     */
+    public function addFeesNotice(): void
+    {
+        if (defined('EE_PPC_USE_PAYMENT_FEES') && ! EE_PPC_USE_PAYMENT_FEES) {
+            // We want to be able to disable fees.
+            return;
+        }
+        try {
+            $this->add_subsections(
+                [
+                    'partner_fees_notice' => new EE_Form_Section_HTML(
+                        EEH_HTML::tr(
+                            EEH_HTML::th()
+                            . EEH_HTML::thx()
+                            . EEH_HTML::td(
+                                EEH_HTML::div(
+                                    EEH_HTML::strong(
+                                        esc_html__(
+                                            'PayPal Partner Commission Fees are based upon the status of your Support License:',
+                                            'event_espresso'
+                                        )
+                                    )
+                                    . EEH_HTML::ul()
+                                    . EEH_HTML::li(
+                                        esc_html__('- Active licenses commission fees: 0%', 'event_espresso')
+                                    )
+                                    . EEH_HTML::li(
+                                        esc_html__('- Expired license commission fees: 3%', 'event_espresso')
+                                    )
+                                    . EEH_HTML::ulx()
+                                    . esc_html__(
+                                        'Keep your support license active for: lower fees, up-to-date software and have access to our support team. By connecting and processing payments you agree to these terms.',
+                                        'event_espresso'
+                                    ),
+                                    '',
+                                    'ee-status-outline ee-status-bg--info'
+                                )
+                            )
+                        )
+                    ),
+                ],
+                'paypal_onboard'
+            );
+        } catch (EE_Error $e) {
+            // Don't add this subsection then.
+        }
+    }
+
+
+    /**
      * Add a checkout type select.
      *
      * @param array $form_parameters
      * @return array
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function addCheckoutTypeSelect(array $form_parameters): array
     {

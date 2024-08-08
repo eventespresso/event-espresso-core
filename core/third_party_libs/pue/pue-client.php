@@ -39,6 +39,7 @@ use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\core\services\request\sanitizers\AllowedTags;
 use EventEspresso\PaymentMethods\Manager;
+use EventEspresso\core\domain\services\capabilities\FeatureFlag;
 
 if (! class_exists('PluginUpdateEngineChecker')):
     /**
@@ -1043,12 +1044,24 @@ if (! class_exists('PluginUpdateEngineChecker')):
                 if (isset($response->extra_notices)) {
                     $this->add_persistent_notice($response->extra_notices);
                 }
+
+                // Toggle EDD Licensing feature flag only if 'update_ready' value is correctly. 
+                if (isset($response->extra_data)) {
+                    if(isset($response->extra_data->update_ready)){
+                        if($response->extra_data->update_ready === 'espressoUpdate') {
+                            $feature_flags = LoaderFactory::getLoader()->getShared('EventEspresso\core\domain\services\capabilities\FeatureFlagsConfig');
+                            $feature_flags->enableFeatureFlag(FeatureFlag::USE_EDD_PLUGIN_LICENSING);
+                        }
+                    }
+                }
+
                 // This instance is for EE Core, we have a response from PUE so lets check if it contains PUE Plugin data.
                 if (
                     stripos((string) $this->slug, 'event-espresso-core') !== false
                     && isset($response->extra_data)
                     && ! empty($response->extra_data->plugins)
-                ) {                    // Pull PUE plugin data from 'extra_data'.
+                ) {                    
+                    // Pull PUE plugin data from 'extra_data'.
                     $plugins_array = json_decode($result['body'], true);
                     $plugins       = $plugins_array['extra_data']['plugins'];
                     // Pull all of the add-ons EE has active and update the local latestVersion value of each of them.

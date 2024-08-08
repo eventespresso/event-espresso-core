@@ -918,6 +918,13 @@ class EEH_Template
         string $wrap_id = '',
         array $query_args = []
     ): string {
+        $request = LoaderFactory::getShared(RequestInterface::class);
+        if (
+            $request->isActivation()
+            || strpos($request->requestUri(true), 'wp-admin/update.php') !== false
+        ){
+            return '';
+        }
         $cache_id = TemplateCache::generateCacheID(__FUNCTION__, func_get_args());
         $cache    = TemplateCache::get($cache_id);
         if ($cache) {

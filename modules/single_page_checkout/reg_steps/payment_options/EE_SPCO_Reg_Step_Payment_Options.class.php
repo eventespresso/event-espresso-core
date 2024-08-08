@@ -7,6 +7,8 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\InvalidStatusException;
 use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\payments\IpnHandler;
+use EventEspresso\core\services\payments\PaymentProcessor;
 use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\core\services\request\ResponseInterface;
 
@@ -1019,7 +1021,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                 )
             ),
         ];
-        // the list of actual payment methods ( invoice, paypal, etc ) in a  ( slug => HTML )  format
+        // the list of actual payment methods ( invoice, PayPal, etc ) in a  ( slug => HTML )  format
         $available_payment_method_options = [];
         $default_payment_method_option    = [];
         // additional instructions to be displayed and hidden below payment methods (adding a clearing div to start)
@@ -1351,12 +1353,11 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
             // store it in the session so that it's available for all subsequent requests including AJAX
             $this->_save_selected_method_of_payment($selected_method_of_payment);
         } else {
-            // or is is set in the session ?
+            // or is it set in the session ?
             $selected_method_of_payment = EE_Registry::instance()->SSN->get_session_data(
                 'selected_method_of_payment'
             );
         }
-        // do ya really really gotta have it?
         if (empty($selected_method_of_payment) && $required) {
             EE_Error::add_error(
                 sprintf(
@@ -1894,7 +1895,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
         if ($payment instanceof EE_Payment) {
             // store that for later
             $this->checkout->payment = $payment;
-            // we can also consider the TXN to not have been failed, so temporarily upgrade it's status to abandoned
+            // we can also consider the TXN to not have been failed, so temporarily upgrade its status to abandoned
             $this->checkout->transaction->toggle_failed_transaction_status();
             $payment_status = $payment->status();
             if (
@@ -2081,7 +2082,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
         ) {
             return false;
         }
-        // because saving an object clears it's cache, we need to do the chevy shuffle
+        // because saving an object clears its cache, we need to do the Chevy Shuffle
         // grab the primary_registration object
         $primary_registration = $this->checkout->transaction->primary_registration();
         // at this point we'll consider a TXN to not have been failed
@@ -2343,41 +2344,44 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      *
      * @access    private
      * @type    EE_Payment_Method $payment_method
-     * @return mixed EE_Payment | boolean
+     * @return EE_Payment|null
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws ReflectionException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    private function _attempt_payment(EE_Payment_Method $payment_method)
+    private function _attempt_payment(EE_Payment_Method $payment_method): ?EE_Payment
     {
-        $payment = null;
         $this->checkout->transaction->save();
-        $payment_processor = EE_Registry::instance()->load_core('Payment_Processor');
-        if (! $payment_processor instanceof EE_Payment_Processor) {
-            return false;
+        /** @var PaymentProcessor $payment_processor */
+        $payment_processor = LoaderFactory::getShared(PaymentProcessor::class);
+        if (! $payment_processor instanceof PaymentProcessor) {
+            return null;
+        }
+        /** @var EE_Transaction_Processor $transaction_processor */
+        $transaction_processor = LoaderFactory::getShared(EE_Transaction_Processor::class);
+        if ($transaction_processor instanceof EE_Transaction_Processor) {
+            $transaction_processor->set_revisit($this->checkout->revisit);
         }
         try {
-            $payment_processor->set_revisit($this->checkout->revisit);
             // generate payment object
-            $payment = $payment_processor->process_payment(
+            return $payment_processor->processPayment(
                 $payment_method,
                 $this->checkout->transaction,
-                $this->checkout->amount_owing,
                 $this->checkout->billing_form instanceof EE_Billing_Info_Form
                     ? $this->checkout->billing_form
                     : null,
-                $this->_get_return_url($payment_method),
-                'CART',
+                $this->checkout->amount_owing,
                 $this->checkout->admin_request,
                 true,
+                $this->_get_return_url($payment_method),
                 $this->reg_step_url()
             );
         } catch (Exception $e) {
             $this->_handle_payment_processor_exception($e);
         }
-        return $payment;
+        return null;
     }
 
 
@@ -2413,8 +2417,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
 
 
     /**
-     * _get_return_url
-     *
      * @param EE_Payment_Method $payment_method
      * @return string
      * @throws EE_Error
@@ -2422,10 +2424,9 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      */
     protected function _get_return_url(EE_Payment_Method $payment_method)
     {
-        $return_url = '';
         switch ($payment_method->type_obj()->payment_occurs()) {
             case EE_PMT_Base::offsite:
-                $return_url = add_query_arg(
+                return add_query_arg(
                     [
                         'action'                     => 'process_gateway_response',
                         'selected_method_of_payment' => $this->checkout->selected_method_of_payment,
@@ -2433,13 +2434,12 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                     ],
                     $this->reg_step_url()
                 );
-                break;
+
             case EE_PMT_Base::onsite:
             case EE_PMT_Base::offline:
-                $return_url = $this->checkout->next_step->reg_step_url();
-                break;
+                return $this->checkout->next_step->reg_step_url();
         }
-        return $return_url;
+        return '';
     }
 
 
@@ -2447,7 +2447,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
      * _validate_payment
      *
      * @param EE_Payment $payment
-     * @return EE_Payment|FALSE
+     * @return EE_Payment|bool
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -2733,11 +2733,11 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                 || (
                     // WARNING !!!
                     // this could be PayPal sending back duplicate requests (ya they do that)
-                    // or it **could** mean someone is simply registering AGAIN after having just done so
+                    // or it **could** mean someone is simply registering AGAIN after having just done so,
                     // so now we need to determine if this current TXN looks valid or not
                     // and whether this reg step has even been started ?
                     EE_Session::instance()->id() === $valid_TXN_SID
-                    // really? you're half way through this reg step, but you never started it ?
+                    // really? you're halfway through this reg step, but you never started it ?
                     && $this->checkout->transaction->reg_step_completed($this->slug()) === false
                 )
             ) {
@@ -2834,9 +2834,9 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
             );
             if ($this->handle_IPN_in_this_request()) {
                 // get payment details and process results
-                /** @type EE_Payment_Processor $payment_processor */
-                $payment_processor = EE_Registry::instance()->load_core('Payment_Processor');
-                $payment           = $payment_processor->process_ipn(
+                /** @var IpnHandler $payment_processor */
+                $payment_processor = LoaderFactory::getShared(IpnHandler::class);
+                $payment           = $payment_processor->processIPN(
                     $request_data,
                     $this->checkout->transaction,
                     $this->checkout->payment_method,

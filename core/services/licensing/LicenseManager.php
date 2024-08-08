@@ -41,7 +41,7 @@ class LicenseManager
             $min_core_version
         );
         $license_data->license_key = $license_data->license === 'valid' ? $license_key : '';
-        $this->license_key_data->updateLicense($license_data, $plugin_slug);
+        $this->license_key_data->updateLicenseDataForPlugin($license_data, $plugin_slug);
         return $license_data;
     }
 
@@ -62,7 +62,7 @@ class LicenseManager
             $plugin_version,
             $min_core_version
         );
-        $this->license_key_data->removeLicense($plugin_slug);
+        $this->license_key_data->removeLicenseDataForPlugin($plugin_slug);
         return $license_data;
     }
 
@@ -71,7 +71,7 @@ class LicenseManager
     {
         $license_data              = $this->getLicenseData($plugin_slug);
         $license_data->license_key = '';
-        $this->license_key_data->updateLicense($license_data, $plugin_slug, true);
+        $this->license_key_data->updateLicenseDataForPlugin($license_data, $plugin_slug, true);
         return $license_data;
     }
 
@@ -100,7 +100,7 @@ class LicenseManager
 
     public function getLicenseData(string $plugin_slug): stdClass
     {
-        return $this->license_key_data->getLicense($plugin_slug);
+        return $this->license_key_data->getLicenseDataForPlugin($plugin_slug);
     }
 
 

@@ -120,7 +120,7 @@ class EE_Admin_Config extends EE_Config_Base
      */
     public function useAdvancedEditor(): bool
     {
-        return $this->useAdvancedEditor && $this->is_caffeinated;
+        return $this->useAdvancedEditor;
     }
 
     /**

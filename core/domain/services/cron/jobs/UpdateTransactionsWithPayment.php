@@ -5,13 +5,15 @@ namespace EventEspresso\core\domain\services\cron\jobs;
 use DomainException;
 use EE_Error;
 use EE_Payment;
-use EE_Payment_Processor;
 use EE_Transaction;
+use EE_Transaction_Processor;
 use EEM_Payment;
 use EEM_Transaction;
 use EventEspresso\core\domain\services\cron\CronJob;
 use EventEspresso\core\domain\services\cron\CronUtilities;
 use EventEspresso\core\domain\services\database\DbStatus;
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\payments\PaymentProcessor;
 use ReflectionException;
 use RuntimeException;
 
@@ -122,10 +124,12 @@ class UpdateTransactionsWithPayment extends CronJob
         ) {
             return;
         }
-        /** @var EE_Payment_Processor $payment_processor */
-        $payment_processor = $this->loader->getShared(EE_Payment_Processor::class);
-        // set revisit flag for payment processor
-        $payment_processor->set_revisit();
+        /** @var EE_Transaction_Processor $transaction_processor */
+        $transaction_processor = LoaderFactory::getShared(EE_Transaction_Processor::class);
+        if ($transaction_processor instanceof EE_Transaction_Processor) {
+            // set revisit flag for payment processor
+            $transaction_processor->set_revisit();
+        }
         foreach ($this->update_transactions_with_payment as $TXN_ID => $PAY_ID) {
             // reschedule the cron if we can't hit the db right now
             if (DbStatus::isOffline()) {
@@ -142,7 +146,9 @@ class UpdateTransactionsWithPayment extends CronJob
             // verify transaction
             if ($transaction instanceof EE_Transaction && $payment instanceof EE_Payment) {
                 // now try to update the TXN with any payments
-                $payment_processor->update_txn_based_on_payment($transaction, $payment, true, true);
+                /** @var PaymentProcessor $payment_processor */
+                $payment_processor = LoaderFactory::getShared(PaymentProcessor::class);
+                $payment_processor->updateTransactionBasedOnPayment($transaction, $payment, true, true);
             }
             unset($this->update_transactions_with_payment[ $TXN_ID ]);
         }

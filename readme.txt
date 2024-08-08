@@ -1,72 +1,71 @@
-=== Event Espresso 4 Decaf - Event Registration Event Ticketing ===
-Contributors: eventespresso, sethshoultes, garthkoyle, pebblo, mnelson4, lorenzocaum, charliespider, builtbynorthby
-Donate link: https://eventespresso.com/pricing/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_donate_link&utm_content=Donate+link
-Tags: event registration, ticketing, online registration, ticket sales, event booking, class registration, conference registration, event ticketing, registration, event, events, online event registration
-Requires at least: 4.5
-Requires PHP: 5.4
-Tested up to: 5.7.1
-Stable tag: 4.10.4.decaf
-License: GPL2
+# Event Espresso - Event Registration & Ticketing Sales
 
-Manage online event registration and ticketing. Create event registration forms, sell tickets, collect money, send email, and SEO for events.
+**Contributors:** eventespresso, garthkoyle, pebblo, charliespider  
+**Donate link:** [Support Our Work](https://eventespresso.com/pricing/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_donate_link&utm_content=Donate+link)  
+**Tags:** Events, Tickets, Event Registration, Ticket Sales, Calendar
+**Requires at least:** WordPress 4.5  
+**Requires PHP:** 7.4  
+**Tested up to:** WordPress 6.6.1  
+**Stable tag:** 5.0.22.decaf  
+**License:** GPL2  
+
+The best event registration and ticket sales plugin with: registration forms, PayPal payments, automated confirmation emails and more!
 
 == Description ==
+Power your online event registration and ticket sales with more caffeine. Easily create events, event registrations forms, RSVP with free tickets, sell tickets and process payments with cards and PayPal accounts, manage attendees, automatically send confirmation emails, download attendee lists, and optimize your events—all from your WordPress dashboard all with our free events plugin. Specially designed for in-person and/or virtual events your event registration and ticket sales can be better backed by the team of experts that have been doing this longer than any else on WordPress. ☕️
 
-Manage your events from your WordPress dashboard. Reduce your admin, [reduce your costs](https://eventespresso.com/2010/08/friends-dont-let-friends-host-events-eventbrite/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_description_tab&utm_content=reduce+your+costs+link), make your life easier!
-
-Event Espresso is a [WordPress event manager](https://eventespresso.com/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_description_tab&utm_content=WordPress+event+manager) which makes it easy for you to sell tickets for events, workshops, training, conferences or concerts, register attendees for classes, all from your WordPress website. Quickly create events from within the WordPress admin area using the Event Espresso engine. You can create signup forms to collect information about your attendees, accept payments, and create reports. The decaf version of the plugin provides everything that you need to sell tickets, collect payments, and manage events all from within your WordPress dashboard.
-
-Would you like to do online event registration and ticketing _without_ having to build and maintain a WordPress website? Please be sure to check out our service website called [Event Smart](https://eventsmart.com/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_description_tab&utm_content=event+smart).
+## Transform Your WordPress Site into a Powerful Event Management Platform
 
 [youtube http://www.youtube.com/watch?v=K_yVwWnTjL8]
-(Some features not available in all versions)
 
+---
 
-= Why Online Event Management? =
-You shouldn't need to be convinced about how awesome online event management is, but in case you do:
+## Most Advanced Events Plugin for WordPress
 
-* Save yourself countless hours of tedious admin processes
-* Create green, paperless [event registration](https://eventespresso.com/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_description_tab&utm_content=event+registration)
-* Reduce costs
-* Process sign-ups 24/7
+### Automate Ticket Sales and Customer Communication
 
-= What's Included? =
-**Everything you need** to sell tickets and manage event registrations from your website. Here's what you get:
+- Automatically open and close registrations or ticket sales based on dates or when ticket sales reach certain levels.
+- Automatically send attendees confirmation emails based on situations such as successful registration, successful payments, payment incomplete, pending payments, etc.
+- Collect information for each ticket sold.
 
-* Out-of-the-box event ticketing and registration from your WordPress website
-* Process payments using PayPal Express Checkout, or [buy a support license](https://eventespresso.com/pricing/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_content=buy+a+support+license&utm_campaign=ee4_decaf_whats_included) for more [payment options](https://eventespresso.com/features/payment-options/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_content=more+payment+options&utm_campaign=ee4_decaf_whats_included).
-* Automated confirmation emails
-* Manage registrants (attendees) and export registrant (attendee) data
-* Easily manage registrants' (attendees) profiles
-* [Android & Apple event apps](https://eventespresso.com/features/mobile-ticketing-apps/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_content=mobile+event+apps&utm_campaign=ee4_decaf_whats_included) for ticket scanning and attendance tracking
+### Maximize Your Reach and Revenue:
 
+- Use the built-in tools to boost your event visibility and ticket sales.
+- Easily manage ticket inventory, attendee lists, and event check-ins.
+- Seamlessly integrate with PayPal to collect payments (more payment platforms supported in the premium verison).
 
-[View Features & Sample Screenshots Here](https://eventespresso.com/features/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_content=View+Sample+Screens+Here&utm_campaign=ee4_decaf_plugin_screenshots_tab) OR [Compare Features](https://eventespresso.com/differences-ee4-ee3/?utm_source=wordpress_org&utm_medium=link&utm_content=Compare+Features&utm_campaign=ee4_decaf_plugin_screenshots_tab)
+### Streamline Your Event Management:
 
+- Save hours of administrative tasks with automated processes.
+- Provide your attendees with a smooth, 24/7 registration experience.
+- Go green by offering paperless event registration.
 
-= Support License =
-Just in case you want some advanced features, you can purchase a **[Premium Support License](https://eventespresso.com/pricing/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_content=Buy+a+Premium+Support+License&utm_campaign=ee4_decaf_plugin_dscreenshots_tab)** to get access to additional features and payment options for your events.
+## Key Features
 
-**Premium Features**
-* [Event Calendar](https://eventespresso.com/product/ee4-events-calendar/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_description_tab&utm_content=Event+Calendar)
-* [Additional Payment Gateways](https://eventespresso.com/features/payment-options/?ee_ver=ee4&utm_source=wordpress_org&utm_campaign=ee4_decaf_plugin_description_tab&utm_content=Additional+Payment+Gateways) (including Authorize.net and PayPal Pro)
-* [Multiple Pricing and Ticket Options](https://eventespresso.com/features/multiple-ticket-pricing-options/?ee_ver=ee4&utm_source=wordpress_org&utm_campaign=ee4_decaf_plugin_description_tab&utm_content=Multiple+Pricing+Options)
-* [Manual Registration](https://eventespresso.com/features/manual-registration/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_description_tab&utm_content=Manual+Registration)
-* [Reusable, Customizable Email Templates](https://eventespresso.com/features/confirmation-emails/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_description_tab&utm_content=Reusable+Email+Templates)
-* [Transaction Reporting](https://eventespresso.com/features/transaction-reporting/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_description_tab&utm_content=Transaction+Reporting)
-* [Event Check-in](https://eventespresso.com/features/event-check-list/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_description_tab&utm_content=Event+Check-in)
-* [Contact Profiles & Contact List](https://eventespresso.com/features/contacts/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_description_tab&utm_content=Contact+Profiles+Contact+List)
-* [Tax Administration](https://eventespresso.com/features/tax-administration/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_description_tab&utm_content=Tax+Administration)
+### Everything You Need to Manage Events Efficiently:
 
-= Newsletter =
-Be the first to know when we ship new features, [signup here](https://eventespresso.com/newsletter/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_plugin_description_tab&utm_content=newsletter+signup).
+- **Event Ticketing and Registration:** Start selling tickets directly from your WordPress site.
+- **Payment Processing:** Easily accept payments with PayPal (no API keys required, just connect to your PayPal account with your username and password). Upgrade to [Premium Support](https://eventespresso.com/pricing/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_content=buy+a+support+license&utm_campaign=ee4_decaf_whats_included) for additional payment options.
+- **Automated Email Notifications:** Keep attendees informed with confirmation and reminder emails.
+- **Attendee Management:** Track RSVPs, registrations, ticket sales and collect and manage attendee details with ease.
+- **Download Attendee Data:** Collect attendee contact information into your WordPress website and download the data at any time. 
+- **Mobile Event Apps:** Manage check-ins with our Android and Apple apps (scanning tickets available in the premium version). 📱
 
-= Community Chat =
-Join a real-time community chat group for professionals that are leading the way in events from event management, event technology and event marketing to work-life balance.
+Explore more features and view screenshots [here](https://eventespresso.com/features/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_content=View+Sample+Screens+Here&utm_campaign=ee4_decaf_plugin_screenshots_tab).
 
-[Join the Discussion →](https://eventsmart.com/contact/community-chat/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_plugin_description_tab&utm_content=community+chat)
+== Screenshots ==
 
-= Testimonials & Reviews =
+1. Multiple Ticket and Pricing Options
+2. Customized Confirmation Emails
+3. Customizable Event Designs
+4. Smart Single Page Checkout
+5. Contact Profiles
+6. Contact List
+7. In-app Documentation
+8. Customizable Country Settings
+
+## What Our Users Say
+
 > Your plugin saved our client nearly $9000 in development costs because it handled the majority of the functionality we were looking for at a much lower cost. Event Espresso's staff have been very responsive to our needs when we have them (which has been rare, because the plugin is so well coded). Great job on a great plugin!
 
 Brandon P. - [Experience Farm](http://www.experiencefarm.com/)
@@ -110,124 +109,41 @@ Ed - [Friends of Oscar Scherer Park](http://www.friendsofoscarscherer.com/)
 
 Kelly - [College Station Independent School District](http://csisd.org/)
 
-
 > I chose EE because, a few years ago, I was using it on a personal website and loved it. So, when I discovered that our current event management system that is deployed in other areas of campus was completely deficient for this initiative's needs, I didn't even hesitate to use EE.
 
 Rob Domaschuk
 
+> The best event plugin system we have used! We just closed registration for a girls/ladies conference at our church next month. This year we have over 400 registrants and only a few were mail-ins. Everyone else registered on our website, which is running Event Espresso. We had to close registration early because we are at capacity! We also received a lot of compliments on the “new system”. Registrants stated that it was much easier to use than in previous years.  
 
-= Support =
-This version is self-supported only. We DO NOT regularly monitor the WordPress.org support forums. For faster support you can purchase a [support license](https://eventespresso.com/pricing/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_content=Buy+a+Premium+Support+License&utm_campaign=ee4_decaf_plugin_support_tab) and ask questions in our [support forum](https://eventespresso.com/support/forums/?utm_source=wordpress_org&utm_medium=link&utm_content=forum&utm_campaign=ee4_decaf_plugin_description_tab). You can also visit the Help/Support menu from the Event Espresso admin.
+Amanda Leigh
 
-If your support issue is urgent, we also offer [priority event management support](https://eventespresso.com/product/premium-support-token/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_description_tab&utm_content=priority+event+management+support) (support tokens).
+Read more [testimonials](https://eventespresso.com/testimonials/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_testimonials_tab) from our satisfied customers.
 
-Check out the advanced [installation](https://eventespresso.com/wiki/installing-event-espresso/?utm_source=wordpress_org&utm_medium=link&utm_content=installation&utm_campaign=ee4_decaf_plugin_description_tab) and [setup instructions](https://eventespresso.com/wiki/how-to-setup-event-espresso-and-publish-your-first-event/?utm_source=wordpress_org&utm_medium=link&utm_content=setup+instructions&utm_campaign=ee4_decaf_plugin_description_tab) on our website.
+## Unlock Advanced Features with Premium Support
 
-= Developer Resources =
-* [Event Espresso 4 on Github](http://evts.io/EE4_WP_Readme)
-* [Developer Targeted Documentation](http://evts.io/EE4_Dev_Docs)
+Enhance your event management capabilities by upgrading to our **Premium Support License**. Get access to powerful features such as:
 
-== Screenshots ==
+- [Event Calendar](https://eventespresso.com/product/ee4-events-calendar/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_description_tab&utm_content=Event+Calendar) - Display your events in a sleek calendar view supporting events with multiple dates, images, categories, colors, and more.
+- [Multiple Payment Gateways:](https://eventespresso.com/features/payment-options/?ee_ver=ee4&utm_source=wordpress_org&utm_campaign=ee4_decaf_plugin_description_tab&utm_content=Additional+Payment+Gateways) - Accept payments through Stripe, Square and more.
+- [Custom Registration Form Question](https://eventespresso.com/features/event-registration/?ee_ver=ee4&utm_source=wordpress_org&utm_campaign=ee4_decaf_plugin_description_tab&utm_content=custom+questions) - Ask any type of question in your registration forms.
+- [Promotion Codes & Discounts](https://eventespresso.com/product/eea-promotions/?ee_ver=ee4&utm_source=wordpress_org&utm_campaign=ee4_decaf_plugin_description_tab&utm_content=prmotions) - Incentivize attendees with promotion and discount codes during checkout.
+- [Advanced Ticket Options:](https://eventespresso.com/features/multiple-ticket-pricing-options/?ee_ver=ee4&utm_source=wordpress_org&utm_campaign=ee4_decaf_plugin_description_tab&utm_content=Multiple+Pricing+Options) - Offer multiple pricing tiers and ticket types.
+- [Manual Registration:](https://eventespresso.com/features/manual-registration/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_description_tab&utm_content=Manual+Registration) - Add attendees manually and manage offline registrations.
+- [Customizable Email Templates:](https://eventespresso.com/features/confirmation-emails/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_description_tab&utm_content=Reusable+Email+Templates) - Send personalized emails with our reusable templates.
+- [QR and Barcode Ticket Scanning:](https://eventespresso.com/product/eea-ticketing/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_description_tab&utm_content=ticketing) - Send attendees tickets with QR and/or Barcodes and use our mobile apps to scan and validate tickets at the door or track attendance.
+- [Tax Administration:](https://eventespresso.com/features/tax-administration/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_description_tab&utm_content=Tax+Administration)
+ - Manage and report on tax for your events.
+- [Recurring Events:](https://eventespresso.com/product/eea-recurring-events-manager/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_description_tab&utm_content=recurring) - Automate creating new events based on a schedule in the future.
+- [Event Cart:](https://eventespresso.com/product/eea-multi-event-registration/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_description_tab&utm_content=mer) - Allow attendees to purchase tickets from multiple events at the same time during one checkout transaction.
+- **Conditional Logic Forms:** - Configure the registration form questions and answers to change based on what answers attendees give to your registration questions (coming soon).
+- **Ticket Questions:** - Control which questions are asked attendees based on the ticket they select (coming soon).
+- And much more!
 
-1. Multiple Ticket and Pricing Options
-2. Customized Confirmation Emails
-3. Customizable Event Designs
-4. Smart Single Page Checkout
-5. Contact Profiles
-6. Contact List
-7. In-app Documentation
-8. Customizable Country Settings
-
-== Installation ==
-
-= Quick Install =
-1. Event Espresso can be installed and activated by searching for the plugin through WordPress admin &rarr; Plugins &rarr; Add New. 
-
-=  Installing via FTP =  
-Alternatively, you can download Event Espresso to your computer from the WordPress Plugin Directory.
-
-1. Then locate the `event-espresso-core-decaf` folder on your computer and unzip it.
-2. Login to your WordPress root with an SFTP or FTP client and browse to the WordPress plugins directory: `wp-content/plugins`.
-3. Now upload the `event-espresso` folder to the WordPress plugins directory.
-4. Return to the WordPress admin and go to Plugins. Then activate Event Espresso.
-
-Check out the advanced [installation](https://eventespresso.com/wiki/installing-event-espresso/?utm_source=wordpress_org&utm_medium=link&utm_content=installation&utm_campaign=ee4_decaf_plugin_installation_tab) and [setup instructions](https://eventespresso.com/wiki/the-basic-settings/?utm_source=wordpress_org&utm_medium=link&utm_content=setup+instructions&utm_campaign=ee4_decaf_plugin_installation_tab) on our website.
-
-= Documentation =
-Find resources on Event Espresso 4 for a beginner to advanced users.
-
-[View Event Espresso 4 Documentation →](https://eventespresso.com/support/documentation/versioned-docs?doc_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_plugin_description_tab&utm_content=view+ee4+documentation)
-
-= Mobile Event Apps =
-The Event Espresso 4 check-in & ticket scanning event app is available for [Android](http://evts.io/EE4_Android_App?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_plugin_description_tab&utm_content=mobile+event+apps+android) and [Apple](http://evts.io/EE4_Apple_App?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_plugin_description_tab)
-
-= Developers =
-**The full version can be [found on Github](http://evts.io/EE4_WP_Readme)** and provides everything that you need to [sell tickets](https://eventespresso.com/features/multiple-ticket-pricing-options/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_plugin_description_tab&utm_content=sell+tickets), [collect payments](https://eventespresso.com/features/payment-options/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_plugin_description_tab&utm_content=collect+payments), and [manage events](https://eventespresso.com/features/event-management/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_plugin_description_tab&utm_content=manage+events) all from within your WordPress dashboard.
-
-
-Buy a **[Premium Support License](https://eventespresso.com/pricing/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_plugin_description_tab&utm_content=premium+support+license)** to get access to more features (including [one-click upgrades](https://eventespresso.com/features/one-click-upgrades/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_plugin_description_tab&utm_content=one+click+upgrades), [growing list of add-ons](https://eventespresso.com/add-ons/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_plugin_description_tab&utm_content=growing+list+of+addons)).
-
-== Frequently Asked Questions ==
-
-= What is Event Espresso? =
-
-Event Espresso is ticket and event management software for the modern world. Do you need to convince someone about Event Espresso? Share our [new video](https://eventespresso.com/2012/11/what-is-event-espresso-video/) or [print a brochure](http://ee-screenshots.s3.amazonaws.com/2012/02/EE_brochure_small.pdf).
-
-= Can I fully manage my events with Event Espresso Decaf? =
-
-You will be able to manage basic events with Event Espresso Decaf entirely, which is sufficient for many WordPress users. If you need advanced features, you can check out our Premium [Event Management plugin](https://eventespresso.com/pricing/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_content=Event+Management+plugin&utm_campaign=ee4_decaf_plugin_faq_tab)
-
-= Can I use the Android & Apple event apps with Event Espresso Decaf? =
-
-Yes, the [event apps](https://eventespresso.com/features/mobile-ticketing-apps/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_content=event+apps&utm_campaign=ee4_decaf_plugin_faq_tab) work great with Event Espresso Decaf!
-
-= Will Event Espresso work on my server? =
-
-We have a plugin available that will check your server for the [minimum requirements](https://eventespresso.com/requirements/).
-
-= Do you support WordPress multisite? =
-
-WordPress multisite brings some complexity that can lead to some challenges. As such we cannot support multisite, but we'll offer recommendations wherever we can. Multisite compatibility is much better with EE4 than EE3. If you're unsure about using multisite, then please read [this article](http://halfelf.org/2011/dont-use-wordpress-multisite/).
-
-= Which web browsers work with Event Espresso? =
-
-Event Espresso has been tested with the most current versions Internet Explorer (Windows only), Firefox, Safari, Chrome on the Windows PC and Mac OSX platforms. Event Espresso may function just as well in older or other, less modern browsers, but we only support those listed previously. For more information, please see our [supported web browsers](https://eventespresso.com/faqs/supported-web-browsers/) page.
-
-= Do you monitor the WordPress.org support forums? =
-
-We DO NOT regularly monitor the support forums on WordPress.org. You'll find a faster response time at the [support forums on our website](https://eventespresso.com/support/forums/?utm_source=wordpress_org&utm_medium=link&utm_content=support+forums+on+our+website&utm_campaign=ee4_decaf_plugin_faq_tab).
-
-= What if I don't have (or don't want) a WordPress website? =
-
-If you want to organize your event fast without the hassle of managing a server, plugins, and security, then build your event website on our event cloud [Event Smart - free online event registration and ticketing management](https://eventsmart.com/?utm_source=wordpress_org&utm_medium=EE4_faq&utm_campaign=EE4&utm_content=link).
-
-= Is Event Espresso 4 available on Github? =
-
-Yes, you can get access to the core files via the [Event Espresso 4 Github page](http://evts.io/EE4_WP_Readme).
-
-== Changelog ==
-
-= Important Note =
-
-Backup your database before installing any updates. Please see our article on [Backing Up your WordPress Site](https://eventespresso.com/wiki/how-to-back-up-your-site/?utm_source=wordpress_org&utm_medium=link&utm_content=changelog&utm_campaign=ee4_decaf_plugin_changelog_tab).
-
-**Please Note:** Due to the fact that the Event Espresso 4 Decaf and Caffeinated (paid) versions share the same codebase, the changelog presented here is based on the Caffeinated (paid) version of Event Espresso 4. Up to date changelog for the current premium version [can be found here](https://eventespresso.com/wiki/ee4-changelog/?utm_source=wordpress_org&utm_medium=link&utm_content=changelog&utm_campaign=ee4_decaf_plugin_changelog_tab).
-
-**Developers, [find us on Github](http://evts.io/EE4_WP_Readme)**
-
-== Upgrade Notice ==
-
-Backup your WordPress website before installing any updates.
-
-== Other Notes ==
-
-**Developers, [find us on Github](http://evts.io/EE4_WP_Readme)**
-
-**Translators, find out how [you can translate Event Espresso](https://eventespresso.com/wiki/how-to-translate-event-espresso/?utm_source=wordpress_org)**
+Learn more about [Premium Features](https://eventespresso.com/features/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_description_tab&utm_content=Event+Calendar).
 
 **Use Cases**
 
-[Event Espresso](http:eventespresso.com/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases) is a very flexible, and robust event ticketing plugin for WordPress. Many [optional features](https://eventespresso.com/features/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases) include an [integrated calendar](https://eventespresso.com/product/ee4-events-calendar/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases), [ticket scanning](https://eventespresso.com/product/eea-barcode-scanner/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases) & check-in/out capabilities, [single page checkout](https://eventespresso.com/features/intelligent-single-page-checkout/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases), [multiple event registration](https://eventespresso.com/product/eea-multi-event-registration/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases), and after event [marketing tools](https://eventespresso.com/product/eea-mailchimp/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_case).
+[Event Espresso](https:eventespresso.com/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases) is a very flexible, and robust event ticketing plugin for WordPress. Many [optional features](https://eventespresso.com/features/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases) include an [integrated calendar](https://eventespresso.com/product/ee4-events-calendar/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases), [ticket scanning](https://eventespresso.com/product/eea-barcode-scanner/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases) & check-in/out capabilities, [single page checkout](https://eventespresso.com/features/intelligent-single-page-checkout/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases), [multiple event registration](https://eventespresso.com/product/eea-multi-event-registration/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases), and after event [marketing tools](https://eventespresso.com/product/eea-mailchimp/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_case).
 
 = Arts & Culture =
 
@@ -364,20 +280,86 @@ Backup your WordPress website before installing any updates.
 If you aren't quite sure if Event Espresso will work for you and it's not listed above, then [contact us](https://eventespresso.com/contact/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_more_info_use_cases_tab&utm_content=WordPress+event+manager+use_cases) and we'll do our best to evaluate your needs.
 
 
-= License =
+## Get Started Today
 
-    Copyright 2016  Event Espresso  (email : info@eventespresso.com)
+### Installation Instructions
 
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License, version 2, as
-    published by the Free Software Foundation.
+**Quick Install:**
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+1. Search for "Event Espresso" in the WordPress admin under Plugins → Add New.
+2. Install and activate the plugin.
 
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+**Install via FTP:**
 
+1. Download Event Espresso from the WordPress Plugin Directory.
+2. Unzip the `event-espresso-core-decaf` folder.
+3. Upload it to the `wp-content/plugins` directory using SFTP or FTP.
+4. Activate the plugin from the WordPress admin.
+
+For detailed installation and setup instructions, visit our [documentation](https://eventespresso.com/wiki/installing-event-espresso/?utm_source=wordpress_org&utm_medium=link&utm_content=installation&utm_campaign=ee4_decaf_plugin_installation_tab).
+
+== Frequently Asked Questions ==
+
+= What is Event Espresso? =
+
+Event Espresso is ticket and event management software for the modern world. Do you need to convince someone about Event Espresso? Share our [new video](https://eventespresso.com/2012/11/what-is-event-espresso-video/) or [print a brochure](http://ee-screenshots.s3.amazonaws.com/2012/02/EE_brochure_small.pdf).
+
+= Can I fully manage my events with Event Espresso Decaf? =
+
+You will be able to manage basic events with Event Espresso Decaf entirely, which is sufficient for many WordPress users. If you need advanced features, you can check out our Premium [Event Management plugin](https://eventespresso.com/pricing/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_content=Event+Management+plugin&utm_campaign=ee4_decaf_plugin_faq_tab)
+
+= Can I use the Android & Apple event apps with Event Espresso Decaf? =
+
+Yes, the [event apps](https://eventespresso.com/features/mobile-ticketing-apps/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_content=event+apps&utm_campaign=ee4_decaf_plugin_faq_tab) work great with Event Espresso Decaf!
+
+= Will Event Espresso work on my server? =
+
+We have a plugin available that will check your server for the [minimum requirements](https://eventespresso.com/requirements/).
+
+= Do you support WordPress multisite? =
+
+WordPress multisite brings some complexity that can lead to some challenges. As such we cannot support multisite, but we'll offer recommendations wherever we can. Multisite compatibility is much better with EE4 than EE3. If you're unsure about using multisite, then please read [this article](http://halfelf.org/2011/dont-use-wordpress-multisite/).
+
+= Which web browsers work with Event Espresso? =
+
+Event Espresso has been tested with the most current versions Internet Explorer (Windows only), Firefox, Safari, Chrome on the Windows PC and Mac OSX platforms. Event Espresso may function just as well in older or other, less modern browsers, but we only support those listed previously. For more information, please see our [supported web browsers](https://eventespresso.com/faqs/supported-web-browsers/) page.
+
+= Do you monitor the WordPress.org support forums? =
+
+We DO NOT regularly monitor the support forums on WordPress.org. You'll find a faster response time at the [support forums on our website](https://eventespresso.com/support/forums/?utm_source=wordpress_org&utm_medium=link&utm_content=support+forums+on+our+website&utm_campaign=ee4_decaf_plugin_faq_tab).
+
+= What if I don't have (or don't want) a WordPress website? =
+
+If you want to organize your event fast without the hassle of managing a server, plugins, and security, then build your event website on our event cloud [Event Smart - free online event registration and ticketing management](https://eventsmart.com/?utm_source=wordpress_org&utm_medium=EE4_faq&utm_campaign=EE4&utm_content=link).
+
+= Is Event Espresso 4 available on Github? =
+
+Yes, you can get access to the core files via the [Event Espresso 4 Github page](http://evts.io/EE4_WP_Readme).
+
+## Support and Resources
+
+### Need Help?
+
+This version is self-supported only or ask the community for help in the community forums. For faster support, consider purchasing a [Premium Support License](https://eventespresso.com/pricing/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_content=Buy+a+Premium+Support+License&utm_campaign=ee4_decaf_plugin_support_tab) and access our dedicated support forum.
+
+**Translators, find out how [you can translate Event Espresso](https://eventespresso.com/wiki/how-to-translate-event-espresso/?utm_source=wordpress_org)**
+
+
+### Developer Resources:
+
+- [Event Espresso on GitHub](https://github.com/eventespresso/event-espresso-core)
+
+### Stay Updated:
+
+Sign up for our [newsletter](https://eventespresso.com/newsletter/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_plugin_description_tab&utm_content=newsletter+signup) to be the first to know about new features and updates.
+
+## Changelog and Updates
+
+Always back up your site before updating. For a detailed changelog, visit our [changelog page](https://eventespresso.com/wiki/ee4-changelog/?utm_source=wordpress_org&utm_medium=link&utm_content=changelog&utm_campaign=ee4_decaf_plugin_changelog_tab).
+
+
+## License
+
+Copyright 2024 Event Espresso
+
+Licensed under the GNU General Public License v2.0.

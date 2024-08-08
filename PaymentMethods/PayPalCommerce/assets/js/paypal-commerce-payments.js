@@ -27,10 +27,7 @@ jQuery(document).ready(function ($) {
      * 	payment_currency: string,
      * 	checkout_type: string,
      * 	currency_sign: string,
-     * 	pp_order_id: string,
      * 	pp_order_nonce: string,
-     * 	pp_order_status: string,
-     * 	pp_order_amount: string,
      * 	txn_id: int,
      * 	org_country: string,
      * 	decimal_places: int,
@@ -106,12 +103,6 @@ jQuery(document).ready(function ($) {
         this.initializeObjects = function () {
             this.pp_order_id = this.pp_order_status = this.pp_order_amount = '';
             this.pp_order_nonce = eeaPPCommerceParameters.pp_order_nonce;
-            // Don't override possibly already saved order ID.
-            if (!this.pp_order_id || this.pp_order_id.length < 1) {
-                this.pp_order_id = eeaPPCommerceParameters.pp_order_id;
-                this.pp_order_status = eeaPPCommerceParameters.pp_order_status;
-                this.pp_order_amount = eeaPPCommerceParameters.pp_order_amount;
-            }
             this.button_container_id = '#eep-' + pm_slug + '-payment-buttons';
             this.payment_method_selector = $('#ee-available-payment-method-inputs');
             this.payment_method_select_lbl = $('#ee-available-payment-method-inputs-' + pm_slug + '-lbl');
@@ -282,7 +273,7 @@ jQuery(document).ready(function ($) {
                     this_pm.submitCardFieldsListener(cardFields);
                 }).catch(function (orderData) {
                     this_pm.throwError(
-                        eeaPPCommerceParameters.hf_render_error + ' ' + JSON.stringify(orderData),
+                        eeaPPCommerceParameters.hf_render_error,
                         JSON.stringify(orderData),
                         this_pm.slug
                     );
@@ -356,7 +347,7 @@ jQuery(document).ready(function ($) {
                         return this_pm.captureOrder([], billing_info);
                     }).catch(function (err) {
                         this_pm.throwError(
-                            eeaPPCommerceParameters.pm_capture_error + ' ' + JSON.stringify(err),
+                            eeaPPCommerceParameters.pm_capture_error,
                             JSON.stringify(err),
                             this_pm.slug
                         );
@@ -402,8 +393,8 @@ jQuery(document).ready(function ($) {
         this.createOrder = function (billing_info) {
             console.log('function createOrder()');
             this.spco.do_before_sending_ajax();
-            // Do we already have an order created ?
-            if (this.pp_order_id.length > 0) {
+            // Do we already have a complete order ?
+            if (this.pp_order_id && this.pp_order_status && this.pp_order_status === 'COMPLETED') {
                 this.spco.end_ajax();
                 return this.pp_order_id;
             }
@@ -564,6 +555,13 @@ jQuery(document).ready(function ($) {
             this_pm.order_nonce_input.parents('form:first').find('.spco-next-step-btn').trigger('click');
             console.log('-- captureOrder return response_data:', response_data);
             this_pm.spco.end_ajax();
+
+            this_pm.spco.main_container.on('spco_process_response', (event, nextStep, response) => {
+                // Disable the spco submit button in case there was an error response.
+                if (! response.success) {
+                    this_pm.disableSubmitButtons();
+                }
+            });
             return response_data
         };
 
@@ -619,7 +617,7 @@ jQuery(document).ready(function ($) {
                 this.displayError(error_message);
             }
             // add to PM logs
-            if (log_error !== false) {
+            if (typeof log_error === 'undefined' || log_error === true) {
                 if (!details) {
                     details = error_message;
                 }
