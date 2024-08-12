@@ -6,6 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Releases
 
+### [5.0.23]
+
+#### Fixed
+ - [Type Cast Return Value for EE_Admin_Config::useAdvancedEditor() (#1458)](https://github.com/eventespresso/cafe/pull/1458)
+
+#### Changed
+ - [BuildMachine 5.0.22 changes (#1450)](https://github.com/eventespresso/cafe/pull/1450)
+
+
 ### [5.0.22]
 
 #### Added
@@ -37,6 +46,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - [Catch Billing Form Errors if Payment Method Deactivated (#1434)](https://github.com/eventespresso/cafe/pull/1434)
  - [Advanced Editor Changes for Decaf (Barista#1330) (#1439)](https://github.com/eventespresso/cafe/pull/1439)
  - [Decaf 5.0.22 Update readme.txt (#1448)](https://github.com/eventespresso/cafe/pull/1448)
+ - [BuildMachine 5.0.22 changes (#1450)](https://github.com/eventespresso/cafe/pull/1450)
 
 
 ### [5.0.21]
