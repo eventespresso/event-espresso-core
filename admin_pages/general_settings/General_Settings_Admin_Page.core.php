@@ -1009,6 +1009,10 @@ class General_Settings_Admin_Page extends EE_Admin_Page
      */
     public function add_new_state()
     {
+        if (! $this->capabilities->current_user_can('manage_options', __FUNCTION__)) {
+            wp_die(esc_html__('You do not have the required privileges to perform this action', 'event_espresso'));
+        }
+
         $success = true;
         $CNT_ISO = $this->getCountryISO('');
         if (! $CNT_ISO) {
@@ -1076,6 +1080,10 @@ class General_Settings_Admin_Page extends EE_Admin_Page
      */
     public function delete_state()
     {
+        if (! $this->capabilities->current_user_can('manage_options', __FUNCTION__)) {
+            wp_die(esc_html__('You do not have the required privileges to perform this action', 'event_espresso'));
+        }
+
         $CNT_ISO    = $this->getCountryISO();
         $STA_ID     = $this->request->getRequestParam('STA_ID');
         $STA_abbrev = $this->request->getRequestParam('STA_abbrev');

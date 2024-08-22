@@ -451,6 +451,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
 
     public function load_scripts_styles_edit_category()
     {
+        wp_enqueue_style('editor-buttons');
     }
 
 

@@ -671,9 +671,8 @@ if (! class_exists('PluginUpdateEngineChecker')):
 
 
         /**
-         * Install the hooks required to run periodic update checks and inject update info
-         * into WP data structures.
-         * Also other hooks related to the automatic updates (such as checking agains API and what not (@from Darren)
+         * Install the hooks required to run periodic update checks and inject update info into WP data structures.
+         * Also other hooks related to the automatic updates (such as checking against API and what not (@from Darren)
          *
          * @return void
          */
@@ -696,23 +695,24 @@ if (! class_exists('PluginUpdateEngineChecker')):
                 //Periodic checks are disabled.
                 wp_clear_scheduled_hook($cronHook);
             }
+
+            if (! $this->_use_wp_update) {
+                add_filter('upgrader_pre_install', [$this, 'pre_upgrade_setup'], 10, 2);
+                add_filter('upgrader_post_install', [$this, 'tidy_up_after_upgrade'], 10, 3);
+            }
+
             //dashboard message "dismiss upgrade" link
             add_action('wp_ajax_' . $this->dismiss_upgrade, [$this, 'dashboard_dismiss_upgrade']);
 
             if (! has_action('wp_ajax_pue_dismiss_persistent_notice')) {
                 add_action('wp_ajax_pue_dismiss_persistent_notice', [$this, 'dismiss_persistent_notice']);
             }
-
-            if (! $this->_use_wp_update) {
-                add_filter('upgrader_pre_install', [$this, 'pre_upgrade_setup'], 10, 2);
-                add_filter('upgrader_post_install', [$this, 'tidy_up_after_upgrade'], 10, 3);
-            }
         }
 
 
         /**
          * This is where we'll hook in to set filters for handling bulk and regular updates (i.e. making sure directory
-         * names are setup properly etc.)
+         * names are set up properly etc.)
          *
          * @param boolean $continue   return true or WP aborts current upgrade process.
          * @param array   $hook_extra This will contain the plugin basename in a 'plugin' key
@@ -1045,7 +1045,7 @@ if (! class_exists('PluginUpdateEngineChecker')):
                     $this->add_persistent_notice($response->extra_notices);
                 }
 
-                // Toggle EDD Licensing feature flag only if 'update_ready' value is correctly. 
+                // Toggle EDD Licensing feature flag only if 'update_ready' value is correctly.
                 if (isset($response->extra_data)) {
                     if(isset($response->extra_data->update_ready)){
                         if($response->extra_data->update_ready === 'espressoUpdate') {
@@ -1060,7 +1060,7 @@ if (! class_exists('PluginUpdateEngineChecker')):
                     stripos((string) $this->slug, 'event-espresso-core') !== false
                     && isset($response->extra_data)
                     && ! empty($response->extra_data->plugins)
-                ) {                    
+                ) {
                     // Pull PUE plugin data from 'extra_data'.
                     $plugins_array = json_decode($result['body'], true);
                     $plugins       = $plugins_array['extra_data']['plugins'];
@@ -1179,6 +1179,12 @@ if (! class_exists('PluginUpdateEngineChecker')):
          */
         public function dismiss_persistent_notice()
         {
+            /** @var EE_Capabilities $capabilities */
+            $capabilities = LoaderFactory::getLoader()->getShared(EE_Capabilities::class);
+            if (! $capabilities->current_user_can('manage_options', 'dismiss-pue-notice')) {
+                wp_die(esc_html__('You do not have the required privileges to perform this action', 'event_espresso'));
+            }
+
             /** @var RequestInterface $request */
             $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
             $type    = $request->getRequestParam('type');
@@ -1686,6 +1692,12 @@ if (! class_exists('PluginUpdateEngineChecker')):
          */
         public function dashboard_dismiss_upgrade()
         {
+            /** @var EE_Capabilities $capabilities */
+            $capabilities = LoaderFactory::getLoader()->getShared(EE_Capabilities::class);
+            if (! $capabilities->current_user_can('manage_options', 'dismiss-pue-upgrade')) {
+                wp_die(esc_html__('You do not have the required privileges to perform this action', 'event_espresso'));
+            }
+
             $os_ary = get_site_option($this->dismiss_upgrade);
             if (! is_array($os_ary)) {
                 $os_ary = [];

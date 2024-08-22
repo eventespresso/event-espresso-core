@@ -63,9 +63,6 @@ class Transactions_Admin_Page extends EE_Admin_Page
      */
     protected function _ajax_hooks()
     {
-        // add_action('wp_ajax_espresso_apply_payment', [$this, 'apply_payments_or_refunds']);
-        // add_action('wp_ajax_espresso_apply_refund', [$this, 'apply_payments_or_refunds']);
-        // add_action('wp_ajax_espresso_delete_payment', [$this, 'delete_payment']);
     }
 
 

@@ -90,6 +90,7 @@ class GQLRequests extends Route
                 'EventEspresso\core\services\graphql\EnumsManager'       => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\graphql\InputsManager'      => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\graphql\TypesManager'       => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\graphql\InterfaceManager'   => EE_Dependency_Map::load_from_cache
             ]
         );
         $this->dependency_map->registerDependencies(
@@ -121,6 +122,10 @@ class GQLRequests extends Route
             [
                 'EventEspresso\core\services\graphql\loaders\DataLoaderCollection' => EE_Dependency_Map::load_from_cache,
             ]
+        );
+        $this->dependency_map->registerDependencies(
+            'EventEspresso\core\services\graphql\InterfaceManager',
+            ['EventEspresso\core\services\graphql\interfaces\InterfaceCollection' => EE_Dependency_Map::load_from_cache],
         );
         $this->dependency_map->registerDependencies(
             'EventEspresso\core\domain\services\graphql\types\Datetime',

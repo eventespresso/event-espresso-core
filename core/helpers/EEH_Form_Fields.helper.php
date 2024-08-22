@@ -1951,7 +1951,7 @@ class EEH_Form_Fields
             $_where['Event.Term_Taxonomy.term_id'] = $evt_category;
         }
 
-        $regdtts = EEM_Registration::instance()->get_reg_months_and_years($_where);
+        $reg_dates = EEM_Registration::instance()->get_reg_months_and_years($_where);
 
         // setup vals for select input helper
         $options = [
@@ -1961,15 +1961,15 @@ class EEH_Form_Fields
             ],
         ];
 
-        foreach ($regdtts as $regdtt) {
-            $date      = $regdtt->reg_month . ' ' . $regdtt->reg_year;
+        foreach ($reg_dates as $reg_date) {
+            $date      = $reg_date->reg_month . ' ' . $reg_date->reg_year;
             $options[] = [
                 'text' => $date,
                 'id'   => $date,
             ];
         }
 
-        return self::select_input('month_range', $options, $cur_date);
+        return self::select_input('month_range', $options, $cur_date, '', 'ee-list-table-filter');
     }
 
 
@@ -2038,7 +2038,7 @@ class EEH_Form_Fields
         }
 
 
-        return self::select_input('month_range', $options, $cur_date);
+        return self::select_input('month_range', $options, $cur_date, '', 'ee-list-table-filter');
     }
 
 
@@ -2069,12 +2069,12 @@ class EEH_Form_Fields
             ];
         }
 
-        return self::select_input('EVT_CAT', $options, $current_cat);
+        return self::select_input('EVT_CAT', $options, $current_cat, '', 'ee-list-table-filter');
     }
 
 
     /**
-     *    generate a submit button with or without it's own microform
+     *    generate a submit button with or without its own microform
      *    this is the only way to create buttons that are compatible across all themes
      *
      * @access    public

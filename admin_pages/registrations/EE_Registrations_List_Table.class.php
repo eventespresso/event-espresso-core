@@ -69,14 +69,14 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
     private function setupFilters()
     {
         // for event filtering
-        $this->EVT_ID = $this->request->getRequestParam('EVT_ID', 0, DataType::INTEGER);
-        $this->EVT_ID = $this->request->getRequestParam('event_id', $this->EVT_ID, DataType::INTEGER);
+        $this->EVT_ID = $this->request->getRequestParam('event_id', 0, DataType::INTEGER);
+        $this->EVT_ID = $this->request->getRequestParam('EVT_ID', $this->EVT_ID, DataType::INTEGER);
         // for datetime filtering
-        $this->DTT_ID = $this->request->getRequestParam('DTT_ID', 0, DataType::INTEGER);
-        $this->DTT_ID = $this->request->getRequestParam('datetime_id', $this->DTT_ID, DataType::INTEGER);
+        $this->DTT_ID = $this->request->getRequestParam('datetime_id', 0, DataType::INTEGER);
+        $this->DTT_ID = $this->request->getRequestParam('DTT_ID', $this->DTT_ID, DataType::INTEGER);
         // for ticket filtering
-        $this->TKT_ID = $this->request->getRequestParam('TKT_ID', 0, DataType::INTEGER);
-        $this->TKT_ID = $this->request->getRequestParam('ticket_id', $this->TKT_ID, DataType::INTEGER);
+        $this->TKT_ID = $this->request->getRequestParam('ticket_id', 0, DataType::INTEGER);
+        $this->TKT_ID = $this->request->getRequestParam('TKT_ID', $this->TKT_ID, DataType::INTEGER);
 
         $filters = [
             'event_id'    => $this->EVT_ID,
@@ -285,27 +285,44 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
     protected function _get_table_filters()
     {
         $filters = [];
-        // todo we're currently using old functions here. We need to move things into the Events_Admin_Page() class as
-        // methods.
         $cur_date     = $this->request->getRequestParam('month_range', '');
         $cur_category = $this->request->getRequestParam('EVT_CAT', -1, DataType::INTEGER);
         $reg_status   = $this->request->getRequestParam('_reg_status', '');
-        $filters[]    = EEH_Form_Fields::generate_registration_months_dropdown($cur_date, $reg_status, $cur_category);
-        $filters[]    = EEH_Form_Fields::generate_event_category_dropdown($cur_category);
+
+        $month_filter = EEH_Form_Fields::generate_registration_months_dropdown($cur_date, $reg_status, $cur_category);
+        $filters[] = "
+        <span class='ee-list-table-filter ee-reg-filter__month'>
+            <label for='month_range' class='ee-reg-filter__label'>" . esc_html__('Month', 'event_espresso') . "</label>
+            $month_filter
+        </span>";
+
+        $cat_filter = EEH_Form_Fields::generate_event_category_dropdown($cur_category);
+        $filters[] = "
+        <span class='ee-list-table-filter ee-reg-filter__category'>
+            <label for='EVT_CAT' class='ee-reg-filter__label'>" . esc_html__('Category', 'event_espresso') . "</label>
+            $cat_filter
+        </span>";
+
         $status       = [];
         $status[]     = ['id' => 0, 'text' => esc_html__('Select Status', 'event_espresso')];
         foreach ($this->_status as $key => $value) {
             $status[] = ['id' => $key, 'text' => $value];
         }
         if ($this->_view !== 'incomplete') {
-            $filters[] = EEH_Form_Fields::select_input(
+            $status_filter = EEH_Form_Fields::select_input(
                 '_reg_status',
                 $status,
                 $reg_status ? strtoupper($reg_status) : ''
             );
+            $filters[] = "
+        <span class='ee-list-table-filter ee-reg-filter__status'>
+            <label for='_reg_status' class='ee-reg-filter__label'>" . esc_html__('Status', 'event_espresso') . "</label>
+            $status_filter
+        </span>";
         }
         foreach ($this->filters as $filter_key => $filter_value) {
-            $filters[] = EEH_Form_Fields::hidden_input($filter_key, $filter_value, 'reg_' . $filter_key);
+            // add hidden inputs for each filter with ids like "reg_event_id", "reg_datetime_id", & "reg_ticket_id"
+            $filters[] = EEH_Form_Fields::hidden_input($filter_key, $filter_value, "reg_$filter_key");
         }
         return $filters;
     }

@@ -3,6 +3,7 @@
 namespace EventEspresso\caffeinated\core\domain\services\pue;
 
 use Closure;
+use EE_Capabilities;
 use EE_Maintenance_Mode;
 use EEH_Template;
 use EEH_URL;
@@ -193,6 +194,11 @@ class Stats
      */
     public function ajaxHandler()
     {
+        /** @var EE_Capabilities $capabilities */
+        $capabilities = LoaderFactory::getLoader()->getShared(EE_Capabilities::class);
+        if (! $capabilities->current_user_can('manage_options', 'edit-uxip-settings')) {
+            wp_die(esc_html__('You do not have the required privileges to perform this action', 'event_espresso'));
+        }
         /** @var RequestInterface $request */
         $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
         $nonce   = $request->getRequestParam('nonce');

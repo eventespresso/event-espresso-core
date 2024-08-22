@@ -16,15 +16,9 @@ use EventEspresso\PaymentMethods\PayPalCommerce\api\PayPalApi;
  */
 abstract class ClientsApi
 {
-    /**
-     * @var PayPalApi
-     */
-    protected $api;
+    protected PayPalApi $api;
 
-    /**
-     * @var string
-     */
-    protected $request_url;
+    protected string $request_url;
 
 
     /**

@@ -55,6 +55,9 @@ class Maintenance_Admin_Page extends EE_Admin_Page
 
     protected function _ajax_hooks()
     {
+        if (! $this->capabilities->current_user_can('manage_options', 'perform-migrations')) {
+            return;
+        }
         add_action('wp_ajax_migration_step', [$this, 'migration_step']);
         add_action('wp_ajax_add_error_to_migrations_ran', [$this, 'add_error_to_migrations_ran']);
     }
@@ -382,6 +385,9 @@ class Maintenance_Admin_Page extends EE_Admin_Page
      */
     public function migration_step()
     {
+        if (! $this->capabilities->current_user_can('manage_options', __FUNCTION__)) {
+            wp_die(esc_html__('You do not have the required privileges to perform this action', 'event_espresso'));
+        }
         $this->_template_args['data'] = $this->migration_manager->response_to_migration_ajax_request();
         $this->_return_json();
     }

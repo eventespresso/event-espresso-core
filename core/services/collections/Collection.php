@@ -164,7 +164,7 @@ class Collection extends SplObjectStorage implements CollectionInterface
      *
      * @param        $object
      * @param  mixed $identifier
-     * @return bool
+     * @return string
      */
     public function getIdentifier($object, $identifier = null)
     {

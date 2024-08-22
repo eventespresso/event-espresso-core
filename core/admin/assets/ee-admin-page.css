@@ -251,58 +251,63 @@
     word-wrap: inherit;
     white-space: inherit;
 }
-.ee-status-outline.small-text {
+.espresso-admin .ee-status-outline.small-text {
     font-size: var(--ee-font-size-smaller);
 }
 
-.ee-status-outline.ee-status-outline--error {
+.espresso-admin .ee-status-outline.ee-status-outline--error {
     border-color: var(--ee-status-color-red) !important;
 }
 
-.ee-status-outline.ee-status-outline--warning {
+.espresso-admin .ee-status-outline.ee-status-outline--warning {
     border-color: var(--ee-status-color-orange) !important;
 }
 
-.ee-status-outline.ee-status-outline--attention {
+.espresso-admin .ee-status-outline.ee-status-outline--attention {
     border-color: var(--ee-status-color-yellow) !important;
 }
 
-.ee-status-outline.ee-status-outline--active,
-.ee-status-outline.ee-status-outline--success {
+.espresso-admin .ee-status-outline.ee-status-outline--active,
+.espresso-admin .ee-status-outline.ee-status-outline--success {
     border-color: var(--ee-status-color-green) !important;
 }
 
-.ee-status-outline.ee-status-outline--ok {
+.espresso-admin .ee-status-outline.ee-status-outline--ok {
     border-color: var(--ee-status-color-blue) !important;
 }
 
-.ee-status-outline.ee-status-outline--info {
+.espresso-admin .ee-status-outline.ee-status-outline--info {
     border-color: var(--ee-status-color-light-blue) !important;
 }
 
-.ee-status-outline.ee-status-outline--ignore {
+.espresso-admin .ee-status-outline.ee-status-outline--ignore {
     border-color: var(--ee-status-color-light-grey) !important;
 }
 
-.ee-status-outline.ee-status-outline--void {
+.espresso-admin .ee-status-outline.ee-status-outline--void {
     border-color: var(--ee-status-color-grey) !important;
 }
 
-.ee-status-outline.ee-status-outline--margin-small {
+.espresso-admin .ee-status-outline.ee-status-outline--margin-small {
     margin-block: var(--ee-margin-small);
 }
 
 
-.ee-status-outline.ee-status-outline--small {
+.espresso-admin .ee-status-outline.ee-status-outline--small {
     font-size: inherit;
     padding-block: var(--ee-padding-micro);
     padding-inline: var(--ee-padding-smaller);
 }
 
-.ee-status-outline.ee-status-outline--micro {
+.espresso-admin .ee-status-outline.ee-status-outline--micro {
     font-size: inherit;
     padding-block: var(--ee-padding-pico);
     padding-inline: var(--ee-padding-micro);
+}
+
+
+.espresso-admin .ee-status-outline.ee-status-outline--fit-content {
+    width: fit-content !important;
 }
 
 
@@ -1227,19 +1232,15 @@ div.espresso-admin.wp-core-ui button:not(.ee-btn-base):not(.button--primary):not
 .espresso-admin .tablenav .actions > #doaction,
 .espresso-admin .tablenav .actions > #doaction2,
 .espresso-admin .tablenav .actions > #post-query-submit {
-    margin: var(--ee-margin-nano);
-    margin-inline-end: var(--ee-margin-micro);
+    margin: var(--ee-margin-micro);
+    margin-inline-end: var(--ee-margin-tiny);
 }
 
 .espresso-admin .tablenav .ee-list-table-filters__submit-buttons {
+    align-items: center;
     display: flex;
-    flex-wrap: nowrap;
+    flex-flow: row nowrap;
 }
-
-.espresso-admin .tablenav div {
-    margin-inline-end: var(--ee-margin-micro);
-}
-
 
 /*** Save buttons ***/
 .espresso-admin #major-publishing-actions {
@@ -4738,8 +4739,6 @@ body.espresso-admin #contextual-help-wrap strong {
     min-width: var(--ee-button-height);
     outline: 0;
     padding: 0;
-    /* padding-block: var(--ee-button-height-sixth); */
-    /* padding-inline: calc(var(--ee-button-height-half) - var(--ee-button-height-shim)); */
     padding-block: var(--ee-padding-tiny);
     padding-inline: var(--ee-padding-default);
     position: relative;
@@ -5547,10 +5546,6 @@ body.espresso-admin #contextual-help-wrap strong {
     background: var(--ee-color-almost-white);
     border-block-end: none;
     color: var(--ee-font-color-light);
-    /* position: -webkit-sticky;
-    position: sticky;
-    top: var(--ee-size-bigger);
-    z-index: 25; */
 }
 
 .admin-primary-mbox-tbl tfoot td,
@@ -5727,7 +5722,6 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin .wp-list-table.plugins td.plugin-title strong {
     color: var(--ee-font-color);
     font-size: var(--ee-font-size-default);
-    /* white-space: break-spaces; */
 }
 
 .espresso-admin .wp-list-table.plugins tbody td p {
@@ -5851,6 +5845,18 @@ body.espresso-admin #contextual-help-wrap strong {
     display: flex;
     flex-flow: row wrap;
     font-size: var(--ee-font-size-small);
+}
+.espresso-admin .tablenav.ee-tablenav {
+    width: 100%;
+}
+.espresso-admin .tablenav.ee-tablenav.top {
+    display: flex;
+    flex-flow: row wrap;
+    background-color: var(--ee-status-color-pale-blue) !important;
+    padding-block: var(--ee-padding-smaller);
+    padding-inline: var(--ee-padding-default);
+    width: 100%;
+    box-sizing: border-box;
 }
 
 .espresso-admin .pagination-links {
@@ -6066,25 +6072,8 @@ body.espresso-admin #contextual-help-wrap strong {
 }
 
 .espresso-admin .tablenav select {
-    min-width: clamp(12rem, 50%, 16rem);
     max-width: 100%;
-    width: 100%;
-}
-
-@media only screen and (min-width: 600px) {
-    .espresso-admin .tablenav select {
-        min-width: clamp(12rem, 25%, 16rem);
-        max-width: clamp(16rem, 50%, 20rem);
-        width: fit-content;
-    }
-}
-
-@media only screen and (min-width: 1024px) {
-    .espresso-admin .tablenav select {
-        min-width: clamp(12rem, 15%, 16rem);
-        max-width: clamp(16rem, 50%, 20rem);
-        width: fit-content;
-    }
+    width: fit-content;
 }
 
 .espresso-admin .tablenav .current-page {
@@ -6255,7 +6244,6 @@ body.espresso-admin #contextual-help-wrap strong {
         margin: 0;
         margin-block-end: var(--ee-margin-big);
         min-width: unset;
-        /* margin-inline-start: -5px; */
         max-width: 100%;
         width: 100%;
     }
@@ -7011,14 +6999,14 @@ body.espresso-admin #contextual-help-wrap strong {
 }
 
 .ee-filter-header__text .ee-filter-header__details {
+    align-items: center;
     color: var(--ee-status-color-grey);
+    display: inline-flex;
     font-size: .9em;
 }
 
 .ee-filter-header__text .ee-filter-header__details .dashicons {
     margin-inline-end: var(--ee-margin-pico);
-    position: relative;
-    top: -0.1875rem;
 }
 
 .ee-ticket-assignments-manager .ee-rspnsv-table__inner-wrapper[role="region"],

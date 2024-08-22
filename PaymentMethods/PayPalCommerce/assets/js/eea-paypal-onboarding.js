@@ -141,7 +141,7 @@ jQuery(document).ready(function ($) {
         this.onboardBtnListeners = function () {
             const this_pm = this;
             this.processing_icon = $('#' + this.processing_icon_name);
-            this.onboard_btn.on('click', function (event) {
+            this.onboard_btn.on('click', function () {
                 this_pm.pp_pm_slug_holder.text(this_pm.slug);
                 this_pm.sandbox_mode = this_pm.sandbox_select.val();
                 this_pm.preOnboardingForm();
@@ -264,7 +264,7 @@ jQuery(document).ready(function ($) {
             const this_pm = this;
             this.clear_metadata_btn.on('click', function (event) {
                 event.preventDefault();
-                this_pm.sendRequest('eeaPpOffboard', {}, this_pm.reloadPage, false);
+                this_pm.sendRequest('eeaPpClearMetaData', {}, this_pm.reloadPage, false);
             });
         };
 

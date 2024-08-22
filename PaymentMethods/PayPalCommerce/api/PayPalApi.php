@@ -36,13 +36,14 @@ abstract class PayPalApi
     /**
      * @param bool $sandbox_mode
      */
-    public function __construct(bool $sandbox_mode = true) {
+    public function __construct(bool $sandbox_mode = true)
+    {
         $this->sandbox_mode = $sandbox_mode;
         // Is this a sandbox request.
         $this->api_endpoint = $this->sandbox_mode
             ? 'https://api-m.sandbox.paypal.com/v2/'
             : 'https://api-m.paypal.com/v2/';
-        $this->inspector     = new ResponseInspector();
+        $this->inspector    = new ResponseInspector();
     }
 
 

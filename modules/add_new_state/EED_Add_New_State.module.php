@@ -37,24 +37,20 @@ class EED_Add_New_State extends EED_Module
     {
         add_action('wp_loaded', ['EED_Add_New_State', 'set_definitions'], 2);
         add_action('wp_enqueue_scripts', ['EED_Add_New_State', 'translate_js_strings'], 0);
-        add_action('wp_enqueue_scripts', ['EED_Add_New_State', 'wp_enqueue_scripts'], 10);
+        add_action('wp_enqueue_scripts', ['EED_Add_New_State', 'wp_enqueue_scripts']);
         add_filter(
             'FHEE__EE_SPCO_Reg_Step_Attendee_Information___question_group_reg_form__question_group_reg_form',
             ['EED_Add_New_State', 'display_add_new_state_micro_form'],
-            1,
             1
         );
         add_filter(
             'FHEE__EE_SPCO_Reg_Step_Payment_Options___get_billing_form_for_payment_method__billing_form',
             ['EED_Add_New_State', 'display_add_new_state_micro_form'],
-            1,
             1
         );
         add_filter(
             'FHEE__EE_Single_Page_Checkout__process_attendee_information__valid_data_line_item',
-            ['EED_Add_New_State', 'unset_new_state_request_params'],
-            10,
-            1
+            ['EED_Add_New_State', 'unset_new_state_request_params']
         );
         add_filter(
             'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__state_options',
@@ -70,15 +66,11 @@ class EED_Add_New_State extends EED_Module
         );
         add_filter(
             'FHEE__EE_State_Select_Input____construct__state_options',
-            ['EED_Add_New_State', 'state_options'],
-            10,
-            1
+            ['EED_Add_New_State', 'state_options']
         );
         add_filter(
             'FHEE__EE_Country_Select_Input____construct__country_options',
-            ['EED_Add_New_State', 'country_options'],
-            10,
-            1
+            ['EED_Add_New_State', 'country_options']
         );
     }
 
@@ -94,22 +86,18 @@ class EED_Add_New_State extends EED_Module
         add_filter(
             'FHEE__EE_SPCO_Reg_Step_Attendee_Information___question_group_reg_form__question_group_reg_form',
             ['EED_Add_New_State', 'display_add_new_state_micro_form'],
-            1,
             1
         );
         add_filter(
             'FHEE__EE_SPCO_Reg_Step_Payment_Options___get_billing_form_for_payment_method__billing_form',
             ['EED_Add_New_State', 'display_add_new_state_micro_form'],
-            1,
             1
         );
         add_action('wp_ajax_espresso_add_new_state', ['EED_Add_New_State', 'add_new_state']);
         add_action('wp_ajax_nopriv_espresso_add_new_state', ['EED_Add_New_State', 'add_new_state']);
         add_filter(
             'FHEE__EE_Single_Page_Checkout__process_attendee_information__valid_data_line_item',
-            ['EED_Add_New_State', 'unset_new_state_request_params'],
-            10,
-            1
+            ['EED_Add_New_State', 'unset_new_state_request_params']
         );
         add_action(
             'AHEE__General_Settings_Admin_Page__update_country_settings__state_saved',
@@ -125,21 +113,15 @@ class EED_Add_New_State extends EED_Module
         );
         add_filter(
             'FHEE__EE_State_Select_Input____construct__state_options',
-            ['EED_Add_New_State', 'state_options'],
-            10,
-            1
+            ['EED_Add_New_State', 'state_options']
         );
         add_filter(
             'FHEE__EE_Country_Select_Input____construct__country_options',
-            ['EED_Add_New_State', 'country_options'],
-            10,
-            1
+            ['EED_Add_New_State', 'country_options']
         );
         add_filter(
             'FHEE__EE_Form_Section_Proper__receive_form_submission__request_data',
-            ['EED_Add_New_State', 'filter_checkout_request_params'],
-            10,
-            1
+            ['EED_Add_New_State', 'filter_checkout_request_params']
         );
         add_filter(
             'FHEE__EE_SPCO_Reg_Step_Attendee_Information___generate_question_input__state_options',
@@ -241,7 +223,7 @@ class EED_Add_New_State extends EED_Module
     ): EE_Form_Section_Proper {
         $request = self::getRequest();
         // only add the 'new_state_micro_form' when displaying reg forms,
-        // not during processing since we process the 'new_state_micro_form' in it's own AJAX request
+        // not during processing since we process the 'new_state_micro_form' in its own AJAX request
         $action = $request->getRequestParam('action');
         // is the "state" question in this form section?
         $input = $question_group_reg_form->get_subsection('state');
@@ -566,7 +548,7 @@ class EED_Add_New_State extends EED_Module
      */
     public static function filter_checkout_request_params(array $request_params): array
     {
-        foreach ((array) $request_params as $form_section) {
+        foreach ($request_params as $form_section) {
             if (is_array($form_section)) {
                 EED_Add_New_State::unset_new_state_request_params($form_section);
                 EED_Add_New_State::filter_checkout_request_params($form_section);
@@ -660,6 +642,11 @@ class EED_Add_New_State extends EED_Module
      */
     public static function update_country_settings(string $CNT_ISO = '', int $STA_ID = 0, array $cols_n_values = [])
     {
+        /** @var EE_Capabilities $capabilities */
+        $capabilities = LoaderFactory::getLoader()->getShared(EE_Capabilities::class);
+        if (! $capabilities->current_user_can('manage_options', 'update-country-settings')) {
+            wp_die(esc_html__('You do not have the required privileges to perform this action', 'event_espresso'));
+        }
         if (! $CNT_ISO) {
             EE_Error::add_error(
                 esc_html__('An invalid or missing Country ISO Code was received.', 'event_espresso'),

@@ -15,19 +15,10 @@ use EventEspresso\PaymentMethods\PayPalCommerce\api\PayPalApi;
  */
 abstract class OrdersApi
 {
-    /**
-     * @var PayPalApi
-     */
     protected PayPalApi $api;
 
-    /**
-     * @var string
-     */
     protected string $request_url;
 
-    /**
-     * @var string
-     */
     protected string $order_id;
 
 

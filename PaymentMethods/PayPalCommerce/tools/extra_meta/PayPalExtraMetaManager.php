@@ -22,24 +22,64 @@ use ReflectionException;
  */
 class PayPalExtraMetaManager
 {
+    private static ?OpenSSLEncryption $encryptor = null;
+
+    private static ?PayPalExtraMeta $pay_pal_extra_meta = null;
+
+
+    /**
+     * Get PayPal extra meta helper.
+     *
+     * @param EE_Payment_Method $paypal_pm
+     * @return PayPalExtraMeta
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public static function extraMeta(EE_Payment_Method $paypal_pm): PayPalExtraMeta
+    {
+        if (! PayPalExtraMetaManager::$pay_pal_extra_meta instanceof PayPalExtraMeta) {
+            PayPalExtraMetaManager::$pay_pal_extra_meta = new PayPalExtraMeta($paypal_pm);
+        }
+        return PayPalExtraMetaManager::$pay_pal_extra_meta;
+    }
+
+
+    /**
+     * Get OpenSSLEncryption instance.
+     *
+     * @return OpenSSLEncryption
+     */
+    public static function encryptor(): OpenSSLEncryption
+    {
+        if (! PayPalExtraMetaManager::$encryptor instanceof OpenSSLEncryption) {
+            PayPalExtraMetaManager::$encryptor = LoaderFactory::getLoader()->getShared(
+                OpenSSLEncryption::class,
+                [new Base64Encoder()]
+            );
+        }
+        return PayPalExtraMetaManager::$encryptor;
+    }
+
+
     /**
      * Get payment method option/extra meta
      *
      * @param EE_Payment_Method $paypal_pm
      * @param string            $option_name
      * @return mixed
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function getPmOption(EE_Payment_Method $paypal_pm, string $option_name)
     {
-        $pp_meta_data = self::extraMeta($paypal_pm);
-        $option_value = $pp_meta_data->getOption($option_name);
+        $option_value = PayPalExtraMetaManager::extraMeta($paypal_pm)->getOption($option_name);
         // Decrypt the encrypted options.
         if (
             $option_name === Domain::META_KEY_ACCESS_TOKEN
             || $option_name === Domain::META_KEY_PARTNER_MERCHANT_ID
             || $option_name === Domain::META_KEY_CLIENT_SECRET
         ) {
-            $option_value = self::decryptString($option_value, $paypal_pm);
+            $option_value = PayPalExtraMetaManager::decryptString($option_value, $paypal_pm);
         }
         return $option_value;
     }
@@ -52,11 +92,12 @@ class PayPalExtraMetaManager
      * @param string            $option_name
      * @param                   $option_value
      * @return bool
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function savePmOption(EE_Payment_Method $paypal_pm, string $option_name, $option_value): bool
     {
-        $pp_meta_data = self::extraMeta($paypal_pm);
-        return $pp_meta_data->saveOption($option_name, $option_value);
+        return PayPalExtraMetaManager::extraMeta($paypal_pm)->saveOption($option_name, $option_value);
     }
 
 
@@ -66,11 +107,12 @@ class PayPalExtraMetaManager
      * @param EE_Payment_Method $paypal_pm
      * @param array             $options_list
      * @return bool
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function savePmOptions(EE_Payment_Method $paypal_pm, array $options_list): bool
     {
-        $pp_meta_data = self::extraMeta($paypal_pm);
-        return $pp_meta_data->saveBatch($options_list);
+        return PayPalExtraMetaManager::extraMeta($paypal_pm)->saveBatch($options_list);
     }
 
 
@@ -80,11 +122,12 @@ class PayPalExtraMetaManager
      * @param EE_Payment_Method $paypal_pm
      * @param string            $option_name
      * @return bool
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function deletePmOption(EE_Payment_Method $paypal_pm, string $option_name): bool
-        {
-        $pp_meta_data = self::extraMeta($paypal_pm);
-        return $pp_meta_data->deleteOption($option_name);
+    {
+        return PayPalExtraMetaManager::extraMeta($paypal_pm)->deleteOption($option_name);
     }
 
 
@@ -92,27 +135,42 @@ class PayPalExtraMetaManager
      * Get all options for payment method.
      *
      * @param EE_Payment_Method $paypal_pm
-     * @return array|bool
+     * @return array
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public static function getAllData(EE_Payment_Method $paypal_pm)
+    public static function getAllData(EE_Payment_Method $paypal_pm): array
     {
-        $pp_meta_data = self::extraMeta($paypal_pm);
-        return $pp_meta_data->getMetaData();
+        return PayPalExtraMetaManager::extraMeta($paypal_pm)->getMetaData();
     }
 
 
     /**
-     * Delete all options for this payment method.
+     * Delete payment method metadata.
      *
      * @param EE_Payment_Method $paypal_pm
      * @return bool
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public static function deleteData(EE_Payment_Method $paypal_pm): bool
+    {
+        return PayPalExtraMetaManager::extraMeta($paypal_pm)->deleteMetaData();
+    }
+
+
+    /**
+     * Delete all payment method metadata.
+     *
+     * @param EE_Payment_Method $paypal_pm
+     * @return bool
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function deleteAllData(EE_Payment_Method $paypal_pm): bool
     {
-        $pp_meta_data = self::extraMeta($paypal_pm);
-        return $pp_meta_data->deleteMetaData();
+        return PayPalExtraMetaManager::extraMeta($paypal_pm)->deleteAllMetaData();
     }
-
 
     /**
      * Save the debug mode option if it changed.
@@ -120,6 +178,8 @@ class PayPalExtraMetaManager
      * @param EE_Payment_Method $paypal_pm
      * @param array             $request_data
      * @return bool             Updated or not.
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function updateDebugMode(EE_Payment_Method $paypal_pm, array $request_data): bool
     {
@@ -131,14 +191,17 @@ class PayPalExtraMetaManager
             try {
                 $paypal_pm->save(['PMD_debug_mode' => (bool) $request_data['sandbox_mode']]);
             } catch (EE_Error $e) {
-                $err_msg = sprintf(
-                    esc_html__('Note, debug mode not saved ! %1$s', 'event_espresso'),
-                    $e->getMessage()
+                PayPalLogger::errorLog(
+                    sprintf(
+                        esc_html__('Note, debug mode not saved ! %1$s', 'event_espresso'),
+                        $e->getMessage()
+                    ),
+                    ['request_data' => $request_data, 'trace' => $e->getTrace()],
+                    $paypal_pm
                 );
-                PayPalLogger::errorLog($err_msg, $request_data, $paypal_pm);
                 return false;
             }
-             return true;
+            return true;
         }
         return false;
     }
@@ -150,6 +213,8 @@ class PayPalExtraMetaManager
      * @param EE_Payment_Method $paypal_pm
      * @param array             $response
      * @return bool
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function savePartnerAccessToken(EE_Payment_Method $paypal_pm, array $response): bool
     {
@@ -171,7 +236,10 @@ class PayPalExtraMetaManager
                 switch ($api_key) {
                     case Domain::META_KEY_ACCESS_TOKEN:
                     case Domain::META_KEY_PARTNER_MERCHANT_ID:
-                        $paypal_data[ $api_key ] = self::encryptString($response[ $api_key ], $paypal_pm);
+                        $paypal_data[ $api_key ] = PayPalExtraMetaManager::encryptString(
+                            $response[ $api_key ],
+                            $paypal_pm
+                        );
                         break;
                     case Domain::META_KEY_TOKEN_EXPIRES_IN:
                         $paypal_data[ $api_key ] = time() + (int) sanitize_key($response[ $api_key ]);
@@ -179,12 +247,16 @@ class PayPalExtraMetaManager
                     default:
                         $paypal_data[ $api_key ] = sanitize_text_field($response[ $api_key ]);
                 }
-            } catch (Exception $exception) {
-                PayPalLogger::errorLog($exception->getMessage(), $response, $paypal_pm);
+            } catch (Exception $e) {
+                PayPalLogger::errorLog(
+                    $e->getMessage(),
+                    ['response' => $response, 'trace' => $e->getTrace()],
+                    $paypal_pm
+                );
                 return false;
             }
         }
-        return self::savePmOptions($paypal_pm, $paypal_data);
+        return PayPalExtraMetaManager::savePmOptions($paypal_pm, $paypal_data);
     }
 
 
@@ -194,13 +266,13 @@ class PayPalExtraMetaManager
      * @param EE_Payment_Method $paypal_pm
      * @param array             $response
      * @return bool
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function saveSellerApiCredentials(EE_Payment_Method $paypal_pm, array $response): bool
     {
         $api_credentials     = [];
-        $expected_parameters = [
-            Domain::META_KEY_SELLER_MERCHANT_ID,
-        ];
+        $expected_parameters = [Domain::META_KEY_SELLER_MERCHANT_ID];
         foreach ($expected_parameters as $api_key) {
             if (! isset($response[ $api_key ])) {
                 // Don't want to try saving data that doesn't exist.
@@ -208,7 +280,7 @@ class PayPalExtraMetaManager
             }
             $api_credentials[ $api_key ] = $response[ $api_key ];
         }
-        return self::savePmOptions($paypal_pm, $api_credentials);
+        return PayPalExtraMetaManager::savePmOptions($paypal_pm, $api_credentials);
     }
 
 
@@ -226,7 +298,7 @@ class PayPalExtraMetaManager
         $allowed_checkout_type = 'express_checkout';
         // Note, although PayPal shows that this should include PPCP_CUSTOM or EXPRESS_CHECKOUT only,
         // in reality, it will also include other products like MOBILE_PAYMENT_ACCEPTANCE etc.
-        if (! empty($data['response']['products'][0]['name']) && is_array($data['response']['products'])) {
+        if (! empty($data['response']['products'][0]['name'])) {
             foreach ($data['response']['products'] as $product) {
                 if (str_contains($product['name'], 'PPCP')) {
                     // This merchant has PPCP in the products list, so we can enable both (all) checkout types.
@@ -248,7 +320,7 @@ class PayPalExtraMetaManager
                 $split       = explode('/', $scope);
                 $split_count = count($split);
                 // Get the scope itself.
-                $scopes    []= $split[ $split_count - 1 ];
+                $scopes[] = $split[ $split_count - 1 ];
             }
             if (empty($scopes)) {
                 // In case the there's a change in how scopes come in just save the list.
@@ -265,27 +337,12 @@ class PayPalExtraMetaManager
 
 
     /**
-     * Get PayPal extra meta helper.
-     *
-     * @param EE_Payment_Method $paypal_pm
-     * @return PayPalExtraMeta
-     * @throws EE_Error
-     * @throws ReflectionException
-     */
-    public static function extraMeta(EE_Payment_Method $paypal_pm): PayPalExtraMeta
-    {
-        return new PayPalExtraMeta($paypal_pm);
-    }
-
-
-    /**
      * Encrypt a text field.
      *
      * @param string            $text
      * @param EE_Payment_Method $paypal_pm
      * @return string|null
-     * @throws EE_Error
-     * @throws ReflectionException
+     * @throws Exception
      */
     public static function encryptString(string $text, EE_Payment_Method $paypal_pm): ?string
     {
@@ -293,13 +350,22 @@ class PayPalExtraMetaManager
         if (! $text) {
             return $text;
         }
-        // Do encrypt.
-        $encryptor      = LoaderFactory::getLoader()->getShared(OpenSSLEncryption::class, [new Base64Encoder()]);
-        $sanitized_text = sanitize_text_field($text);
-        $key_identifier = $paypal_pm->debug_mode()
-            ? PPCommerceEncryptionKeyManager::SANDBOX_ENCRYPTION_KEY_ID
-            : PPCommerceEncryptionKeyManager::PRODUCTION_ENCRYPTION_KEY_ID;
-        return $encryptor->encrypt($sanitized_text, $key_identifier);
+
+        try {
+            // Do encrypt.
+            $sanitized_text = sanitize_text_field($text);
+            $key_identifier = $paypal_pm->debug_mode()
+                ? PPCommerceEncryptionKeyManager::SANDBOX_ENCRYPTION_KEY_ID
+                : PPCommerceEncryptionKeyManager::PRODUCTION_ENCRYPTION_KEY_ID;
+            $encrypted      = PayPalExtraMetaManager::encryptor()->encrypt($sanitized_text, $key_identifier);
+        } catch (Exception $e) {
+            PayPalLogger::errorLog(
+                $e->getMessage(),
+                ['trace' => $e->getTrace()],
+                $paypal_pm
+            );
+        }
+        return $encrypted ?? null;
     }
 
 
@@ -318,12 +384,16 @@ class PayPalExtraMetaManager
         }
         // Try decrypting.
         try {
-            $encryptor      = LoaderFactory::getLoader()->getShared(OpenSSLEncryption::class, [new Base64Encoder()]);
             $key_identifier = $paypal_pm->debug_mode()
                 ? PPCommerceEncryptionKeyManager::SANDBOX_ENCRYPTION_KEY_ID
                 : PPCommerceEncryptionKeyManager::PRODUCTION_ENCRYPTION_KEY_ID;
-            $decrypted      = $encryptor->decrypt($text, $key_identifier);
+            $decrypted      = PayPalExtraMetaManager::encryptor()->decrypt($text, $key_identifier);
         } catch (Exception $e) {
+            PayPalLogger::errorLog(
+                $e->getMessage(),
+                ['trace' => $e->getTrace()],
+                $paypal_pm
+            );
             return $text;
         }
         return $decrypted ?? $text;

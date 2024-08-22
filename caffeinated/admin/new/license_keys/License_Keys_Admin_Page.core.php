@@ -27,6 +27,9 @@ class License_Keys_Admin_Page extends EE_Admin_Page
 
     protected function _ajax_hooks()
     {
+        if (! $this->capabilities->current_user_can('manage_options', 'update-license-key')) {
+            return;
+        }
         add_action('wp_ajax_espresso_update_license', [$this, 'updateLicenseKey']);
     }
 
@@ -191,7 +194,7 @@ class License_Keys_Admin_Page extends EE_Admin_Page
      */
     public function updateLicenseKey()
     {
-        if (current_user_can('manage_options')) {
+        if ($this->capabilities->current_user_can('manage_options', __FUNCTION__)) {
             $licence_manager  = $this->getLicenseManager();
             $license_action   = $this->request->getRequestParam(LicenseAPI::REQUEST_PARAM_ACTION);
             $license_key      = $this->request->getRequestParam(LicenseAPI::REQUEST_PARAM_LICENSE_KEY);
@@ -254,7 +257,7 @@ class License_Keys_Admin_Page extends EE_Admin_Page
             $notices = [
                 'success' => false,
                 'errors'  => [
-                    esc_html__('You do not have permission to perform this action.', 'event_espresso'),
+                    esc_html__('You do not have the required privileges to perform this action', 'event_espresso'),
                 ],
             ];
         }

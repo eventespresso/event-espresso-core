@@ -24,10 +24,8 @@ class ClientToken extends ClientsApi
      * @param PayPalApi $api
      * @param bool      $sandbox_mode
      */
-    public function __construct(
-        PayPalApi $api,
-        bool $sandbox_mode
-    ) {
+    public function __construct(PayPalApi $api, bool $sandbox_mode)
+    {
         parent::__construct($api, $sandbox_mode);
         $this->request_url = $this->request_url . "/generate-token";
     }
@@ -70,7 +68,7 @@ class ClientToken extends ClientsApi
         return [
             'valid'        => true,
             'client_token' => $response[ Domain::API_KEY_CLIENT_TOKEN ],
-            'expires_in'   => $response[ Domain::API_KEY_EXPIRES_IN ]
+            'expires_in'   => $response[ Domain::API_KEY_EXPIRES_IN ],
         ];
     }
 }

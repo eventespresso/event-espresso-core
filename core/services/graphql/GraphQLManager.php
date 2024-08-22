@@ -41,6 +41,11 @@ class GraphQLManager implements GQLManagerInterface
     protected $types_manager;
 
     /**
+     * @var InterfaceManager $interface_manager
+     */
+    protected $interface_manager;
+    
+    /**
      * @var boolean $initialized
      */
     private $initialized = false;
@@ -60,13 +65,15 @@ class GraphQLManager implements GQLManagerInterface
         DataLoaderManager $data_loader_manager,
         EnumsManager $enums_manager,
         InputsManager $inputs_manager,
-        TypesManager $types_manager
+        TypesManager $types_manager,
+        InterfaceManager $interface_manager
     ) {
         $this->connections_manager = $connections_manager;
         $this->data_loader_manager = $data_loader_manager;
         $this->enums_manager = $enums_manager;
         $this->inputs_manager = $inputs_manager;
         $this->types_manager = $types_manager;
+        $this->interface_manager = $interface_manager;
     }
 
 
@@ -83,6 +90,7 @@ class GraphQLManager implements GQLManagerInterface
         $this->connections_manager->init();
         $this->data_loader_manager->init();
         $this->enums_manager->init();
+        $this->interface_manager->init();
         $this->inputs_manager->init();
         $this->types_manager->init();
         $this->initialized = true;

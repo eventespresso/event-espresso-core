@@ -23,6 +23,9 @@ class Pricing_Admin_Page extends EE_Admin_Page
 
     protected function _ajax_hooks()
     {
+        if (! $this->capabilities->current_user_can('ee_edit_default_prices', 'update-price-order')) {
+            return;
+        }
         add_action('wp_ajax_espresso_update_prices_order', [$this, 'update_price_order']);
     }
 
@@ -864,6 +867,9 @@ class Pricing_Admin_Page extends EE_Admin_Page
      */
     public function update_price_order()
     {
+        if (! $this->capabilities->current_user_can('ee_edit_default_prices', __FUNCTION__)) {
+            wp_die(esc_html__('You do not have the required privileges to perform this action', 'event_espresso'));
+        }
         // grab our row IDs
         $row_ids = $this->request->getRequestParam('row_ids', '');
         $row_ids = explode(',', rtrim($row_ids, ','));

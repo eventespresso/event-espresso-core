@@ -163,41 +163,41 @@
 
 /* TABLE NAV FILTERS */
 
-.espresso-admin #EE_Event_Registrations_List_Table-table-frm .tablenav {
-    margin-block-start: -1.25rem;
-}
-
-.espresso-admin #EE_Event_Registrations_List_Table-table-frm .tablenav > span,
-.espresso-admin #EE_Event_Registrations_List_Table-table-frm .tablenav > a.button,
-.espresso-admin #EE_Event_Registrations_List_Table-table-frm .tablenav > input.button,
-.espresso-admin #EE_Event_Registrations_List_Table-table-frm .tablenav > div:not(.ee-event-filter__wrapper) {
-    margin-block-start: 1.25rem;
-}
-
 .espresso-admin .tablenav .ee-event-filter__wrapper {
     margin-inline-end: 0;
     max-width: 100%;
-}
-
-.espresso-admin .tablenav .ee-event-filter__wrapper .ee-event-filter-main-label {
-    margin-block: 0;
 }
 
 .espresso-admin .tablenav .ee-event-filter,
 .espresso-admin .tablenav .ee-event-filter > span {
     align-items: center;
     display: flex;
-    flex-flow: row nowrap;
+    flex-flow: row wrap;
     justify-content: flex-start;
+    margin-block: var(--ee-margin-small);
     max-width: 100%;
 }
-
 .espresso-admin .tablenav .ee-event-filter {
-    flex-wrap: wrap !important;
-    margin-inline-end: 0;
-    padding-block: 0.5rem;
-    padding-block-end: .75rem;
-    padding-inline: 1rem;
+    margin-block: 0;
+}
+
+.espresso-admin .tablenav .actions > span.ee-list-table-filter {
+    align-items: center;
+    display: inline-flex;
+    flex-flow: row nowrap;
+    flex-grow: .125;
+    justify-content: flex-start;
+    margin-block: var(--ee-margin-small);
+    max-width: 100%;
+    width: fit-content;
+}
+
+.espresso-admin .tablenav .ee-reg-filter__month .ee-list-table-filter {
+    min-width: 11rem;
+}
+
+.espresso-admin .tablenav .ee-reg-filter__label {
+    margin: 0 !important;
 }
 
 .espresso-admin .tablenav .ee-event-filter .ee-event-filter-main-label {
@@ -205,39 +205,24 @@
 }
 
 .espresso-admin .tablenav .ee-event-filter > span {
+    flex-wrap: nowrap;
     margin-inline-end: var(--ee-margin-small);
-    padding-block: var(--ee-padding-small);
 }
 
 .espresso-admin .tablenav .ee-event-filter > span:last-child {
     margin-inline-end: 0;
 }
 
+.espresso-admin .tablenav .ee-event-filter-main-label,
 .espresso-admin .tablenav .ee-event-filter > span label {
     flex-wrap: nowrap;
-    margin-block: 0;
+    margin: 0 var(--ee-margin-micro) 0 0 !important;
     white-space: nowrap;
 }
 
 .espresso-admin .tablenav .ee-event-filter > span .ee-help-btn {
     margin-inline-start: 0;
     margin-inline-end: var(--ee-margin-smaller);
-}
-
-.espresso-admin .tablenav .ee-event-filter > span.ee-event-selector {
-    width: 28rem;
-}
-
-.espresso-admin .tablenav .ee-event-filter > span.ee-hide-upcoming-check {
-    width: 16rem;
-}
-
-.espresso-admin .tablenav .ee-event-filter > span.ee-hide-expired-check {
-    width: 15rem;
-}
-
-.espresso-admin .tablenav .ee-event-filter > span.ee-datetime-selector {
-    width: 30rem;
 }
 
 .espresso-admin .tablenav .ee-event-filter > span select {
@@ -260,9 +245,8 @@
 
 @media screen and ( min-width: 782px ) {
     .espresso-admin .tablenav .ee-event-filter {
-        padding-block-end: .5rem;
+        flex-wrap: nowrap;
     }
-
     .espresso-admin .tablenav .ee-event-filter > span select {
         margin-inline: var(--ee-margin-nano);
     }
@@ -273,7 +257,8 @@
         margin-inline-end: 1rem;
     }
 
-    .espresso-admin .tablenav .ee-event-filter > span {
+    .espresso-admin .tablenav .ee-event-filter > span,
+    .espresso-admin .tablenav .ee-reg-filters > span {
         padding-block: 0;
     }
 }
@@ -567,7 +552,7 @@
 .reg-page-form-field-wrap-pg select {
     display: block;
     padding: 7px 10px;
-    margin: 0px 0px 1em;
+    margin: 0 0 1em;
     height: auto;
 }
 
@@ -782,3 +767,9 @@
 .ee-reg-list-txn-link .dashicons {
     margin-inline-end: .5rem;
 }
+
+
+.espresso-admin .wp-list-table .ee-responsive-table-cell__content.ee-layout-row {
+    align-items: center;
+}
+

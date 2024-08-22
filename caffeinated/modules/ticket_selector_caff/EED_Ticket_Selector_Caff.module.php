@@ -2,6 +2,7 @@
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\loaders\LoaderFactory;
 
 /**
  *
@@ -268,6 +269,11 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
      */
     public static function update_template_settings(EE_Template_Config $CFG, array $REQ): EE_Template_Config
     {
+        /** @var EE_Capabilities $capabilities */
+        $capabilities = LoaderFactory::getLoader()->getShared(EE_Capabilities::class);
+        if (! $capabilities->current_user_can('ee_edit_events', 'edit-event-template-settings')) {
+            wp_die(esc_html__('You do not have the required privileges to perform this action', 'event_espresso'));
+        }
         if (! $CFG->EED_Ticket_Selector instanceof EE_Ticket_Selector_Config) {
             EED_Ticket_Selector::instance()->set_config();
             $CFG->EED_Ticket_Selector = EED_Ticket_Selector::instance()->config();

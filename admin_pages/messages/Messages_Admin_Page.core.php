@@ -270,6 +270,9 @@ class Messages_Admin_Page extends EE_Admin_Page
 
     protected function _ajax_hooks()
     {
+        if (! $this->capabilities->current_user_can('ee_edit_messages', 'edit-message-settings')) {
+            return;
+        }
         add_action('wp_ajax_activate_messenger', [$this, 'activate_messenger_toggle']);
         add_action('wp_ajax_activate_mt', [$this, 'activate_mt_toggle']);
         add_action('wp_ajax_ee_msgs_save_settings', [$this, 'save_settings']);
@@ -1745,6 +1748,9 @@ class Messages_Admin_Page extends EE_Admin_Page
      */
     public function toggle_context_template()
     {
+        if (! $this->capabilities->current_user_can('ee_edit_messages', __FUNCTION__)) {
+            wp_die(esc_html__('You do not have the required privileges to perform this action', 'event_espresso'));
+        }
         $success = true;
         // check for required data
         if (
@@ -1835,6 +1841,9 @@ class Messages_Admin_Page extends EE_Admin_Page
      */
     public function switch_template_pack()
     {
+        if (! $this->capabilities->current_user_can('ee_edit_messages', __FUNCTION__)) {
+            wp_die(esc_html__('You do not have the required privileges to perform this action', 'event_espresso'));
+        }
         $GRP_ID        = $this->request->getRequestParam('GRP_ID', 0, DataType::INTEGER);
         $template_pack = $this->request->getRequestParam('template_pack', '');
 
@@ -3444,6 +3453,9 @@ class Messages_Admin_Page extends EE_Admin_Page
      */
     public function activate_messenger_toggle()
     {
+        if (! $this->capabilities->current_user_can('ee_edit_messages', __FUNCTION__)) {
+            wp_die(esc_html__('You do not have the required privileges to perform this action', 'event_espresso'));
+        }
         $success = true;
         $this->_prep_default_response_for_messenger_or_message_type_toggle();
         // let's check that we have required data
@@ -3519,6 +3531,9 @@ class Messages_Admin_Page extends EE_Admin_Page
      */
     public function activate_mt_toggle()
     {
+        if (! $this->capabilities->current_user_can('ee_edit_messages', __FUNCTION__)) {
+            wp_die(esc_html__('You do not have the required privileges to perform this action', 'event_espresso'));
+        }
         $success = true;
         $this->_prep_default_response_for_messenger_or_message_type_toggle();
 
@@ -3936,6 +3951,9 @@ class Messages_Admin_Page extends EE_Admin_Page
      */
     public function update_mt_form()
     {
+        if (! $this->capabilities->current_user_can('ee_edit_messages', __FUNCTION__)) {
+            wp_die(esc_html__('You do not have the required privileges to perform this action', 'event_espresso'));
+        }
         if (! $this->_active_messenger_name || ! $this->_active_message_type_name) {
             EE_Error::add_error(
                 esc_html__('Require message type or messenger to send an updated form', 'event_espresso'),
@@ -3965,6 +3983,9 @@ class Messages_Admin_Page extends EE_Admin_Page
      */
     public function save_settings()
     {
+        if (! $this->capabilities->current_user_can('ee_edit_messages', __FUNCTION__)) {
+            wp_die(esc_html__('You do not have the required privileges to perform this action', 'event_espresso'));
+        }
         $type = $this->request->getRequestParam('type');
         if (! $type) {
             EE_Error::add_error(

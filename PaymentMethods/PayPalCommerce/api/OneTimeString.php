@@ -14,10 +14,7 @@ use Exception;
  */
 class OneTimeString
 {
-    /**
-     * @var string
-     */
-    private $value;
+    private string $value;
 
 
     /**

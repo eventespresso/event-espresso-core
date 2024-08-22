@@ -1,6 +1,7 @@
 <?php
 
 use EventEspresso\core\domain\entities\custom_post_types\EspressoPostType;
+use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\sanitizers\AllowedTags;
 use EventEspresso\widgets\EspressoWidget;
 
@@ -295,6 +296,11 @@ class EEW_Upcoming_Events extends EspressoWidget
      */
     public function update($new_instance, $old_instance)
     {
+        /** @var EE_Capabilities $capabilities */
+        $capabilities = LoaderFactory::getLoader()->getShared(EE_Capabilities::class);
+        if (! $capabilities->current_user_can('manage_options', 'update-espresso-widget')) {
+            wp_die(esc_html__('You do not have the required privileges to perform this action', 'event_espresso'));
+        }
         $instance                    = $old_instance;
         $instance['title']           = ! empty($new_instance['title']) ? strip_tags((string) $new_instance['title']) : '';
         $instance['category_name']   = $new_instance['category_name'];

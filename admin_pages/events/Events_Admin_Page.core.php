@@ -580,7 +580,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
         wp_enqueue_style(
             'ee-cat-admin',
             EVENTS_ASSETS_URL . 'ee-cat-admin.css',
-            [],
+            ['editor-buttons'],
             EVENT_ESPRESSO_VERSION
         );
         // scripts
@@ -2969,6 +2969,9 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
      */
     public function saveTimezoneString()
     {
+        if (! $this->capabilities->current_user_can('manage_options', __FUNCTION__)) {
+            wp_die(esc_html__('You do not have the required privileges to perform this action', 'event_espresso'));
+        }
         $timezone_string = $this->request->getRequestParam('timezone_selected');
         if (empty($timezone_string) || ! EEH_DTT_Helper::validate_timezone($timezone_string, false)) {
             EE_Error::add_error(

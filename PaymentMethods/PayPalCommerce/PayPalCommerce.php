@@ -2,7 +2,6 @@
 
 namespace EventEspresso\PaymentMethods;
 
-use EE_Config;
 use EE_Dependency_Map;
 use EE_Error;
 use EEH_Autoloader;
@@ -39,8 +38,7 @@ class PayPalCommerce
         // Register payment method through a legacy manager.
         add_filter(
             'FHEE__EE_Payment_Method_Manager__register_payment_methods__payment_methods_to_register',
-            [__CLASS__, 'injectPaymentMethod'],
-            10
+            [__CLASS__, 'injectPaymentMethod']
         );
         // Load modules.
         /** @var LegacyModulesManager $legacy_modules_manager */
@@ -50,9 +48,9 @@ class PayPalCommerce
 
         // Setup auto loaders.
         EEH_Autoloader::instance()->register_autoloader([
-            'SettingsForm'   => EEP_PAYPAL_COMMERCE_PATH . 'forms' . DS . 'SettingsForm.php',
-            'OnboardingForm' => EEP_PAYPAL_COMMERCE_PATH . 'forms' . DS . 'OnboardingForm.php',
-            'BillingForm'    => EEP_PAYPAL_COMMERCE_PATH . 'forms' . DS . 'BillingForm.php',
+            'SettingsForm'   => EEP_PAYPAL_COMMERCE_PATH . 'forms/SettingsForm.php',
+            'OnboardingForm' => EEP_PAYPAL_COMMERCE_PATH . 'forms/OnboardingForm.php',
+            'BillingForm'    => EEP_PAYPAL_COMMERCE_PATH . 'forms/BillingForm.php',
         ]);
     }
 

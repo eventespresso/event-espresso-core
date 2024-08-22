@@ -101,7 +101,10 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      */
     protected ?bool $_is_UI_request = null;
 
-    protected bool  $_is_caf        = false;                                                                                                                                                                                                                                  // This is just a property that flags whether the given route is a caffeinated route or not.
+    /**
+     * flags whether the given route is a caffeinated route or not.
+     */
+    protected bool  $_is_caf        = false;
 
     protected bool  $_routing       = false;
 
@@ -240,6 +243,15 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     }
 
 
+    public function capabilities(): EE_Capabilities
+    {
+        if (! $this->capabilities instanceof EE_Capabilities) {
+            $this->capabilities = $this->loader->getShared(EE_Capabilities::class);
+        }
+        return $this->capabilities;
+    }
+
+
     /**
      * @return FeatureFlags
      */
@@ -276,8 +288,10 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         // set global defaults
         $this->_set_defaults();
         // set early because incoming requests could be ajax related and we need to register those hooks.
-        $this->_global_ajax_hooks();
-        $this->_ajax_hooks();
+        if ($this->request->isAjax()) {
+            $this->_global_ajax_hooks();
+            $this->_ajax_hooks();
+        }
         // other_page_hooks have to be early too.
         $this->_do_other_page_hooks();
         // set up page dependencies
@@ -609,7 +623,8 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         // if a specific 'route' has been set, and the action is 'default' OR we are doing_ajax
         // then let's use the route as the action.
         // This covers cases where we're coming in from a list table that isn't on the default route.
-        $route             = $this->request->getRequestParam('route');
+        $route = $this->request->getRequestParam('route');
+        $route = $route !== '-1' ? $route : 'default';
         $this->_req_action = $route && ($req_action === 'default' || $this->request->isAjax())
             ? $route
             : $req_action;

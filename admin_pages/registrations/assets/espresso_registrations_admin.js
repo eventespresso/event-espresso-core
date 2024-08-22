@@ -125,27 +125,15 @@ jQuery(document).ready(function($) {
 	}
 
 	$('#js-ee-hide-expired-events').click( function() {
-		$('#event_id').toggleClass('ee-hide-expired-events');
-		// if ($(this).prop('checked')) {
-		// 	$('#event_id').addClass('ee-hide-expired-events');
-		// } else {
-		// 	$('#event_id').removeClass('ee-hide-expired-events');
-		// }
+		$('#EVT_ID').toggleClass('ee-hide-expired-events');
 	});
 	$('#js-ee-hide-upcoming-events').click( function() {
-		$('#event_id').toggleClass('ee-hide-upcoming-events');
-		// if ($(this).prop('checked')) {
-		// 	$('#event_id').addClass('ee-hide-upcoming-events');
-		// } else {
-		// 	$('#event_id').removeClass('ee-hide-upcoming-events');
-		// }
+		$('#EVT_ID').toggleClass('ee-hide-upcoming-events');
 	});
-	$('#event_id').change(function () {
+	$('#EVT_ID').change(function () {
 		$('#DTT_ID').val(0);
-		this.form.submit();
-	});
-	$('#DTT_ID').change(function () {
-		this.form.submit();
+        $('#reg_datetime_id').val(0);
+        $('#reg_event_id').val($(this).val());
 	});
 });
 

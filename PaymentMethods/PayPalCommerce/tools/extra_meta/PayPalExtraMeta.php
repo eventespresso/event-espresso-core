@@ -18,19 +18,9 @@ use ReflectionException;
  */
 class PayPalExtraMeta
 {
-    /**
-     * Payment method instance.
-     *
-     * @var EE_Payment_Method
-     */
-    public $pm;
+    public EE_Payment_Method $pm;
 
-    /**
-     * Metadata key.
-     *
-     * @var EE_Payment_Method
-     */
-    public $metadata_key;
+    public string $metadata_key;
 
 
     /**
@@ -59,15 +49,17 @@ class PayPalExtraMeta
     {
         // Update the PM data.
         try {
-            $paypal_data  = $this->pm->get_extra_meta($this->metadata_key, true, []);
-            $data_to_save = array_replace_recursive($paypal_data, $data);
-            $this->saveMetaData($data_to_save);
+            $paypal_data = $this->getMetaData();
+            $this->saveMetaData(array_replace_recursive($paypal_data, $data));
         } catch (Exception $e) {
-            $err_msg = sprintf(
-                esc_html__('Could not save merchant data. %1$s', 'event_espresso'),
-                $e->getMessage()
+            PayPalLogger::errorLog(
+                sprintf(
+                    esc_html__('Could not save merchant data. %1$s', 'event_espresso'),
+                    $e->getMessage()
+                ),
+                ['data' => $data, 'trace' => $e->getTrace()],
+                $this->pm
             );
-            PayPalLogger::errorLog($err_msg, $data, $this->pm);
             return false;
         }
         return true;
@@ -98,11 +90,14 @@ class PayPalExtraMeta
         try {
             return (array) $this->pm->get_extra_meta($this->metadata_key, true, []);
         } catch (EE_Error | ReflectionException $e) {
-            $err_msg = sprintf(
-                esc_html__('Error getting the PM meta data: %1$s', 'event_espresso'),
-                $e->getMessage()
+            PayPalLogger::errorLog(
+                sprintf(
+                    esc_html__('Error getting the PM meta data: %1$s', 'event_espresso'),
+                    $e->getMessage()
+                ),
+                ['trace' => $e->getTrace()],
+                $this->pm
             );
-            PayPalLogger::errorLog($err_msg, [], $this->pm);
             return [];
         }
     }
@@ -137,6 +132,14 @@ class PayPalExtraMeta
         try {
             $this->pm->update_extra_meta($this->metadata_key, $data);
         } catch (Exception $e) {
+            PayPalLogger::errorLog(
+                sprintf(
+                    esc_html__('Error saving the PM meta data: %1$s', 'event_espresso'),
+                    $e->getMessage()
+                ),
+                ['data' => $data, 'trace' => $e->getTrace()],
+                $this->pm
+            );
             return false;
         }
         return true;
@@ -155,23 +158,48 @@ class PayPalExtraMeta
         if (! $meta_data) {
             return false;
         }
+        // If the option does not exist, don't bother saving, but return true anyways.
+        if (! isset($meta_data[ $name ])) {
+            return true;
+        }
         unset($meta_data[ $name ]);
         return $this->saveMetaData($meta_data);
     }
 
 
     /**
-     * Delete the PM extra meta.
+     * Delete all the PM extra meta.
      *
      * @return bool
      */
-    public function deleteMetaData(): bool
+    public function deleteAllMetaData(): bool
+    {
+        return $this->deleteMetaData(Domain::META_KEY_PAYPAL_DATA)
+            && $this->deleteMetaData(Domain::META_KEY_PAYPAL_DATA_SANDBOX);
+    }
+
+
+    /**
+     * Delete the PM extra meta.
+     *
+     * @param null $metadata_key
+     * @return bool
+     */
+    public function deleteMetaData($metadata_key = null): bool
     {
         try {
-            // Live and sandbox data.
-            $this->pm->delete_extra_meta(Domain::META_KEY_PAYPAL_DATA);
-            $this->pm->delete_extra_meta(Domain::META_KEY_PAYPAL_DATA_SANDBOX);
+            // Related to PM and sandbox mode metadata (default), or by the provided metadata key?
+            $metadata_key = $metadata_key ?? $this->metadata_key;
+            $this->pm->delete_extra_meta($metadata_key);
         } catch (Exception $e) {
+            PayPalLogger::errorLog(
+                sprintf(
+                    esc_html__('Error deleting the PM meta data: %1$s', 'event_espresso'),
+                    $e->getMessage()
+                ),
+                ['trace' => $e->getTrace()],
+                $this->pm
+            );
             return false;
         }
         return true;

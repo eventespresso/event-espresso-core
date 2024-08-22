@@ -18,14 +18,14 @@ class ResponseInspector
      *
      * @var bool
      */
-    protected $valid = true;
+    protected bool $valid = true;
 
     /**
      * An encountered error.
      *
      * @var array
      */
-    protected $error = [];
+    protected array $error = [];
 
 
     /**
@@ -51,13 +51,14 @@ class ResponseInspector
 
 
     /**
-     * Set/save the error.
+     * Set/save the error and mark the response as invalid
      *
      * @param array $error
      */
     private function setError(array $error)
     {
         $this->error = $error;
+        $this->setInValid();
     }
 
 
@@ -99,7 +100,6 @@ class ResponseInspector
                     ),
                 ]
             );
-            $this->setInValid();
             return false;
         }
         // Do we have a response body ?
@@ -110,7 +110,6 @@ class ResponseInspector
                     'message' => esc_html__('No response body provided.', 'event_espresso'),
                 ]
             );
-            $this->setInValid();
             return false;
         }
         return true;
@@ -132,7 +131,6 @@ class ResponseInspector
                     'event_espresso'
                 ),
             ]);
-            $this->setInValid();
             return false;
         }
         // Check the data for errors.
@@ -145,7 +143,6 @@ class ResponseInspector
                     'message' => $error_message,
                 ]
             );
-            $this->setInValid();
             return false;
         }
         return true;

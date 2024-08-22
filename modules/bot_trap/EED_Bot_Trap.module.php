@@ -2,6 +2,7 @@
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 /**
@@ -94,9 +95,7 @@ class EED_Bot_Trap extends EED_Module
         );
         add_filter(
             'FHEE__Extend_Registration_Form_Admin_Page___update_reg_form_settings__CFG_registration',
-            array('EED_Bot_Trap', 'update_bot_trap_settings_form'),
-            10,
-            1
+            array('EED_Bot_Trap', 'update_bot_trap_settings_form')
         );
     }
 
@@ -281,6 +280,11 @@ class EED_Bot_Trap extends EED_Module
      */
     public static function update_bot_trap_settings_form(EE_Registration_Config $EE_Registration_Config)
     {
+        /** @var EE_Capabilities $capabilities */
+        $capabilities = LoaderFactory::getLoader()->getShared(EE_Capabilities::class);
+        if (! $capabilities->current_user_can('manage_options', 'update-country-settings')) {
+            wp_die(esc_html__('You do not have the required privileges to perform this action', 'event_espresso'));
+        }
         try {
             $bot_trap_settings_form = EED_Bot_Trap::_bot_trap_settings_form();
             // if not displaying a form, then check for form submission

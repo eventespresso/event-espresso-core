@@ -100,8 +100,7 @@ class EED_PayPalCommerce extends EED_Module
     public static function createOrderRequest(): void
     {
         $paypal_pm   = EED_PayPalCommerce::getPaymentMethod();
-        $request     = EED_Module::getRequest();
-        $post_params = $request->postParams();
+        $post_params = EED_Module::getRequest()->postParams();
         if (! $paypal_pm instanceof EE_Payment_Method) {
             PayPalLogger::errorLogAndExit(
                 esc_html__('Related payment method not found (create Order).', 'event_espresso'),
@@ -249,22 +248,6 @@ class EED_PayPalCommerce extends EED_Module
             EEG_PayPalCheckout::updatePaymentStatus($payment, EEM_Payment::status_id_failed, $order, $order['error']);
             return $order;
         }
-        // If this was a capture request on an already Captured order, try using the initial capture data (if any saved)
-        // that has more information on the order than this retry capture response.
-        if (
-            $order['status'] === 'ORDER_ALREADY_CAPTURED'
-            || empty($order['purchase_units'][0]['payments']['captures'][0]['amount']['value'])
-        ) {
-            // Get the previous order. Maybe it's the same order but will hold a bit more information.
-            $previous_order = EEG_PayPalCheckout::getPpOrder($paypal_pm, $transaction->ID());
-            if (
-                $previous_order['id'] === $order['id']
-                && ! empty($previous_order['purchase_units'][0]['payments']['captures'][0]['amount']['value'])
-            ) {
-                // Can use the initially captured order information.
-                $order = $previous_order;
-            }
-        }
         // Attach the transaction ID to this order.
         try {
             $order['ee_txn_id'] = $transaction->ID();
@@ -285,8 +268,6 @@ class EED_PayPalCommerce extends EED_Module
             );
         }
         EEG_PayPalCheckout::saveBillingDetails($payment, $transaction, $order, $billing_info);
-        // Save this order details.
-        EEG_PayPalCheckout::updatePpOrder($order, $paypal_pm, $transaction->ID());
         $nonce = wp_create_nonce(Domain::CAPTURE_ORDER_NONCE_NAME);
         return [
             'pp_order_nonce'  => $nonce,
@@ -431,6 +412,8 @@ class EED_PayPalCommerce extends EED_Module
      *
      * @param EE_Payment_Method $paypal_pm
      * @return bool
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function isThirdParty(EE_Payment_Method $paypal_pm): bool
     {

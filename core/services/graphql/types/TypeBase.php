@@ -9,6 +9,7 @@ use EEM_Base;
 use EE_Base_Class;
 use EventEspresso\core\services\graphql\fields\GraphQLField;
 use EventEspresso\core\services\graphql\fields\GraphQLFieldInterface;
+use EventEspresso\core\services\graphql\interfaces\GraphQLInterfaceInterface;
 use EventEspresso\core\domain\services\graphql\resolvers\FieldResolver;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -51,6 +52,11 @@ abstract class TypeBase implements TypeInterface
      * @var GraphQLFieldInterface[] $fields
      */
     protected array         $fields              = [];
+
+    /**
+     * @var GraphQLInterfaceInterface[] $interfaces
+     */
+    protected array         $interfaces          = [];
 
     protected FieldResolver $field_resolver;
 
@@ -154,6 +160,12 @@ abstract class TypeBase implements TypeInterface
             }
         }
         return $fields;
+    }
+
+
+    public function interfaces(): array
+    {
+        return $this->interfaces;
     }
 
 

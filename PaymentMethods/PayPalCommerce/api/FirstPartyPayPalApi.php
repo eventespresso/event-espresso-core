@@ -82,15 +82,13 @@ class FirstPartyPayPalApi extends PayPalApi
             'redirection' => 5,
             'blocking'    => true,
         ];
-        $default_headers = [
+        // add default values to incoming headers.
+        $request_parameters['headers'] = $headers + [
             'User-Agent'                    => sanitize_text_field($_SERVER['HTTP_USER_AGENT']),
             'PayPal-Partner-Attribution-Id' => $this->bn_code,
             'Content-Type'                  => 'application/json',
-            'Authorization'                 => 'Basic ' . base64_encode(
-                $this->client_id . ':' . $this->client_secret
-            ),
+            'Authorization'                 => 'Basic ' . base64_encode("$this->client_id:$this->client_secret"),
         ];
-        $request_parameters['headers'] = array_merge($default_headers, $headers);
         // Add body if this is a POST request.
         if ($body_parameters && ($method === 'POST' || $method === 'PUT')) {
             $request_parameters['body'] = json_encode($body_parameters);

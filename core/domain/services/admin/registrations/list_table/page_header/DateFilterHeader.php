@@ -4,6 +4,7 @@ namespace EventEspresso\core\domain\services\admin\registrations\list_table\page
 
 use EE_Datetime;
 use EE_Error;
+use EEH_Template;
 use EEM_Datetime;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -58,6 +59,12 @@ class DateFilterHeader extends AdminPageHeaderDecorator
         if ($DTT_ID) {
             $datetime = $this->datetime_model->get_one_by_ID($DTT_ID);
             if ($datetime instanceof EE_Datetime && $text !== '') {
+                $active_status   = $datetime->get_active_status();
+                $datetime_status =
+                    '<span class="ee-status ee-status-bg--' . esc_attr($active_status) . ' event-active-status-' .
+                    esc_attr($active_status) . '">'
+                    . EEH_Template::pretty_status($active_status, false, 'sentence')
+                    . '</span>';
                 // remove the closing h3 heading tag if it exists
                 $text = str_replace(
                     '</h3>',
@@ -66,9 +73,10 @@ class DateFilterHeader extends AdminPageHeaderDecorator
                 );
                 $text .= '&nbsp; &nbsp; ';
                 $text .= '<span class="ee-filter-header__details">';
-                $text .= '<span class="dashicons dashicons-calendar"></span>';
+                $text .= '<span class="dashicons dashicons-calendar-alt"></span>';
                 $text .= $datetime->name();
                 $text .= ' ( ' . $datetime->start_date() . ' )';
+                $text .= $datetime_status;
                 $text .= '</span></h3>';
             }
         }

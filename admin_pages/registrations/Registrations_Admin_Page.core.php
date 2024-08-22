@@ -213,8 +213,6 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
 
     protected function _ajax_hooks()
     {
-        // todo: all hooks for registrations ajax goes in here
-        add_action('wp_ajax_toggle_checkin_status', [$this, 'toggle_checkin_status']);
     }
 
 

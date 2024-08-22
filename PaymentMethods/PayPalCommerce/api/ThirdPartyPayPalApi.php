@@ -54,7 +54,7 @@ class ThirdPartyPayPalApi extends PayPalApi
         string $bn_code,
         string $partner_client_id = '',
         string $payer_id = '',
-        bool   $sandbox_mode = true
+        bool $sandbox_mode = true
     ) {
         parent::__construct($sandbox_mode);
         $this->access_token      = $access_token;
@@ -90,9 +90,7 @@ class ThirdPartyPayPalApi extends PayPalApi
      */
     private function getRequestParameters(array $body_parameters, string $method, array $headers): array
     {
-        $request_parameters = [
-            'method' => $method,
-        ];
+        $request_parameters = ['method' => $method];
         $default_headers    = [
             'User-Agent'                    => sanitize_text_field($_SERVER['HTTP_USER_AGENT']),
             'PayPal-Partner-Attribution-Id' => $this->bnCode(),
@@ -101,17 +99,20 @@ class ThirdPartyPayPalApi extends PayPalApi
         ];
         // If we have merchant credentials then we are onboard and can do requests on behalf of the seller.
         if ($this->partner_client_id && $this->payer_id) {
-            $assertion1 = [
-                'alg' => 'none',
-            ];
-            $assertion2 = [
-                'iss'      => $this->partner_client_id,
-                'payer_id' => $this->payer_id,
-            ];
-            $default_headers['PayPal-Auth-Assertion'] = base64_encode(json_encode($assertion1, JSON_HEX_APOS)) . '.' .
-                                                        base64_encode(json_encode($assertion2, JSON_HEX_APOS)) . '.';
+            $assertion1 = base64_encode(json_encode(['alg' => 'none'], JSON_HEX_APOS));
+            $assertion2 = base64_encode(
+                json_encode(
+                    [
+                        'iss'      => $this->partner_client_id,
+                        'payer_id' => $this->payer_id,
+                    ],
+                    JSON_HEX_APOS
+                )
+            );
+            // now concatenate the two assertions and add to the headers.
+            $default_headers['PayPal-Auth-Assertion'] = "$assertion1.$assertion2.";
         }
-        $request_parameters['headers'] = array_merge($default_headers, $headers);
+        $request_parameters['headers'] = $headers + $default_headers;
         // Add body if this is a POST request.
         if ($body_parameters && ($method === 'POST' || $method === 'PUT')) {
             $request_parameters['body'] = json_encode($body_parameters);

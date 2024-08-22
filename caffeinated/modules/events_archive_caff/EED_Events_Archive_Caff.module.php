@@ -158,6 +158,11 @@ class EED_Events_Archive_Caff extends EED_Events_Archive
      */
     public static function update_template_settings(EE_Template_Config $CFG, array $REQ): EE_Template_Config
     {
+        /** @var EE_Capabilities $capabilities */
+        $capabilities = LoaderFactory::getLoader()->getShared(EE_Capabilities::class);
+        if (! $capabilities->current_user_can('ee_edit_events', 'edit-event-template-settings')) {
+            wp_die(esc_html__('You do not have the required privileges to perform this action', 'event_espresso'));
+        }
         $request                   = EED_Module::getRequest();
         $reset_event_list_settings = $request->getRequestParam(
             'EED_Events_Archive_reset_event_list_settings',
@@ -237,12 +242,16 @@ class EED_Events_Archive_Caff extends EED_Events_Archive
 
     /**
      * @return void
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function update_event_archive_order()
     {
+        /** @var EE_Capabilities $capabilities */
+        $capabilities = LoaderFactory::getLoader()->getShared(EE_Capabilities::class);
+        if (! $capabilities->current_user_can('ee_edit_events', 'edit-event-template-settings')) {
+            wp_die(esc_html__('You do not have the required privileges to perform this action', 'event_espresso'));
+        }
         $config         = EE_Registry::instance()->CFG;
         $config_saved   = false;
         $template_parts = EED_Events_Archive_Caff::getRequest()->getRequestParam('elements');

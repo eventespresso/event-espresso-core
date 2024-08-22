@@ -53,8 +53,6 @@ class EEG_PayPalCheckout extends EE_Onsite_Gateway
      * @param EE_Payment|null $payment
      * @param array|null      $billing_info
      * @return EE_Payment
-     * @throws EE_Error
-     * @throws ReflectionException
      */
     public function do_direct_payment($payment, $billing_info = null)
     {
@@ -182,63 +180,6 @@ class EEG_PayPalCheckout extends EE_Onsite_Gateway
         $payment->set_gateway_response($log_message);
         $payment->save();
         return $payment;
-    }
-
-
-    /**
-     * Get PayPal order if already created for this transaction and saved.
-     *
-     * @param EE_Payment_Method $paypal_pm
-     * @param int               $TXN_ID
-     * @return array
-     */
-    public static function getPpOrder(EE_Payment_Method $paypal_pm, int $TXN_ID): array
-    {
-        try {
-            $pp_orders = PayPalExtraMetaManager::getPmOption($paypal_pm, Domain::META_KEY_PAYPAL_ORDERS) ?? [];
-            return $pp_orders[ $TXN_ID ] ?? [];
-        } catch (Exception $exception) {
-            return [];
-        }
-    }
-
-
-    /**
-     * Update PayPal order for this transaction.
-     *
-     * @param                   $order
-     * @param EE_Payment_Method $paypal_pm
-     * @param int               $TXN_ID
-     * @return bool
-     */
-    public static function updatePpOrder($order, EE_Payment_Method $paypal_pm, int $TXN_ID): bool
-    {
-        try {
-            $pp_orders = PayPalExtraMetaManager::getPmOption($paypal_pm, Domain::META_KEY_PAYPAL_ORDERS) ?? [];
-            $pp_orders[ $TXN_ID ] = $order;
-            return PayPalExtraMetaManager::savePmOption($paypal_pm, Domain::META_KEY_PAYPAL_ORDERS, $pp_orders);
-        } catch (Exception $exception) {
-            return false;
-        }
-    }
-
-
-    /**
-     * Delete PP Order associated with the provided transaction.
-     *
-     * @param EE_Payment_Method $paypal_pm
-     * @param int               $TXN_ID
-     * @return bool
-     */
-    public static function deletePpOrder(EE_Payment_Method $paypal_pm, int $TXN_ID): bool
-    {
-        try {
-            $pp_orders = PayPalExtraMetaManager::getPmOption($paypal_pm, Domain::META_KEY_PAYPAL_ORDERS) ?? [];
-            unset($pp_orders[ $TXN_ID ]);
-            return PayPalExtraMetaManager::savePmOption($paypal_pm, Domain::META_KEY_PAYPAL_ORDERS, $pp_orders);
-        } catch (Exception $exception) {
-            return false;
-        }
     }
 
 

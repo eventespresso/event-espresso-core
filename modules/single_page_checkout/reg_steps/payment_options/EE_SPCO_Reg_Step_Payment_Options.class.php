@@ -69,9 +69,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
         );
         add_filter(
             'FHEE__EED_Recaptcha___bypass_recaptcha__bypass_request_params_array',
-            ['EE_SPCO_Reg_Step_Payment_Options', 'bypass_recaptcha_for_load_payment_method'],
-            10,
-            1
+            ['EE_SPCO_Reg_Step_Payment_Options', 'bypass_recaptcha_for_load_payment_method']
         );
     }
 

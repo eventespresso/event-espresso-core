@@ -56,6 +56,8 @@ class CaptureOrder extends OrdersApi
      * Capture payment for PayPal Order.
      *
      * @return array
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function capture(): array
     {

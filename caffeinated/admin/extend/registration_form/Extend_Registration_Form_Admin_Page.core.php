@@ -332,6 +332,9 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
      */
     protected function _ajax_hooks()
     {
+        if (! $this->capabilities->current_user_can('ee_edit_question_groups', 'edit-questions')) {
+            return;
+        }
         add_action('wp_ajax_espresso_update_question_group_order', [$this, 'update_question_group_order']);
     }
 
@@ -1065,6 +1068,9 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
      */
     public function update_question_group_order()
     {
+        if (! $this->capabilities->current_user_can('ee_edit_question_groups', __FUNCTION__)) {
+            wp_die(esc_html__('You do not have the required privileges to perform this action', 'event_espresso'));
+        }
         $success = esc_html__('Question group order was updated successfully.', 'event_espresso');
 
         // grab our row IDs

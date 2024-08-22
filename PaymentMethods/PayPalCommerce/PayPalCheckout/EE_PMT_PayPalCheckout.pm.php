@@ -39,9 +39,7 @@ class EE_PMT_PayPalCheckout extends EE_PMT_Base
         // Display a refund message at transactions actions area.
         add_action(
             'AHEE__txn_admin_details_main_meta_box_txn_details__after_actions_buttons',
-            [__CLASS__, 'refundNotice'],
-            10,
-            1
+            [__CLASS__, 'refundNotice']
         );
 
         parent::__construct($pm_instance);

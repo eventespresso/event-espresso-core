@@ -220,7 +220,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table
      */
     protected ?AdminListTableFilters $admin_list_table_filters = null;
 
-    protected ?RequestInterface    $request            = null;
+    protected ?RequestInterface $request = null;
 
 
     /**
@@ -229,8 +229,9 @@ abstract class EE_Admin_List_Table extends WP_List_Table
      */
     public function __construct(EE_Admin_Page $admin_page, ?AdminListTableFilters $filters = null)
     {
-        $this->request       = $this->request ?? LoaderFactory::getShared(RequestInterface::class);
-        $this->_admin_page   = $admin_page;
+        $this->request     = $this->request ?? LoaderFactory::getShared(RequestInterface::class);
+        $this->_admin_page = $admin_page;
+        // kept for back compat
         $this->_req_data     = $this->_admin_page->get_request_data();
         $this->_view         = $this->_admin_page->get_view();
         $this->_views        = $this->_admin_page->get_list_table_view_RLs();
@@ -238,7 +239,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table
         $this->_screen       = $this->_admin_page->get_current_page() . '_' . $this->_admin_page->get_current_view();
         $this->_yes_no       = [
             esc_html__('No', 'event_espresso'),
-            esc_html__('Yes', 'event_espresso')
+            esc_html__('Yes', 'event_espresso'),
         ];
 
         $this->_per_page = $this->get_items_per_page($this->_screen . '_per_page');
@@ -323,18 +324,19 @@ abstract class EE_Admin_List_Table extends WP_List_Table
      */
     protected function _get_hidden_fields()
     {
-        $action = isset($this->_req_data['route']) ? $this->_req_data['route'] : '';
-        $action = empty($action) && isset($this->_req_data['action']) ? $this->_req_data['action'] : $action;
+        $page   = $this->request->getRequestParam('page', '');
+        $action = $this->request->getRequestParam('route', '');
+        $action = $this->request->getRequestParam('action', $action);
         // if action is STILL empty, then we set it to default
-        $action = empty($action) ? 'default' : $action;
-        $field  = '<input type="hidden" name="page" value="' . esc_attr($this->_req_data['page']) . '" />' . "\n";
+        $action = empty($action) || $action === '-1' ? 'default' : $action;
+        $field  = '<input type="hidden" name="page" value="' . esc_attr($page) . '" />' . "\n";
         $field  .= '<input type="hidden" name="route" value="' . esc_attr($action) . '" />' . "\n";
         $field  .= '<input type="hidden" name="perpage" value="' . esc_attr($this->_per_page) . '" />' . "\n";
 
         $bulk_actions = $this->_get_bulk_actions();
         foreach ($bulk_actions as $bulk_action => $label) {
             $field .= '<input type="hidden" name="' . $bulk_action . '_nonce"'
-                      . ' value="' . wp_create_nonce($bulk_action . '_nonce') . '" />' . "\n";
+                . ' value="' . wp_create_nonce($bulk_action . '_nonce') . '" />' . "\n";
         }
 
         return $field;
@@ -362,7 +364,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table
          * However, take note that if the top level menu label has been translated (i.e. "Event Espresso"). then the
          * hook prefix ("event-espresso") will be different.
          *
-         * @var array
+         * @var array $_sortable
          */
         $_sortable = apply_filters(
             "FHEE_manage_{$this->screen->id}_sortable_columns",
@@ -379,7 +381,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table
             // fix for offset errors with WP_List_Table default get_columninfo()
             if (is_array($data)) {
                 $_data[0] = key($data);
-                $_data[1] = isset($data[1]) ? $data[1] : false;
+                $_data[1] = $data[1] ?? false;
             } else {
                 $_data[0] = $data;
             }
@@ -471,20 +473,38 @@ abstract class EE_Admin_List_Table extends WP_List_Table
         if ('top' === $which) {
             wp_nonce_field('bulk-' . $this->_args['plural']);
         }
-        ?>
-        <div class="tablenav <?php echo esc_attr($which); ?>">
-            <?php if ($this->_get_bulk_actions()) { ?>
-                <div class="alignleft actions bulkactions">
-                    <?php $this->bulk_actions(); ?>
-                </div>
-            <?php }
-            $this->extra_tablenav($which);
-            $this->pagination($which);
-            ?>
 
-            <br class="clear" />
+        ob_start();
+        $this->extra_tablenav($which);
+        $ee_tablenav = ob_get_clean();
+
+        ob_start();
+        $this->bulk_actions();
+        $bulkactions = ob_get_clean();
+
+        ?>
+    <?php if ($ee_tablenav && $which === 'top') : ?>
+    <div class="tablenav <?php echo esc_attr($which); ?> ee-tablenav">
+        <?php echo wp_kses($ee_tablenav, AllowedTags::getWithFormTags()); ?>
+    </div>
+    <?php endif; ?>
+    <div class="tablenav <?php echo esc_attr($which); ?> wp-tablenav">
+        <?php if ($bulkactions) : ?>
+        <div class="alignleft actions bulkactions">
+            <?php echo wp_kses($bulkactions, AllowedTags::getWithFormTags()); ?>
         </div>
+        <?php endif; ?>
+        <?php $this->pagination($which); ?>
+    </div>
+    <?php if ($ee_tablenav && $which === 'bottom') : ?>
+    <div class="tablenav <?php echo esc_attr($which); ?> ee-tablenav">
+        <?php echo wp_kses($ee_tablenav, AllowedTags::getWithFormTags()); ?>
+    </div>
+    <?php endif; ?>
         <?php
+        if ($which === 'top') {
+            echo wp_kses($this->_get_hidden_fields(), AllowedTags::getWithFormTags());
+        }
     }
 
 
@@ -642,14 +662,16 @@ abstract class EE_Admin_List_Table extends WP_List_Table
         }
         echo "<ul class='subsubsub'>\n";
         foreach ($views as $view) {
-            $count = isset($view['count']) && ! empty($view['count']) ? absint($view['count']) : 0;
+            $count = ! empty($view['count']) ? absint($view['count']) : 0;
             if (isset($view['slug'], $view['class'], $view['url'], $view['label'])) {
-                $filter = "<li";
-                $filter .= $view['class'] ? " class='" . esc_attr($view['class']) . "'" : '';
-                $filter .= ">";
-                $filter .= '<a href="' . esc_url_raw($view['url']) . '">' . esc_html($view['label']) . '</a>';
-                $filter .= '<span class="count">(' . $count . ')</span>';
-                $filter .= '</li>';
+                $filter                           = "<li";
+                $filter                           .= $view['class'] ? " class='" . esc_attr($view['class']) . "'" : '';
+                $filter                           .= ">";
+                $filter                           .= '<a href="' . esc_url_raw($view['url']) . '">' . esc_html(
+                        $view['label']
+                    ) . '</a>';
+                $filter                           .= '<span class="count">(' . $count . ')</span>';
+                $filter                           .= '</li>';
                 $assembled_views[ $view['slug'] ] = $filter;
             }
         }
@@ -746,7 +768,6 @@ abstract class EE_Admin_List_Table extends WP_List_Table
         [$columns, $hidden, $sortable, $primary] = $this->get_column_info();
 
         foreach ($columns as $column_name => $column_display_name) {
-
             /**
              * With WordPress version 4.3.RC+ WordPress started using the hidden css class to control whether columns
              * are hidden or not instead of using "display:none;".  This bit of code provides backward compat.
@@ -762,7 +783,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table
 
             $class = 'class="' . esc_attr($classes) . '"';
 
-            $attributes = "{$class}{$data}";
+            $attributes = "$class$data";
 
             if ($column_name === 'cb') {
                 echo '<th scope="row" class="check-column">';
@@ -810,20 +831,22 @@ abstract class EE_Admin_List_Table extends WP_List_Table
     {
         if ($which === 'top') {
             $this->_filters();
-            echo wp_kses($this->_get_hidden_fields(), AllowedTags::getWithFormTags());
-        } else {
+        } elseif($this->_bottom_buttons) {
             echo '<div class="list-table-bottom-buttons alignleft actions">';
             foreach ($this->_bottom_buttons as $type => $action) {
                 $route         = $action['route'] ?? '';
                 $extra_request = $action['extra_request'] ?? [];
                 $btn_class     = $action['btn_class'] ?? 'button button--secondary';
                 // already escaped
-                echo wp_kses($this->_admin_page->get_action_link_or_button(
-                    $route,
-                    $type,
-                    $extra_request,
-                    $btn_class
-                ), AllowedTags::getWithFormTags());
+                echo wp_kses(
+                    $this->_admin_page->get_action_link_or_button(
+                        $route,
+                        $type,
+                        $extra_request,
+                        $btn_class
+                    ),
+                    AllowedTags::getWithFormTags()
+                );
             }
             do_action('AHEE__EE_Admin_List_Table__extra_tablenav__after_bottom_buttons', $this, $this->_screen);
             echo '</div>';
@@ -909,7 +932,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table
             }
             $content = $action_items;
         }
-        return "{$open_tag}{$content}{$close_tag}";
+        return "$open_tag$content$close_tag";
     }
 
 
@@ -920,15 +943,15 @@ abstract class EE_Admin_List_Table extends WP_List_Table
     {
         $host = $this->_admin_page->get_request()->getServerParam('HTTP_HOST');
         $uri  = $this->_admin_page->get_request()->getServerParam('REQUEST_URI');
-        return urlencode(esc_url_raw("//{$host}{$uri}"));
+        return urlencode(esc_url_raw("//$host$uri"));
     }
 
 
     /**
      * @param string $id
      * @param string $content
-     * @param string $align     start (default), center, end
-     * @param string $layout    row (default) or stack
+     * @param string $align  start (default), center, end
+     * @param string $layout row (default) or stack
      * @return string
      * @since   5.0.0.p
      */
@@ -942,9 +965,9 @@ abstract class EE_Admin_List_Table extends WP_List_Table
             throw new DomainException('missing column id');
         }
         $heading = $id !== 'cb' ? $this->_columns[ $id ] : '';
-        $align = in_array($align, ['start', 'center', 'end']) ? $align : 'start';
-        $align = "ee-responsive-table-cell--$align";
-        $layout = $layout === 'row' ? 'ee-layout-row' : 'ee-layout-stack';
+        $align   = in_array($align, ['start', 'center', 'end']) ? $align : 'start';
+        $align   = "ee-responsive-table-cell--$align";
+        $layout  = $layout === 'row' ? 'ee-layout-row' : 'ee-layout-stack';
 
         $html = "<div class='ee-responsive-table-cell ee-responsive-table-cell--column-$id $align $layout'>";
         $html .= "<div class='ee-responsive-table-cell__heading'>$heading</div>";
@@ -983,11 +1006,12 @@ abstract class EE_Admin_List_Table extends WP_List_Table
 
     protected function getActionLink(string $url, string $display_text, string $label, $class = ''): string
     {
-        $class = ! empty($class) ? "{$class} ee-list-table-action" : 'ee-list-table-action';
-        $class = ! empty($label) ? "{$class} ee-aria-tooltip" : $class;
-        $label = ! empty($label) ? " aria-label='{$label}'" : '';
-        return "<a href='{$url}' class='{$class}'{$label}>{$display_text}</a>";
+        $class = ! empty($class) ? "$class ee-list-table-action" : 'ee-list-table-action';
+        $class = ! empty($label) ? "$class ee-aria-tooltip" : $class;
+        $label = ! empty($label) ? " aria-label='$label'" : '';
+        return "<a href='$url' class='$class'$label>$display_text</a>";
     }
+
 
     /**
      * Override the search box method of WP List Table to include a reset button

@@ -207,7 +207,6 @@ class EE_Payment_Method_Manager implements ResettableInterface
         }
         // add to array of registered modules
         $this->_payment_method_types[ $module ] = $payment_method_path . '/' . $module_class . $module_ext;
-        ksort($this->_payment_method_types);
         return true;
     }
 

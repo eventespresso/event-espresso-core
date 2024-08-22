@@ -384,11 +384,14 @@ class EEM_Payment_Method extends EEM_Base
     protected function _create_objects($rows = [])
     {
         EE_Registry::instance()->load_lib('Payment_Method_Manager');
+        $PMM = EE_Payment_Method_Manager::instance();
         $payment_methods = parent::_create_objects($rows);
         /* @var $payment_methods EE_Payment_Method[] */
         $usable_payment_methods = [];
         foreach ($payment_methods as $key => $payment_method) {
-            if (EE_Payment_Method_Manager::instance()->payment_method_type_exists($payment_method->type())) {
+            // check if the payment method type exists and force recheck
+            $pm_type_exists = $PMM->payment_method_type_exists($payment_method->type(), true);
+            if ($pm_type_exists) {
                 $usable_payment_methods[ $key ] = $payment_method;
                 // some payment methods enqueue their scripts in EE_PMT_*::__construct
                 // which is kinda a no-no (just because it's being constructed doesn't mean we need to enqueue

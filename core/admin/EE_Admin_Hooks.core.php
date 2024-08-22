@@ -535,8 +535,15 @@ abstract class EE_Admin_Hooks extends EE_Base
     private function _ajax_hooks()
     {
         if (empty($this->_ajax_func)) {
+            // get out there's nothing to take care of.
             return;
-        } //get out there's nothing to take care of.
+        }
+
+        // check for the most basic EE capability
+        if (! $this->_adminpage_obj->capabilities()->current_user_can('ee_read_ee', 'access-ajax-actions')) {
+            return;
+        }
+
         foreach ($this->_ajax_func as $action => $method) {
             // make sure method exists
             if (! method_exists($this, $method)) {

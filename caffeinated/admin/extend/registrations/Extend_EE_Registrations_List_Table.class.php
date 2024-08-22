@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\caffeinated\admin\extend\registrations\RegistrationsListTableFilters;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 
@@ -12,6 +13,26 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
  */
 class Extend_EE_Registrations_List_Table extends EE_Registrations_List_Table
 {
+    private RegistrationsListTableFilters $filters;
+
+
+    /**
+     * @param Registrations_Admin_Page $admin_page
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function __construct(Registrations_Admin_Page $admin_page)
+    {
+        parent::__construct($admin_page);
+        $this->filters = new RegistrationsListTableFilters($this->request);
+        $this->filters->resolveRequestVars();
+        add_filter(
+            'FHEE__Extend_EE_Registrations_List_Table__filters',
+            [$this->filters, 'addFiltersBefore'],
+        );
+    }
+
+
     /**
      * @param EE_Registration $registration
      * @return string

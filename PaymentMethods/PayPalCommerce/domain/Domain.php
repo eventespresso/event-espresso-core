@@ -2,7 +2,9 @@
 
 namespace EventEspresso\PaymentMethods\PayPalCommerce\domain;
 
+use EE_Error;
 use EE_Payment_Method;
+use ReflectionException;
 
 /**
  * Class Domain
@@ -73,11 +75,6 @@ class Domain
      * Name of the extra meta that holds the seller merchant ID.
      */
     public const META_KEY_SELLER_MERCHANT_ID = 'merchantIdInPayPal';
-
-    /**
-     * Name of the extra meta that holds the onboarding URL.
-     */
-    public const META_KEY_ONBOARDING_URL = 'onboarding_url';
 
     /**
      * Name of the extra meta that holds the BN / request tracking code.
@@ -185,6 +182,8 @@ class Domain
      *
      * @param EE_Payment_Method $payment_method
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function getPayPalApiUrl(EE_Payment_Method $payment_method): string
     {

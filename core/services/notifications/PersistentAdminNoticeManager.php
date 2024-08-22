@@ -302,6 +302,14 @@ class PersistentAdminNoticeManager
         if (! empty($pan_name) && $this->notice_collection->has($pan_name)) {
             /** @var PersistentAdminNotice $persistent_admin_notice */
             $persistent_admin_notice = $this->notice_collection->get($pan_name);
+            try {
+                $this->capabilities_checker->processCapCheck(
+                    $persistent_admin_notice->getCapCheck()
+                );
+            } catch (InsufficientPermissionsException $e) {
+                // user does not have required cap, so just eat the exception - nom nom nom nom
+                return;
+            }
             $persistent_admin_notice->setDismissed(true);
             $persistent_admin_notice->setPurge($purge);
             $this->saveNotices();

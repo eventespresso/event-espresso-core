@@ -35,21 +35,21 @@ class CreateOrder extends OrdersApi
      *
      * @var float
      */
-    protected $items_total = 0;
+    protected float $items_total = 0.0;
 
     /**
      * Promotions total.
      *
      * @var float
      */
-    protected $promos_total = 0;
+    protected float $promos_total = 0.0;
 
     /**
      * Tax total.
      *
      * @var float
      */
-    protected $tax_total = 0;
+    protected float $tax_total = 0.0;
 
     /**
      * Currency.
@@ -101,8 +101,7 @@ class CreateOrder extends OrdersApi
      */
     public function sanitizeRequestParameters(array $billing_info): void
     {
-        $email_validator = new Basic();
-        $sanitizer       = new RequestSanitizer($email_validator);
+        $sanitizer       = new RequestSanitizer(new Basic());
         foreach ($billing_info as $item => $value) {
             $this->billing_info[ $item ] = $sanitizer->clean($value);
         }
@@ -257,7 +256,7 @@ class CreateOrder extends OrdersApi
     protected function countTaxTotal(): void
     {
         // List taxes.
-        $this->tax_total = 0;
+        $this->tax_total = 0.0;
         $tax_items       = $this->transaction->tax_items();
         foreach ($tax_items as $tax_item) {
             $this->tax_total += $tax_item->total();
@@ -300,9 +299,8 @@ class CreateOrder extends OrdersApi
      */
     public function validateOrder($response, $parameters): array
     {
-        $message = esc_html__('Validating Order Create:', 'event_espresso');
         PayPalLogger::errorLog(
-            $message,
+            esc_html__('Validating Order Create:', 'event_espresso'),
             [$this->request_url, $response],
             $this->transaction->payment_method(),
             false,

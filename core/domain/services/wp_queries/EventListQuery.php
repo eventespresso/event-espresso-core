@@ -64,8 +64,23 @@ class EventListQuery extends WP_Query
         foreach ($args as $property => $value) {
             // if the arg is a property of this class, then it's an EE shortcode arg
             if (property_exists($this, $property) && ! property_exists('WP_Query', $property)) {
+                // get the property type
+                $type = gettype($this->{$property});
                 // set the property value
-                $this->{$property} = $value;
+                switch ($type) {
+                    case 'integer':
+                        $this->{$property} = absint($value);
+                        break;
+                    case 'boolean':
+                        $this->{$property} = filter_var($value, FILTER_VALIDATE_BOOLEAN);
+                        break;
+                    case 'string':
+                        $this->{$property} = sanitize_text_field($value);
+                        break;
+                    default:
+                        $this->{$property} = $value;
+                        break;
+                }
                 // then remove it from the array of args that will later be passed to WP_Query()
                 unset($args[ $property ]);
             }

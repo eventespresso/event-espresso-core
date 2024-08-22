@@ -3,6 +3,7 @@
 namespace EventEspresso\caffeinated\modules\recaptcha_invisible;
 
 use EE_Admin_Two_Column_Layout;
+use EE_Capabilities;
 use EE_Checkbox_Multi_Input;
 use EE_Div_Per_Section_Layout;
 use EE_Error;
@@ -17,6 +18,7 @@ use EEH_HTML;
 use EEH_Template;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\sanitizers\AllowedTags;
 use InvalidArgumentException;
 use ReflectionException;
@@ -328,6 +330,11 @@ class RecaptchaAdminSettings
      */
     public function updateAdminSettings(EE_Registration_Config $EE_Registration_Config)
     {
+        /** @var EE_Capabilities $capabilities */
+        $capabilities = LoaderFactory::getLoader()->getShared(EE_Capabilities::class);
+        if (! $capabilities->current_user_can('manage_options', 'edit-recaptcha-settings')) {
+            wp_die(esc_html__('You do not have the required privileges to perform this action', 'event_espresso'));
+        }
         try {
             $recaptcha_settings_form = $this->settingsForm();
             // if not displaying a form, then check for form submission

@@ -7,6 +7,7 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
 use EventEspresso\core\services\graphql\fields\GraphQLFieldInterface;
+use EventEspresso\core\services\graphql\interfaces\GraphQLInterfaceInterface;
 use GraphQL\Error\UserError;
 use GraphQL\Type\Definition\ResolveInfo;
 use InvalidArgumentException;
@@ -40,6 +41,11 @@ interface TypeInterface
      * @since 5.0.0.p
      */
     public function fields(): array;
+
+    /**
+     * @return GraphQLInterfaceInterface
+     */
+    public function interfaces(): array;
 
 
     /**

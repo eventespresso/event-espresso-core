@@ -84,6 +84,7 @@ class TypesManager implements GQLManagerInterface
             }
         }
         if (is_callable([$type, 'extendMutations'])) {
+            /** @disregard P1013 */
             $type->extendMutations();
         }
     }
@@ -116,10 +117,12 @@ class TypesManager implements GQLManagerInterface
                 [
                     'description' => $type->description(),
                     'fields'      => $outputFields,
+                    'interfaces'  => $type->interfaces(),
                 ]
             );
         }
         if (is_callable([$type, 'registerMutations'])) {
+            /** @disregard P1013 */
             $type->registerMutations($inputFields);
         }
     }
