@@ -19,7 +19,7 @@ use ReflectionException;
  * @package     Event Espresso
  * @subpackage  EventEspresso\caffeinated\admin\extend\registrations
  * @author      Brent Christensen
- * @since       $VID:$
+ * @since       5.0.24.p
  */
 class RegistrationsListTableFilters
 {

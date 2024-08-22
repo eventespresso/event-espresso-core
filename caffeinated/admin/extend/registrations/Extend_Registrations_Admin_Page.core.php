@@ -1121,7 +1121,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
 
     /**
      * @return string
-     * @since $VID:$
+     * @since 5.0.24.p
      */
     private function generateListTableHeaderText(): string
     {
@@ -1150,7 +1150,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
     /**
      * @return string
      * @throws EE_Error
-     * @since $VID:$
+     * @since 5.0.24.p
      */
     private function generateListTableLegend(): string
     {
