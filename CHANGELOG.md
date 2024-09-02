@@ -6,13 +6,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Releases
 
+### [5.0.26]
+
+#### Fixed
+ - Fixed PHP 7.4 Incompatible Code in InterfaceManager
+
+#### Changed
+ - [BuildMachine changes - 5.0.25.p (#1511)](https://github.com/eventespresso/cafe/pull/1511)
+
+
 ### [5.0.25]
 
 #### Changed
  - [BuildMachine changes - 5.0.24.p (#1486)](https://github.com/eventespresso/cafe/pull/1486)
  - [Fix and Split Up PHP Unit Tests (#1354)](https://github.com/eventespresso/cafe/pull/1354)
  - [Add GraphQL interface EspressoNode (#1478)](https://github.com/eventespresso/cafe/pull/1478)
+ - [Keap. Refactor error logging (#1500)](https://github.com/eventespresso/cafe/pull/1500)
  - [Remove USE_ADVANCED_EDITOR Feature Flag (Barista#1332) (#1503)](https://github.com/eventespresso/cafe/pull/1503)
+
 
 ### [5.0.24]
 

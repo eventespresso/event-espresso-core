@@ -6,7 +6,6 @@ use Exception;
 use RuntimeException;
 use WPGraphQL\Registry\TypeRegistry;
 use EventEspresso\core\services\graphql\interfaces\GraphQLInterface;
-use EventEspresso\core\services\graphql\fields\GraphQLFieldInterface;
 use EventEspresso\core\services\graphql\interfaces\InterfaceCollection;
 use EventEspresso\core\services\graphql\interfaces\GraphQLInterfaceInterface;
 
@@ -56,7 +55,7 @@ class InterfaceManager implements GQLManagerInterface
 
     /**
      * Convert an array of GraphQLFieldInterface into compatible format with WPGraphQL
-     * @param GraphQLFieldInterface[] $fields
+     * @param GraphQLInterfaceInterface $interface
      * @return array
      */
     protected function fieldsToArray(GraphQLInterfaceInterface $interface): array
@@ -80,7 +79,7 @@ class InterfaceManager implements GQLManagerInterface
                 __(
                     sprintf(
                         'GraphQL interface "%1$s" has no accessible method "%2$s"!',
-                        $interface::class,
+                        get_class($interface),
                         $this->methodName
                     ),
                     'event_espresso'
