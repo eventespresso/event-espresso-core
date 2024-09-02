@@ -4,10 +4,11 @@
  * Class EE_Registration_Payment
  * Description
  *
- * @package               Event Espresso
- * @subpackage            core
- * @author                Brent Christensen
- * @since                 4.7.0
+ * @package     Event Espresso
+ * @subpackage  core
+ * @author      Brent Christensen
+ * @since       4.7.0
+ * @method EE_Payment|EE_Registration|null get_first_related(string string $relation_name, array array $query_params = [])
  */
 class EE_Registration_Payment extends EE_Base_Class
 {
@@ -22,9 +23,7 @@ class EE_Registration_Payment extends EE_Base_Class
     public static function new_instance($props_n_values = [], $timezone = '', $date_formats = [])
     {
         $has_object = parent::_check_for_object($props_n_values, __CLASS__, $timezone, $date_formats);
-        return $has_object
-            ? $has_object
-            : new self($props_n_values, false, $timezone, $date_formats);
+        return $has_object ?: new self($props_n_values, false, $timezone, $date_formats);
     }
 
 
@@ -89,22 +88,22 @@ class EE_Registration_Payment extends EE_Base_Class
 
 
     /**
-     * @return EE_Registration
+     * @return EE_Registration|null
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function registration(): EE_Registration
+    public function registration(): ?EE_Registration
     {
         return $this->get_first_related('Registration');
     }
 
 
     /**
-     * @return EE_Payment
+     * @return EE_Payment|null
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function payment(): EE_Payment
+    public function payment(): ?EE_Payment
     {
         return $this->get_first_related('Payment');
     }

@@ -10,7 +10,7 @@ use EventEspresso\core\services\address\AddressInterface;
  * @package               Event Espresso
  * @subpackage            includes/classes/EE_Transaction.class.php
  * @author                Mike Nelson
- * @method EE_Country|EE_State|EE_Registration get_first_related($relationName, $query_params = [])
+ * @method EE_Country|EE_State|EE_Registration get_first_related(string $relation_name, array $query_params = [])
  * @method EE_Event[]|EE_Registration[] get_many_related($relationName, $query_params = [])
  */
 class EE_Attendee extends EE_CPT_Base implements EEI_Contact, AddressInterface, EEI_Admin_Links, EEI_Attendee

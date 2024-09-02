@@ -54,10 +54,10 @@ class EEM_Line_Item extends EEM_Base
 
     /**
      * Line item indicating all the factors that make a single line item.
-     * Sub-line items should have NO children line items.
+     * Subline items should have NO children line items.
      * For flat sub-items, their quantity should match their parent item, their LIN_unit_price should be this sub-item's
      * contribution towards the price of ONE of their parent items, and its LIN_total should be
-     *  = LIN_quantity * LIN_unit_price. Its LIN_percent = 0.
+     *  = LIN_quantity * LIN_unit_price. It's LIN_percent = 0.
      * For percent sub-items, the quantity should be 1, LIN_unit_price should be 0, and its LIN_total should
      * = LIN_percent / 100 * sum of lower-priority sibling line items..
      */
@@ -92,8 +92,8 @@ class EEM_Line_Item extends EEM_Base
      * could be for 3, indicating that originally 4 were purchased, but 3 have been
      * cancelled, and only one remains).
      * When items are refunded, a cancellation line item should be made, which points
-     * to teh payment model object which actually refunded the payment.
-     * Cancellations should NOT have any children line items; the should NOT affect
+     * to the payment model object which actually refunded the payment.
+     * Cancellations should NOT have any children line items; they should NOT affect
      * any calculations, and are only meant as a record that cancellations have occurred.
      * Their LIN_percent should be 0.
      */
@@ -124,6 +124,7 @@ class EEM_Line_Item extends EEM_Base
      *                              (and will be assumed using the set timezone in the 'timezone_string' wp option)
      * @throws EE_Error
      * @throws ReflectionException
+     * @throws Exception
      */
     protected function __construct(?string $timezone = '')
     {

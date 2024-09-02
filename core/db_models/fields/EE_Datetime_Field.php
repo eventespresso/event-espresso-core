@@ -5,6 +5,8 @@ use EventEspresso\core\domain\values\DateFormat;
 use EventEspresso\core\domain\values\TimeFormat;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\orm\model_field\SchemaFormat;
+use EventEspresso\core\services\orm\model_field\SchemaType;
 
 /**
  * EE_Datetime_Field
@@ -128,7 +130,8 @@ class EE_Datetime_Field extends EE_Model_Field_Base
 
         parent::__construct($table_column, $nice_name, $nullable, $default_value);
         $this->set_timezone($timezone_string);
-        $this->setSchemaFormat('date-time');
+        $this->setSchemaType(SchemaType::STRING);
+        $this->setSchemaFormat(SchemaFormat::DATETIME);
     }
 
 

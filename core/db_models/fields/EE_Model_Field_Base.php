@@ -1,6 +1,9 @@
 <?php
 
 use EventEspresso\core\entities\interfaces\HasSchemaInterface;
+use EventEspresso\core\services\database\WpdbDataFormat;
+use EventEspresso\core\services\orm\model_field\SchemaFormat;
+use EventEspresso\core\services\orm\model_field\SchemaType;
 
 /**
  * EE_Model_Field_Base class
@@ -77,7 +80,7 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
      * @link http://json-schema.org/latest/json-schema-core.html#rfc.section.4.2
      * @var string|string[]
      */
-    private $_schema_type = 'string';
+    private $_schema_type = [];
 
 
     /**
@@ -138,13 +141,13 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
     }
 
 
-    public function get_table_alias()
+    public function get_table_alias(): string
     {
         return $this->_table_alias;
     }
 
 
-    public function get_table_column()
+    public function get_table_column(): string
     {
         return $this->_table_column;
     }
@@ -155,7 +158,7 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
      *
      * @return string
      */
-    public function get_model_name()
+    public function get_model_name(): string
     {
         return $this->_model_name;
     }
@@ -165,7 +168,7 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
      * @return string
      * @throws EE_Error
      */
-    public function get_name()
+    public function get_name(): string
     {
         if ($this->_name) {
             return $this->_name;
@@ -182,13 +185,13 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
     }
 
 
-    public function get_nicename()
+    public function get_nicename(): string
     {
         return $this->_nicename;
     }
 
 
-    public function is_nullable()
+    public function is_nullable(): bool
     {
         return $this->_nullable;
     }
@@ -198,9 +201,9 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
      * returns whether this field is an auto-increment field or not. If it is, then
      * on insertion it can be null. However, on updates it must be present.
      *
-     * @return boolean
+     * @return bool
      */
-    public function is_auto_increment()
+    public function is_auto_increment(): bool
     {
         return false;
     }
@@ -322,16 +325,10 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
      * Returns whatever is set as the $_schema_type property for the object.
      * Note: this will automatically add 'null' to the schema if the object is_nullable()
      *
-     * @return string|array
+     * @return string|string[]
      */
     public function getSchemaType()
     {
-        if ($this->is_nullable()) {
-            $this->_schema_type = (array) $this->_schema_type;
-            if (! in_array('null', $this->_schema_type)) {
-                $this->_schema_type[] = 'null';
-            };
-        }
         return $this->_schema_type;
     }
 
@@ -340,21 +337,30 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
      * Sets the _schema_type property.  Child classes should call this in their constructors to override the default
      * state for this property.
      *
-     * @param string|array $type
+     * @param string|string[] $type
      * @throws InvalidArgumentException
      */
     protected function setSchemaType($type)
     {
-        $this->validateSchemaType($type);
-        $this->_schema_type = $type;
+        $this->_schema_type = [];
+        foreach ((array) $type as $field_type) {
+            SchemaType::validateSchemaType($field_type);
+            $this->_schema_type[] = $field_type;
+        }
+        // if the field is nullable, then add null to the schema type, if it isn't already there
+        if ($this->is_nullable() && ! in_array(SchemaType::NULL, $this->_schema_type, true)) {
+            $this->_schema_type[] = SchemaType::NULL;
+        }
+        // if there is only one type, then just set that type, otherwise leave it as an array
+        $this->_schema_type = count($this->_schema_type) === 1 ? $this->_schema_type[0] : $this->_schema_type;
     }
 
 
     /**
-     * This is usually present when the $_schema_type property is 'object'.  Any child classes will need to override
-     * this method and return the properties for the schema.
-     * The reason this is not a property on the class is because there may be filters set on the values for the property
-     * that won't be exposed on construct.  For example enum type schemas may have the enum values filtered.
+     * This is usually present when the $_schema_type property is SchemaType::OBJECT.  Any child classes will need to
+     * override this method and return the properties for the schema. The reason this is not a property on the class is
+     * because there may be filters set on the values for the property that won't be exposed on construct.  For example
+     * enum type schemas may have the enum values filtered.
      *
      * @return array
      */
@@ -417,7 +423,7 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
      *
      * @return string
      */
-    public function getSchemaFormat()
+    public function getSchemaFormat(): string
     {
         return $this->_schema_format;
     }
@@ -429,9 +435,9 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
      * @param string $format
      * @throws InvalidArgumentException
      */
-    protected function setSchemaFormat($format)
+    protected function setSchemaFormat(string $format)
     {
-        $this->validateSchemaFormat($format);
+        SchemaFormat::validateSchemaFormat($format);
         $this->_schema_format = $format;
     }
 
@@ -452,17 +458,8 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
      *
      * @param bool $readonly (only explicit boolean values are accepted)
      */
-    protected function setSchemaReadOnly($readonly)
+    protected function setSchemaReadOnly(bool $readonly)
     {
-        if (! is_bool($readonly)) {
-            throw new InvalidArgumentException(
-                sprintf(
-                    esc_html__('The incoming argument (%s) must be a boolean.', 'event_espresso'),
-                    print_r($readonly, true)
-                )
-            );
-        }
-
         $this->_schema_readonly = $readonly;
     }
 
@@ -473,7 +470,7 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
      * @return string
      * @uses _get_wpdb_data_type()
      */
-    public function get_wpdb_data_type()
+    public function get_wpdb_data_type(): string
     {
         return $this->_get_wpdb_data_type();
     }
@@ -486,60 +483,26 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
      * @return string
      * @uses get_schema_type()
      */
-    protected function _get_wpdb_data_type($type = '')
+    protected function _get_wpdb_data_type(string $type = ''): string
     {
         $type = empty($type) ? $this->getSchemaType() : $type;
-
         // if type is an array, then different parsing is required.
         if (is_array($type)) {
-            return $this->_get_wpdb_data_type_for_type_array($type);
+            return WpdbDataFormat::getWpdbDataTypeForTypeArray($type);
         }
-
-        $wpdb_type = '%s';
-        switch ($type) {
-            case 'number':
-                $wpdb_type = '%f';
-                break;
-            case 'integer':
-            case 'boolean':
-                $wpdb_type = '%d';
-                break;
-            case 'object':
-                $properties = $this->getSchemaProperties();
-                if (isset($properties['raw'], $properties['raw']['type'])) {
-                    $wpdb_type = $this->_get_wpdb_data_type($properties['raw']['type']);
-                }
-                break; // leave at default
+        if ($type === SchemaType::OBJECT) {
+            $properties = $this->getSchemaProperties();
+            if (isset($properties['raw'], $properties['raw']['type'])) {
+                return WpdbDataFormat::getWpdbDataType($properties['raw']['type']);
+            }
         }
-        return $wpdb_type;
+        return WpdbDataFormat::getWpdbDataType($type);
     }
 
 
-    protected function _get_wpdb_data_type_for_type_array($type)
+    protected function _get_wpdb_data_type_for_type_array($type): string
     {
-        $type = (array) $type;
-        // first let's flip because then we can do a faster key check
-        $type = array_flip($type);
-
-        // check for things that mean '%s'
-        if (isset($type['string'], $type['object'], $type['array'])) {
-            return '%s';
-        }
-
-        // if makes it past the above condition and there's float in the array
-        // then the type is %f
-        if (isset($type['number'])) {
-            return '%f';
-        }
-
-        // if it makes it above the above conditions and there is an integer in the array
-        // then the type is %d
-        if (isset($type['integer'])) {
-            return '%d';
-        }
-
-        // anything else is a string
-        return '%s';
+        return WpdbDataFormat::getWpdbDataTypeForTypeArray((array) $type);
     }
 
 
@@ -585,107 +548,10 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
      * post_type is irrelevant for EE_Event objects (because they will ALL be of post_type 'esp_event').
      * By default, all fields aren't db-only.
      *
-     * @return boolean
+     * @return bool
      */
-    public function is_db_only_field()
+    public function is_db_only_field(): bool
     {
         return false;
-    }
-
-
-    /**
-     * Validates the incoming string|array to ensure its an allowable type.
-     *
-     * @param string|array $type
-     * @throws InvalidArgumentException
-     */
-    private function validateSchemaType($type)
-    {
-        if (! (is_string($type) || is_array($type))) {
-            throw new InvalidArgumentException(
-                sprintf(
-                    esc_html__('The incoming argument (%s) must be a string or an array.', 'event_espresso'),
-                    print_r($type, true)
-                )
-            );
-        }
-
-        if (is_array($type)) {
-            foreach ($type as $item_in_type) {
-                $this->validateSchemaType($item_in_type);
-            }
-            return;
-        }
-
-        // validate allowable types.
-        // @link http://json-schema.org/latest/json-schema-core.html#rfc.section.4.2
-        $allowable_types = [
-            'string',
-            'number',
-            'null',
-            'object',
-            'array',
-            'boolean',
-            'integer',
-        ];
-
-        if (! in_array($type, $allowable_types, true)) {
-            throw new InvalidArgumentException(
-                sprintf(
-                    esc_html__(
-                        'The incoming argument (%1$s) must be one of the allowable types: %2$s',
-                        'event_espresso'
-                    ),
-                    $type,
-                    implode(',', array_flip($allowable_types))
-                )
-            );
-        }
-    }
-
-
-    /**
-     * Validates that the incoming format is an allowable string to use for the _schema_format property
-     *
-     * @param $format
-     * @throws InvalidArgumentException
-     */
-    private function validateSchemaFormat($format)
-    {
-        if (! is_string($format)) {
-            throw new InvalidArgumentException(
-                sprintf(
-                    esc_html__('The incoming argument (%s) must be a string.', 'event_espresso'),
-                    print_r($format, true)
-                )
-            );
-        }
-
-        // validate allowable format values
-        // @link http://json-schema.org/latest/json-schema-validation.html#rfc.section.7
-        $allowable_formats = array_flip(
-            [
-                'date-time',
-                'email',
-                'hostname',
-                'ipv4',
-                'ipv6',
-                'uri',
-                'uriref',
-            ]
-        );
-
-        if (! isset($allowable_formats[ $format ])) {
-            throw new InvalidArgumentException(
-                sprintf(
-                    esc_html__(
-                        'The incoming argument (%1$s) must be one of the allowable formats: %2$s',
-                        'event_espresso'
-                    ),
-                    $format,
-                    implode(',', array_flip($allowable_formats))
-                )
-            );
-        }
     }
 }

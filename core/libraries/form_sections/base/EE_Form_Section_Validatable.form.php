@@ -119,6 +119,12 @@ abstract class EE_Form_Section_Validatable extends EE_Form_Section_Base
         } else {
             $validation_error = new EE_Validation_Error($message_or_object, $error_code, $this, $previous_exception);
         }
+        // check if this error is already in the list
+        foreach ($this->_validation_errors as $existing_error) {
+            if ($existing_error->getMessage() === $validation_error->getMessage()) {
+                return;
+            }
+        }
         $this->_validation_errors[] = $validation_error;
     }
 

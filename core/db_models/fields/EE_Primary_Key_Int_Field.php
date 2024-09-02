@@ -1,11 +1,13 @@
 <?php
 
+use EventEspresso\core\services\orm\model_field\SchemaType;
+
 class EE_Primary_Key_Int_Field extends EE_Primary_Key_Field_Base
 {
     public function __construct($table_column, $nicename)
     {
         parent::__construct($table_column, $nicename, 0);
-        $this->setSchemaType('integer');
+        $this->setSchemaType(SchemaType::INTEGER);
     }
 
     public function prepare_for_set($value_inputted_for_field_on_model_object)
@@ -21,7 +23,7 @@ class EE_Primary_Key_Int_Field extends EE_Primary_Key_Field_Base
         return intval($value_found_in_db_for_model_object);
     }
 
-    public function is_auto_increment()
+    public function is_auto_increment(): bool
     {
         return true;
     }

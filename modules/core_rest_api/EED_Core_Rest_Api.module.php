@@ -12,6 +12,7 @@ use EventEspresso\core\libraries\rest_api\changes\ChangesInBase;
 use EventEspresso\core\libraries\rest_api\ModelDataTranslator;
 use EventEspresso\core\libraries\rest_api\ModelVersionInfo;
 use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\orm\model_field\SchemaType;
 
 /**
  * Class  EED_Core_Rest_Api
@@ -409,7 +410,7 @@ class EED_Core_Rest_Api extends EED_Module
      * @param EEM_Base $model
      * @return bool
      */
-    public static function should_have_write_endpoints(EEM_Base $model)
+    public static function should_have_write_endpoints(EEM_Base $model): bool
     {
         if ($model->is_wp_core_model()) {
             return false;
@@ -430,7 +431,7 @@ class EED_Core_Rest_Api extends EED_Module
      * @param $version
      * @return array keys are model names (eg 'Event') and values ar either classnames (eg 'EEM_Event')
      */
-    public static function model_names_with_plural_routes($version)
+    public static function model_names_with_plural_routes($version): array
     {
         $model_version_info = new ModelVersionInfo($version);
         $models_to_register = $model_version_info->modelsForRequestedVersion();
@@ -440,7 +441,7 @@ class EED_Core_Rest_Api extends EED_Module
             $models_to_register['Extra_Join'],
             $models_to_register['Post_Meta']
         );
-        return apply_filters(
+        return (array) apply_filters(
             'FHEE__EED_Core_REST_API___register_model_routes',
             $models_to_register
         );
@@ -735,13 +736,13 @@ class EED_Core_Rest_Api extends EED_Module
             'include'   => [
                 'required' => false,
                 'default'  => '*',
-                'type'     => 'string',
+                'type'     => SchemaType::STRING,
             ],
             'calculate' => [
                 'required'          => false,
                 'default'           => '',
                 'enum'              => EED_Core_Rest_Api::$_field_calculator->retrieveCalculatedFieldsForModel($model),
-                'type'              => 'string',
+                'type'              => SchemaType::STRING,
                 // because we accept a CSV list of the enumerated strings, WP core validation and sanitization
                 // freaks out. We'll just validate this argument while handling the request
                 'validate_callback' => null,
@@ -750,7 +751,7 @@ class EED_Core_Rest_Api extends EED_Module
             'password'  => [
                 'required' => false,
                 'default'  => '',
-                'type'     => 'string',
+                'type'     => SchemaType::STRING,
             ],
         ];
         return apply_filters(
@@ -775,13 +776,13 @@ class EED_Core_Rest_Api extends EED_Module
             'allow_blocking' => [
                 'required' => false,
                 'default'  => true,
-                'type'     => 'boolean',
+                'type'     => SchemaType::BOOLEAN,
             ],
         ];
         $params_for_delete['force'] = [
             'required' => false,
             'default'  => false,
-            'type'     => 'boolean',
+            'type'     => SchemaType::BOOLEAN,
         ];
         return apply_filters(
             'FHEE__EED_Core_Rest_Api___get_delete_query_params',
@@ -846,7 +847,7 @@ class EED_Core_Rest_Api extends EED_Module
                 'where'    => [
                     'required'          => false,
                     'default'           => [],
-                    'type'              => 'object',
+                    'type'              => SchemaType::OBJECT,
                     // because we accept an almost infinite list of possible where conditions, WP
                     // core validation and sanitization freaks out. We'll just validate this argument
                     // while handling the request
@@ -857,9 +858,9 @@ class EED_Core_Rest_Api extends EED_Module
                     'required'          => false,
                     'default'           => EED_Core_Rest_Api::get_default_query_limit(),
                     'type'              => [
-                        'array',
-                        'string',
-                        'integer',
+                        SchemaType::ARRAY,
+                        SchemaType::STRING,
+                        SchemaType::INTEGER,
                     ],
                     // because we accept a variety of types, WP core validation and sanitization
                     // freaks out. We'll just validate this argument while handling the request
@@ -870,8 +871,8 @@ class EED_Core_Rest_Api extends EED_Module
                     'required'          => false,
                     'default'           => $default_orderby,
                     'type'              => [
-                        'object',
-                        'string',
+                        SchemaType::OBJECT,
+                        SchemaType::STRING,
                     ],// because we accept a variety of types, WP core validation and sanitization
                     // freaks out. We'll just validate this argument while handling the request
                     'validate_callback' => null,
@@ -881,8 +882,8 @@ class EED_Core_Rest_Api extends EED_Module
                     'required'          => false,
                     'default'           => null,
                     'type'              => [
-                        'object',
-                        'string',
+                        SchemaType::OBJECT,
+                        SchemaType::STRING,
                     ],
                     // because we accept  an almost infinite list of possible groupings,
                     // WP core validation and sanitization
@@ -893,7 +894,7 @@ class EED_Core_Rest_Api extends EED_Module
                 'having'   => [
                     'required'          => false,
                     'default'           => null,
-                    'type'              => 'object',
+                    'type'              => SchemaType::OBJECT,
                     // because we accept an almost infinite list of possible where conditions, WP
                     // core validation and sanitization freaks out. We'll just validate this argument
                     // while handling the request
@@ -903,7 +904,7 @@ class EED_Core_Rest_Api extends EED_Module
                 'caps'     => [
                     'required' => false,
                     'default'  => EEM_Base::caps_read,
-                    'type'     => 'string',
+                    'type'     => SchemaType::STRING,
                     'enum'     => [
                         EEM_Base::caps_read,
                         EEM_Base::caps_read_admin,
@@ -953,15 +954,9 @@ class EED_Core_Rest_Api extends EED_Module
             // remove the read-only flag. If it were read-only we wouldn't list it as an argument while writing, right?
             unset($arg_info['readonly']);
             $schema_properties = $field_obj->getSchemaProperties();
-            if (
-                isset($schema_properties['raw'])
-                && $field_obj->getSchemaType() === 'object'
-            ) {
-                // if there's a "raw" form of this argument, use those properties instead
-                $arg_info = array_replace(
-                    $arg_info,
-                    $schema_properties['raw']
-                );
+            // if there's a "raw" form of this argument, use those properties instead
+            if (isset($schema_properties['raw'])) {
+                $arg_info = array_replace($arg_info, $schema_properties['raw']);
             }
             $arg_info['default'] = ModelDataTranslator::prepareFieldValueForJson(
                 $field_obj,

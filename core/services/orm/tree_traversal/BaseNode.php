@@ -31,16 +31,17 @@ namespace EventEspresso\core\services\orm\tree_traversal;
  */
 abstract class BaseNode
 {
-    /**
-     * @var boolean
-     */
-    protected $complete;
-
+    protected ?bool $complete = null;
 
     /**
      * @var array of model names we don't want to traverse
      */
-    protected $dont_traverse_models;
+    protected array $dont_traverse_models = [];
+
+
+    public ?bool $sleep_complete = null;
+    public ?array $sleep_dtm = null;
+
 
     /**
      * Whether this item has already been initialized
@@ -113,11 +114,11 @@ abstract class BaseNode
      */
     public function __sleep()
     {
-        $this->c = $this->complete;
-        $this->dtm = $this->dont_traverse_models;
+        $this->sleep_complete = $this->complete;
+        $this->sleep_dtm = $this->dont_traverse_models;
         return [
-            'c',
-            'dtm'
+            'sleep_complete',
+            'sleep_dtm'
         ];
     }
 
@@ -127,8 +128,8 @@ abstract class BaseNode
      */
     public function __wakeup()
     {
-        $this->complete = $this->c;
-        $this->dont_traverse_models = $this->dtm;
+        $this->complete = $this->sleep_complete;
+        $this->dont_traverse_models = $this->sleep_dtm;
     }
 }
 // End of file BaseNode.php

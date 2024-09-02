@@ -70,7 +70,8 @@ class EEM_Payment_Method extends EEM_Base
                 'PMD_admin_desc'      => new EE_Post_Content_Field(
                     'PMD_admin_desc',
                     esc_html__('Admin-Only Description', 'event_espresso'),
-                    true
+                    true,
+                    ''
                 ),
                 'PMD_slug'            => new EE_Slug_Field(
                     'PMD_slug',

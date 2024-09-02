@@ -543,25 +543,24 @@ class EE_Registry implements ResettableInterface
      * @param string $class_name - simple class name ie: price
      * @param mixed  $arguments
      * @param bool   $load_only
-     * @return bool|null|object
+     * @return EEM_Base|null
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
      * @throws ReflectionException
      * @throws InvalidArgumentException
      */
-    public function load_model(string $class_name, $arguments = [], bool $load_only = false)
+    public function load_model(string $class_name, $arguments = [], bool $load_only = false): ?EEM_Base
     {
-        $paths = (array) apply_filters(
-            'FHEE__EE_Registry__load_model__paths',
-            [
-                EE_MODELS,
-                EE_CORE,
-            ]
-        );
         // retrieve instantiated class
-        return $this->_load(
-            $paths,
+        $model = $this->_load(
+            (array) apply_filters(
+                'FHEE__EE_Registry__load_model__paths',
+                [
+                    EE_MODELS,
+                    EE_CORE,
+                ]
+            ),
             'EEM_',
             $class_name,
             'model',
@@ -570,6 +569,7 @@ class EE_Registry implements ResettableInterface
             true,
             $load_only
         );
+        return $model instanceof EEM_Base ? $model : null;
     }
 
 

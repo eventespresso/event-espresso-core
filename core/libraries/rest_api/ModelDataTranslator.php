@@ -16,6 +16,7 @@ use EED_Core_Rest_Api;
 use EEM_Base;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use Exception;
 use InvalidArgumentException;
 use ReflectionException;
 
@@ -51,16 +52,16 @@ class ModelDataTranslator
      * @param EE_Model_Field_Base $field_obj
      * @param mixed               $original_value_maybe_array
      * @param string              $requested_version
-     * @param string              $timezone_string treat values as being in this timezone
+     * @param string|null         $timezone_string treat values as being in this timezone
      * @return mixed
      * @throws RestException
      * @throws EE_Error
      */
     public static function prepareFieldValuesFromJson(
-        $field_obj,
+        EE_Model_Field_Base $field_obj,
         $original_value_maybe_array,
-        $requested_version,
-        $timezone_string = 'UTC'
+        string $requested_version,
+        ?string $timezone_string = 'UTC'
     ) {
         if (
             is_array($original_value_maybe_array)
@@ -97,8 +98,11 @@ class ModelDataTranslator
      * @throws EE_Error
      * @throws EE_Error
      */
-    public static function prepareFieldValuesForJson($field_obj, $original_value_maybe_array, $request_version)
-    {
+    public static function prepareFieldValuesForJson(
+        EE_Model_Field_Base $field_obj,
+        $original_value_maybe_array,
+        string $request_version
+    ) {
         if (is_array($original_value_maybe_array)) {
             $new_value = [];
             foreach ($original_value_maybe_array as $key => $value) {
@@ -126,17 +130,18 @@ class ModelDataTranslator
      * @param EE_Model_Field_Base $field_obj
      * @param mixed               $original_value
      * @param string              $requested_version
-     * @param string              $timezone_string treat values as being in this timezone
+     * @param string|null         $timezone_string treat values as being in this timezone
      * @return mixed
      * @throws RestException
      * @throws DomainException
      * @throws EE_Error
+     * @throws Exception
      */
     public static function prepareFieldValueFromJson(
-        $field_obj,
+        EE_Model_Field_Base $field_obj,
         $original_value,
-        $requested_version,
-        $timezone_string = 'UTC'
+        string $requested_version,
+        ?string $timezone_string = 'UTC'
     ) {
         // check if they accidentally submitted an error value. If so throw an exception
         if (
@@ -159,71 +164,72 @@ class ModelDataTranslator
         }
         // double-check for serialized PHP. We never accept serialized PHP. No way Jose.
         ModelDataTranslator::throwExceptionIfContainsSerializedData($original_value);
-        $timezone_string =
-            $timezone_string !== ''
-                ? $timezone_string
-                : get_option('timezone_string', '');
+        $timezone_string = $timezone_string !== ''
+            ? $timezone_string
+            : get_option('timezone_string', '');
         // walk through the submitted data and double-check for serialized PHP. We never accept serialized PHP. No
         // way Jose.
         ModelDataTranslator::throwExceptionIfContainsSerializedData($original_value);
+        $new_value = $original_value;
         if (
             $field_obj instanceof EE_Infinite_Integer_Field
             && in_array($original_value, [null, ''], true)
         ) {
             $new_value = EE_INF;
         } elseif ($field_obj instanceof EE_Datetime_Field) {
-            $new_value = rest_parse_date(
-                self::getTimestampWithTimezoneOffset($original_value, $field_obj, $timezone_string)
-            );
-            if ($new_value === false) {
-                throw new RestException(
-                    'invalid_format_for_timestamp',
-                    sprintf(
-                        esc_html__(
-                            'Timestamps received on a request as the value for Date and Time fields must be in %1$s/%2$s format.  The timestamp provided (%3$s) is not that format.',
-                            'event_espresso'
-                        ),
-                        'RFC3339',
-                        'ISO8601',
-                        $original_value
-                    ),
-                    [
-                        'status' => 400,
-                    ]
+            if (! (empty($original_value) && $field_obj->is_nullable())) {
+                $new_value = rest_parse_date(
+                    self::getTimestampWithTimezoneOffset($original_value, $field_obj, $timezone_string)
                 );
+                if ($new_value === false) {
+                    throw new RestException(
+                        'invalid_format_for_timestamp',
+                        sprintf(
+                            esc_html__(
+                                'Timestamps received on a request as the value for Date and Time fields must be in %1$s/%2$s format.  The timestamp provided (%3$s) is not that format.',
+                                'event_espresso'
+                            ),
+                            'RFC3339',
+                            'ISO8601',
+                            $original_value
+                        ),
+                        [
+                            'status' => 400,
+                        ]
+                    );
+                }
             }
         } elseif ($field_obj instanceof EE_Boolean_Field) {
             // Interpreted the strings "false", "true", "on", "off" appropriately.
             $new_value = filter_var($original_value, FILTER_VALIDATE_BOOLEAN);
-        } else {
-            $new_value = $original_value;
         }
         return $new_value;
     }
 
 
     /**
-     * This checks if the incoming timestamp has timezone information already on it and if it doesn't then adds timezone
-     * information via details obtained from the host site.
+     * This checks if the incoming timestamp has timezone information already on it and if it doesn't,
+     * then adds timezone information via details obtained from the host site.
      *
-     * @param string            $original_timestamp
+     * @param string|null       $original_timestamp
      * @param EE_Datetime_Field $datetime_field
-     * @param                   $timezone_string
+     * @param string|null       $timezone_string
      * @return string
      * @throws DomainException
+     * @throws Exception
      */
     private static function getTimestampWithTimezoneOffset(
-        $original_timestamp,
+        ?string $original_timestamp,
         EE_Datetime_Field $datetime_field,
-        $timezone_string
-    ) {
+        ?string $timezone_string
+    ): ?string {
         // already have timezone information?
-        if (preg_match('/Z|([+-])(\d{2}:\d{2})/', $original_timestamp)) {
+        if (preg_match('/Z|([+-])(\d{2}:\d{2})/', (string) $original_timestamp)) {
             // yes, we're ignoring the timezone.
             return $original_timestamp;
         }
         // need to append timezone
-        list($offset_sign, $offset_secs) = self::parseTimezoneOffset(
+        [$offset_sign, $offset_secs] = self::parseTimezoneOffset(
             $datetime_field->get_timezone_offset(
                 new DateTimeZone($timezone_string),
                 $original_timestamp
@@ -281,10 +287,10 @@ class ModelDataTranslator
     /**
      * determines what's going on with them timezone strings
      *
-     * @param int $timezone_offset
+     * @param int|string|null $timezone_offset
      * @return array
      */
-    private static function parseTimezoneOffset($timezone_offset)
+    private static function parseTimezoneOffset($timezone_offset): array
     {
         $first_char = substr((string) $timezone_offset, 0, 1);
         if ($first_char === '+' || $first_char === '-') {
@@ -301,15 +307,19 @@ class ModelDataTranslator
     /**
      * Prepares a field's value for display in the API
      *
-     * @param EE_Model_Field_Base $field_obj
-     * @param mixed               $original_value
-     * @param string              $requested_version
+     * @param EE_Model_Field_Base|null $field_obj
+     * @param mixed                    $original_value
+     * @param string                   $requested_version
      * @return mixed
      * @throws EE_Error
      * @throws EE_Error
+     * @throws Exception
      */
-    public static function prepareFieldValueForJson($field_obj, $original_value, $requested_version)
-    {
+    public static function prepareFieldValueForJson(
+        ?EE_Model_Field_Base $field_obj,
+        $original_value,
+        string $requested_version
+    ) {
         if ($original_value === EE_INF) {
             $new_value = ModelDataTranslator::EE_INF_IN_REST;
         } elseif ($field_obj instanceof EE_Datetime_Field) {
@@ -319,11 +329,11 @@ class ModelDataTranslator
                     $datetime_obj = new DateTime();
                     $datetime_obj->setTimestamp((int) $original_value);
                 } else {
-                    // first, check if its a MySQL timestamp in GMT
+                    // first, check if it's a MySQL timestamp in GMT
                     $datetime_obj = DateTime::createFromFormat('Y-m-d H:i:s', $original_value);
                 }
                 if (! $datetime_obj instanceof DateTime) {
-                    // so it's not a unix timestamp or a MySQL timestamp. Maybe its in the field's date/time format?
+                    // so it's not a unix timestamp or a MySQL timestamp. Maybe it's in the field's date/time format?
                     $datetime_obj = $field_obj->prepare_for_set($original_value);
                 }
                 $original_value = $datetime_obj;
@@ -399,11 +409,11 @@ class ModelDataTranslator
      * @throws InvalidArgumentException
      */
     public static function prepareConditionsQueryParamsForModels(
-        $inputted_query_params_of_this_type,
+        array $inputted_query_params_of_this_type,
         EEM_Base $model,
-        $requested_version,
-        $writing = false
-    ) {
+        string $requested_version,
+        bool $writing = false
+    ): array {
         $query_param_for_models = [];
         $context                = new RestIncomingQueryParamContext($model, $requested_version, $writing);
         foreach ($inputted_query_params_of_this_type as $query_param_key => $query_param_value) {
@@ -412,7 +422,7 @@ class ModelDataTranslator
                 $translated_value = $query_param_meta->determineConditionsQueryParameterValue();
                 if (
                     (isset($query_param_for_models[ $query_param_meta->getQueryParamKey() ])
-                     && $query_param_meta->isGmtField())
+                        && $query_param_meta->isGmtField())
                     || $translated_value === null
                 ) {
                     // they have already provided a non-gmt field, ignore the gmt one. That's what WP core
@@ -433,13 +443,13 @@ class ModelDataTranslator
 
 
     /**
-     * Mostly checks if the last 4 characters are "_gmt", indicating its a
+     * Mostly checks if the last 4 characters are "_gmt", indicating it's a
      * gmt date field name
      *
      * @param string $field_name
      * @return boolean
      */
-    public static function isGmtDateFieldName($field_name)
+    public static function isGmtDateFieldName(string $field_name): bool
     {
         $field_name = ModelDataTranslator::removeStarsAndAnythingAfterFromConditionQueryParamKey($field_name);
         return substr($field_name, -4, 4) === '_gmt';
@@ -452,14 +462,15 @@ class ModelDataTranslator
      * @param string $field_name
      * @return string
      */
-    public static function removeGmtFromFieldName($field_name)
+    public static function removeGmtFromFieldName(string $field_name): string
     {
         if (! ModelDataTranslator::isGmtDateFieldName($field_name)) {
             return $field_name;
         }
-        $query_param_sans_stars = ModelDataTranslator::removeStarsAndAnythingAfterFromConditionQueryParamKey(
-            $field_name
-        );
+        $query_param_sans_stars              =
+            ModelDataTranslator::removeStarsAndAnythingAfterFromConditionQueryParamKey(
+                $field_name
+            );
         $query_param_sans_gmt_and_sans_stars = substr(
             $query_param_sans_stars,
             0,
@@ -478,7 +489,7 @@ class ModelDataTranslator
      * @param string $field_name
      * @return string
      */
-    public static function prepareFieldNameFromJson($field_name)
+    public static function prepareFieldNameFromJson(string $field_name): string
     {
         if (ModelDataTranslator::isGmtDateFieldName($field_name)) {
             return ModelDataTranslator::removeGmtFromFieldName($field_name);
@@ -493,7 +504,7 @@ class ModelDataTranslator
      * @param array $field_names
      * @return array of field names (possibly include model prefixes)
      */
-    public static function prepareFieldNamesFromJson(array $field_names)
+    public static function prepareFieldNamesFromJson(array $field_names): array
     {
         $new_array = [];
         foreach ($field_names as $key => $field_name) {
@@ -510,7 +521,7 @@ class ModelDataTranslator
      * @param array $field_names_as_keys
      * @return array
      */
-    public static function prepareFieldNamesInArrayKeysFromJson(array $field_names_as_keys)
+    public static function prepareFieldNamesInArrayKeysFromJson(array $field_names_as_keys): array
     {
         $new_array = [];
         foreach ($field_names_as_keys as $field_name => $value) {
@@ -523,10 +534,10 @@ class ModelDataTranslator
     /**
      * Prepares an array of model query params for use in the REST API
      *
-     * @param array    $model_query_params
-     * @param EEM_Base $model
-     * @param string   $requested_version  eg "4.8.36". If null is provided, defaults to the latest release of the EE4
-     *                                     REST API
+     * @param array       $model_query_params
+     * @param EEM_Base    $model
+     * @param string|null $requested_version eg "4.8.36". If null is provided, defaults to the latest release of the EE4
+     *                                       REST API
      * @return array which can be passed into the EE4 REST API when querying a model resource
      * @throws EE_Error
      * @throws ReflectionException
@@ -534,9 +545,9 @@ class ModelDataTranslator
     public static function prepareQueryParamsForRestApi(
         array $model_query_params,
         EEM_Base $model,
-        $requested_version = null
-    ) {
-        if ($requested_version === null) {
+        ?string $requested_version = ''
+    ): array {
+        if (! $requested_version) {
             $requested_version = EED_Core_Rest_Api::latest_rest_api_version();
         }
         $rest_query_params = $model_query_params;
@@ -568,22 +579,20 @@ class ModelDataTranslator
     /**
      * Prepares all the sub-conditions query parameters (eg having or where conditions) for use in the rest api
      *
-     * @param array    $inputted_query_params_of_this_type  eg like the "where" or "having" conditions query params
+     * @param array    $inputted_query_params_of_this_type eg like the "where" or "having" conditions query params
      * @param EEM_Base $model
-     * @param string   $requested_version                   eg "4.8.36"
+     * @param string   $requested_version                  eg "4.8.36"
      * @return array ready for use in the rest api query params
      * @throws EE_Error
-     * @throws RestException if somehow a PHP object were in the query params' values,*@throws
-     * @throws ReflectionException
-     *                                                      ReflectionException
-     *                                                      (which would be really unusual)
+     * @throws RestException if somehow a PHP object were in the query param's values
+     * @throws ReflectionException (which would be really unusual)
      * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions
      */
     public static function prepareConditionsQueryParamsForRestApi(
-        $inputted_query_params_of_this_type,
+        array $inputted_query_params_of_this_type,
         EEM_Base $model,
-        $requested_version
-    ) {
+        string $requested_version
+    ): array {
         $query_param_for_models = [];
         foreach ($inputted_query_params_of_this_type as $query_param_key => $query_param_value) {
             $field = ModelDataTranslator::deduceFieldFromQueryParam(
@@ -629,7 +638,7 @@ class ModelDataTranslator
      * @param $condition_query_param_key
      * @return string
      */
-    public static function removeStarsAndAnythingAfterFromConditionQueryParamKey($condition_query_param_key)
+    public static function removeStarsAndAnythingAfterFromConditionQueryParamKey($condition_query_param_key): string
     {
         $pos_of_star = strpos($condition_query_param_key, '*');
         if ($pos_of_star === false) {
@@ -648,7 +657,7 @@ class ModelDataTranslator
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public static function deduceFieldFromQueryParam($query_param_name, EEM_Base $model)
+    public static function deduceFieldFromQueryParam(string $query_param_name, EEM_Base $model): ?EE_Model_Field_Base
     {
         // ok, now proceed with deducing which part is the model's name, and which is the field's name
         // which will help us find the database table and column
@@ -686,10 +695,8 @@ class ModelDataTranslator
      * @param mixed $data
      * @return bool
      */
-    protected static function isRepresentableInJson($data)
+    protected static function isRepresentableInJson($data): bool
     {
-        return is_scalar($data)
-               || is_array($data)
-               || is_null($data);
+        return is_scalar($data) || is_array($data) || is_null($data);
     }
 }

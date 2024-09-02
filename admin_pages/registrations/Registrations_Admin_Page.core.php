@@ -3,6 +3,7 @@
 use EventEspresso\core\domain\Domain;
 use EventEspresso\core\domain\entities\contexts\Context;
 use EventEspresso\core\domain\entities\custom_post_types\EspressoPostType;
+use EventEspresso\core\domain\services\admin\registrations\list_table\QueryBuilder;
 use EventEspresso\core\domain\services\registration\RegStatus;
 use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
@@ -1329,11 +1330,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         int $per_page = 10,
         bool $count = false
     ): array {
-        /** @var EventEspresso\core\domain\services\admin\registrations\list_table\QueryBuilder $list_table_query_builder */
-        $list_table_query_builder = $this->loader->getNew(
-            'EventEspresso\core\domain\services\admin\registrations\list_table\QueryBuilder',
-            [null, null, $request]
-        );
+        /** @var QueryBuilder $list_table_query_builder */
+        $list_table_query_builder = $this->loader->getNew(QueryBuilder::class, [null, null, $request]);
         return $list_table_query_builder->getQueryParams($per_page, $count);
     }
 

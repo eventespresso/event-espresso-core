@@ -2,6 +2,7 @@
 
 use EventEspresso\core\services\form\meta\FormStatus;
 use EventEspresso\core\services\form\meta\InputTypes;
+use EventEspresso\core\services\form\meta\inputs\Text;
 use EventEspresso\core\services\request\RequestInterface;
 
 /**
@@ -131,14 +132,14 @@ class EEM_Form_Element extends EEM_Base
                         'event_espresso'
                     ),
                     false,
-                    false
+                    '{"required":false,"validationText":""}'
                 ),
                 'FIN_status'     => new EE_Enum_Text_Field(
                     'FIN_status',
                     esc_html(
                         sprintf(
-                        /* translators: 1 class name */
-                            __(
+                            /* translators: 1 class name */
+                            esc_html__(
                                 'Whether form element is active, archived, trashed, or used as a default on new forms. Values correspond to the %1$s class constants.',
                                 'event_espresso'
                             ),
@@ -153,7 +154,7 @@ class EEM_Form_Element extends EEM_Base
                     'FIN_type',
                     esc_html__('Form element type.', 'event_espresso'),
                     false,
-                    null,
+                    Text::TYPE_TEXT,
                     $input_types->validTypeOptions()
                 ),
                 'FIN_wpUser'     => new EE_WP_User_Field(

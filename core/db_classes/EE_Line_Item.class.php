@@ -12,7 +12,7 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  * @package            Event Espresso
  * @subpackage         includes/classes/EE_Line_Item.class.php
  * @author             Michael Nelson
- * @method EE_Ticket|EE_Transaction|null get_first_related($r, $q = [])
+ * @method EE_Ticket|EE_Transaction|null get_first_related(string $relation_name, array $query_params = [])
  */
 class EE_Line_Item extends EE_Base_Class
 {
@@ -711,11 +711,39 @@ class EE_Line_Item extends EE_Base_Class
             $children = $this->get_model()->get_all($query_params);
             foreach ($children as $child) {
                 if ($child instanceof EE_Line_Item) {
-                    $this->_children[ $child->code() ] = $child;
+                    $this->addLineItemToChildren($child);
                 }
             }
         }
         return $this->_children;
+    }
+
+
+    private function addLineItemToChildren($child_line_item)
+    {
+        $this->_children[ $child_line_item->code() ] = $child_line_item;
+    }
+
+
+    private function getChildLineItemFromCache(string $code): ?EE_Line_Item
+    {
+        return $this->_children[ $code ] ?? null;
+    }
+
+
+    private function removeChildLineItemFromCache(string $code): int
+    {
+        if (isset($this->_children[ $code ])) {
+            unset($this->_children[ $code ]);
+            return 1;
+        }
+        return 0;
+    }
+
+
+    private function resetChildren()
+    {
+        $this->_children = [];
     }
 
 
@@ -965,9 +993,10 @@ class EE_Line_Item extends EE_Base_Class
             if ($this->TXN_ID()) {
                 $line_item->set_TXN_ID($this->TXN_ID());
             }
+            $this->addLineItemToChildren($line_item);
             return (bool) $line_item->save();
         }
-        $this->_children[ $line_item->code() ] = $line_item;
+        $this->addLineItemToChildren($line_item);
         if ($line_item->parent() !== $this) {
             $line_item->set_parent($this);
         }
@@ -1018,12 +1047,16 @@ class EE_Line_Item extends EE_Base_Class
      */
     public function get_child_line_item(string $code)
     {
+        $child = $this->getChildLineItemFromCache($code);
+        if ($child instanceof EE_Line_Item) {
+            return $child;
+        }
         if ($this->ID()) {
             return $this->get_model()->get_one(
                 [['LIN_parent' => $this->ID(), 'LIN_code' => $code]]
             );
         }
-        return $this->_children[ $code ] ?? null;
+        return null;
     }
 
 
@@ -1040,12 +1073,9 @@ class EE_Line_Item extends EE_Base_Class
      */
     public function delete_children_line_items(): int
     {
-        if ($this->ID()) {
-            return (int) $this->get_model()->delete([['LIN_parent' => $this->ID()]]);
-        }
-        $count           = count($this->_children);
-        $this->_children = [];
-        return $count;
+        $count = count($this->_children);
+        $this->resetChildren();
+        return $this->ID() ? (int) $this->get_model()->delete([['LIN_parent' => $this->ID()]]) : $count;
     }
 
 
@@ -1068,6 +1098,7 @@ class EE_Line_Item extends EE_Base_Class
      */
     public function delete_child_line_item(string $code, bool $stop_search_once_found = true): int
     {
+        $removed = $this->removeChildLineItemFromCache($code);
         if ($this->ID()) {
             $items_deleted = 0;
             if ($this->code() === $code) {
@@ -1082,11 +1113,7 @@ class EE_Line_Item extends EE_Base_Class
             }
             return $items_deleted;
         }
-        if (isset($this->_children[ $code ])) {
-            unset($this->_children[ $code ]);
-            return 1;
-        }
-        return 0;
+        return $removed;
     }
 
 
@@ -1125,6 +1152,20 @@ class EE_Line_Item extends EE_Base_Class
     {
         // each line item in the cart requires a unique identifier
         return $this->get('OBJ_type') . '-' . $this->get('OBJ_ID');
+    }
+
+
+    /**
+     * @return bool
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ReflectionException
+     */
+    public function isTax(): bool
+    {
+        return $this->type() === EEM_Line_Item::type_tax || $this->type() === EEM_Line_Item::type_sub_tax;
     }
 
 
@@ -1372,6 +1413,7 @@ class EE_Line_Item extends EE_Base_Class
     public function recalculate_total_including_taxes(bool $update_txn_status = false): float
     {
         $grand_total_line_item = EEH_Line_Item::find_transaction_grand_total_for_line_item($this);
+        $grand_total_line_item->ensureLineItemsAreSaved();
         return $this->calculator->recalculateTotalIncludingTaxes($grand_total_line_item, $update_txn_status);
     }
 
@@ -1392,6 +1434,7 @@ class EE_Line_Item extends EE_Base_Class
     public function recalculate_pre_tax_total(): float
     {
         $grand_total_line_item = EEH_Line_Item::find_transaction_grand_total_for_line_item($this);
+        $grand_total_line_item->ensureLineItemsAreSaved();
         [$total] = $this->calculator->recalculateLineItemTotals($grand_total_line_item);
         return (float) $total;
     }
@@ -1412,6 +1455,7 @@ class EE_Line_Item extends EE_Base_Class
     public function recalculate_taxes_and_tax_total(): float
     {
         $grand_total_line_item = EEH_Line_Item::find_transaction_grand_total_for_line_item($this);
+        $grand_total_line_item->ensureLineItemsAreSaved();
         return $this->calculator->recalculateTaxesAndTaxTotal($grand_total_line_item);
     }
 
@@ -1430,6 +1474,7 @@ class EE_Line_Item extends EE_Base_Class
     public function get_total_tax(): float
     {
         $grand_total_line_item = EEH_Line_Item::find_transaction_grand_total_for_line_item($this);
+        $grand_total_line_item->ensureLineItemsAreSaved();
         return $this->calculator->recalculateTaxesAndTaxTotal($grand_total_line_item);
     }
 
@@ -1502,6 +1547,7 @@ class EE_Line_Item extends EE_Base_Class
      */
     public function taxable_total(): float
     {
+        $this->ensureLineItemsAreSaved();
         return $this->calculator->taxableAmountForGlobalTaxes($this);
     }
 
@@ -1621,7 +1667,7 @@ class EE_Line_Item extends EE_Base_Class
      */
     public function clear_related_line_item_cache()
     {
-        $this->_children = [];
+        $this->resetChildren();
         $this->_parent   = null;
     }
 
@@ -1640,6 +1686,24 @@ class EE_Line_Item extends EE_Base_Class
         return $raw
             ? (int) $this->get_raw('LIN_timestamp')
             : (string) $this->get('LIN_timestamp');
+    }
+
+
+    /**
+     * @return void
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since $VID:$
+     */
+    private function ensureLineItemsAreSaved()
+    {
+        if (! $this->ID()) {
+            $this->save();
+        }
+        $children = $this->children();
+        foreach ($children as $child_line_item) {
+            $child_line_item->ensureLineItemsAreSaved();
+        }
     }
 
 

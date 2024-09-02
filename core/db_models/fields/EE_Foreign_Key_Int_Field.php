@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\services\orm\model_field\SchemaType;
+
 class EE_Foreign_Key_Int_Field extends EE_Foreign_Key_Field_Base
 {
     /**
@@ -14,7 +16,7 @@ class EE_Foreign_Key_Int_Field extends EE_Foreign_Key_Field_Base
     public function __construct($table_column, $nicename, $nullable, $default_value, $model_name)
     {
         parent::__construct($table_column, $nicename, $nullable, $default_value, $model_name);
-        $this->setSchemaType('integer');
+        $this->setSchemaType(SchemaType::INTEGER);
     }
 
 

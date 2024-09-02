@@ -3,10 +3,10 @@
 /**
  * Class EE_Processor_Base
  *
- * @package               Event Espresso
- * @subpackage            core
- * @author                Brent Christensen
- * @since                 4.6
+ * @package     Event Espresso
+ * @subpackage  core
+ * @author      Brent Christensen
+ * @since       4.6
  */
 class EE_Processor_Base
 {
@@ -23,6 +23,8 @@ class EE_Processor_Base
      * @var bool
      */
     protected bool $_revisit = false;
+
+    private static bool $debug = false;
 
 
     /**
@@ -51,7 +53,7 @@ class EE_Processor_Base
      *
      * @param string              $class
      * @param string              $func
-     * @param int|string              $line
+     * @param int|string          $line
      * @param EE_Transaction|null $transaction
      * @param array               $info
      * @param bool                $display_request
@@ -66,17 +68,13 @@ class EE_Processor_Base
         array $info = [],
         bool $display_request = false
     ) {
-        if (WP_DEBUG && false) {
-            if ($transaction instanceof EE_Transaction) {
-                // don't serialize objects
-                $info = EEH_Debug_Tools::strip_objects($info);
-                if ($transaction->ID()) {
-                    $info['TXN_status']    = $transaction->status_ID();
-                    $info['TXN_reg_steps'] = $transaction->reg_steps();
-                    $index                 = 'EE_Transaction: ' . $transaction->ID();
-                    EEH_Debug_Tools::log($class, $func, $line, $info, $display_request, $index);
-                }
-            }
+        if (EE_Processor_Base::$debug && $transaction instanceof EE_Transaction && $transaction->ID()) {
+            // don't serialize objects
+            $info = EEH_Debug_Tools::strip_objects($info);
+            $info['TXN_status']    = $transaction->status_ID();
+            $info['TXN_reg_steps'] = $transaction->reg_steps();
+            $index                 = 'EE_Transaction: ' . $transaction->ID();
+            EEH_Debug_Tools::log($class, $func, $line, $info, $display_request, $index);
         }
     }
 }

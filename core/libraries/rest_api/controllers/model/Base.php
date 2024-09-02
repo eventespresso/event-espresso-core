@@ -32,7 +32,7 @@ class Base extends Controller_Base
      *
      * @param string $version eg '4.8'
      */
-    public function setRequestedVersion($version)
+    public function setRequestedVersion(string $version)
     {
         parent::setRequestedVersion($version);
         $this->model_version_info = new ModelVersionInfo($version);

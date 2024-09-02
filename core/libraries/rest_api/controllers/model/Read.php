@@ -51,10 +51,7 @@ use stdClass;
  */
 class Read extends Base
 {
-    /**
-     * @var CalculatedModelFields
-     */
-    protected $fields_calculator;
+    protected CalculatedModelFields $fields_calculator;
 
 
     /**
@@ -158,6 +155,7 @@ class Read extends Base
                 )
             );
         } catch (Exception $e) {
+            error_log($e->getMessage());
             return [];
         }
     }
@@ -424,12 +422,13 @@ class Read extends Base
      * @throws RestException
      * @throws ModelConfigurationException
      * @throws UnexpectedEntityException
+     * @throws Exception
      */
     protected function getEntitiesFromRelationUsingModelQueryParams(
         array $primary_model_query_params,
         EE_Model_Relation_Base $relation,
         WP_REST_Request $request
-    ) {
+    ): ?array {
         $context       = $this->validateContext($request->get_param('caps'));
         $model         = $relation->get_this_model();
         $related_model = $relation->get_other_model();
@@ -559,6 +558,7 @@ class Read extends Base
      * @throws RestException
      * @throws ModelConfigurationException
      * @throws UnexpectedEntityException
+     * @throws Exception
      */
     public function getEntitiesFromRelation($id, EE_Model_Relation_Base $relation, WP_REST_Request $request): array
     {
@@ -599,6 +599,7 @@ class Read extends Base
      * @param array    $query_params
      * @return void
      * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function setHeadersFromQueryParams(EEM_Base $model, array $query_params)
     {
@@ -808,6 +809,7 @@ class Read extends Base
      * @throws EE_Error
      * @throws ReflectionException
      * @throws RestException
+     * @throws Exception
      */
     protected function createBareEntityFromWpdbResults(EEM_Base $model, array $db_row): array
     {
@@ -1093,8 +1095,7 @@ class Read extends Base
                     $entity_array['_protected'][] = Read::getRelatedEntityName($relation_name, $relation_obj);
                 }
                 if ($related_results instanceof WP_Error || $related_results === null) {
-                    $related_results =
-                        $relation_obj instanceof EE_Belongs_To_Relation
+                    $related_results = $relation_obj instanceof EE_Belongs_To_Relation
                             ? null
                             : [];
                 }
@@ -1362,11 +1363,12 @@ class Read extends Base
      * @throws InvalidInterfaceException
      * @throws RestException
      * @throws DomainException
+     * @throws ReflectionException
      * @see
-     * https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions.
-     * Note: right now the query parameter keys for fields (and related fields) can be left as-is, but it's quite
-     * possible this will change someday. Also, this method's contents might be candidate for moving to
-     * Model_Data_Translator
+     *               https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions.
+     *               Note: right now the query parameter keys for fields (and related fields) can be left as-is, but
+     *               it's quite possible this will change someday. Also, this method's contents might be candidate for
+     *               moving to Model_Data_Translator
      *
      */
     public function createModelQueryParams(EEM_Base $model, array $query_params): array

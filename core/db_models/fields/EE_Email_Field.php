@@ -5,6 +5,7 @@ use EventEspresso\core\domain\services\validation\email\EmailValidationException
 use EventEspresso\core\domain\values\EmailAddress;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\orm\model_field\SchemaFormat;
 
 /**
  * Class EE_Email_Field
@@ -24,7 +25,7 @@ class EE_Email_Field extends EE_Text_Field_Base
     public function __construct($table_column, $nice_name, $nullable, $default_value = null)
     {
         parent::__construct($table_column, $nice_name, $nullable, $default_value);
-        $this->setSchemaFormat('email');
+        $this->setSchemaFormat( SchemaFormat::EMAIL);
     }
 
 

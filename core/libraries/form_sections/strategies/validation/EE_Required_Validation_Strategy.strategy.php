@@ -3,10 +3,10 @@
 /**
  * Class EE_Required_Validation_Strategy
  *
- * @package             Event Espresso
+ * @package     Event Espresso
  * @subpackage  core
- * @author              Mike Nelson
- * @since               4.6
+ * @author      Mike Nelson
+ * @since       4.6
  *
  */
 class EE_Required_Validation_Strategy extends EE_Validation_Strategy_Base
@@ -30,8 +30,7 @@ class EE_Required_Validation_Strategy extends EE_Validation_Strategy_Base
      *
      * @param $normalized_value
      * @return bool
-     * @throws \EE_Error
-     * @throws \EE_Validation_Error
+     * @throws EE_Validation_Error
      */
     public function validate($normalized_value)
     {
@@ -41,16 +40,14 @@ class EE_Required_Validation_Strategy extends EE_Validation_Strategy_Base
             || $normalized_value === array()
         ) {
             throw new EE_Validation_Error($this->get_validation_error_message(), 'required');
-        } else {
-            return true;
         }
+        return true;
     }
 
 
 
     /**
      * @return array
-     * @throws \EE_Error
      */
     public function get_jquery_validation_rule_array()
     {

@@ -204,6 +204,9 @@ class Router
                 $this->route_handler->addRoute(
                     'EventEspresso\core\domain\entities\routing\handlers\shared\WordPressHeartbeat'
                 );
+                $this->route_handler->addRoute(
+                    'EventEspresso\core\domain\entities\routing\handlers\admin\EspressoBatchJob'
+                );
                 break;
         }
         $this->routes_loaded[ __FUNCTION__ ] = true;

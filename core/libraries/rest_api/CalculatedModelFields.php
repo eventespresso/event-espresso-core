@@ -21,29 +21,24 @@ use EventEspresso\core\libraries\rest_api\controllers\Base as BaseController;
  */
 class CalculatedModelFields
 {
-    /**
-     * @var array
-     */
-    protected $mapping;
+    private CalculatedModelFieldsFactory $factory;
 
-    /**
-     * @var array
-     */
-    protected $mapping_schema;
+    protected array $mapping = [];
 
-    /**
-     * @var CalculatedModelFieldsFactory
-     */
-    private $factory;
+    protected array $mapping_schema = [];
+
 
     /**
      * CalculatedModelFields constructor.
+     *
      * @param CalculatedModelFieldsFactory $factory
      */
     public function __construct(CalculatedModelFieldsFactory $factory)
     {
         $this->factory = $factory;
     }
+
+
     /**
      * @param bool $refresh
      * @return array top-level-keys are model names (eg "Event")
@@ -54,7 +49,7 @@ class CalculatedModelFields
      * the WP_Request object,
      * the controller object
      */
-    public function mapping($refresh = false)
+    public function mapping(bool $refresh = false): array
     {
         if (! $this->mapping || $refresh) {
             $this->mapping = $this->generateNewMapping();
@@ -68,18 +63,18 @@ class CalculatedModelFields
      *
      * @return array
      */
-    protected function generateNewMapping()
+    protected function generateNewMapping(): array
     {
-        $mapping = array();
-        $models_with_calculated_fields = array(
+        $mapping                       = [];
+        $models_with_calculated_fields = [
             'Attendee',
             'Datetime',
             'Event',
-            'Registration'
-        );
+            'Registration',
+        ];
         foreach ($models_with_calculated_fields as $model_name) {
             $calculator = $this->factory->createFromModel($model_name);
-            foreach (array_keys(call_user_func(array($calculator, 'schemaForCalculations'))) as $field_name) {
+            foreach (array_keys(call_user_func([$calculator, 'schemaForCalculations'])) as $field_name) {
                 $mapping[ $model_name ][ $field_name ] = get_class($calculator);
             }
         }
@@ -96,9 +91,9 @@ class CalculatedModelFields
      * @return array
      * @throws UnexpectedEntityException
      */
-    protected function generateNewMappingSchema()
+    protected function generateNewMappingSchema(): array
     {
-        $schema_map = array();
+        $schema_map = [];
         foreach ($this->mapping() as $map_model => $map_for_model) {
             /**
              * @var string $calculation_index
@@ -106,7 +101,7 @@ class CalculatedModelFields
              */
             foreach ($map_for_model as $calculation_index => $calculations_class) {
                 $calculator = $this->factory->createFromClassname($calculations_class);
-                $schema = call_user_func(array($calculator, 'schemaForCalculation'), $calculation_index);
+                $schema     = call_user_func([$calculator, 'schemaForCalculation'], $calculation_index);
                 if (! empty($schema)) {
                     $schema_map[ $map_model ][ $calculation_index ] = $schema;
                 }
@@ -122,48 +117,49 @@ class CalculatedModelFields
      * @param EEM_Base $model
      * @return array allowable values for this field
      */
-    public function retrieveCalculatedFieldsForModel(EEM_Base $model)
+    public function retrieveCalculatedFieldsForModel(EEM_Base $model): array
     {
         $mapping = $this->mapping();
         if (isset($mapping[ $model->get_this_model_name() ])) {
             return array_keys($mapping[ $model->get_this_model_name() ]);
         }
-        return array();
+        return [];
     }
 
 
     /**
      * Returns the JsonSchema for the calculated fields on the given model.
+     *
      * @param EEM_Base $model
      * @return array
      */
-    public function getJsonSchemaForModel(EEM_Base $model)
+    public function getJsonSchemaForModel(EEM_Base $model): array
     {
         if (! $this->mapping_schema) {
             $this->mapping_schema = $this->generateNewMappingSchema();
         }
-        return array(
-            'description' => esc_html__(
+        return [
+            'description'          => esc_html__(
                 'Available calculated fields for this model.  Fields are only present in the response if explicitly requested',
                 'event_espresso'
             ),
-            'type' => 'object',
-            'properties' => isset($this->mapping_schema[ $model->get_this_model_name() ])
+            'type'                 => 'object',
+            'properties'           => isset($this->mapping_schema[ $model->get_this_model_name() ])
                 ? $this->mapping_schema[ $model->get_this_model_name() ]
-                : array(),
+                : [],
             'additionalProperties' => false,
-            'readonly' => true,
-        );
+            'readonly'             => true,
+        ];
     }
 
 
     /**
      * Retrieves the value for this calculation
      *
-     * @param EEM_Base $model
-     * @param string $field_name
-     * @param array $wpdb_row
-     * @param $rest_request
+     * @param EEM_Base       $model
+     * @param string         $field_name
+     * @param array          $wpdb_row
+     * @param                $rest_request
      * @param BaseController $controller
      * @return mixed|null
      * @throws RestException
@@ -171,8 +167,8 @@ class CalculatedModelFields
      */
     public function retrieveCalculatedFieldValue(
         EEM_Base $model,
-        $field_name,
-        $wpdb_row,
+        string $field_name,
+        array $wpdb_row,
         $rest_request,
         Base $controller
     ) {
@@ -181,10 +177,10 @@ class CalculatedModelFields
             isset($mapping[ $model->get_this_model_name() ])
             && isset($mapping[ $model->get_this_model_name() ][ $field_name ])
         ) {
-            $classname = $mapping[ $model->get_this_model_name() ][ $field_name ];
-            $calculator = $this->factory->createFromClassname($classname);
+            $classname         = $mapping[ $model->get_this_model_name() ][ $field_name ];
+            $calculator        = $this->factory->createFromClassname($classname);
             $class_method_name = EEH_Inflector::camelize_all_but_first($field_name);
-            return call_user_func(array($calculator, $class_method_name), $wpdb_row, $rest_request, $controller);
+            return call_user_func([$calculator, $class_method_name], $wpdb_row, $rest_request, $controller);
         }
         throw new RestException(
             'calculated_field_does_not_exist',

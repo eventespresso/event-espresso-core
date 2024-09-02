@@ -6,11 +6,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Releases
 
+### [5.0.25]
+
+#### Changed
+ - [BuildMachine changes - 5.0.24.p (#1486)](https://github.com/eventespresso/cafe/pull/1486)
+ - [Fix and Split Up PHP Unit Tests (#1354)](https://github.com/eventespresso/cafe/pull/1354)
+ - [Add GraphQL interface EspressoNode (#1478)](https://github.com/eventespresso/cafe/pull/1478)
+ - [Remove USE_ADVANCED_EDITOR Feature Flag (Barista#1332) (#1503)](https://github.com/eventespresso/cafe/pull/1503)
+
 ### [5.0.24]
 
 #### Added
  - [New Reg List Table Event Filter (#1451)](https://github.com/eventespresso/cafe/pull/1451)
- - NEW
 
 #### Fixed
  - [Fix PPC Meta Data Array Error (#1454)](https://github.com/eventespresso/cafe/pull/1454)
@@ -18,37 +25,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - [Force Payment Method Registration When Generating Messages (#1464)](https://github.com/eventespresso/cafe/pull/1464)
  - [Ensure editor-buttons Script is Enqueued (#1472)](https://github.com/eventespresso/cafe/pull/1472)
  - [PPC. Fix PM thinking it disconnected (#1479)](https://github.com/eventespresso/cafe/pull/1479)
- - FIX
 
 #### Changed
  - [Build machine 5.0.23.p changes (#1461)](https://github.com/eventespresso/cafe/pull/1461)
  - [Add GraphQL interface manager (#1463)](https://github.com/eventespresso/cafe/pull/1463)
- - MOD
-
-#### Deprecated
- - DEP
-
-#### Removed
- - RMV
 
 #### Security
  - [Add current_user_can() Check When Updating Timezone (#1475)](https://github.com/eventespresso/cafe/pull/1475)
- - SEC
-
 
 
 ### [5.0.23]
-
 
 #### Fixed
  - [Type Cast Return Value for EE_Admin_Config::useAdvancedEditor() (#1458)](https://github.com/eventespresso/cafe/pull/1458)
 
 #### Changed
  - [BuildMachine 5.0.22 changes (#1450)](https://github.com/eventespresso/cafe/pull/1450)
-
-
-
-
 
 
 ### [5.0.22]

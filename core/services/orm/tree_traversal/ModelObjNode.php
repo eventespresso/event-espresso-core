@@ -31,20 +31,22 @@ class ModelObjNode extends BaseNode
     /**
      * @var EEM_Base
      */
-    protected $model;
+    protected EEM_Base $model;
 
     /**
-     * @var RelationNode[]
+     * @var RelationNode[]|null
      */
-    protected $nodes;
+    protected ?array $nodes = null;
+
+    public ?string $model_name = null;
 
 
     /**
      * We don't pass the model objects because this needs to serialize to something tiny for effiency.
      *
-     * @param          $model_obj_id
-     * @param EEM_Base $model
-     * @param array    $dont_traverse_models array of model names we DON'T want to traverse.
+     * @param int|string $model_obj_id
+     * @param EEM_Base   $model
+     * @param array      $dont_traverse_models array of model names we DON'T want to traverse.
      */
     public function __construct($model_obj_id, EEM_Base $model, array $dont_traverse_models = [])
     {
@@ -104,7 +106,7 @@ class ModelObjNode extends BaseNode
      */
     protected function isDiscovered()
     {
-        return $this->nodes !== null && is_array($this->nodes);
+        return is_array($this->nodes);
     }
 
     /**
@@ -208,10 +210,10 @@ class ModelObjNode extends BaseNode
      */
     public function __sleep()
     {
-        $this->m = $this->model->get_this_model_name();
+        $this->model_name = $this->model->get_this_model_name();
         return array_merge(
             [
-                'm',
+                'model_name',
                 'id',
                 'nodes',
             ],
@@ -232,7 +234,7 @@ class ModelObjNode extends BaseNode
      */
     public function __wakeup()
     {
-        $this->model = EE_Registry::instance()->load_model($this->m);
+        $this->model = EE_Registry::instance()->load_model($this->model_name);
         parent::__wakeup();
     }
 }

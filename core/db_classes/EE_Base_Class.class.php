@@ -2535,14 +2535,14 @@ abstract class EE_Base_Class
      * @param string $relation_name key in the model's _model_relations array
      * @param array  $query_params  @see
      *                              https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
-     * @return EE_Base_Class (not an array, a single object)
+     * @return EE_Base_Class|null (not an array, a single object)
      * @throws ReflectionException
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function get_first_related($relation_name, $query_params = [])
+    public function get_first_related(string $relation_name, array $query_params = []): ?EE_Base_Class
     {
         $model = $this->get_model();
         if ($this->ID()) {// this exists in the DB, get from the cache OR the DB
@@ -3356,5 +3356,34 @@ abstract class EE_Base_Class
                 $this->_fields[ $field ] = clone $value;
             }
         }
+    }
+
+
+    public function debug()
+    {
+        $this->echoProperty(get_class($this), get_object_vars($this));
+        echo "\n\n";
+    }
+
+
+    private function echoProperty($field, $value, int $indent = 0)
+    {
+        $bullets = str_repeat(' -', $indent) . ' ';
+        $field = strpos($field, '_') === 0 ? substr($field, 1) : $field;
+        echo "\n$bullets$field: ";
+        if ($value instanceof EEM_Base) {
+            $value = get_class($value);
+        } elseif (is_object($value)) {
+            $value = get_object_vars($value);
+        }
+        if (is_array($value)) {
+            foreach ($value as $f => $v ) {
+                $this->echoProperty($f, $v, $indent+1);
+            }
+            return;
+        }
+        ob_start();
+        var_dump($value);
+        echo rtrim(ob_get_clean(), "\n");
     }
 }

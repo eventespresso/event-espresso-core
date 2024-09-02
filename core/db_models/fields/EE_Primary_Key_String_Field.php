@@ -7,11 +7,14 @@ class EE_Primary_Key_String_Field extends EE_Primary_Key_Field_Base
         parent::__construct($table_column, $nicename, null);
     }
 
+
     /**
      * removes all tags when setting
      *
-     * @param string|null $value_inputted_for_field_on_model_object
+     * @param EE_Base_Class|string|null $value_inputted_for_field_on_model_object
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function prepare_for_set($value_inputted_for_field_on_model_object)
     {

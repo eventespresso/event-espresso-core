@@ -319,7 +319,7 @@ class EEH_Sideloader extends EEH_Base
         if ($response_code === 200) {
             return false;
         }
-        if (defined('WP_DEBUG') && WP_DEBUG) {
+        if (defined('WP_DEBUG') && WP_DEBUG && ! defined('EE_TESTS_DIR')) {
             if ($response_code === 404) {
                 EE_Error::add_attention(
                     sprintf(

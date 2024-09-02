@@ -547,7 +547,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
      */
     public function wp_user(): int
     {
-        return $this->get('EVT_wp_user');
+        return (int) $this->get('EVT_wp_user');
     }
 
 

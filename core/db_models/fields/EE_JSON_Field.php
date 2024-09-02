@@ -1,13 +1,11 @@
 <?php
 
 use EventEspresso\core\services\json\JsonDataHandler;
+use EventEspresso\core\services\orm\model_field\SchemaType;
 
 class EE_JSON_Field extends EE_Model_Field_Base
 {
-    /**
-     * @var JsonDataHandler
-     */
-    private $json_data_handler;
+    private JsonDataHandler $json_data_handler;
 
 
     /**
@@ -27,6 +25,7 @@ class EE_JSON_Field extends EE_Model_Field_Base
             JsonDataHandler::DATA_TYPE_OBJECT
         );
         parent::__construct($table_column, $nicename, $nullable, $default_value);
+        $this->setSchemaType(SchemaType::STRING);
     }
 
 

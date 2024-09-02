@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\services\orm\model_field\SchemaType;
+
 /**
  * Field for DB columns which don't correspond to model fields. Eg, on the Event model, which
  * should use the wp_posts and wp_esp_events_detail tables, there will be many fields on the wp_posts
@@ -18,6 +20,7 @@ abstract class EE_DB_Only_Field_Base extends EE_Model_Field_Base
     public function __construct($table_column, $nicename, $nullable, $default_value = null)
     {
         parent::__construct($table_column, $nicename, $nullable, $default_value);
+        $this->setSchemaType(SchemaType::STRING);
         $this->setSchemaReadOnly(true);
     }
 
@@ -29,7 +32,7 @@ abstract class EE_DB_Only_Field_Base extends EE_Model_Field_Base
      *
      * @return boolean
      */
-    public function is_db_only_field()
+    public function is_db_only_field(): bool
     {
         return true;
     }

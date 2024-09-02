@@ -8,7 +8,7 @@ use EventEspresso\core\services\address\AddressInterface;
  * @package               Event Espresso
  * @subpackage            includes/classes/EE_Venue.class.php
  * @author                Mike Nelson
- * @method EE_Country|EE_State get_first_related($relationName, $query_params = [])
+ * @method EE_Country|EE_State get_first_related(string $relation_name, array $query_params = [])
  * @method EE_Country|EE_State _add_relation_to($otherObjectModelObjectOrID, $relationName)
  */
 class EE_Venue extends EE_CPT_Base implements AddressInterface

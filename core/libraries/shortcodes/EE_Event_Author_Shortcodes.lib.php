@@ -19,34 +19,35 @@
  */
 class EE_Event_Author_Shortcodes extends EE_Shortcodes
 {
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-
     protected function _init_props()
     {
-        $this->label = esc_html__('Event Author Details Shortcodes', 'event_espresso');
+        $this->label       = esc_html__('Event Author Details Shortcodes', 'event_espresso');
         $this->description = esc_html__('All shortcodes specific to event_author data', 'event_espresso');
-        $this->_shortcodes = array(
-            '[EVENT_AUTHOR_FNAME]' => esc_html__('Parses to the first name of the event author.', 'event_espresso'),
-            '[EVENT_AUTHOR_LNAME]' => esc_html__('Parses to the last name of the event author.', 'event_espresso'),
+        $this->_shortcodes = [
+            '[EVENT_AUTHOR_FNAME]'           => esc_html__(
+                'Parses to the first name of the event author.',
+                'event_espresso'
+            ),
+            '[EVENT_AUTHOR_LNAME]'           => esc_html__(
+                'Parses to the last name of the event author.',
+                'event_espresso'
+            ),
             '[EVENT_AUTHOR_FORMATTED_EMAIL]' => esc_html__(
                 'Parses to a formatted email address of the event author (fname lname &lt;email@address.com&gt;).  <strong>NOTE:</strong> If the event author has not filled out their WordPress user profile then the organization name will be used as the "From" name.',
                 'event_espresso'
             ),
-            '[EVENT_AUTHOR_EMAIL]' => esc_html__(
+            '[EVENT_AUTHOR_EMAIL]'           => esc_html__(
                 'Parses to the unformatted email address of the event author',
                 'event_espresso'
             ),
-        );
+        ];
     }
 
 
     /**
      * @param string $shortcode
      * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _parser($shortcode)
     {
@@ -75,7 +76,7 @@ class EE_Event_Author_Shortcodes extends EE_Shortcodes
             case '[EVENT_AUTHOR_FNAME]':
                 $fname = ! empty($recipient) ? $recipient->fname : null;
                 if (empty($fname) && ! empty($event)) {
-                    $user = $this->_get_author_for_event($event);
+                    $user  = $this->_get_author_for_event($event);
                     $fname = $user->first_name;
                 }
                 return $fname;
@@ -83,7 +84,7 @@ class EE_Event_Author_Shortcodes extends EE_Shortcodes
             case '[EVENT_AUTHOR_LNAME]':
                 $lname = ! empty($recipient) ? $recipient->lname : null;
                 if (empty($lname) && ! empty($event)) {
-                    $user = $this->_get_author_for_event($event);
+                    $user  = $this->_get_author_for_event($event);
                     $lname = $user->last_name;
                 }
                 return $lname;
@@ -99,7 +100,7 @@ class EE_Event_Author_Shortcodes extends EE_Shortcodes
                     $email = null;
                 }
                 if (empty($email) && ! empty($event)) {
-                    $user = $this->_get_author_for_event($event);
+                    $user  = $this->_get_author_for_event($event);
                     $email = ! empty($user->first_name)
                         ? $user->first_name . ' ' . $user->last_name . '<' . $user->user_email . '>'
                         : EE_Registry::instance()->CFG->organization->get_pretty(
@@ -111,8 +112,8 @@ class EE_Event_Author_Shortcodes extends EE_Shortcodes
             case '[EVENT_AUTHOR_EMAIL]':
                 $email = ! empty($recipient) ? $recipient->admin_email : null;
                 if (empty($email) && ! empty($event)) {
-                    $user = $this->_get_author_for_event($event);
-                    $email = $user->user_email;
+                    $user  = $this->_get_author_for_event($event);
+                    $email = $user instanceof WP_User ? $user->user_email : '';
                 }
                 return $email;
 
@@ -127,12 +128,12 @@ class EE_Event_Author_Shortcodes extends EE_Shortcodes
      *
      * @param EE_Event $event
      *
-     * @return WP_User
+     * @return WP_User|false
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     private function _get_author_for_event(EE_Event $event)
     {
-        $author_id = $event->wp_user();
-        $user_data = get_userdata((int) $author_id);
-        return $user_data;
+        return get_userdata($event->wp_user());
     }
 }

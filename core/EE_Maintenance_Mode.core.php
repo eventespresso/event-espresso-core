@@ -107,6 +107,7 @@ class EE_Maintenance_Mode implements ResettableInterface
     public static function reset(): ?EE_Maintenance_Mode
     {
         self::instance()->set_maintenance_mode_if_db_old();
+        self::instance()->initialize();
         return self::instance();
     }
 
@@ -118,13 +119,7 @@ class EE_Maintenance_Mode implements ResettableInterface
     {
         $this->loader                = $loader;
         $this->request               = $request;
-        $this->current_user_is_admin = current_user_can('administrator');
-        $this->status                = $this->loadStatusFromDatabase();
-        $this->admin_status          = $this->setAdminStatus($this->status);
-        // now make sure the status is set correctly everywhere
-        $this->update_db = false;
-        $this->set_maintenance_level($this->status);
-        $this->update_db = true;
+        $this->initialize();
 
         // if M-Mode level 2 is engaged, we still need basic assets loaded
         add_action('wp_enqueue_scripts', [$this, 'load_assets_required_for_m_mode']);
@@ -134,6 +129,17 @@ class EE_Maintenance_Mode implements ResettableInterface
         add_action('admin_page_access_denied', [$this, 'redirect_to_maintenance']);
         // add powered by EE msg
         add_action('shutdown', [$this, 'display_maintenance_mode_notice']);
+    }
+
+
+    private function initialize(): void
+    {
+        $this->current_user_is_admin = current_user_can('administrator');
+        // now make sure the status is set correctly everywhere
+        // (but don't update the db else we'll get into an infinite loop of updates)
+        $this->update_db = false;
+        $this->set_maintenance_level($this->loadStatusFromDatabase());
+        $this->update_db = true;
     }
 
 
@@ -153,19 +159,19 @@ class EE_Maintenance_Mode implements ResettableInterface
      *      EE_Maintenance_Mode::STATUS_FULL_SITE => frontend and backend maintenance mode
      *
      * @param int $status
-     * @return int
+     * @return void
      * @since 5.0.12.p
      */
-    private function setAdminStatus(int $status): int
+    private function setAdminStatus(int $status)
     {
         if (
             $status === EE_Maintenance_Mode::STATUS_PUBLIC_ONLY
             && $this->current_user_is_admin
             && ($this->request->isAjax() || ! $this->request->isAdmin())
         ) {
-            return EE_Maintenance_Mode::STATUS_OFF;
+            $status = EE_Maintenance_Mode::STATUS_OFF;
         }
-        return $status;
+        $this->admin_status = $status;
     }
 
 
@@ -192,8 +198,10 @@ class EE_Maintenance_Mode implements ResettableInterface
      */
     public function set_maintenance_mode_if_db_old(): bool
     {
-        $this->loader->getShared('Data_Migration_Manager');
-        if (EE_Data_Migration_Manager::instance()->check_for_applicable_data_migration_scripts()) {
+        /** @var EE_Data_Migration_Manager $data_migration_manager */
+        $data_migration_manager = $this->loader->getShared(EE_Data_Migration_Manager::class );
+        $scripts_that_should_run = $data_migration_manager->check_for_applicable_data_migration_scripts();
+        if (! empty($scripts_that_should_run)) { //  && $this->status !== EE_Maintenance_Mode::STATUS_FULL_SITE
             $this->activateFullSiteMaintenanceMode();
             return true;
         }
@@ -249,7 +257,7 @@ class EE_Maintenance_Mode implements ResettableInterface
     {
         DbStatus::setOnline();
         // disable maintenance mode for admins, otherwise enable public only maintenance mode
-        if ($this->admin_status === EE_Maintenance_Mode::STATUS_OFF) {
+        if ($this->current_user_is_admin) {
             MaintenanceStatus::disableMaintenanceMode();
         } else {
             MaintenanceStatus::setPublicOnlyMaintenanceMode();
@@ -290,6 +298,8 @@ class EE_Maintenance_Mode implements ResettableInterface
 
     private function updateMaintenaceModeStatus(int $status)
     {
+        $this->status = $status;
+        $this->setAdminStatus($status);
         if (! $this->update_db) {
             return;
         }

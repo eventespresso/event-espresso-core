@@ -1,6 +1,8 @@
 <?php
 
-class EE_Boolean_Field extends EE_Integer_Field
+use EventEspresso\core\services\orm\model_field\SchemaType;
+
+class EE_Boolean_Field extends EE_Model_Field_Base
 {
     /**
      * @param string $table_column
@@ -11,7 +13,7 @@ class EE_Boolean_Field extends EE_Integer_Field
     public function __construct($table_column, $nicename, $nullable, $default_value = null)
     {
         parent::__construct($table_column, $nicename, $nullable, $default_value);
-        $this->setSchemaType('boolean');
+        $this->setSchemaType(SchemaType::BOOLEAN);
     }
 
     /**

@@ -24,7 +24,7 @@ class Read
      * @param string          $version
      * @return EE_Config|WP_Error
      */
-    public static function handleRequest(WP_REST_Request $request, $version)
+    public static function handleRequest(WP_REST_Request $request, string $version)
     {
         $cap = EE_Restriction_Generator_Base::get_default_restrictions_cap();
         if (EE_Capabilities::instance()->current_user_can($cap, 'read_over_api')) {
@@ -39,7 +39,7 @@ class Read
                     ),
                     $cap
                 ),
-                array('status' => 403)
+                ['status' => 403]
             );
         }
     }
@@ -48,16 +48,16 @@ class Read
     /**
      * Handles the request for public site info
      *
-     * @global                 $wp_json_basic_auth_success       boolean set by the basic auth plugin, indicates if the
-     *                                                           current user could be authenticated using basic auth
-     *                                                           data
-     * @global                 $wp_json_basic_auth_received_data boolean set by the basic auth plugin, indicates if
-     *                                                           basic auth data was somehow received
      * @param WP_REST_Request  $request
      * @param string           $version
      * @return array|WP_Error
+     * @global                 $wp_json_basic_auth_received_data boolean set by the basic auth plugin, indicates if
+     *                                                           basic auth data was somehow received
+     * @global                 $wp_json_basic_auth_success       boolean set by the basic auth plugin, indicates if the
+     *                                                           current user could be authenticated using basic auth
+     *                                                           data
      */
-    public static function handleRequestSiteInfo(WP_REST_Request $request, $version)
+    public static function handleRequestSiteInfo(WP_REST_Request $request, string $version)
     {
         global $wp_json_basic_auth_success, $wp_json_basic_auth_received_data;
         $insecure_usage_of_basic_auth = apply_filters(
@@ -83,19 +83,19 @@ class Read
         }
         return apply_filters(
             'FHEE__EventEspresso_core_libraries_rest_api_controllers_config__handleRequestSiteInfo__return_val',
-            array(
-                'default_timezone' => array(
+            [
+                'default_timezone' => [
                     'pretty' => EEH_DTT_Helper::get_timezone_string_for_display(),
                     'string' => get_option('timezone_string'),
                     'offset' => EEH_DTT_Helper::get_site_timezone_gmt_offset(),
-                ),
+                ],
                 'default_currency' => EE_Config::instance()->currency,
-                'authentication'   => array(
+                'authentication'   => [
                     'received_basic_auth_data'     => (bool) $wp_json_basic_auth_received_data,
                     'insecure_usage_of_basic_auth' => (bool) $insecure_usage_of_basic_auth,
                     'warning'                      => $warning,
-                ),
-            )
+                ],
+            ]
         );
     }
 }

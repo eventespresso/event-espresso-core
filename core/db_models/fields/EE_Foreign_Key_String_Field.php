@@ -5,9 +5,9 @@ class EE_Foreign_Key_String_Field extends EE_Foreign_Key_Field_Base
     /**
      * Whether the value should be converted to uppercase on insertion.
      *
-     * @var boolean
+     * @var bool
      */
-    protected $is_uppercase;
+    protected bool $is_uppercase;
 
 
     /**
@@ -19,7 +19,7 @@ class EE_Foreign_Key_String_Field extends EE_Foreign_Key_Field_Base
      *                                       Basically its the model class's name without the "EEM_"
      * @param boolean         $is_uppercase  Whether the value should be converted to uppercase on insertion.
      */
-    public function __construct($table_column, $nicename, $nullable, $default_value, $model_name, $is_uppercase = true)
+    public function __construct($table_column, $nicename, $nullable, $default_value, $model_name, bool $is_uppercase = true)
     {
         $this->is_uppercase = $is_uppercase;
         parent::__construct($table_column, $nicename, $nullable, $default_value, $model_name);

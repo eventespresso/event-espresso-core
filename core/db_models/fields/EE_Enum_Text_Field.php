@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\services\orm\model_field\SchemaType;
+
 /**
  * Class EE_Enum_Text_Field
  * Description
@@ -20,11 +22,11 @@ class EE_Enum_Text_Field extends EE_Text_Field_Base
      * @param mixed   $default_value
      * @param array   $allowed_enum_values keys are values to be used in the DB, values are how they should be displayed
      */
-    public function __construct($table_column, $nice_name, $nullable, $default_value, $allowed_enum_values)
+    public function __construct($table_column, $nice_name, $nullable, $default_value, array $allowed_enum_values)
     {
         $this->_allowed_enum_values = (array) $allowed_enum_values;
         parent::__construct($table_column, $nice_name, $nullable, $default_value);
-        $this->setSchemaType('object');
+        $this->setSchemaType(SchemaType::OBJECT);
     }
 
 
@@ -34,7 +36,7 @@ class EE_Enum_Text_Field extends EE_Text_Field_Base
      *
      * @return array
      */
-    protected function _allowed_enum_values()
+    protected function _allowed_enum_values(): array
     {
         return (array) apply_filters(
             'FHEE__EE_Enum_Text_Field___allowed_enum_options',
@@ -113,7 +115,7 @@ class EE_Enum_Text_Field extends EE_Text_Field_Base
                     esc_html__('%s - the value in the database.', 'event_espresso'),
                     $this->get_nicename()
                 ),
-                'type'        => 'string',
+                'type'        => SchemaType::STRING,
                 'enum'        => array_keys($this->_allowed_enum_values),
             ],
             'pretty' => [
@@ -121,7 +123,7 @@ class EE_Enum_Text_Field extends EE_Text_Field_Base
                     esc_html__('%s - the value for display.', 'event_espresso'),
                     $this->get_nicename()
                 ),
-                'type'        => 'string',
+                'type'        => SchemaType::STRING,
                 'enum'        => array_values($this->_allowed_enum_values),
                 'read_only'   => true,
             ],

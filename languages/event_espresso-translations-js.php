@@ -141,7 +141,7 @@ $generated_i18n_strings = array(
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:75
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/details/useBulkEditFormConfig.ts:48
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:42
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:198
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:191
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:48
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:42
 	__( 'Name', 'event_espresso' ),
@@ -149,7 +149,7 @@ $generated_i18n_strings = array(
 	// Reference: domains/core/admin/blocks/src/event/controls/SelectField.tsx:19
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:80
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/details/useBulkEditFormConfig.ts:54
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:203
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:196
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:54
 	// Reference: packages/tpc/src/components/table/useHeaderRowGenerator.ts:47
 	__( 'Description', 'event_espresso' ),
@@ -260,7 +260,7 @@ $generated_i18n_strings = array(
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:110
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/details/useBulkEditFormConfig.ts:107
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:233
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:226
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:106
 	__( 'Details', 'event_espresso' ),
 
@@ -276,12 +276,12 @@ $generated_i18n_strings = array(
 	__( 'Set to 0 to close registration or leave blank for no limit.', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:129
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:171
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:166
 	__( 'Trash', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:71
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/details/useBulkEditFormConfig.ts:44
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:194
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:187
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:44
 	__( 'Basics', 'event_espresso' ),
 
@@ -292,12 +292,12 @@ $generated_i18n_strings = array(
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:92
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:53
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:215
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:208
 	__( 'Start Date', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:99
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:67
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:222
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:215
 	__( 'End Date', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/DateRegistrationsLink.tsx:25
@@ -317,10 +317,10 @@ $generated_i18n_strings = array(
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/DatesList.tsx:38
 	__( 'loading event dates…', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/DatesListButtons.tsx:22
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/DatesListButtons.tsx:20
 	__( 'Add a date or a ticket in order to use Ticket Assignment Manager', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/DatesListButtons.tsx:32
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/DatesListButtons.tsx:30
 	__( 'Ticket Assignments', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/actionsMenu/AssignTicketsButton.tsx:25
@@ -363,18 +363,18 @@ $generated_i18n_strings = array(
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DeleteDatetime.tsx:33
 	__( 'delete', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/actions/Actions.tsx:36
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:42
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/actions/Actions.tsx:34
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:39
 	// Reference: packages/ui-components/src/bulkEdit/BulkActions.tsx:43
 	__( 'bulk actions', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/actions/Actions.tsx:40
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/actions/Actions.tsx:38
 	__( 'edit datetime details', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/actions/Actions.tsx:44
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/actions/Actions.tsx:42
 	__( 'delete datetimes', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/actions/Actions.tsx:44
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/actions/Actions.tsx:42
 	__( 'trash datetimes', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/delete/Delete.tsx:14
@@ -828,47 +828,47 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:103
 	__( 'Set to 0 to stop sales, or leave blank for no limit.', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:114
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:109
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:119
 	__( 'Number of Uses', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:120
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:115
 	__( 'Controls the total number of times this ticket can be used, regardless of the number of dates it is assigned to.', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:124
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:119
 	__( 'Example: A ticket might have access to 4 different dates, but setting this field to 2 would mean that the ticket could only be used twice. Leave blank for no limit.', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:132
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:127
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:127
 	__( 'Minimum Quantity', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:137
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:132
 	__( 'The minimum quantity that can be selected for this ticket. Use this to create ticket bundles or graduated pricing.', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:141
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:136
 	__( 'Leave blank for no minimum.', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:147
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:142
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:135
 	__( 'Maximum Quantity', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:153
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:148
 	__( 'The maximum quantity that can be selected for this ticket. Use this to create ticket bundles or graduated pricing.', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:157
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:152
 	__( 'Leave blank for no maximum.', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:163
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:158
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:144
 	__( 'Required Ticket', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:165
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:160
 	__( 'If enabled, the ticket must be selected and will appear first in ticket lists.', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:177
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:172
 	__( 'Visibility', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:211
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:204
 	__( 'Ticket Sales', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:95
@@ -919,16 +919,16 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:39
 	__( 'copy ticket', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:46
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:43
 	__( 'edit ticket details', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:50
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:47
 	__( 'delete tickets', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:50
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:47
 	__( 'trash tickets', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:54
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:51
 	__( 'edit ticket prices', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/delete/Delete.tsx:14

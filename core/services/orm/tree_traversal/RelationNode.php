@@ -24,31 +24,24 @@ use ReflectionException;
  */
 class RelationNode extends BaseNode
 {
-    /**
-     * @var int
-     */
-    protected $count;
+    protected ?int $count = null;
 
     /**
      * @var string|int
      */
     protected $id;
 
-    /**
-     * @var EEM_Base
-     */
-    protected $main_model;
+    protected EEM_Base $main_model;
 
     /**
      * @var ModelObjNode[]
      */
-    protected $nodes;
+    protected array $nodes;
 
-    /**
-     * @var EEM_Base
-     */
-    protected $related_model;
+    protected EEM_Base $related_model;
 
+    public ?string $main_model_name = null;
+    public ?string $related_model_name = null;
 
 
     /**
@@ -297,12 +290,12 @@ class RelationNode extends BaseNode
      */
     public function __sleep()
     {
-        $this->m  = $this->main_model->get_this_model_name();
-        $this->rm = $this->related_model->get_this_model_name();
+        $this->main_model_name  = $this->main_model->get_this_model_name();
+        $this->related_model_name = $this->related_model->get_this_model_name();
         return array_merge(
             [
-                'm',
-                'rm',
+                'main_model_name',
+                'related_model_name',
                 'id',
                 'count',
                 'nodes',
@@ -323,8 +316,8 @@ class RelationNode extends BaseNode
      */
     public function __wakeup()
     {
-        $this->main_model    = EE_Registry::instance()->load_model($this->m);
-        $this->related_model = EE_Registry::instance()->load_model($this->rm);
+        $this->main_model    = EE_Registry::instance()->load_model($this->main_model_name);
+        $this->related_model = EE_Registry::instance()->load_model($this->related_model_name);
         parent::__wakeup();
     }
 }

@@ -495,14 +495,14 @@ class Events_Admin_List_Table extends EE_Admin_List_Table
 
     /**
      * @param EE_Event $event
-     * @return float
+     * @return string
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function column_tkts_sold(EE_Event $event): float
+    public function column_tkts_sold(EE_Event $event): string
     {
         $content = EEM_Ticket::instance()->sum([['Datetime.EVT_ID' => $event->ID()]], 'TKT_sold');
         return $this->columnContent('tkts_sold', $content);

@@ -3,7 +3,6 @@
 use EventEspresso\core\services\Benchmark;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\RequestInterface;
-use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 /**
  * Class EEH_Debug_Tools
@@ -186,7 +185,7 @@ class EEH_Debug_Tools
      */
     public static function ee_plugin_activation_errors()
     {
-        if (WP_DEBUG) {
+        if (defined('WP_DEBUG') && WP_DEBUG) {
             $activation_errors = ob_get_contents();
             if (empty($activation_errors)) {
                 return;
@@ -325,7 +324,7 @@ class EEH_Debug_Tools
         $debug_index = '',
         $debug_key = 'EE_DEBUG_SPCO'
     ) {
-        if (WP_DEBUG) {
+        if (defined('WP_DEBUG') && WP_DEBUG) {
             $debug_key = $debug_key . '_' . EE_Session::instance()->id();
             $debug_data = get_option($debug_key, array());
             $default_data = array(
@@ -408,7 +407,7 @@ class EEH_Debug_Tools
         if ($die) {
             die($result);
         }
-        echo wp_kses($result, AllowedTags::getWithFormTags());
+        echo defined('WP_DEBUG') && WP_DEBUG ? $result : '';
     }
 
 
@@ -546,10 +545,14 @@ class EEH_Debug_Tools
     protected static function pre_span($var)
     {
         ob_start();
-        var_dump($var);
+        if ($var instanceof EE_Base_class) {
+            $var->debug();
+        } else {
+            var_dump($var);
+        }
         $var = ob_get_clean();
         if (EEH_Debug_Tools::plainOutput()) {
-            return str_replace("\n", '', $var);
+            return rtrim($var, "\n");
         }
         $style =[
             'background: #334',
@@ -612,7 +615,7 @@ class EEH_Debug_Tools
         if ($die) {
             die($result);
         }
-        echo wp_kses($result, AllowedTags::getWithFormTags());
+        echo defined('WP_DEBUG') && WP_DEBUG ? $result : '';
     }
 
 

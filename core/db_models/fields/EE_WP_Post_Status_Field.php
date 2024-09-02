@@ -8,11 +8,11 @@ class EE_WP_Post_Status_Field extends EE_Enum_Text_Field
     /**
      * constructor
      *
-     * @param string  $table_column       column on table
-     * @param string  $nicename           nice name for column(field)
-     * @param bool    $nullable           is this field nullable
-     * @param string  $default_value      default status
-     * @param array   $new_stati          If additional stati are to be used other than the default WP statuses then
+     * @param string $table_column        column on table
+     * @param string $nicename            nice name for column(field)
+     * @param bool   $nullable            is this field nullable
+     * @param string $default_value       default status
+     * @param array  $new_stati           If additional stati are to be used other than the default WP statuses then
      *                                    they can be registered via this property.  The format of the array should be
      *                                    as follows: array(
      *                                    'status_reference' => array(
@@ -31,10 +31,8 @@ class EE_WP_Post_Status_Field extends EE_Enum_Text_Field
      *                                    )
      *                                    )
      * @link http://codex.wordpress.org/Function_Reference/register_post_status for more info
-     * @param boolean $store_in_db_as_int By default, enums are stored as STRINGS in the DB. However, if this var is
-     *                                    set to true, it will be stored as an INT
      */
-    public function __construct($table_column, $nicename, $nullable, $default_value, $new_stati = array())
+    public function __construct($table_column, $nicename, $nullable, $default_value, array $new_stati = [])
     {
         $this->_register_new_stati($new_stati);
         $this->_set_allowed_enum_values();
@@ -46,22 +44,29 @@ class EE_WP_Post_Status_Field extends EE_Enum_Text_Field
      * This registers any new statuses sent via the $new_stati array on construct
      *
      * @access protected
-     * @param  array $new_stati statuses
+     * @param array $new_stati statuses
      * @return void
      */
     protected function _register_new_stati($new_stati)
     {
-
         foreach ((array) $new_stati as $status_key => $status_args) {
-            $args = array(
-                'label'                     => isset($status_args['label']) ? $status_args['label'] : $status_key,
-                'public'                    => isset($status_args['public']) && is_bool($status_args['public']) ? $status_args['public'] : true,
-                'exclude_from_search'       => isset($status_args['exclude_from_search']) && is_bool($status_args['exclude_from_search']) ? $status_args['exclude_from_search'] : false,
-                'show_in_admin_all_list'    => isset($status_args['show_in_admin_all_list']) && is_bool($status_args['show_in_admin_all_list']) ? $status_args['show_in_admin_all_list'] : false,
-                'show_in_admin_status_list' => isset($status_args['show_in_admin_status_list']) && is_bool($status_args['show_in_admin_status_list']) ? $status_args['show_in_admin_status_list'] : true,
-                'label_count'               => isset($status_args['label_count']) ? $status_args['label_count'] : '',
-            );
-            register_post_status($status_key, $status_args);
+            $args = [
+                'label'                     => $status_args['label'] ?? $status_key,
+                'public'                    => ! (isset($status_args['public']) && is_bool($status_args['public']))
+                                               || $status_args['public'],
+                'exclude_from_search'       => isset($status_args['exclude_from_search'])
+                                               && is_bool($status_args['exclude_from_search'])
+                                               && $status_args['exclude_from_search'],
+                'show_in_admin_all_list'    => isset($status_args['show_in_admin_all_list'])
+                                               && is_bool($status_args['show_in_admin_all_list'])
+                                               && $status_args['show_in_admin_all_list'],
+                'show_in_admin_status_list' => ! (
+                        isset($status_args['show_in_admin_status_list'])
+                        && is_bool($status_args['show_in_admin_status_list'])
+                    ) || $status_args['show_in_admin_status_list'],
+                'label_count'               => $status_args['label_count'] ?? '',
+            ];
+            register_post_status($status_key, $args);
         }
     }
 
@@ -83,6 +88,7 @@ class EE_WP_Post_Status_Field extends EE_Enum_Text_Field
         }
     }
 
+
     /**
      * Before calling parent, first double-checks our list of acceptable post
      * types is up-to-date
@@ -100,16 +106,16 @@ class EE_WP_Post_Status_Field extends EE_Enum_Text_Field
 
     // helper methods for getting various $wp_post_statuses stuff.
 
+
     /**
      * This just returns the status object for the given status
      *
-     * @access public
+     * @param string $status What status object you want
+     * @return object|null         the status object or FALSE if it doesn't exist.
      * @see    wp_register_post_status in wp-includes/post.php for a list of properties of the status object
-     * @param  string $status What status object you want
-     * @return std_object         the status object or FALSE if it doesn't exist.
      */
     public function get_status_object($status)
     {
-        return isset($this->_wp_post_stati[ $status ]) ? $this->_wp_post_stati[ $status ] : false;
+        return $this->_wp_post_stati[ $status ] ?? null;
     }
 }

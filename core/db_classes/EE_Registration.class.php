@@ -142,7 +142,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
                 }
                 break;
             case 'STS_ID':
-                $this->set_status($field_value, $use_default);
+                $this->set_status((string) $field_value, $use_default);
                 break;
             default:
                 parent::set($field_name, $field_value, $use_default);
@@ -175,14 +175,16 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
         bool $use_default = false,
         ?ContextInterface $context = null
     ): bool {
+        // get current REG_Status
+        $old_STS_ID = $this->status_ID();
         $new_STS_ID = (string) apply_filters(
             'AFEE__EE_Registration__set_status__new_STS_ID',
             $new_STS_ID,
             $context,
             $this
         );
-        // get current REG_Status
-        $old_STS_ID = $this->status_ID();
+        // it's still good to allow the parent set method to have a say
+        parent::set('STS_ID', (! empty($new_STS_ID) ? $new_STS_ID : null), $use_default);
         // if status has changed
         if (
             $old_STS_ID !== $new_STS_ID // and that status has actually changed
@@ -190,8 +192,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
             && ! empty($new_STS_ID) // as well as the new status
             && $this->ID() // ensure registration is in the db
         ) {
-            // update internal status first
-            parent::set('STS_ID', $new_STS_ID, $use_default);
             // THEN handle other changes that occur when reg status changes
             // TO approved
             if ($new_STS_ID === RegStatus::APPROVED) {
@@ -210,19 +210,13 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
                     $context
                 );
             }
-            // update status
-            parent::set('STS_ID', $new_STS_ID, $use_default);
             $this->updateIfCanceledOrReinstated($new_STS_ID, $old_STS_ID, $context);
             if ($this->statusChangeUpdatesTransaction($context)) {
                 $this->updateTransactionAfterStatusChange();
             }
             do_action('AHEE__EE_Registration__set_status__after_update', $this, $old_STS_ID, $new_STS_ID, $context);
-            return true;
         }
-        // even though the old value matches the new value, it's still good to
-        // allow the parent set method to have a say
-        parent::set('STS_ID', $new_STS_ID, $use_default);
-        return true;
+        return ! empty($new_STS_ID);
     }
 
 
@@ -305,7 +299,6 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
                 $new_STS_ID,
                 $context
             );
-            return;
         }
     }
 
@@ -1983,7 +1976,10 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      */
     public function transaction(): EE_Transaction
     {
-        $transaction = EEM_Transaction::instance()->get_one_by_ID($this->transaction_ID());
+        $TXN_ID = $this->transaction_ID();
+        $transaction = $TXN_ID
+            ? EEM_Transaction::instance()->get_one_by_ID($TXN_ID)
+            : $this->get_one_from_cache('Transaction');
         if (! $transaction instanceof \EE_Transaction) {
             throw new EntityNotFoundException('Transaction ID', $this->transaction_ID());
         }
@@ -2049,17 +2045,15 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      */
     public function set_reg_code($REG_code, bool $use_default = false)
     {
-        if (empty($REG_code)) {
+        if (! $this->reg_code()) {
+            parent::set('REG_code', $REG_code, $use_default);
+        } elseif (empty($REG_code)) {
             EE_Error::add_error(
                 esc_html__('REG_code can not be empty.', 'event_espresso'),
                 __FILE__,
                 __FUNCTION__,
                 __LINE__
             );
-            return;
-        }
-        if (! $this->reg_code()) {
-            parent::set('REG_code', $REG_code, $use_default);
         } else {
             EE_Error::doing_it_wrong(
                 __CLASS__ . '::' . __FUNCTION__,

@@ -1,28 +1,8 @@
 <?php
 
-/**
- *     Event Espresso
- *     Manage events, sell tickets, and receive payments from your WordPress website.
- *     Copyright (c) 2008-2019 Event Espresso  All Rights Reserved.
- *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
-
 namespace EventEspresso\core\domain\services\converters;
 
 use DomainException;
-use EE_Base_Class;
 use EE_Error;
 use EED_Core_Rest_Api;
 use EEM_Base;
@@ -49,38 +29,29 @@ use WP_REST_Server;
  */
 class RestApiSpoofer
 {
-    /**
-     * @var WP_REST_Server $wp_rest_server
-     */
-    protected $wp_rest_server;
+    protected EED_Core_Rest_Api $rest_module;
 
-    /**
-     * @var Read
-     */
-    protected $rest_controller;
+    protected Read              $rest_controller;
 
-    /**
-     * @var EED_Core_Rest_Api $rest_module
-     */
-    protected $rest_module;
+    protected WP_REST_Server    $wp_rest_server;
 
 
     /**
      * RestApiSpoofer constructor.
      *
-     * @param WP_REST_Server        $wp_rest_server
+     * @param WP_REST_Server    $wp_rest_server
      * @param EED_Core_Rest_Api $rest_module
-     * @param Read                  $rest_api
-     * @param string                $api_version
+     * @param Read              $rest_api
+     * @param string            $api_version
      */
     public function __construct(
         WP_REST_Server $wp_rest_server,
         EED_Core_Rest_Api $rest_module,
         Read $rest_api,
-        $api_version = '4.8.36'
+        string $api_version = '4.8.36'
     ) {
-        $this->wp_rest_server = $wp_rest_server;
-        $this->rest_module = $rest_module;
+        $this->wp_rest_server  = $wp_rest_server;
+        $this->rest_module     = $rest_module;
         $this->rest_controller = $rest_api;
         $this->rest_controller->setRequestedVersion($api_version);
         $this->setUpRestServer();
@@ -96,32 +67,6 @@ class RestApiSpoofer
         do_action('rest_api_init', $this->wp_rest_server);
     }
 
-    /**
-     * @param EEM_Base $model
-     * @param array    $query_params
-     * @param string   $include
-     * @return array
-     * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     * @throws ModelConfigurationException
-     * @throws ReflectionException
-     * @throws RestException
-     * @throws RestPasswordIncorrectException
-     * @throws RestPasswordRequiredException
-     * @throws UnexpectedEntityException
-     * @throws DomainException
-     * @since 5.0.0.p
-     */
-    public function getOneApiResult(EEM_Base $model, array $query_params, $include = '')
-    {
-        if (! array_key_exists('limit', $query_params)) {
-            $query_params['limit'] = 1;
-        }
-        $result = $this->getApiResults($model, $query_params, $include);
-        return is_array($result) && isset($result[0]) ? $result[0] : [];
-    }
 
     /**
      * @param EEM_Base $model
@@ -141,7 +86,35 @@ class RestApiSpoofer
      * @throws DomainException
      * @since 5.0.0.p
      */
-    public function getApiResults(EEM_Base $model, array $query_params, $include = '')
+    public function getOneApiResult(EEM_Base $model, array $query_params, string $include = '')
+    {
+        if (! array_key_exists('limit', $query_params)) {
+            $query_params['limit'] = 1;
+        }
+        $result = $this->getApiResults($model, $query_params, $include);
+        return $result[0] ?? [];
+    }
+
+
+    /**
+     * @param EEM_Base $model
+     * @param array    $query_params
+     * @param string   $include
+     * @return array
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     * @throws ModelConfigurationException
+     * @throws ReflectionException
+     * @throws RestException
+     * @throws RestPasswordIncorrectException
+     * @throws RestPasswordRequiredException
+     * @throws UnexpectedEntityException
+     * @throws DomainException
+     * @since 5.0.0.p
+     */
+    public function getApiResults(EEM_Base $model, array $query_params, string $include = ''): array
     {
         if (! array_key_exists('caps', $query_params)) {
             $query_params['caps'] = EEM_Base::caps_read_admin;
@@ -150,11 +123,11 @@ class RestApiSpoofer
             $query_params['default_where_conditions'] = 'none';
         }
         /** @type array $results */
-        $results = $model->get_all_wpdb_results($query_params);
+        $results      = $model->get_all_wpdb_results($query_params);
         $rest_request = new WP_REST_Request();
         $rest_request->set_param('include', $include);
         $rest_request->set_param('caps', 'edit');
-        $nice_results = array();
+        $nice_results = [];
         foreach ($results as $result) {
             $nice_results[] = $this->rest_controller->createEntityFromWpdbResult(
                 $model,
@@ -169,16 +142,12 @@ class RestApiSpoofer
     /**
      * @param string $endpoint
      * @return array
-     * @throws EE_Error
      * @since 5.0.0.p
      */
-    public function getModelSchema($endpoint)
+    public function getModelSchema(string $endpoint)
     {
         $response = $this->wp_rest_server->dispatch(
-            new WP_REST_Request(
-                'OPTIONS',
-                "/ee/v4.8.36/{$endpoint}"
-            )
+            new WP_REST_Request('OPTIONS', "/ee/v4.8.36/$endpoint")
         );
         return $response->get_data();
     }

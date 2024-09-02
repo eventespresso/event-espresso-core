@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\services\orm\model_field\SchemaType;
+
 /**
  * Serialized text field should basically: accept either an array or serialized text as input.
  * When initially set by client code (ie, not EEM_Base or children), the value should remain an array.
@@ -17,7 +19,7 @@ class EE_Serialized_Text_Field extends EE_Text_Field_Base
     public function __construct($table_column, $nicename, $nullable, $default_value = null)
     {
         parent::__construct($table_column, $nicename, $nullable, $default_value);
-        $this->setSchemaType(array('object','string'));
+        $this->setSchemaType([SchemaType::OBJECT, SchemaType::STRING]);
     }
 
 
@@ -32,18 +34,21 @@ class EE_Serialized_Text_Field extends EE_Text_Field_Base
         return maybe_serialize($value_of_field_on_model_object);
     }
 
+
     public function prepare_for_set($value_inputted_for_field_on_model_object)
     {
-        $value_inputted_for_field_on_model_object = EEH_Array::maybe_unserialize($value_inputted_for_field_on_model_object);
+        $value_inputted_for_field_on_model_object =
+            EEH_Array::maybe_unserialize($value_inputted_for_field_on_model_object);
         if (is_string($value_inputted_for_field_on_model_object)) {
             return parent::prepare_for_set($value_inputted_for_field_on_model_object);
         }
         if (is_array($value_inputted_for_field_on_model_object)) {
-            return array_map(array($this, 'prepare_for_set'), $value_inputted_for_field_on_model_object);
+            return array_map([$this, 'prepare_for_set'], $value_inputted_for_field_on_model_object);
         }
         // so they passed NULL or an INT or something wack
         return $value_inputted_for_field_on_model_object;
     }
+
 
     /**
      * Value provided should definetely be a serialized string. We should unserialize into an array
@@ -55,6 +60,7 @@ class EE_Serialized_Text_Field extends EE_Text_Field_Base
     {
         return EEH_Array::maybe_unserialize($value_found_in_db_for_model_object);
     }
+
 
     /**
      * Gets a string representation of the array

@@ -155,7 +155,7 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step
         // because we will do that in process_reg_step() after setting some more triggers
         return $transaction_processor->update_transaction_and_registrations_after_checkout_or_payment(
             $this->checkout->transaction,
-            $this->checkout->payment,
+            $this->checkout->payment instanceof EE_Payment ? $this->checkout->payment : null,
             $this->checkout->reg_cache_where_params,
             false
         );

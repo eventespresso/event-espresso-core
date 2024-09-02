@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\services\orm\model_field\SchemaType;
+
 /**
  * Parent field class for any fields which accept a parameter of a model name.
  * Originally this was just foreign keys, but EE_Any_Foreign_Model_name_Field (which works
@@ -29,6 +31,7 @@ abstract class EE_Field_With_Model_Name extends EE_Model_Field_Base
     {
         $this->_model_name_pointed_to = (array) $model_name;
         parent::__construct($table_column, $nicename, $nullable, $default_value);
+        $this->setSchemaType(SchemaType::STRING);
     }
 
 

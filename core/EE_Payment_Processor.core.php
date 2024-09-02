@@ -20,7 +20,7 @@ EE_Registry::instance()->load_class('Processor_Base');
  */
 class EE_Payment_Processor extends EE_Processor_Base implements ResettableInterface
 {
-    private static ?EE_Payment_Processor $_instance;
+    private static ?EE_Payment_Processor $_instance = null;
 
     private IpnHandler $ipn_handler;
 

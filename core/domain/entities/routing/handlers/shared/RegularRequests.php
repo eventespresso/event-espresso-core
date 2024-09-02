@@ -4,6 +4,7 @@ namespace EventEspresso\core\domain\entities\routing\handlers\shared;
 
 use EE_Dependency_Map;
 use EventEspresso\core\domain\entities\routing\handlers\admin\AdminRoute;
+use EventEspresso\core\domain\entities\routing\handlers\admin\EspressoBatchJob;
 use EventEspresso\core\domain\entities\routing\handlers\admin\EspressoEventEditor;
 use EventEspresso\core\domain\entities\routing\handlers\admin\EspressoEventsAdmin;
 use EventEspresso\core\domain\entities\routing\handlers\admin\EspressoLegacyAdmin;
@@ -147,6 +148,7 @@ class RegularRequests extends PrimaryRoute
             GQLRequests::class          => $default_with_manifest,
             // admin dependencies
             AdminRoute::class           => AdminRoute::getDefaultDependencies(),
+            EspressoBatchJob::class     => AdminRoute::getDefaultDependencies(),
             EspressoEventsAdmin::class  => AdminRoute::getDefaultDependencies(),
             EspressoEventEditor::class  => AdminRoute::getDefaultDependencies(),
             EspressoLegacyAdmin::class  => AdminRoute::getDefaultDependencies(),

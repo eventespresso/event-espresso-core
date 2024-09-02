@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\services\orm\model_field\SchemaType;
+
 /**
  * EE_Full_HTML_Field
  * Any HTML can be stored in this field for any user. Note: regardless of the users'
@@ -22,7 +24,7 @@ class EE_Full_HTML_Field extends EE_Text_Field_Base
     public function __construct($table_column, $nicename, $nullable, $default_value = null)
     {
         parent::__construct($table_column, $nicename, $nullable, $default_value);
-        $this->setSchemaType('object');
+        $this->setSchemaType(SchemaType::STRING);
     }
 
 
@@ -53,14 +55,14 @@ class EE_Full_HTML_Field extends EE_Text_Field_Base
                     esc_html__('%s - the value in the database.', 'event_espresso'),
                     $this->get_nicename()
                 ),
-                'type'        => 'string',
+                'type'        => SchemaType::STRING,
             ],
             'rendered' => [
                 'description' => sprintf(
                     esc_html__('%s - transformed for display.', 'event_espresso'),
                     $this->get_nicename()
                 ),
-                'type'        => 'string',
+                'type'        => SchemaType::STRING,
                 'readonly'    => true,
             ],
         ];

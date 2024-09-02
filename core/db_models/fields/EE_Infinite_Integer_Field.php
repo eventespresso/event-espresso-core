@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\services\orm\model_field\SchemaType;
+
 /**
  * For storing integers which can assume the value of INFINITY. They're stored in the DB as -1,
  * but in the code they're delivered as EE_INF (the constant representing Infinity).
@@ -18,7 +20,7 @@ class EE_Infinite_Integer_Field extends EE_Model_Field_Base
     public function __construct($table_column, $nicename, $nullable, $default_value = null)
     {
         parent::__construct($table_column, $nicename, $nullable, $default_value);
-        $this->setSchemaType(['integer', 'null']);
+        $this->setSchemaType([SchemaType::INTEGER, SchemaType::NULL]);
     }
 
 

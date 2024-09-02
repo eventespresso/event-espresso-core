@@ -6,6 +6,7 @@ use EE_Error;
 use EE_Gateway;
 use EE_Payment_Method;
 use EEM_Payment_Method;
+use EventEspresso\core\exceptions\ExceptionLogger;
 use EventEspresso\PaymentMethods\PayPalCommerce\domain\Domain;
 use ReflectionException;
 
@@ -86,6 +87,7 @@ class PayPalLogger
                 PayPalLogger::logInWindow(json_encode($data));
             }
         } catch (ReflectionException|EE_Error $error) {
+            new ExceptionLogger($error);
             return false;
         }
         // Yes, always return true.

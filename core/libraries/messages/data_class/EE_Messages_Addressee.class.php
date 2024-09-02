@@ -303,9 +303,11 @@ class EE_Messages_Addressee extends EE_Base
         if (! empty($this->user_id)) {
             $this->user_id = (int) $this->user_id;
             $user = get_userdata($this->user_id);
-            $this->fname = $user->user_firstname;
-            $this->lname = $user->user_lastname;
-            $this->admin_email = $user->user_email;
+            if ($user instanceof WP_User) {
+                $this->fname = $user->user_firstname;
+                $this->lname = $user->user_lastname;
+                $this->admin_email = $user->user_email;
+            }
         }
     }
 }

@@ -64,11 +64,11 @@ class FeatureFlagsConfig extends JsonDataWordpressOption
             FeatureFlag::USE_EVENT_EDITOR_BULK_EDIT    => $this->domain->isCaffeinated()
                                                             && ! $this->domain->isMultiSite(),
             FeatureFlag::USE_EXPERIMENTAL_RTE          => false,
+            FeatureFlag::USE_PAYMENT_PROCESSOR_FEES    => true,
             FeatureFlag::USE_REG_FORM_BUILDER          => false,
             FeatureFlag::USE_REG_FORM_TICKET_QUESTIONS => false,
             FeatureFlag::USE_REG_OPTIONS_META_BOX      => false,
             FeatureFlag::USE_SPCO_FORM_REFACTOR        => false,
-            FeatureFlag::USE_PAYMENT_PROCESSOR_FEES    => true,
         ];
     }
 
@@ -121,6 +121,7 @@ class FeatureFlagsConfig extends JsonDataWordpressOption
         foreach (FeatureFlagsConfig::$removed as $feature_flag) {
             unset($feature_flags->{$feature_flag});
         }
+        $this->feature_flags = $feature_flags;
         return $this->updateOption($feature_flags);
     }
 

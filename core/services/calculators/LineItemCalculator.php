@@ -25,9 +25,7 @@ class LineItemCalculator
 
     protected DecimalValues $decimal_values;
 
-    protected array $default_query_params = [
-        ['LIN_type' => ['!=', EEM_Line_Item::type_cancellation]],
-    ];
+    protected array $default_query_params = [];
 
 
     /**
@@ -58,6 +56,7 @@ class LineItemCalculator
         $this->debugLog('', 2);
         $this->debugLog(__METHOD__);
         $this->debugLog(str_repeat('*', strlen(__METHOD__)), 2);
+        $this->debugLog(">>> TXN : " . $line_item->TXN_ID(), 2);
         $this->validateLineItemAndType($line_item, EEM_Line_Item::type_total);
         $ticket_line_items = EEH_Line_Item::get_ticket_line_items($line_item);
         if (empty($ticket_line_items)) {
@@ -119,6 +118,7 @@ class LineItemCalculator
                 break;
 
             case EEM_Line_Item::type_sub_line_item:
+            case EEM_Line_Item::type_cancellation:
                 // sub-line-items operate on the total and update both the total AND the pre-tax total
                 [$total, $pretax_total] = $this->recalculateSubLineItem($line_item, $total, $pretax_total, $is_taxable);
                 break;
@@ -130,7 +130,6 @@ class LineItemCalculator
 
             case EEM_Line_Item::type_tax_sub_total:
             case EEM_Line_Item::type_tax:
-            case EEM_Line_Item::type_cancellation:
                 // completely ignore tax totals, tax sub-totals, and cancelled line items
                 // when calculating the pre-tax-total
                 $total = $pretax_total = 0;
@@ -483,6 +482,11 @@ class LineItemCalculator
         bool $save = true
     ): float {
         $pretax_total = $this->decimal_values->roundDecimalValue($pretax_total, $round);
+        $sign = $line_item->type() === EEM_Line_Item::type_cancellation ? -1 : 1;
+        $pretax_total = $sign * $pretax_total;
+        $this->debugLog(' ? ' . __FUNCTION__, 2);
+        $this->debugLog(' ??? ' . $line_item->name() . ' ' . $line_item->type() . ' ' . $line_item->code(), 3);
+        $this->debugLog(" ????? SIGN: $sign  &&  pretax_total: $pretax_total", 3);
         // update and save new total only if incoming value does not match existing value
         if ($line_item->preTaxTotal() !== $pretax_total) {
             $line_item->setPreTaxTotal($pretax_total);
@@ -522,6 +526,11 @@ class LineItemCalculator
     private function updateTotal(EE_Line_Item $line_item, float $total, bool $round = false, bool $save = true): float
     {
         $total = $this->decimal_values->roundDecimalValue($total, $round);
+        $sign = $line_item->type() === EEM_Line_Item::type_cancellation ? -1 : 1;
+        $total = $sign * $total;
+        $this->debugLog(' ? ' . __FUNCTION__, 2);
+        $this->debugLog(' ??? ' . $line_item->name() . ' ' . $line_item->type() . ' ' . $line_item->code(), 3);
+        $this->debugLog(" ????? SIGN: $sign  &&  total: $total", 3);
         // update and save new total only if incoming value does not match existing value
         if ($line_item->total() !== $total) {
             $line_item->set_total($total);
@@ -580,6 +589,11 @@ class LineItemCalculator
         }
         $new_unit_price = $pretax_total / $quantity;
         $new_unit_price = $this->decimal_values->roundDecimalValue($new_unit_price);
+        $sign = $line_item->type() === EEM_Line_Item::type_cancellation ? -1 : 1;
+        $new_unit_price = $sign * $new_unit_price;
+        $this->debugLog(' ? ' . __FUNCTION__, 2);
+        $this->debugLog(' ??? ' . $line_item->name() . ' ' . $line_item->type() . ' ' . $line_item->code(), 3);
+        $this->debugLog(" ????? SIGN: $sign  &&  new_unit_price: $new_unit_price", 3);
         // update and save new total only if incoming value does not match existing value
         if ($line_item->unit_price() !== $new_unit_price) {
             $this->debugLog(' @ ' . __FUNCTION__, 3);

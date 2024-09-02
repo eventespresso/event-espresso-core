@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\services\orm\model_field\SchemaType;
+
 /**
  * Class EE_Enum_Integer_Field
  *
@@ -9,10 +11,7 @@
  */
 class EE_Enum_Integer_Field extends EE_Integer_Field
 {
-    /**
-     * @var array $_allowed_enum_values
-     */
-    public $_allowed_enum_values;
+    public array $_allowed_enum_values;
 
 
     /**
@@ -22,11 +21,11 @@ class EE_Enum_Integer_Field extends EE_Integer_Field
      * @param int     $default_value
      * @param array   $allowed_enum_values keys are values to be used in the DB, values are how they should be displayed
      */
-    public function __construct($table_column, $nicename, $nullable, $default_value, $allowed_enum_values)
+    public function __construct($table_column, $nicename, $nullable, $default_value, array $allowed_enum_values)
     {
         $this->_allowed_enum_values = $allowed_enum_values;
         parent::__construct($table_column, $nicename, $nullable, $default_value);
-        $this->setSchemaType('object');
+        $this->setSchemaType(SchemaType::OBJECT);
     }
 
 
@@ -36,7 +35,7 @@ class EE_Enum_Integer_Field extends EE_Integer_Field
      *
      * @return array
      */
-    protected function _allowed_enum_values()
+    protected function _allowed_enum_values(): array
     {
         return (array) apply_filters(
             'FHEE__EE_Enum_Integer_Field___allowed_enum_options',
@@ -72,7 +71,7 @@ class EE_Enum_Integer_Field extends EE_Integer_Field
                     implode(', ', array_keys($allowed_enum_values)),
                     $value_inputted_for_field_on_model_object
                 );
-                EE_Error::add_error("{$msg}||{$msg2}", __FILE__, __FUNCTION__, __LINE__);
+                EE_Error::add_error("$msg||$msg2", __FILE__, __FUNCTION__, __LINE__);
             }
             return $this->get_default_value();
         }
@@ -103,7 +102,7 @@ class EE_Enum_Integer_Field extends EE_Integer_Field
                     $this->get_nicename()
                 ),
                 'enum'        => array_keys($this->_allowed_enum_values()),
-                'type'        => 'integer',
+                'type'        => SchemaType::INTEGER,
             ],
             'pretty' => [
                 'description' => sprintf(
@@ -111,7 +110,7 @@ class EE_Enum_Integer_Field extends EE_Integer_Field
                     $this->get_nicename()
                 ),
                 'enum'        => array_values($this->_allowed_enum_values()),
-                'type'        => 'string',
+                'type'        => SchemaType::STRING,
                 'read_only'   => true,
             ],
         ];

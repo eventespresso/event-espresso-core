@@ -1187,12 +1187,14 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      */
     public function get_one_by_ID($id)
     {
-        // if no id is passed, just return null
+        // since entities with no ID can still have properties, we need to check the cache for them
+        $cached_value = $this->get_from_entity_map($id);
+        if ($cached_value) {
+            return $cached_value;
+        }
+        // but if no cahced property AND no id is passed, just return null
         if (empty($id)) {
             return null;
-        }
-        if ($this->get_from_entity_map($id)) {
-            return $this->get_from_entity_map($id);
         }
         $model_object = $this->get_one(
             $this->alter_query_params_to_restrict_by_ID(
@@ -2064,6 +2066,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             $allow_blocking,
             $columns_and_ids_for_deleting
         );
+        $rows_deleted = 0;
         if ($deletion_where_query_part) {
             $model_query_info = $this->_create_model_query_info_carrier($query_params);
             $table_aliases    = array_keys($this->_tables);
@@ -2074,8 +2077,6 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                                 . " WHERE "
                                 . $deletion_where_query_part;
             $rows_deleted     = $this->_do_wpdb_query('query', [$SQL]);
-        } else {
-            $rows_deleted = 0;
         }
 
         // Next, make sure those items are removed from the entity map; if they could be put into it at all; and if
@@ -2127,7 +2128,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
          * @param int      $rows_deleted
          */
         do_action('AHEE__EEM_Base__delete__end', $this, $query_params, $rows_deleted, $columns_and_ids_for_deleting);
-        return $rows_deleted;// how many supposedly got deleted
+        return (int) $rows_deleted;// how many supposedly got deleted
     }
 
 

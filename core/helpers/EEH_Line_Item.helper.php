@@ -119,12 +119,12 @@ class EEH_Line_Item
                 'LIN_desc'       => $description,
                 'LIN_unit_price' => 0,
                 'LIN_percent'    => $percentage_amount,
-                'LIN_quantity'   => 1,
                 'LIN_is_taxable' => $taxable,
                 'LIN_total'      => $total,
                 'LIN_type'       => EEM_Line_Item::type_line_item,
                 'LIN_parent'     => $parent_line_item->ID(),
                 'LIN_code'       => $code,
+                'TXN_ID'         => $parent_line_item->TXN_ID(),
             ]
         );
         $line_item = apply_filters(
@@ -378,16 +378,16 @@ class EEH_Line_Item
             $prices = [$default_price];
         }
         foreach ($prices as $price) {
-            $sign        = $price->is_discount() ? -1 : 1;
-            $price_total = $price->is_percent()
-                ? $running_pre_tax_total * $price->amount() / 100
-                : $price->amount() * $qty;
+            $sign = $price->is_discount() ? -1 : 1;
+            $price_amount = $price->amount();
             if ($price->is_percent()) {
-                $percent    = $sign * $price->amount();
+                $price_total = $running_pre_tax_total * $price_amount / 100;
+                $percent    = $sign * $price_amount;
                 $unit_price = 0;
             } else {
+                $price_total = $price_amount * $qty;
                 $percent    = 0;
-                $unit_price = $sign * $price->amount();
+                $unit_price = $sign * $price_amount;
             }
 
             $price_desc = $price->desc();
@@ -400,14 +400,14 @@ class EEH_Line_Item
                 [
                     'LIN_name'       => $price->name(),
                     'LIN_desc'       => $price_desc,
-                    'LIN_quantity'   => $price->is_percent() ? null : $qty,
                     'LIN_is_taxable' => false,
                     'LIN_order'      => $price->order(),
                     'LIN_total'      => $price_total,
                     'LIN_pretax'     => 0,
                     'LIN_unit_price' => $unit_price,
                     'LIN_percent'    => $percent,
-                    'LIN_type'       => $price->is_tax() ? EEM_Line_Item::type_sub_tax
+                    'LIN_type'       => $price->is_tax()
+                        ? EEM_Line_Item::type_sub_tax
                         : EEM_Line_Item::type_sub_line_item,
                     'OBJ_ID'         => $price->ID(),
                     'OBJ_type'       => EEM_Line_Item::OBJ_TYPE_PRICE,
@@ -532,11 +532,11 @@ class EEH_Line_Item
                         $ticket_line_item->name(),
                         current_time(get_option('date_format') . ' ' . get_option('time_format'))
                     ),
-                    'LIN_unit_price' => 0, // $ticket_line_item->unit_price()
+                    'LIN_total'      => 0,
+                    'LIN_unit_price' => 0,
                     'LIN_quantity'   => $qty,
                     'LIN_is_taxable' => $ticket_line_item->is_taxable(),
                     'LIN_order'      => count($ticket_line_item->children()),
-                    'LIN_total'      => 0, // $ticket_line_item->unit_price()
                     'LIN_type'       => EEM_Line_Item::type_cancellation,
                 ]
             );
@@ -842,6 +842,21 @@ class EEH_Line_Item
         ?EE_Transaction $transaction = null,
         ?EE_Event $event = null
     ): EE_Line_Item {
+        // first check if this line item already exists
+        $event_line_item = EEM_Line_Item::instance()->get_one(
+            [
+                [
+                    'LIN_type' => EEM_Line_Item::type_sub_total,
+                    'OBJ_type' => EEM_Line_Item::OBJ_TYPE_EVENT,
+                    'OBJ_ID'   => $event instanceof EE_Event ? $event->ID() : 0,
+                    'TXN_ID'   => $transaction instanceof EE_Transaction ? $transaction->ID() : 0,
+                ],
+            ]
+        );
+        if ($event_line_item instanceof EE_Line_Item) {
+            return $event_line_item;
+        }
+
         $event_line_item = EE_Line_Item::new_instance(
             [
                 'LIN_code' => self::get_event_code($event),
@@ -963,7 +978,7 @@ class EEH_Line_Item
     /**
      * Gets the event line item
      *
-     * @param EE_Line_Item  $grand_total
+     * @param EE_Line_Item  $total_line_item
      * @param EE_Event|null $event
      * @return EE_Line_Item for the event subtotal which is a child of $grand_total
      * @throws EE_Error
@@ -972,31 +987,37 @@ class EEH_Line_Item
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public static function get_event_line_item(EE_Line_Item $grand_total, ?EE_Event $event = null): ?EE_Line_Item
+    public static function get_event_line_item(EE_Line_Item $total_line_item, ?EE_Event $event = null): ?EE_Line_Item
     {
         /** @type EE_Event $event */
         $event           = EEM_Event::instance()->ensure_is_obj($event, true);
         $event_line_item = null;
-        $found           = false;
-        foreach (EEH_Line_Item::get_event_subtotals($grand_total) as $event_line_item) {
+        $event_line_items = EEH_Line_Item::get_event_subtotals($total_line_item);
+        foreach ($event_line_items as $event_line_item) {
             // default event subtotal, we should only ever find this the first time this method is called
-            if (! $event_line_item->OBJ_ID()) {
-                // let's use this! but first... set the event details
-                EEH_Line_Item::set_event_subtotal_details($event_line_item, $event);
-                $found = true;
+            $OBJ_ID = $event_line_item->OBJ_ID();
+            if ($OBJ_ID === $event->ID()) {
+                // found existing line item for this event in the cart, so break out of loop and use this one
                 break;
             }
-            if ($event_line_item->OBJ_ID() === $event->ID()) {
-                // found existing line item for this event in the cart, so break out of loop and use this one
-                $found = true;
+            if (! $OBJ_ID) {
+                // let's use this! but first... set the event details
+                EEH_Line_Item::set_event_subtotal_details($event_line_item, $event);
                 break;
             }
         }
-        if (! $found) {
+        if (! $event_line_item instanceof EE_Line_Item) {
             // there is no event sub-total yet, so add it
-            $pre_tax_subtotal = EEH_Line_Item::get_pre_tax_subtotal($grand_total);
-            // create a new "event" subtotal below that
-            $event_line_item = EEH_Line_Item::create_event_subtotal($pre_tax_subtotal, null, $event);
+            $pre_tax_subtotal = EEH_Line_Item::get_pre_tax_subtotal($total_line_item);
+            // a new "event" subtotal SHOULD have been created
+            $event_subtotals = EEH_Line_Item::get_event_subtotals($total_line_item);
+            $event_line_item = reset($event_subtotals);
+            // but in ccase one wasn't created for some reason...
+            if (! $event_line_item instanceof EE_Line_Item) {
+                // create a new "event" subtotal
+                $txn = $total_line_item->transaction();
+                $event_line_item = EEH_Line_Item::create_event_subtotal($pre_tax_subtotal, $txn, $event);
+            }
             // and set the event details
             EEH_Line_Item::set_event_subtotal_details($event_line_item, $event);
         }
@@ -1687,11 +1708,12 @@ class EEH_Line_Item
             echo '<pre style="padding: 2rem 3rem; color: #00CCFF; background: #363636;">';
         }
         if ($top_level || $indentation) {
+            // echo $top_level ? "$new_line$new_line" : $new_line;
             echo $new_line;
         }
         echo str_repeat('. ', $indentation);
         $breakdown = '';
-        if ($line_item->is_line_item() || $line_item->is_sub_line_item() || $line_item->isSubTax()) {
+        if ($line_item->is_line_item() || $line_item->is_sub_line_item() || $line_item->isTax()) {
             if ($line_item->is_percent()) {
                 $breakdown = "{$line_item->percent()}%";
             } else {
@@ -1699,22 +1721,22 @@ class EEH_Line_Item
             }
         }
         echo wp_kses($line_item->name(), AllowedTags::getAllowedTags());
-        echo " [ ID:{$line_item->ID()} | qty:{$line_item->quantity()} ] {$line_item->type()}";
-        echo " : \${$line_item->total()} : \${$line_item->pretaxTotal()}";
+        echo " [ ID:{$line_item->ID()} · qty:{$line_item->quantity()} ] {$line_item->type()}";
+        echo " · \${$line_item->total()} · \${$line_item->pretaxTotal()}";
         if ($breakdown) {
             echo " ( $breakdown )";
         }
         if ($line_item->is_taxable()) {
             echo '  * taxable';
         }
-        if ($line_item->children()) {
-            foreach ($line_item->children() as $child) {
+        $children = $line_item->children();
+        if ($children) {
+            foreach ($children as $child) {
                 self::visualize($child, $indentation + 1, false);
             }
         }
-        if ($top_level && ! $testing) {
-            echo $new_line;
-            echo '</pre></div>';
+        if ($top_level) {
+            echo $testing ? $new_line : "$new_line</pre></div>$new_line";
         }
     }
 

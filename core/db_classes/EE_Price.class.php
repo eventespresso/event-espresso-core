@@ -10,7 +10,7 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
  * @subpackage         includes/classes/EE_Price.class.php
  * @author             Mike Nelson
  *
- * @method EE_Price_Type|null get_first_related($relation, $query_params = []);
+ * @method EE_Price_Type|null get_first_related(string $relation_name, array $query_params = []);
  */
 class EE_Price extends EE_Soft_Delete_Base_Class
 {

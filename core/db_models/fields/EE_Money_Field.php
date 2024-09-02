@@ -2,6 +2,7 @@
 
 use EventEspresso\core\services\helpers\DecimalValues;
 use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\orm\model_field\SchemaType;
 
 /**
  * Text_Fields is a base class for any fields which are have float value. (Exception: foreign and private key fields.
@@ -26,7 +27,7 @@ class EE_Money_Field extends EE_Float_Field
     public function __construct($table_column, $nicename, $nullable, $default_value = null)
     {
         parent::__construct($table_column, $nicename, $nullable, $default_value);
-        $this->setSchemaType('object');
+        $this->setSchemaType(SchemaType::OBJECT);
         $this->decimal_values = LoaderFactory::getShared(
             'EventEspresso\core\services\helpers\DecimalValues',
             [EE_Currency_Config::getCurrencyConfig()]
@@ -86,14 +87,14 @@ class EE_Money_Field extends EE_Float_Field
                     esc_html__('%s - the raw value as it exists in the database as a simple float.', 'event_espresso'),
                     $this->get_nicename()
                 ),
-                'type'        => 'number',
+                'type'        => SchemaType::NUMBER,
             ],
             'pretty' => [
                 'description' => sprintf(
                     esc_html__('%s - formatted for display in the set currency and decimal places.', 'event_espresso'),
                     $this->get_nicename()
                 ),
-                'type'        => 'string',
+                'type'        => SchemaType::STRING,
                 'format'      => 'money',
             ],
         ];
