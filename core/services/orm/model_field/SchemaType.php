@@ -7,7 +7,7 @@ use InvalidArgumentException;
 /**
  *  Constants for defining data types used within EE's Model Field Classes
  *
- * @since $VID:$
+ * @since 5.0.25.p
  */
 class SchemaType
 {

@@ -1693,7 +1693,7 @@ class EE_Line_Item extends EE_Base_Class
      * @return void
      * @throws EE_Error
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 5.0.25.p
      */
     private function ensureLineItemsAreSaved()
     {

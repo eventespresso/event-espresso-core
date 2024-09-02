@@ -486,7 +486,7 @@ class EE_Transaction_Processor extends EE_Processor_Base
      * @return EE_Transaction
      * @throws EE_Error
      * @throws ReflectionException
-     * @depecated $VID:$
+     * @depecated 5.0.25.p
      */
     public function get_transaction_for_registration(EE_Registration $registration): EE_Transaction
     {
@@ -496,7 +496,7 @@ class EE_Transaction_Processor extends EE_Processor_Base
                 'This logic is no longer necessary. Please just call EE_Registration::transaction() instead.',
                 'event_espresso'
             ),
-            '$VID:$',
+            '5.0.25.p',
             '6.0.0'
         );
         return $registration->transaction();
@@ -509,7 +509,7 @@ class EE_Transaction_Processor extends EE_Processor_Base
      * @return EE_Line_Item
      * @throws EE_Error
      * @throws ReflectionException
-     * @depecated $VID:$
+     * @depecated 5.0.25.p
      */
     public function get_ticket_line_item_for_transaction_registration(
         EE_Transaction $transaction,
@@ -521,7 +521,7 @@ class EE_Transaction_Processor extends EE_Processor_Base
                 'This logic been replaced by EE_Transaction_Processor::getTicketLineItemForRegistration(). Please use that method instead.',
                 'event_espresso'
             ),
-            '$VID:$',
+            '5.0.25.p',
             '6.0.0'
         );
         return $this->getTicketLineItemForRegistration($registration);
@@ -537,7 +537,7 @@ class EE_Transaction_Processor extends EE_Processor_Base
      * @return    boolean
      * @throws EE_Error
      * @throws ReflectionException
-     * @depecated $VID:$
+     * @depecated 5.0.25.p
      */
     public function toggle_registration_statuses_for_default_approved_events(
         EE_Transaction $transaction,
@@ -549,7 +549,7 @@ class EE_Transaction_Processor extends EE_Processor_Base
                 'This logic been replaced by EE_Registration_Processor::toggle_registration_status_for_default_approved_events(). Please use that method instead.',
                 'event_espresso'
             ),
-            '$VID:$',
+            '5.0.25.p',
             '6.0.0'
         );
         $status_updates = $this->_call_method_on_registrations_via_Registration_Processor(
@@ -575,7 +575,7 @@ class EE_Transaction_Processor extends EE_Processor_Base
      * @return    boolean
      * @throws EE_Error
      * @throws ReflectionException
-     * @depecated $VID:$
+     * @depecated 5.0.25.p
      */
     public function toggle_registration_statuses_if_no_monies_owing(
         EE_Transaction $transaction,
@@ -587,7 +587,7 @@ class EE_Transaction_Processor extends EE_Processor_Base
                 'This logic been replaced by EE_Registration_Processor::toggle_registration_status_if_no_monies_owing(). Please use that method instead.',
                 'event_espresso'
             ),
-            '$VID:$',
+            '5.0.25.p',
             '6.0.0'
         );
         $status_updates = $this->_call_method_on_registrations_via_Registration_Processor(
