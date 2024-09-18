@@ -338,9 +338,9 @@ class EEM_System_Status
             $status = esc_html__('Your server has cURL enabled, fsockopen is disabled.', 'event_espresso');
         } else {
             $status = esc_html__(
-                          'Your server does not have fsockopen or cURL enabled - PayPal IPN and other scripts which communicate with other servers will not work. Contact your hosting provider.',
-                          'event_espresso'
-                      ) . '</mark>';
+                'Your server does not have fsockopen or cURL enabled - PayPal IPN and other scripts which communicate with other servers will not work. Contact your hosting provider.',
+                'event_espresso'
+            ) . '</mark>';
         }
         return $status;
     }

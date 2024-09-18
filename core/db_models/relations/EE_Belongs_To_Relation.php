@@ -44,21 +44,21 @@ class EE_Belongs_To_Relation extends EE_Model_Relation_Base
             $this->get_this_model()->get_foreign_key_to($this->get_other_model()->get_this_model_name());
         $other_table_pk_field = $this->get_other_model()->get_primary_key_field();
         $this_table_alias     = EE_Model_Parser::extract_table_alias_model_relation_chain_prefix(
-                $model_relation_chain,
-                $this->get_this_model()->get_this_model_name()
-            ) . $this_table_fk_field->get_table_alias();
+            $model_relation_chain,
+            $this->get_this_model()->get_this_model_name()
+        ) . $this_table_fk_field->get_table_alias();
         $other_table_alias    = EE_Model_Parser::extract_table_alias_model_relation_chain_prefix(
-                $model_relation_chain,
-                $this->get_other_model()->get_this_model_name()
-            ) . $other_table_pk_field->get_table_alias();
+            $model_relation_chain,
+            $this->get_other_model()->get_this_model_name()
+        ) . $other_table_pk_field->get_table_alias();
         $other_table          = $this->get_other_model()->get_table_for_alias($other_table_alias);
         return $this->_left_join(
-                $other_table,
-                $other_table_alias,
-                $other_table_pk_field->get_table_column(),
-                $this_table_alias,
-                $this_table_fk_field->get_table_column()
-            ) . $this->get_other_model()->_construct_internal_join_to_table_with_alias($other_table_alias);
+            $other_table,
+            $other_table_alias,
+            $other_table_pk_field->get_table_column(),
+            $this_table_alias,
+            $this_table_fk_field->get_table_column()
+        ) . $this->get_other_model()->_construct_internal_join_to_table_with_alias($other_table_alias);
     }
 
 
@@ -153,7 +153,7 @@ class EE_Belongs_To_Relation extends EE_Model_Relation_Base
         }
         $ID_value_on_other_model = $model_obj->get($fk_field_obj->get_name());
         // if PK ID is empty, there is nothing to match to
-        if(empty($ID_value_on_other_model)) {
+        if (empty($ID_value_on_other_model)) {
             return [];
         }
         // get all where their PK matches that value

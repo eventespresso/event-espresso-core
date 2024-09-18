@@ -10,5 +10,5 @@ abstract class PermalinkHtmlHook
     }
 
 
-    abstract public static function addButton( string $html, int $post_id ): string;
+    abstract public static function addButton(string $html, int $post_id): string;
 }

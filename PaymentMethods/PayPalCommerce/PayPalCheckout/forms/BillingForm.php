@@ -38,7 +38,6 @@ use ReflectionException;
  */
 class BillingForm extends EE_Billing_Attendee_Info_Form
 {
-
     protected EE_Payment_Method $paypal_pmt;
 
     protected ?EE_Transaction $transaction = null;
@@ -216,7 +215,8 @@ class BillingForm extends EE_Billing_Attendee_Info_Form
         }
         // Make sure the billing form subsections have correct names.
         $inputs = $billing_form->inputs_in_subsections();
-        if (! empty($request_params['process_form_submission'])
+        if (
+            ! empty($request_params['process_form_submission'])
             && $request_params['process_form_submission'] === '1'
             && ! empty($request_params['eep_ppc_skip_form_validation'])
         ) {
@@ -460,22 +460,56 @@ class BillingForm extends EE_Billing_Attendee_Info_Form
      */
     public function enqueue_js(): void
     {
-        $third_party   = EED_PayPalCommerce::isThirdParty($this->_pm_instance);
-        $currency      = CurrencyManager::currencyCode();
+        // Setup default values
         $client_id_key = Domain::META_KEY_CLIENT_ID;
-        // Scripts.
-        $scripts_src = 'https://www.paypal.com/sdk/js?components=buttons,hosted-fields&intent=capture';
-        if ($third_party) {
+        $merchant_id   = false;
+        $funding_options = ['venmo', 'paylater'];
+
+        // Override the above if thrid party integration
+        if (EED_PayPalCommerce::isThirdParty($this->_pm_instance)) {
             $client_id_key = Domain::META_KEY_PARTNER_CLIENT_ID;
             $merchant_id   = PayPalExtraMetaManager::getPmOption(
                 $this->_pm_instance,
                 Domain::META_KEY_SELLER_MERCHANT_ID
             );
-            $scripts_src   .= "&merchant-id=$merchant_id";
         }
-        $client_id   = PayPalExtraMetaManager::getPmOption($this->_pm_instance, $client_id_key);
-        $scripts_src .= "&client-id=$client_id&currency=$currency";
-        wp_enqueue_script('eea_paypal_commerce_js_lib', $scripts_src, [], null);
+
+        // Setup query args
+        $url_params            = [
+            'client-id'        => PayPalExtraMetaManager::getPmOption($this->_pm_instance, $client_id_key),
+            'currency'         => CurrencyManager::currencyCode(),
+            'components'       => implode(',', ['buttons','hosted-fields']),
+            'intent'           => 'capture',
+            'merchant-id'      => $merchant_id,
+        ];
+
+        // Which funding methods are active?
+        $enabled_funding = $this->_pm_instance->get_extra_meta(Domain::META_KEY_FUNDING_OPTIONS, true, $funding_options);
+
+        // Any funding method not enabled should be disabled.
+        $disabled_funding = array_diff(
+            $funding_options,
+            $enabled_funding
+        );
+
+        // Any funding options enabled?
+        if (count($enabled_funding) > 0) {
+            $url_params['enable-funding'] = implode(',', $enabled_funding);
+        }
+
+        // Any funding options disabled?
+        if (count($disabled_funding) > 0) {
+            $url_params['disable-funding'] = implode(',', $disabled_funding);
+        }
+
+        // Enqueue the PayPal JS
+        wp_enqueue_script(
+            'eea_paypal_commerce_js_lib',
+            add_query_arg($url_params, 'https://www.paypal.com/sdk/js'),
+            [],
+            null
+        );
+
         wp_enqueue_script(
             'eea_paypal_commerce_js',
             EEP_PAYPAL_COMMERCE_URL . 'assets/js/paypal-commerce-payments.js',

@@ -9,6 +9,7 @@ use EE_Payment_Method;
 use EE_Error;
 use EE_Form_Section_HTML;
 use EE_Select_Input;
+use EE_Checkbox_Multi_Input;
 use EED_PayPalOnboard;
 use EEH_HTML;
 use EventEspresso\PaymentMethods\PayPalCommerce\domain\Domain;
@@ -57,6 +58,7 @@ class SettingsForm extends EE_Payment_Method_Form
         $is_onboard   = EED_PayPalOnboard::isOnboard($pm_instance);
         if ($is_onboard && ($allowed_type === 'ppcp' || $allowed_type === 'all')) {
             $form_parameters = $this->addCheckoutTypeSelect($form_parameters);
+            $form_parameters = $this->addFundingOptions($form_parameters);
         }
         // Build the PM form.
         parent::__construct($form_parameters);
@@ -159,27 +161,53 @@ class SettingsForm extends EE_Payment_Method_Form
     public function addCheckoutTypeSelect(array $form_parameters): array
     {
         $pm_slug               = $this->pm_instance->slug();
-        $allowed_checkout_type = PayPalExtraMetaManager::getPmOption(
-            $this->pm_instance,
-            Domain::META_KEY_ALLOWED_CHECKOUT_TYPE
-        );
         // Section to be displayed if onboard.
-        $form_parameters['extra_meta_inputs'] = [
-            Domain::META_KEY_CHECKOUT_TYPE => new EE_Select_Input(
-                [
-                    'express_checkout' => esc_html__('Express Checkout', 'event_espresso'),
-                    'ppcp'             => esc_html__('Advanced Credit and Debit Card payments', 'event_espresso'),
-                    'all'              => esc_html__('Both, ACDC and Express Checkout', 'event_espresso'),
-                ],
-                [
-                    'html_name'  => 'eep_checkout_type_option_' . $pm_slug,
-                    'html_id'    => 'eep_checkout_type_option_' . $pm_slug,
-                    'html_class' => 'eep-checkout-type-option-' . $pm_slug,
-                    'required'   => true,
-                    'default'    => $allowed_checkout_type,
-                ]
-            ),
-        ];
+        $form_parameters['extra_meta_inputs'][Domain::META_KEY_CHECKOUT_TYPE] = new EE_Select_Input(
+            [
+                'express_checkout' => esc_html__('Express Checkout', 'event_espresso'),
+                'ppcp'             => esc_html__('Advanced Credit and Debit Card payments', 'event_espresso'),
+                'all'              => esc_html__('Both, ACDC and Express Checkout', 'event_espresso'),
+            ],
+            [
+                'html_name'  => "eep_checkout_type_option_$pm_slug",
+                'html_id'    => "eep_checkout_type_option_$pm_slug",
+                'html_class' => "eep-checkout-type-option-$pm_slug",
+                'required'   => true,
+                'default'    => PayPalExtraMetaManager::getPmOption(
+                    $this->pm_instance,
+                    Domain::META_KEY_ALLOWED_CHECKOUT_TYPE
+                ),
+            ]
+        );
+        return $form_parameters;
+    }
+
+
+    /**
+     * Add a checkout type select.
+     *
+     * @param array $form_parameters
+     * @return array
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function addFundingOptions(array $form_parameters): array
+    {
+        $pm_slug               = $this->pm_instance->slug();
+        // Section to be displayed if onboard.
+        $form_parameters['extra_meta_inputs'][Domain::META_KEY_FUNDING_OPTIONS] = new EE_Checkbox_Multi_Input(
+            [
+                'venmo'    => esc_html__('Venmo', 'event_espresso'),
+                'paylater' => esc_html__('PayLater', 'event_espresso'),
+            ],
+            [
+                'html_name'       => "eep_checkout_funding_options_$pm_slug",
+                'html_id'         => "eep_checkout_funding_options_$pm_slug",
+                'html_class'      => "eep-checkout-funding-options-$pm_slug",
+                'html_label_text' => esc_html__('Enable PayPal funding options:', 'event_espresso'),
+                'default'         => ['venmo', 'paylater'],
+            ]
+        );
         return $form_parameters;
     }
 

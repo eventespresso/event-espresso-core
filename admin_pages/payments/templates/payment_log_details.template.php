@@ -13,8 +13,7 @@
 
 use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
-if ($payment_log instanceof EE_Change_Log): ?>
-
+if ($payment_log instanceof EE_Change_Log) : ?>
 <div class="padding">
     <table class="ee-payment-log-details widefat">
         <tbody>
@@ -76,8 +75,7 @@ if ($payment_log instanceof EE_Change_Log): ?>
     </table>
 </div>
 
-<?php else: ?>
-
+<?php else : ?>
 <div class="padding">
     <table class="ee-payment-log-details widefat">
         <tbody>

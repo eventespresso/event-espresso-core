@@ -858,10 +858,10 @@ class EE_Line_Item extends EE_Base_Class
     {
         // we're going to assume that when this method is called
         // we always want to receive the attached ticket EVEN if that ticket is archived.
-        if(! $this->OBJ_ID() || $this->OBJ_type() !== EEM_Line_Item::OBJ_TYPE_TICKET) {
+        if (! $this->OBJ_ID() || $this->OBJ_type() !== EEM_Line_Item::OBJ_TYPE_TICKET) {
             return null;
         }
-        if(empty($query_args)) {
+        if (empty($query_args)) {
             return EEM_Ticket::instance()->get_one_by_ID($this->OBJ_ID());
         }
         // legacy usage

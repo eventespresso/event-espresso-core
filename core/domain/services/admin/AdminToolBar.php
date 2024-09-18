@@ -20,15 +20,15 @@ use WP_Admin_Bar;
  */
 class AdminToolBar
 {
-    private ?WP_Admin_Bar   $admin_bar        = null;
+    private ?WP_Admin_Bar $admin_bar        = null;
 
     private EE_Capabilities $capabilities;
 
-    private string          $events_admin_url = '';
+    private string $events_admin_url = '';
 
-    private string          $menu_class       = 'espresso_menu_item_class';
+    private string $menu_class       = 'espresso_menu_item_class';
 
-    private string          $reg_admin_url    = '';
+    private string $reg_admin_url    = '';
 
 
     /**

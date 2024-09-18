@@ -6,7 +6,6 @@ use EventEspresso\core\services\loaders\LoaderInterface;
 
 abstract class CronJob
 {
-
     protected LoaderInterface $loader;
 
 

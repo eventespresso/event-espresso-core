@@ -14,7 +14,7 @@ use EventEspresso\core\interfaces\ReservedInstanceInterface;
  */
 class Response implements ResponseInterface, ReservedInstanceInterface
 {
-    protected bool  $deactivate_plugin = false;
+    protected bool $deactivate_plugin = false;
 
     protected array $notice            = [];
 
@@ -25,7 +25,7 @@ class Response implements ResponseInterface, ReservedInstanceInterface
 
     protected array $request_headers    = [];
 
-    protected bool  $request_terminated = false;
+    protected bool $request_terminated = false;
 
 
     /**

@@ -7,7 +7,6 @@ use EventEspresso\core\services\request\DataType;
 
 class RequestSanitizer
 {
-
     private Basic $email_validator;
 
 

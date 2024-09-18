@@ -3,9 +3,9 @@
 /**
  * EEH_Base Helper
  *
- * @package         Event Espresso
+ * @package     Event Espresso
  * @subpackage  /helpers/
- * @author              Brent Christensen
+ * @author      Brent Christensen
  *
  * ------------------------------------------------------------------------
  */
@@ -13,13 +13,11 @@ class EEH_Base
 {
     /**
      *  @var    array   $uri_segment_array  URL segments
-     *  @access     private
      */
-//  final private function __construct() {}
 
     /**
-     *      @ override magic methods
-     *      @ return void
+     * override magic methods
+     * @return void
      */
     public function __set($a, $b)
     {

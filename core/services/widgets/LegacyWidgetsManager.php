@@ -99,7 +99,7 @@ class LegacyWidgetsManager
         if (! is_readable($widget_path . '/' . $widget_class . $widget_ext)) {
             $msg = sprintf(
                 esc_html__(
-                    'The requested %s widget file could not be found or is not readable due to file permissions. Please ensure the following path is correct: %s',
+                    'The requested %1$s widget file could not be found or is not readable due to file permissions. Please ensure the following path is correct: %2$s',
                     'event_espresso'
                 ),
                 $widget_class,

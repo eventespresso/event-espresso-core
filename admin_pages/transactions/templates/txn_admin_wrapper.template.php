@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var string $admin_page_content
  * @var string $admin_page_title
@@ -23,31 +24,31 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 <div class="wrap">
 
-	<h2>
-		<?php echo esc_html__('Event Espresso', 'event_espresso') . ' ' . wp_kses($admin_page_title, AllowedTags::getWithFormTags()); ?>
-	</h2>
+    <h2>
+        <?php echo esc_html__('Event Espresso', 'event_espresso') . ' ' . wp_kses($admin_page_title, AllowedTags::getWithFormTags()); ?>
+    </h2>
 
-	<h2 class="nav-tab-wrapper">
-		<a class="nav-tab<?php echo esc_attr($tab_active_overview); ?>"
-		   href="<?php echo esc_url_raw($tab_url_overview); ?>">
-			<?php echo esc_html($tab_lnk_overview); ?>
-		</a>
-		<?php if ($tab_details) : ?>
-		<a class="nav-tab<?php echo esc_attr($tab_active_details); ?>"
-		   href="<?php echo esc_url_raw($tab_url_details); ?>">
-			<?php echo esc_html($tab_lnk_details); ?>
-		</a>
-		<?php endif; ?>
-		<a class="nav-tab<?php echo esc_attr($tab_active_reports); ?>"
-		   href="<?php echo esc_url_raw($tab_url_reports); ?>">
-			<?php echo esc_html($tab_lnk_reports); ?>
-		</a>
-		<a class="nav-tab<?php echo esc_attr($tab_active_settings); ?>"
-		   href="<?php echo esc_url_raw($tab_url_settings); ?>">
-			<?php echo esc_html($tab_lnk_settings); ?>
-		</a>
-	</h2>
+    <h2 class="nav-tab-wrapper">
+        <a class="nav-tab<?php echo esc_attr($tab_active_overview); ?>"
+           href="<?php echo esc_url_raw($tab_url_overview); ?>">
+            <?php echo esc_html($tab_lnk_overview); ?>
+        </a>
+        <?php if ($tab_details) : ?>
+        <a class="nav-tab<?php echo esc_attr($tab_active_details); ?>"
+           href="<?php echo esc_url_raw($tab_url_details); ?>">
+            <?php echo esc_html($tab_lnk_details); ?>
+        </a>
+        <?php endif; ?>
+        <a class="nav-tab<?php echo esc_attr($tab_active_reports); ?>"
+           href="<?php echo esc_url_raw($tab_url_reports); ?>">
+            <?php echo esc_html($tab_lnk_reports); ?>
+        </a>
+        <a class="nav-tab<?php echo esc_attr($tab_active_settings); ?>"
+           href="<?php echo esc_url_raw($tab_url_settings); ?>">
+            <?php echo esc_html($tab_lnk_settings); ?>
+        </a>
+    </h2>
 
-	<?php echo esc_html($admin_page_content); ?>
+    <?php echo esc_html($admin_page_content); ?>
 
 </div>

@@ -1264,7 +1264,9 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
                         $subsection_name,
                         $this->name()
                     ),
-                    __FILE__, __FUNCTION__, __LINE__
+                    __FILE__,
+                    __FUNCTION__,
+                    __LINE__
                 );
                 unset($new_subsections[ $subsection_name ]);
             }

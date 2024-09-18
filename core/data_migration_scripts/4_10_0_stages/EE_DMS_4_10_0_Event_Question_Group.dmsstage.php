@@ -9,7 +9,6 @@
  */
 class EE_DMS_4_10_0_Event_Question_Group extends EE_Data_Migration_Script_Stage_Table
 {
-
     /**
      * Just initializes the status of the migration
      */
@@ -117,9 +116,9 @@ class EE_DMS_4_10_0_Event_Question_Group extends EE_Data_Migration_Script_Stage_
     {
         global $wpdb;
         $query = "SELECT * FROM $this->_old_table $this->_extra_where_sql " . $wpdb->prepare(
-                "LIMIT %d",
-                $limit
-            );
+            "LIMIT %d",
+            $limit
+        );
         return $wpdb->get_results($query, ARRAY_A);
     }
 

@@ -4396,27 +4396,27 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                     case 'NOT':
                         $where_clauses[] = "! ("
                                            . $this->_construct_condition_clause_recursive(
-                                $op_and_value_or_sub_condition,
-                                $glue
-                            )
+                                               $op_and_value_or_sub_condition,
+                                               $glue
+                                           )
                                            . ")";
                         break;
                     case 'and':
                     case 'AND':
                         $where_clauses[] = " ("
                                            . $this->_construct_condition_clause_recursive(
-                                $op_and_value_or_sub_condition,
-                                ' AND '
-                            )
+                                               $op_and_value_or_sub_condition,
+                                               ' AND '
+                                           )
                                            . ")";
                         break;
                     case 'or':
                     case 'OR':
                         $where_clauses[] = " ("
                                            . $this->_construct_condition_clause_recursive(
-                                $op_and_value_or_sub_condition,
-                                ' OR '
-                            )
+                                               $op_and_value_or_sub_condition,
+                                               ' OR '
+                                           )
                                            . ")";
                         break;
                 }

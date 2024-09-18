@@ -632,9 +632,9 @@ class EEH_Template
             <a id="' . esc_attr($help_tab_lnk) . '"
                class="espresso-help-tab-lnk ee-help-btn ee-aria-tooltip dashicons ' . esc_attr($icon) . '"
                aria-label="' . esc_attr__(
-                'Click to open the \'Help\' tab for more information about this feature.',
-                'event_espresso'
-            ) . '"
+                   'Click to open the \'Help\' tab for more information about this feature.',
+                   'event_espresso'
+               ) . '"
             >
                 ' . wp_kses($help_text, AllowedTags::getAllowedTags()) . '
             </a>';
@@ -922,7 +922,7 @@ class EEH_Template
         if (
             $request->isActivation()
             || strpos($request->requestUri(true), 'wp-admin/update.php') !== false
-        ){
+        ) {
             return '';
         }
         $cache_id = TemplateCache::generateCacheID(__FUNCTION__, func_get_args());

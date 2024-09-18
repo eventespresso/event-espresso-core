@@ -175,7 +175,7 @@ class PaymentProcessorFees
      */
     private function getGatewayFee(string $payment_method_name, string $license_status): float
     {
-        if (isset($this->gateway_fees[ $license_status ][ $payment_method_name ] )) {
+        if (isset($this->gateway_fees[ $license_status ][ $payment_method_name ])) {
             return $this->gateway_fees[ $license_status ][ $payment_method_name ];
         }
         throw new OutOfBoundsException(

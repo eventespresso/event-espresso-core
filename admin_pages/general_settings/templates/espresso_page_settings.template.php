@@ -1,4 +1,5 @@
 <?php
+
 /**
  * @var int     $reg_page_id
  * @var WP_Post $reg_page_obj

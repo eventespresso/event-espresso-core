@@ -174,7 +174,7 @@ class EE_Messages_Template_Defaults extends EE_Base
      *
      * @param string $template_pack This corresponds to a template pack class reference
      *                              which will contain information about where to obtain the templates.
-     * @returnarray|bool            success array or false.
+     * @return array|bool            success array or false.
      * @throws EE_Error
      * @throws ReflectionException
      */

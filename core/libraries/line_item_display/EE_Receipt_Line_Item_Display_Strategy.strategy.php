@@ -5,14 +5,12 @@
  *
  * Event Registration and Ticketing Management Plugin for WordPress
  *
- * @ package            Event Espresso
- * @ author             Event Espresso
- * @ copyright      (c) 2008-2014 Event Espresso  All Rights Reserved.
- * @ license            https://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
- * @ link                   http://www.eventespresso.com
- *
- *
- * ------------------------------------------------------------------------
+ * @package     Event Espresso
+ * @author      Event Espresso
+ * @copyright   (c) 2008-2014 Event Espresso  All Rights Reserved.
+ * @license     https://eventespresso.com/support/terms-conditions/   * see Plugin Licensing *
+ * @link        http://www.eventespresso.com
+
  */
  /**
  *

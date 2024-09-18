@@ -12,8 +12,8 @@
 class EE_Base
 {
     /**
-     *        @ override magic methods
-     *        @ return void
+     * override magic methods
+     * @return void
      */
     public function __get($a)
     {

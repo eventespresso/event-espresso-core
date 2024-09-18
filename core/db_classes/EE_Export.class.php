@@ -20,13 +20,13 @@ class EE_Export
 {
     const option_prefix = 'ee_report_job_';
 
-
-    // instance of the EE_Export object
+    /**
+     * instance of the EE_Export object
+     */
     private static $_instance = null;
 
-    // instance of the EE_CSV object
     /**
-     *
+     * instance of the EE_CSV object
      * @var EE_CSV
      */
     public $EE_CSV = null;
@@ -36,10 +36,8 @@ class EE_Export
 
 
     /**
-     *        private constructor to prevent direct creation
+     * private constructor to prevent direct creation
      *
-     * @Constructor
-     * @access private
      * @param array $request_data
      */
     private function __construct($request_data = array())
@@ -52,11 +50,10 @@ class EE_Export
 
 
     /**
-     *        @ singleton method used to instantiate class object
-     *        @ access public
+     * singleton method used to instantiate class object
      *
      * @param array $request_data
-     * @return \EE_Export
+     * @return EE_Export
      */
     public static function instance($request_data = array())
     {
@@ -69,8 +66,7 @@ class EE_Export
 
 
     /**
-     * @Export Event Espresso data - routes export requests
-     * @access public
+     * Export Event Espresso data - routes export requests
      * @return void | bool
      */
     public function export()
@@ -141,8 +137,7 @@ class EE_Export
 
 
     /**
-     * @Export data for ALL events
-     * @access public
+     * Export data for ALL events
      * @return void
      * @throws EE_Error
      * @throws ReflectionException
@@ -273,8 +268,7 @@ class EE_Export
 
 
     /**
-     * @Export data for ALL attendees
-     * @access public
+     * Export data for ALL attendees
      * @return void
      * @throws EE_Error
      */
@@ -686,8 +680,7 @@ class EE_Export
 
 
     /**
-     * @Export data for ALL events
-     * @access public
+     * Export data for ALL events
      * @return void
      */
     public function export_categories()
@@ -734,8 +727,7 @@ class EE_Export
 
 
     /**
-     * @process export name to create a suitable filename
-     * @access  private
+     * process export name to create a suitable filename
      * @param string - export_name
      * @return string on success, FALSE on fail
      */
@@ -753,8 +745,7 @@ class EE_Export
 
 
     /**
-     * @recursive function for exporting table data and merging the results with the next results
-     * @access    private
+     * recursive function for exporting table data and merging the results with the next results
      * @param array $models_to_export keys are model names (eg 'Event', 'Attendee', etc.) and values are arrays of
      *                                query params @return bool on success, FALSE on fail
      * @throws EE_Error

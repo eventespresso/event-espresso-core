@@ -146,7 +146,7 @@ class FeatureFlagsConfig extends JsonDataWordpressOption
         $this->feature_flags->{$feature_flag} = true;
         // if feature flag is the advanced event editor bulk edit options
         // then only enabled if the site is Caffeinated and not MultiSite
-        if ( $feature_flag === FeatureFlag::USE_EVENT_EDITOR_BULK_EDIT ) {
+        if ($feature_flag === FeatureFlag::USE_EVENT_EDITOR_BULK_EDIT) {
             $this->feature_flags->{$feature_flag} = $this->domain->isCaffeinated() && ! $this->domain->isMultiSite();
         }
         if ($save) {

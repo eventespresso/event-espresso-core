@@ -72,7 +72,7 @@ class FeatureFlags
      */
     public function getAllowedFeatures(): array
     {
-        $allowed = array_filter( (array) $this->feature_flags, [$this, 'allowed'], ARRAY_FILTER_USE_KEY);
+        $allowed = array_filter((array) $this->feature_flags, [$this, 'allowed'], ARRAY_FILTER_USE_KEY);
         return array_keys($allowed);
     }
 }

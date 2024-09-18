@@ -643,8 +643,10 @@ class EE_Message_Resource_Manager
         if (! empty($not_installed)) {
             EE_Error::add_error(
                 sprintf(
-                    esc_html__('The following messengers are either not installed or are invalid:%1$s %2$s',
-                        'event_espresso'),
+                    esc_html__(
+                        'The following messengers are either not installed or are invalid:%1$s %2$s',
+                        'event_espresso'
+                    ),
                     '<br />',
                     implode(', ', $not_installed)
                 ),

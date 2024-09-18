@@ -50,7 +50,7 @@ class Extend_EE_Registrations_List_Table extends EE_Registrations_List_Table
         $actions['event_checkins'] = $this->viewCheckinsLink($registration);
         return $this->columnContent(
             'event_name',
-             $edit_event . $this->row_actions($actions)
+            $edit_event . $this->row_actions($actions)
         );
     }
 
@@ -132,9 +132,9 @@ class Extend_EE_Registrations_List_Table extends EE_Registrations_List_Table
             <a  class="ee-aria-tooltip ee-datetime-filter-link"
                 href="' . $datetime_filter_url . '"
                 aria-label="' . sprintf(
-                esc_attr__('Filter this list to only show registrations for %s', 'event_espresso'),
-                $datetime->name() ?: esc_attr__('this datetime', 'event_espresso'),
-            ) . '"
+                    esc_attr__('Filter this list to only show registrations for %s', 'event_espresso'),
+                    $datetime->name() ?: esc_attr__('this datetime', 'event_espresso'),
+                ) . '"
             >
                 <span class="dashicons dashicons-groups dashicons--small"></span>
             </a>';

@@ -15,7 +15,6 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
  */
 abstract class EE_Base_Class
 {
-
     /**
      * @var EEM_Base|null
      */
@@ -3377,8 +3376,8 @@ abstract class EE_Base_Class
             $value = get_object_vars($value);
         }
         if (is_array($value)) {
-            foreach ($value as $f => $v ) {
-                $this->echoProperty($f, $v, $indent+1);
+            foreach ($value as $f => $v) {
+                $this->echoProperty($f, $v, $indent + 1);
             }
             return;
         }

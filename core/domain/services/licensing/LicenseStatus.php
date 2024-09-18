@@ -44,7 +44,7 @@ class LicenseStatus
 
     public static function statusClass(?string $license_status): string
     {
-        switch ( $license_status ) {
+        switch ($license_status) {
             case "valid":
                 return "active";
 
@@ -70,7 +70,7 @@ class LicenseStatus
 
     public static function statusIcon(?string $license_status): string
     {
-        switch ( $license_status ) {
+        switch ($license_status) {
             case "valid":
                 return "yes-alt";
 

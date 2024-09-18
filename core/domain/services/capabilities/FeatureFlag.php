@@ -10,7 +10,6 @@ namespace EventEspresso\core\domain\services\capabilities;
  */
 class FeatureFlag
 {
-
     /**
      * Whether to use the New Event Editor (EDTR) or continue using the legacy Event Editor
      * deafult: Enabled for Caffeinated sites, disabled for Decaf or Multisite installs

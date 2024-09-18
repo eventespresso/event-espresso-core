@@ -21,17 +21,17 @@ abstract class EE_Admin_Page_Init extends EE_Base
     /**
      * This holds the menu map object for this admin page.
      */
-    protected ?AdminMenuItem    $_menu_map           = null;
+    protected ?AdminMenuItem $_menu_map           = null;
 
-    protected ?EE_Admin_Page    $_loaded_page_object = null;
+    protected ?EE_Admin_Page $_loaded_page_object = null;
 
-    protected ?LoaderInterface  $loader              = null;
+    protected ?LoaderInterface $loader              = null;
 
     protected ?RequestInterface $request             = null;
 
-    private bool                $_load_page          = false;
+    private bool $_load_page          = false;
 
-    protected bool              $_routing            = false;
+    protected bool $_routing            = false;
 
     /**
      * Menu map has a capability.  However, this allows admin pages to have separate capability requirements for menus
@@ -44,7 +44,7 @@ abstract class EE_Admin_Page_Init extends EE_Base
     /**
      * identity properties (set in _set_defaults and _set_init_properties)
      */
-    public string    $label         = '';
+    public string $label         = '';
 
     protected string $_file_name    = '';
 
@@ -54,14 +54,14 @@ abstract class EE_Admin_Page_Init extends EE_Base
 
     protected string $_wp_page_slug = '';
 
-    public string    $hook_file     = '';
+    public string $hook_file     = '';
 
-    public string    $menu_slug     = '';
+    public string $menu_slug     = '';
 
     /**
      * @deprecated
      */
-    public string   $menu_label    = '';
+    public string $menu_label    = '';
 
     protected array $_files_hooked = [];
 

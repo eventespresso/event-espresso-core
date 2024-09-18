@@ -9,7 +9,6 @@
  */
 class EE_DMS_4_6_0_transactions extends EE_Data_Migration_Script_Stage_Table
 {
-
     protected string $_transaction_table;
 
     protected string $_payment_method_table;

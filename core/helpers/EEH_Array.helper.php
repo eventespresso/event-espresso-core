@@ -143,11 +143,11 @@ class EEH_Array extends EEH_Base
             // then add the new data
             // then add another slice that starts at the offset and goes till the end
             return array_slice($target_array, 0, $offset, true) + $array_to_insert + array_slice(
-                    $target_array,
-                    $offset,
-                    null,
-                    true
-                );
+                $target_array,
+                $offset,
+                null,
+                true
+            );
         } else {
             // since we don't want to preserve keys, we can use array_splice
             array_splice($target_array, $offset, 0, $array_to_insert);

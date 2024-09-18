@@ -24,23 +24,23 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
  */
 abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
 {
-    protected ?EE_Admin_Config     $admin_config       = null;
+    protected ?EE_Admin_Config $admin_config       = null;
 
-    protected ?EE_Admin_Hooks      $_hook_obj          = null;
+    protected ?EE_Admin_Hooks $_hook_obj          = null;
 
     protected ?EE_Admin_List_Table $_list_table_object = null;
 
-    protected ?EE_Capabilities     $capabilities       = null;
+    protected ?EE_Capabilities $capabilities       = null;
 
-    protected ?EE_Registry         $EE                 = null;
+    protected ?EE_Registry $EE                 = null;
 
-    protected ?FeatureFlags        $feature            = null;
+    protected ?FeatureFlags $feature            = null;
 
-    protected ?LoaderInterface     $loader             = null;
+    protected ?LoaderInterface $loader             = null;
 
-    protected ?RequestInterface    $request            = null;
+    protected ?RequestInterface $request            = null;
 
-    protected ?WP_Screen           $_current_screen    = null;
+    protected ?WP_Screen $_current_screen    = null;
 
     /**
      * @var array
@@ -104,9 +104,9 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     /**
      * flags whether the given route is a caffeinated route or not.
      */
-    protected bool  $_is_caf        = false;
+    protected bool $_is_caf        = false;
 
-    protected bool  $_routing       = false;
+    protected bool $_routing       = false;
 
     /**
      * whether initializePage() has run
@@ -124,7 +124,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
 
     protected string $_column_template_path = '';
 
-    protected bool   $_cpt_route            = false;
+    protected bool $_cpt_route            = false;
 
     /**
      * set via request page and action args.
@@ -184,11 +184,11 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      */
     protected string $raw_req_page = '';
 
-    public string    $page_folder  = '';
+    public string $page_folder  = '';
 
-    public string    $page_label   = '';
+    public string $page_label   = '';
 
-    public string    $page_slug    = '';
+    public string $page_slug    = '';
 
 
     /**
@@ -938,7 +938,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         if (
             $this->_req_action === 'editpost'
             && ! isset($this->_page_routes['editpost'])
-            && isset($this->_page_routes[$alt_edit_route])
+            && isset($this->_page_routes[ $alt_edit_route ])
         ) {
             $this->_req_action = $alt_edit_route;
         }
@@ -1459,9 +1459,9 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
 
             $this->_nav_tabs[ $slug ] = [
                 'url'       => $config['nav']['url'] ?? EE_Admin_Page::add_query_args_and_nonce(
-                        ['action' => $slug],
-                        $this->_admin_base_url
-                    ),
+                    ['action' => $slug],
+                    $this->_admin_base_url
+                ),
                 'link_text' => $this->navTabLabel($config['nav'], $slug),
                 'css_class' => $this->_req_action === $slug ? $css_class . ' nav-tab-active' : $css_class,
                 'order'     => $config['nav']['order'] ?? $i,
@@ -2357,8 +2357,8 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     {
         ?>
 <div class="padding">
-	<div id="espresso_news_post_box_content" class="infolinks">
-		<?php
+    <div id="espresso_news_post_box_content" class="infolinks">
+        <?php
                 // Get RSS Feed(s)
                 EE_Admin_Page::cached_rss_display(
                     'espresso_news_post_box_content',
@@ -2369,9 +2369,9 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                         )
                     )
                 );
-                ?>
-	</div>
-	<?php do_action('AHEE__EE_Admin_Page__espresso_news_post_box__after_content'); ?>
+        ?>
+    </div>
+    <?php do_action('AHEE__EE_Admin_Page__espresso_news_post_box__after_content'); ?>
 </div>
 <?php
     }
@@ -2581,15 +2581,15 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     {
         ?>
 <noscript>
-	<div id="no-js-message" class="error">
-		<p style="font-size:1.3em;">
-			<span style="color:red;"><?php esc_html_e('Warning!', 'event_espresso'); ?></span>
-			<?php esc_html_e(
-                        'Javascript is currently turned off for your browser. Javascript must be enabled in order for all of the features on this page to function properly. Please turn your javascript back on.',
-                        'event_espresso'
-                    ); ?>
-		</p>
-	</div>
+    <div id="no-js-message" class="error">
+        <p style="font-size:1.3em;">
+            <span style="color:red;"><?php esc_html_e('Warning!', 'event_espresso'); ?></span>
+            <?php esc_html_e(
+                'Javascript is currently turned off for your browser. Javascript must be enabled in order for all of the features on this page to function properly. Please turn your javascript back on.',
+                'event_espresso'
+            ); ?>
+        </p>
+    </div>
 </noscript>
 <?php
     }
@@ -2618,7 +2618,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     {
         ?>
 <div id="espresso-ajax-loading" class="ajax-loading-grey">
-	<span class="ee-spinner ee-spin"></span><span class="hidden"><?php
+    <span class="ee-spinner ee-spin"></span><span class="hidden"><?php
                 esc_html_e('loading...', 'event_espresso'); ?></span>
 </div>
 <?php
@@ -2792,10 +2792,10 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             ? 'poststuff'
             : 'espresso-default-admin';
         $this->_template_args['admin_page_wrapper_div_class'] = str_replace(
-                                                                    'event-espresso_page_espresso_',
-                                                                    '',
-                                                                    $this->_wp_page_slug
-                                                                ) . ' ' . $this->_req_action . '-route';
+            'event-espresso_page_espresso_',
+            '',
+            $this->_wp_page_slug
+        ) . ' ' . $this->_req_action . '-route';
 
         $template_path = $sidebar
             ? EE_ADMIN_TEMPLATE . 'admin_details_wrapper.template.php'
@@ -2815,7 +2815,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         // to prevent WooCommerce from blowing things up if not using CPT
         global $post_type, $post;
         $this->_template_args['post_type'] = $post_type ?? '';
-        $this->_template_args['post']  = $post ?? new WP_Post( (object) [ 'ID' => 0, 'filter' => 'raw' ] );
+        $this->_template_args['post']  = $post ?? new WP_Post((object) [ 'ID' => 0, 'filter' => 'raw' ]);
 
         $this->_template_args['post_body_content'] = EEH_Template::display_template(
             EE_ADMIN_TEMPLATE . 'admin_details_wrapper_post_body_content.template.php',

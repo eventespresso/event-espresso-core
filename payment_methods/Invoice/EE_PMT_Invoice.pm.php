@@ -50,7 +50,8 @@ class EE_PMT_Invoice extends EE_PMT_Base
      * @throws ReflectionException
      */
     public function generate_new_billing_form(EE_Transaction $transaction = null)
-    {    return null;
+    {
+    return null;
     }
 
 

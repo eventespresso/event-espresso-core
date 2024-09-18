@@ -368,11 +368,11 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
     public function extra_list_table_actions(array $action_links, EE_Event $event): array
     {
         if (
-        EE_Registry::instance()->CAP->current_user_can(
-            'ee_read_registrations',
-            'espresso_registrations_reports',
-            $event->ID()
-        )
+            EE_Registry::instance()->CAP->current_user_can(
+                'ee_read_registrations',
+                'espresso_registrations_reports',
+                $event->ID()
+            )
         ) {
             $reports_link = EE_Admin_Page::add_query_args_and_nonce(
                 [
@@ -409,10 +409,10 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
     public function additional_legend_items($items)
     {
         if (
-        EE_Registry::instance()->CAP->current_user_can(
-            'ee_read_registrations',
-            'espresso_registrations_reports'
-        )
+            EE_Registry::instance()->CAP->current_user_can(
+                'ee_read_registrations',
+                'espresso_registrations_reports'
+            )
         ) {
             $items['reports'] = [
                 'class' => 'dashicons dashicons-chart-bar',
@@ -1292,11 +1292,11 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
         ];
         // fail safe.  If the default ticket count === 1 then we need to redirect to event overview.
         if (
-        EEM_Ticket::instance()->count_deleted_and_undeleted(
-            [['TKT_is_default' => 1]],
-            'TKT_ID',
-            true
-        )
+            EEM_Ticket::instance()->count_deleted_and_undeleted(
+                [['TKT_is_default' => 1]],
+                'TKT_ID',
+                true
+            )
         ) {
             $query_args = [];
         }

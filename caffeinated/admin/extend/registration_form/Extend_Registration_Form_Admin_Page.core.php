@@ -403,10 +403,10 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
         ];
 
         if (
-        EE_Registry::instance()->CAP->current_user_can(
-            'ee_delete_questions',
-            'espresso_registration_form_trash_questions'
-        )
+            EE_Registry::instance()->CAP->current_user_can(
+                'ee_delete_questions',
+                'espresso_registration_form_trash_questions'
+            )
         ) {
             $this->_views['trash'] = [
                 'slug'        => 'trash',
@@ -438,10 +438,10 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
         ];
 
         if (
-        EE_Registry::instance()->CAP->current_user_can(
-            'ee_delete_question_groups',
-            'espresso_registration_form_trash_question_groups'
-        )
+            EE_Registry::instance()->CAP->current_user_can(
+                'ee_delete_question_groups',
+                'espresso_registration_form_trash_question_groups'
+            )
         ) {
             $this->_views['trash'] = [
                 'slug'        => 'trash',
@@ -466,11 +466,11 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
     protected function _questions_overview_list_table()
     {
         $this->_admin_page_title .= ' ' . $this->get_action_link_or_button(
-                'add_question',
-                'add_question',
-                [],
-                'add-new-h2'
-            );
+            'add_question',
+            'add_question',
+            [],
+            'add-new-h2'
+        );
         parent::_questions_overview_list_table();
     }
 
@@ -487,11 +487,11 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
     {
         $this->_search_btn_label = esc_html__('Question Groups', 'event_espresso');
         $this->_admin_page_title .= ' ' . $this->get_action_link_or_button(
-                'add_question_group',
-                'add_question_group',
-                [],
-                'add-new-h2'
-            );
+            'add_question_group',
+            'add_question_group',
+            [],
+            'add-new-h2'
+        );
         $this->display_admin_list_table_page_with_sidebar();
     }
 
@@ -774,12 +774,12 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
                 // not found, remove it (but only if not a system question for the personal group
                 // with the exception of lname system question - we allow removal of it)
                 if (
-                in_array(
-                    $question->system_ID(),
-                    EEM_Question::instance()->required_system_questions_in_system_question_group(
-                        $question_group->system_group()
+                    in_array(
+                        $question->system_ID(),
+                        EEM_Question::instance()->required_system_questions_in_system_question_group(
+                            $question_group->system_group()
+                        )
                     )
-                )
                 ) {
                     continue;
                 } else {

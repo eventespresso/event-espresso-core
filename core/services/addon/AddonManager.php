@@ -24,15 +24,15 @@ use Throwable;
  */
 class AddonManager
 {
-    private AddonCollection          $addons;
+    private AddonCollection $addons;
 
     private IncompatibleAddonHandler $incompatible_addon_handler;
 
-    private Psr4Autoloader           $psr4_loader;
+    private Psr4Autoloader $psr4_loader;
 
-    private RegisterV1Addon          $register_v1_addon;
+    private RegisterV1Addon $register_v1_addon;
 
-    private ThirdPartyPluginHandler  $third_party_plugin_handler;
+    private ThirdPartyPluginHandler $third_party_plugin_handler;
 
 
     /**

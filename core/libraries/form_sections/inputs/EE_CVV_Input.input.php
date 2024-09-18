@@ -22,9 +22,9 @@ class EE_CVV_Input extends EE_Text_Input
         $this->_add_validation_strategy(
             new EE_Text_Validation_Strategy(
                 $input_settings['validation_error_message'] ?? esc_html__(
-                'The CVV is either a 3 digit number on the back of your card, or 4 digit number on the front',
-                'event_espresso'
-            ),
+                    'The CVV is either a 3 digit number on the back of your card, or 4 digit number on the front',
+                    'event_espresso'
+                ),
                 '~^\d{3,4}$~'
             )
         );

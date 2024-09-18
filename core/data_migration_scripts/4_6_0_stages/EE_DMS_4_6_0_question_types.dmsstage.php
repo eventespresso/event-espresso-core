@@ -9,7 +9,6 @@
  */
 class EE_DMS_4_6_0_question_types extends EE_Data_Migration_Script_Stage_Table
 {
-
     protected array $_question_type_conversions = [];
 
 

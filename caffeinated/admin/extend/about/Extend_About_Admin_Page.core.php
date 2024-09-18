@@ -112,9 +112,9 @@ class Extend_About_Admin_Page extends About_Admin_Page
         );
         $settings_message                                 = $steps;
         $this->_template_args['admin_page_subtitle']      = esc_html__(
-                                                                'Thank you for choosing Event Espresso, the most powerful Event Management plugin for WordPress.',
-                                                                'event_espresso'
-                                                            ) . $settings_message;
+            'Thank you for choosing Event Espresso, the most powerful Event Management plugin for WordPress.',
+            'event_espresso'
+        ) . $settings_message;
         $template                                         =
             is_readable(EE_ABOUT_CAF_TEMPLATE_PATH . 'whats_new.template.php')
                 ? EE_ABOUT_CAF_TEMPLATE_PATH . 'whats_new.template.php'

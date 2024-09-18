@@ -243,7 +243,7 @@ class TableManager extends EE_Base
      *                                       (often true in EE)
      * @param string|int $index_size         defaults to TableAnalysis::index_col_size, the max for utf8mb4.
      * @return bool whether an index was dropped or not
-     * @throws /EE_Error if table analysis object isn't defined
+     * @throws EE_Error if table analysis object isn't defined
      */
     public function dropIndexIfSizeNot(
         string $table_name,

@@ -9,7 +9,6 @@
  */
 class EE_DMS_4_6_0_billing_info extends EE_Data_Migration_Script_Stage_Table
 {
-
     public function __construct()
     {
         global $wpdb;

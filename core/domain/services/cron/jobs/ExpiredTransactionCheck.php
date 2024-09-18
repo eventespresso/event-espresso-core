@@ -129,7 +129,6 @@ class ExpiredTransactionCheck extends CronJob
             // verify transaction and whether it is failed or not
             if ($transaction instanceof EE_Transaction) {
                 switch ($transaction->status_ID()) {
-
                     case EEM_Transaction::complete_status_code:
                         $this->processCompletedTransaction($transaction);
                         break;

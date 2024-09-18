@@ -24,7 +24,6 @@ class EE_CSV
     private $_primary_keys;
 
     /**
-     *
      * @var EE_Registry
      */
     private $EE;
@@ -34,10 +33,8 @@ class EE_CSV
     const metadata_header = 'Event Espresso Export Meta Data';
 
     /**
-     *        private constructor to prevent direct creation
+     * private constructor to prevent direct creation
      *
-     * @Constructor
-     * @access private
      * @return void
      */
     private function __construct()
@@ -75,8 +72,7 @@ class EE_CSV
 
 
     /**
-     *        @ singleton method used to instantiate class object
-     *        @ access public
+     * singleton method used to instantiate class object
      *
      * @return EE_CSV
      */
@@ -90,8 +86,8 @@ class EE_CSV
     }
 
     /**
-     * Opens a unicode or utf file (normal file_get_contents has difficulty readin ga unicode file. @see
-     * http://stackoverflow.com/questions/15092764/how-to-read-unicode-text-file-in-php
+     * Opens a unicode or utf file (normal file_get_contents has difficulty reading ga unicode file)
+     * @see http://stackoverflow.com/questions/15092764/how-to-read-unicode-text-file-in-php
      *
      * @param string $file_path
      * @return string
@@ -174,8 +170,7 @@ class EE_CSV
 
 
     /**
-     * @Import contents of csv file and store values in an array to be manipulated by other functions
-     * @access public
+     * Import contents of csv file and store values in an array to be manipulated by other functions
      * @param string  $path_to_file         - the csv file to be imported including the path to it's location.
      *                                      If $model_name is provided, assumes that each row in the CSV represents a
      *                                      model object for that model If $model_name ISN'T provided, assumes that
@@ -530,8 +525,7 @@ class EE_CSV
     }
 
     /**
-     * @Export contents of an array to csv file
-     * @access public
+     * Export contents of an array to csv file
      * @param array  $data     - the array of data to be converted to csv and exported
      * @param string $filename - name for newly created csv file
      * @return TRUE on success, FALSE on fail
@@ -563,8 +557,7 @@ class EE_CSV
 
 
     /**
-     * @Determine the maximum upload file size based on php.ini settings
-     * @access    public
+     * Determine the maximum upload file size based on php.ini settings
      * @param int $percent_of_max - desired percentage of the max upload_mb
      * @return int KB
      */
@@ -597,8 +590,7 @@ class EE_CSV
 
 
     /**
-     * @Drop   in replacement for PHP's fputcsv function - but this one works!!!
-     * @access private
+     * Drop   in replacement for PHP's fputcsv function - but this one works!!!
      * @param resource $fh         - file handle - what we are writing to
      * @param array    $row        - individual row of csv data
      * @param string   $delimiter  - csv delimiter
@@ -635,8 +627,7 @@ class EE_CSV
 
 
     // /**
-    //  * @CSV    Import / Export messages
-    //  * @access public
+    //  * CSV    Import / Export messages
     //  * @return void
     //  */
     // public function csv_admin_notices()

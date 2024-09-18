@@ -25,7 +25,7 @@ class EE_Email_Field extends EE_Text_Field_Base
     public function __construct($table_column, $nice_name, $nullable, $default_value = null)
     {
         parent::__construct($table_column, $nice_name, $nullable, $default_value);
-        $this->setSchemaFormat( SchemaFormat::EMAIL);
+        $this->setSchemaFormat(SchemaFormat::EMAIL);
     }
 
 

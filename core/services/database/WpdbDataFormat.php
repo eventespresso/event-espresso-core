@@ -50,19 +50,19 @@ class WpdbDataFormat
         $type = array_flip($type);
 
         // check for things that mean '%s'
-        if (isset($type[SchemaType::STRING], $type[SchemaType::OBJECT], $type[SchemaType::ARRAY])) {
+        if (isset($type[ SchemaType::STRING ], $type[ SchemaType::OBJECT ], $type[ SchemaType::ARRAY ])) {
             return WpdbDataFormat::STRING;
         }
 
         // if makes it past the above condition and there's float in the array
         // then the type is %f
-        if (isset($type[SchemaType::NUMBER])) {
+        if (isset($type[ SchemaType::NUMBER ])) {
             return WpdbDataFormat::FLOAT;
         }
 
         // if it makes it past the above conditions and there is an integer in the array
         // then the type is %d
-        if (isset($type[SchemaType::INTEGER])) {
+        if (isset($type[ SchemaType::INTEGER ])) {
             return WpdbDataFormat::INTEGER;
         }
 

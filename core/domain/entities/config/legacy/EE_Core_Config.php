@@ -124,9 +124,9 @@ class EE_Core_Config extends EE_Config_Base
     {
         if (! $this->reg_page_url) {
             $this->reg_page_url = add_query_arg(
-                    ['uts' => time()],
-                    get_permalink($this->reg_page_id)
-                ) . '#checkout';
+                ['uts' => time()],
+                get_permalink($this->reg_page_id)
+            ) . '#checkout';
         }
         return $this->reg_page_url;
     }

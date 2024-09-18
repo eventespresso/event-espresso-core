@@ -15,13 +15,13 @@ class CurrentUser
 {
     private EventManagers $event_managers;
 
-    private ?WP_User      $current_user     = null;
+    private ?WP_User $current_user     = null;
 
-    private bool          $is_event_manager = false;
+    private bool $is_event_manager = false;
 
-    private bool          $is_logged_in     = false;
+    private bool $is_logged_in     = false;
 
-    private bool          $is_super_admin   = false;
+    private bool $is_super_admin   = false;
 
 
     /**

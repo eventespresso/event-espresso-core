@@ -1,4 +1,5 @@
 <?php
+
 // comment out the following two lines if version is a major release
 use EventEspresso\core\domain\services\database\MaintenanceStatus;
 

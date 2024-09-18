@@ -16,29 +16,29 @@ class MessageTemplateRequestData
 {
     protected ?RequestInterface $request         = null;
 
-    protected string            $context         = '';
+    protected string $context         = '';
 
-    protected string            $description     = '';
+    protected string $description     = '';
 
-    protected string            $messenger       = '';
+    protected string $messenger       = '';
 
-    protected string            $message_type    = '';
+    protected string $message_type    = '';
 
-    protected string            $name            = '';
+    protected string $name            = '';
 
-    protected array             $template_fields = [];
+    protected array $template_fields = [];
 
-    protected int               $group_ID        = 0;
+    protected int $group_ID        = 0;
 
-    protected int               $user_ID         = 0;
+    protected int $user_ID         = 0;
 
-    protected bool              $is_active       = false;
+    protected bool $is_active       = false;
 
-    protected bool              $is_deleted      = false;
+    protected bool $is_deleted      = false;
 
-    protected bool              $is_global       = false;
+    protected bool $is_global       = false;
 
-    protected bool              $is_override     = false;
+    protected bool $is_override     = false;
 
 
     /**

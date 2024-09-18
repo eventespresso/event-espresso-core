@@ -61,7 +61,7 @@ class EE_Registry implements ResettableInterface
      * @since 4.5.0
      * @var EE_Capabilities|null $CAP
      */
-    public ?EE_Capabilities$CAP = null;
+    public ?EE_Capabilities $CAP = null;
 
     /**
      * @since 4.9.0

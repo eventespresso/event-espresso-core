@@ -12,7 +12,7 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  */
 class EE_Message_Factory
 {
-    protected static ?EE_Message_Factory  $_instance = null;
+    protected static ?EE_Message_Factory $_instance = null;
 
     protected EE_Message_Resource_Manager $_message_resource_manager;
 

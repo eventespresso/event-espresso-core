@@ -31,7 +31,6 @@ EEH_Autoloader::register_autoloader($class_to_filepath);
  */
 class EE_DMS_Core_4_10_0 extends EE_Data_Migration_Script_Base
 {
-
     /**
      * @param TableManager|null  $table_manager
      * @param TableAnalysis|null $table_analysis

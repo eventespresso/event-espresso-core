@@ -29,8 +29,6 @@ use ReflectionException;
  */
 class PaymentProcessor
 {
-
-
     private EEM_Payment_Method $payment_method_model;
 
     private EEM_Transaction $transaction_model;
@@ -159,7 +157,7 @@ class PaymentProcessor
         EE_Error::add_error(
             sprintf(
                 esc_html__(
-                    'A valid payment method could not be determined due to a technical issue.%sPlease try again or contact %s for assistance.',
+                    'A valid payment method could not be determined due to a technical issue.%1$sPlease try again or contact %2$s for assistance.',
                     'event_espresso'
                 ),
                 '<br/>',

@@ -15,7 +15,6 @@ use EventEspresso\core\services\licensing\LicenseKeyData;
  */
 class LicenseDataEDD implements LicenseDataStrategy
 {
-
     private LicenseKeyData $license_key_data;
 
     private string $status;

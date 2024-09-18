@@ -92,7 +92,8 @@ class EEM_Price_Type extends EEM_Soft_Delete_Base
         $this->_fields          = [
             'Price_Type' => [
                 'PRT_ID'         => new EE_Primary_Key_Int_Field(
-                    'PRT_ID', esc_html__('Price Type ID', 'event_espresso')
+                    'PRT_ID',
+                    esc_html__('Price Type ID', 'event_espresso')
                 ),
                 'PRT_name'       => new EE_Plain_Text_Field(
                     'PRT_name',

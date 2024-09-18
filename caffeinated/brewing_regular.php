@@ -342,7 +342,7 @@ class EE_Brewing_Regular extends EE_BASE implements InterminableInterface
      */
     public function filter_cpts(array $cpt_array): array
     {
-        $cpt_array[EspressoPostType::VENUES]['args']['show_in_nav_menus'] = true;
+        $cpt_array[ EspressoPostType::VENUES ]['args']['show_in_nav_menus'] = true;
         return $cpt_array;
     }
 

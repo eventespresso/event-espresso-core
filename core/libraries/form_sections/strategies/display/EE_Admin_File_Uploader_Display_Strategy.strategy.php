@@ -18,7 +18,7 @@ class EE_Admin_File_Uploader_Display_Strategy extends EE_Display_Strategy_Base
      * button to select media). Besides that, no special consideration should be required to make the media uploader
      * appear, besides having this input displayed.
      *
-     * @deprecated. enqueue_js should be called automatically now
+     * @deprecated enqueue_js should be called automatically now
      */
     public static function enqueue_scripts()
     {
@@ -84,10 +84,10 @@ class EE_Admin_File_Uploader_Display_Strategy extends EE_Display_Strategy_Base
             : '';
         // html string
         return EEH_HTML::div(
-                $input . $uploader,
-                '',
-                'ee_media_uploader_area'
-            ) . $image;
+            $input . $uploader,
+            '',
+            'ee_media_uploader_area'
+        ) . $image;
     }
 
 

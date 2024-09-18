@@ -30,7 +30,10 @@ class EEM_Status extends EEM_Base
             'StatusTable' => [
                 'STS_ID'       => new EE_Primary_Key_String_Field('STS_ID', esc_html__('Status ID', 'event_espresso')),
                 'STS_code'     => new EE_Plain_Text_Field(
-                    'STS_code', esc_html__('Status Code', 'event_espresso'), false, ''
+                    'STS_code',
+                    esc_html__('Status Code', 'event_espresso'),
+                    false,
+                    ''
                 ),
                 'STS_type'     => new EE_Enum_Text_Field(
                     'STS_type',

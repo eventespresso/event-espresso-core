@@ -11,7 +11,6 @@
 use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 try {
-
     // the following are already escaped
     echo wp_kses(
         EEH_Form_Fields::hidden_input(
@@ -573,7 +572,6 @@ try {
 
     <?php
     do_action('AHEE__questions_main_meta_box__template__after_admin_page_content', $question);
-
 } catch (Exception $e) {
     EE_Error::add_error($e->getMessage(), __FILE__, __LINE__, __METHOD__);
 }

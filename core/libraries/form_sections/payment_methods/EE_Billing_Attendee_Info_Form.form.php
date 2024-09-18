@@ -68,21 +68,23 @@ class EE_Billing_Attendee_Info_Form extends EE_Billing_Info_Form
                 'state'      => apply_filters(
                     'FHEE__EE_Billing_Attendee_Info_Form__state_field',
                     new EE_State_Select_Input(
-                        null, [
+                        null,
+                        [
                         'required'        => true,
                         'html_class'      => 'ee-billing-qstn ee-billing-qstn-state',
                         'html_label_text' => esc_html__('State', 'event_espresso'),
-                    ]
+                        ]
                     )
                 ),
                 'country'    => apply_filters(
                     'FHEE__EE_Billing_Attendee_Info_Form__country_field',
                     new EE_Country_Select_Input(
-                        null, [
+                        null,
+                        [
                         'required'        => true,
                         'html_class'      => 'ee-billing-qstn ee-billing-qstn-country',
                         'html_label_text' => esc_html__('Country', 'event_espresso'),
-                    ]
+                        ]
                     )
                 ),
                 'zip'        => new EE_Text_Input(

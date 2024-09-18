@@ -555,9 +555,9 @@ class Maintenance_Admin_Page extends EE_Admin_Page
         header("Content-Disposition: attachment; filename=system_status_" . sanitize_key(site_url()) . ".html");
         $output = '<style>table{border:1px solid darkgrey;}td{vertical-align:top}</style>';
         $output .= '<h1>' . sprintf(
-                __('System Information for %1$s', 'event_espresso'),
-                esc_url_raw(site_url())
-            ) . '</h1>';
+            __('System Information for %1$s', 'event_espresso'),
+            esc_url_raw(site_url())
+        ) . '</h1>';
         $output .= EEH_Template::layout_array_as_table($status_info);
         echo esc_html($output);
         die;

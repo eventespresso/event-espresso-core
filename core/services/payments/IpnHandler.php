@@ -338,7 +338,7 @@ class IpnHandler
         EE_Error::add_error(
             sprintf(
                 esc_html__(
-                    'A valid payment method could not be determined due to a technical issue.%sPlease refresh your browser and try again or contact %s for assistance.',
+                    'A valid payment method could not be determined due to a technical issue.%1$sPlease refresh your browser and try again or contact %2$s for assistance.',
                     'event_espresso'
                 ),
                 '<br/>',
@@ -406,5 +406,4 @@ class IpnHandler
     {
         return preg_replace('/[^[:print:]]/', '', $request_data);
     }
-
 }

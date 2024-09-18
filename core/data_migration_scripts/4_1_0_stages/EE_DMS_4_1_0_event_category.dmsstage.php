@@ -26,7 +26,6 @@
  */
 class EE_DMS_4_1_0_event_category extends EE_Data_Migration_Script_Stage
 {
-
     /**
      * @throws EE_Error
      */

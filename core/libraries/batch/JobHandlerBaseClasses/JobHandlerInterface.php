@@ -1,6 +1,5 @@
 <?php
 
-
 namespace EventEspresso\core\libraries\batch\JobHandlerBaseClasses;
 
 use EventEspresso\core\libraries\batch\Helpers\BatchRequestException;

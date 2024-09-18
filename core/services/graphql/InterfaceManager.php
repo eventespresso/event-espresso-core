@@ -64,9 +64,9 @@ class InterfaceManager implements GQLManagerInterface
         $array = [];
         foreach ($interface->getFields() as $f) {
             $name = $f->name();
-            $array[$name] = $f->toArray();
+            $array[ $name ] = $f->toArray();
             if ($f->useForOutput()) {
-                $array[$name]['resolve'] = [$interface, $this->methodName];
+                $array[ $name ]['resolve'] = [$interface, $this->methodName];
             }
         }
         return $array;

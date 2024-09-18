@@ -169,7 +169,9 @@ if ($show_backup_db_text) { ?>
 
     <?php
     if ($show_migration_progress) { ?>
-        <div id='migration-monitor' <?php if ($show_backup_db_text) : ?>style="display:none"<?php endif; ?>>
+        <div id='migration-monitor' <?php if ($show_backup_db_text) :
+            ?>style="display:none"<?php
+                                    endif; ?>>
             <?php if ($show_backup_db_text) { ?>
                 <p>
                     <a class="toggle-migration-monitor small-text" style="cursor: pointer;">

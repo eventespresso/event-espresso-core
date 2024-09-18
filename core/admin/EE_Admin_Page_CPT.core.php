@@ -92,7 +92,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
      *
      * @var array
      */
-    protected array $_pagenow_map= [];
+    protected array $_pagenow_map = [];
 
 
     /**
@@ -440,7 +440,6 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
-     * @since %VER%
      */
     private function _supports_page_templates(string $cpt_name): bool
     {
@@ -464,7 +463,6 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
      * Callback for the page_templates metabox selector.
      *
      * @return void
-     * @since %VER%
      */
     public function page_template_meta_box()
     {
@@ -1379,8 +1377,7 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
     private function loadEditorTemplate(bool $creating = true)
     {
         if ($this->admin_config && ! $this->admin_config->useAdvancedEditor()) {
-            add_filter('admin_body_class', function($classes)
-            {
+            add_filter('admin_body_class', function ($classes) {
                 $classes .= ' espresso-legacy-editor';
                 return $classes;
             });

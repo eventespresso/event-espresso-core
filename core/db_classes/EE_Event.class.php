@@ -208,7 +208,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 
     /**
      * Gets all the datetimes for this event, ordered by the DTT_order on the datetime.
-     * @darren, we should probably UNSET timezone on the EEM_Datetime model
+     * @todo We should probably UNSET timezone on the EEM_Datetime model
      * after running our query, so that this timezone isn't set for EVERY query
      * on EEM_Datetime for the rest of the request, no?
      *

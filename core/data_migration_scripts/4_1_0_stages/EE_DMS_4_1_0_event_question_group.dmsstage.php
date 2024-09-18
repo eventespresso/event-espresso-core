@@ -20,7 +20,6 @@
  */
 class EE_DMS_4_1_0_event_question_group extends EE_Data_Migration_Script_Stage_Table
 {
-
     /**
      * @throws EE_Error
      */

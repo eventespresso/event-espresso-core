@@ -8,7 +8,6 @@
  */
 class EE_Secondary_Table extends EE_Table_Base
 {
-
     protected ?string $_extra_join_conditions;
 
     protected ?string $_fk_on_table;

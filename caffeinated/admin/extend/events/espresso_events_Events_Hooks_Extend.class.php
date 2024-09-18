@@ -522,9 +522,9 @@ class espresso_events_Events_Hooks_Extend extends EE_Admin_Hooks
                     : '',
                 'TKT_description' => ! empty($ticket_data['TKT_description'])
                                      && $ticket_data['TKT_description'] !== esc_html__(
-                    'You can modify this description',
-                    'event_espresso'
-                )
+                                         'You can modify this description',
+                                         'event_espresso'
+                                     )
                     ? $ticket_data['TKT_description']
                     : '',
                 'TKT_start_date'  => $ticket_data['TKT_start_date'],
@@ -1874,12 +1874,12 @@ class espresso_events_Events_Hooks_Extend extends EE_Admin_Hooks
                 ? 'PRICENAMEATTR'
                 : 'edit_prices',
             'price_type_selector'   => $this->_get_price_type_selector(
-                    $ticket_row,
-                    $price_row,
-                    $price,
-                    $default,
-                    $send_disabled
-                ),
+                $ticket_row,
+                $price_row,
+                $price,
+                $default,
+                $send_disabled
+            ),
             'PRC_ID'                => $default && empty($price)
                 ? 0
                 : $price->ID(),

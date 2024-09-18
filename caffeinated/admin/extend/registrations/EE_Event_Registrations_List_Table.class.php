@@ -28,7 +28,7 @@ class EE_Event_Registrations_List_Table extends EE_Registrations_List_Table
      */
     protected ?DatetimesForEventCheckIn $datetimes_for_current_row = null;
 
-    protected array     $_status       = [];
+    protected array $_status       = [];
 
     private RegistrationsListTableFilters $filters;
 
@@ -45,7 +45,7 @@ class EE_Event_Registrations_List_Table extends EE_Registrations_List_Table
         $this->request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
         $this->filters = new RegistrationsListTableFilters($this->request);
         $this->filters->resolveRequestVars();
-        $this->filters->setLabel( __('Check-in Status for', 'event_espresso') );
+        $this->filters->setLabel(__('Check-in Status for', 'event_espresso'));
         parent::__construct($admin_page);
     }
 

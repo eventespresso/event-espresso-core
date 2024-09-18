@@ -44,7 +44,7 @@ class GraphQLManager implements GQLManagerInterface
      * @var InterfaceManager $interface_manager
      */
     protected $interface_manager;
-    
+
     /**
      * @var boolean $initialized
      */

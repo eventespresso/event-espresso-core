@@ -58,7 +58,7 @@ class EEM_Registration extends EEM_Soft_Delete_Base
 
     protected static ?EEM_Registration $_instance       = null;
 
-    protected ?TableAnalysis           $_table_analysis = null;
+    protected ?TableAnalysis $_table_analysis = null;
 
     /**
      * Keys are the status IDs for registrations (eg, RAP, RCN, etc), and the values
@@ -453,7 +453,8 @@ class EEM_Registration extends EEM_Soft_Delete_Base
      * @throws EE_Error
      */
     public function get_registration_for_transaction_attendee(int $TXN_ID = 0, int $ATT_ID = 0, int $att_nmbr = 0):
-    ?EE_Registration {
+    ?EE_Registration
+    {
         return $this->get_one(
             [
                 [

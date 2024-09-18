@@ -7,7 +7,6 @@
  */
 class EE_DMS_4_1_0_category_details extends EE_Data_Migration_Script_Stage
 {
-
     private string $_new_term_table;
 
 

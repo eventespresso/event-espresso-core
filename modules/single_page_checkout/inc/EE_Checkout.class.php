@@ -466,7 +466,7 @@ class EE_Checkout
         // grab what step we're on
         $this->current_step = $this->reg_steps[ $current_step ] ?? reset($this->reg_steps);
         // verify instance
-        if (! $this->current_step instanceof EE_SPCO_Reg_Step)  {
+        if (! $this->current_step instanceof EE_SPCO_Reg_Step) {
             EE_Error::add_error(
                 esc_html__('The current step could not be set.', 'event_espresso'),
                 __FILE__,

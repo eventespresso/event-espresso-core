@@ -232,8 +232,8 @@ class EED_PayPalCommerce extends EED_Module
     public static function captureOrder(
         EE_Transaction $transaction,
         EE_Payment_Method $paypal_pm,
-        string            $order_id,
-        array             $billing_info
+        string $order_id,
+        array $billing_info
     ): array {
         $capture_order_api = EED_PayPalCommerce::getCaptureOrderApi($transaction, $paypal_pm, $order_id);
         if (! $capture_order_api instanceof CaptureOrder) {
@@ -349,7 +349,11 @@ class EED_PayPalCommerce extends EED_Module
         $partner_client_id = PayPalExtraMetaManager::getPmOption($paypal_pm, Domain::META_KEY_PARTNER_CLIENT_ID) ?: '';
         $payer_id          = PayPalExtraMetaManager::getPmOption($paypal_pm, Domain::META_KEY_SELLER_MERCHANT_ID) ?: '';
         return new ThirdPartyPayPalApi(
-            $access_token, $bn_code, $partner_client_id, $payer_id, $paypal_pm->debug_mode()
+            $access_token,
+            $bn_code,
+            $partner_client_id,
+            $payer_id,
+            $paypal_pm->debug_mode()
         );
     }
 

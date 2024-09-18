@@ -22,17 +22,17 @@ use WP;
  */
 class CurrentPage
 {
-    private EE_CPT_Strategy  $cpt_strategy;
+    private EE_CPT_Strategy $cpt_strategy;
 
-    private bool             $initialized;
+    private bool $initialized;
 
-    private ?bool            $is_espresso_page = null;
+    private ?bool $is_espresso_page = null;
 
-    private int              $post_id          = 0;
+    private int $post_id          = 0;
 
-    private string           $post_name        = '';
+    private string $post_name        = '';
 
-    private array            $post_type        = [];
+    private array $post_type        = [];
 
     private RequestInterface $request;
 

@@ -65,7 +65,7 @@ class EE_Messenger_Collection extends EE_Object_Collection
      */
     public function get_by_info($info = '')
     {
-        return parent::get_by_info(str_replace(' ', '_', strtolower((string)$info)));
+        return parent::get_by_info(str_replace(' ', '_', strtolower((string) $info)));
     }
 
 

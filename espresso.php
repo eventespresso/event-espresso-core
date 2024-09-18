@@ -3,7 +3,7 @@
   Plugin Name: Event Espresso
   Plugin URI: https://eventespresso.com/pricing/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=wordpress_plugins_page&utm_content=support_link
   Description: Manage events, sell tickets, and receive payments from your WordPress website. Reduce event administration time, cut-out ticketing fees, and own your customer data. | <a href="https://eventespresso.com/add-ons/?utm_source=plugin_activation_screen&utm_medium=link&utm_campaign=plugin_description">Extensions</a> | <a href="https://eventespresso.com/pricing/?utm_source=plugin_activation_screen&utm_medium=link&utm_campaign=plugin_description">Sales</a> | <a href="admin.php?page=espresso_support">Support</a>
-  Version: 5.0.27.rc.000
+  Version: 5.0.27.rc.006
   Author: Event Espresso
   Author URI: https://eventespresso.com/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=wordpress_plugins_page&utm_content=support_link
   License: GPLv3
@@ -46,13 +46,13 @@ if (function_exists('espresso_version')) {
         {
             ?>
 <div class="error">
-	<p>
-		<?php
+    <p>
+        <?php
                     echo esc_html__(
                         'Can not run multiple versions of Event Espresso! One version has been automatically deactivated. Please verify that you have the correct version you want still active.',
                         'event_espresso'
                     ); ?>
-	</p>
+    </p>
 </div>
 <?php
             espresso_deactivate_plugin(plugin_basename(__FILE__));
@@ -71,8 +71,8 @@ if (function_exists('espresso_version')) {
         {
             ?>
 <div class="error">
-	<p>
-		<?php
+    <p>
+        <?php
                     printf(
                         esc_html__(
                             'We\'re sorry, but Event Espresso requires PHP version %1$s or greater in order to operate. You are currently running version %2$s.%3$sIn order to update your version of PHP, you will need to contact your current hosting provider.%3$sFor information on stable PHP versions, please go to %4$s.',
@@ -83,8 +83,8 @@ if (function_exists('espresso_version')) {
                         '<br/>',
                         '<a href="https://www.php.net/downloads.php">https://php.net/downloads.php</a>'
                     );
-                    ?>
-	</p>
+        ?>
+    </p>
 </div>
 <?php
             espresso_deactivate_plugin(plugin_basename(__FILE__));
@@ -104,7 +104,7 @@ if (function_exists('espresso_version')) {
          */
         function espresso_version(): string
         {
-            return apply_filters('FHEE__espresso__espresso_version', '5.0.27.rc.000');
+            return apply_filters('FHEE__espresso__espresso_version', '5.0.27.rc.006');
         }
 
         /**

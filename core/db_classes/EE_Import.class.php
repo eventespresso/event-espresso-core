@@ -18,13 +18,14 @@ class EE_Import implements ResettableInterface
     const do_nothing = 'nothing';
 
 
-    // instance of the EE_Import object
+    /**
+     * instance of the EE_Import object
+     */
     private static $_instance;
 
     private static $_csv_array = array();
 
     /**
-     *
      * @var array of model names
      */
     private static $_model_list = array();
@@ -44,10 +45,8 @@ class EE_Import implements ResettableInterface
 
 
     /**
-     *        private constructor to prevent direct creation
+     * private constructor to prevent direct creation
      *
-     * @Constructor
-     * @access private
      * @return void
      */
     private function __construct()
@@ -60,8 +59,7 @@ class EE_Import implements ResettableInterface
 
 
     /**
-     *    @ singleton method used to instantiate class object
-     *    @ access public
+     * singleton method used to instantiate class object
      *
      * @return EE_Import
      */
@@ -87,15 +85,14 @@ class EE_Import implements ResettableInterface
 
 
     /**
-     *    @ generates HTML for a file upload input and form
-     *    @ access    public
+     * generates HTML for a file upload input and form
      *
      * @param    string $title  - heading for the form
      * @param    string $intro  - additional text explaing what to do
      * @param    string $page   - EE Admin page to direct form to - in the form "espresso_{pageslug}"
      * @param    string $action - EE Admin page route array "action" that form will direct to
      * @param    string $type   - type of file to import
-     *                          @ return    string
+     * @return    string
      */
     public function upload_form($title, $intro, $form_url, $action, $type)
     {
@@ -133,8 +130,7 @@ class EE_Import implements ResettableInterface
 
 
     /**
-     * @Import Event Espresso data - some code "borrowed" from event espresso csv_import.php
-     * @access public
+     * Import Event Espresso data - some code "borrowed" from event espresso csv_import.php
      * @return boolean success
      */
     public function import()
@@ -304,19 +300,18 @@ class EE_Import implements ResettableInterface
      *    the same item, and instead update the item in the DB with that same ID.
      *    Also note, we remember the mappings permanently. So the 2nd, 3rd, and 10000th
      *    time you import a CSV from a different site, we remember their mappings, and
-     * will try to update the item in the DB instead of inserting another item (eg
-     * if we previously imported an event with temporary ID 1, and then it got a
-     * real ID of 123, we remember that. So the next time we import an event with
-     * temporary ID, from the same site, we know that it's real ID is 123, and will
-     * update that event, instead of adding a new event).
+     *    will try to update the item in the DB instead of inserting another item (eg
+     *    if we previously imported an event with temporary ID 1, and then it got a
+     *    real ID of 123, we remember that. So the next time we import an event with
+     *    temporary ID, from the same site, we know that it's real ID is 123, and will
+     *    update that event, instead of adding a new event).
      *
-     * @access public
      * @param array $csv_data_array - the array containing the csv data produced from
      *                              EE_CSV::import_csv_to_model_data_array()
      * @param array $fields_to_save - an array containing the csv column names as keys with the corresponding db table
      *                              fields they will be saved to
      * @return TRUE on success, FALSE on fail
-     * @throws \EE_Error
+     * @throws EE_Error
      */
     public function save_csv_data_array_to_db($csv_data_array, $model_name = false)
     {
@@ -467,9 +462,9 @@ class EE_Import implements ResettableInterface
      * we need to insert a new row for that ID, and then map from the non-existent ID
      * to the newly-inserted real ID.
      *
-     * @param type $csv_data_array
-     * @param type $export_from_site_a_to_b
-     * @param type $old_db_to_new_db_mapping
+     * @param mixed $csv_data_array
+     * @param mixed $export_from_site_a_to_b
+     * @param mixed $old_db_to_new_db_mapping
      * @return array updated $old_db_to_new_db_mapping
      */
     public function save_data_rows_to_db($csv_data_array, $export_from_site_a_to_b, $old_db_to_new_db_mapping)
@@ -632,10 +627,10 @@ class EE_Import implements ResettableInterface
      * otherwise insert it (ie, someone tweaked the CSV file, or the item was
      * deleted in the database so it should be re-inserted)
      *
-     * @param type     $id_in_csv
-     * @param type     $model_object_data
+     * @param mixed     $id_in_csv
+     * @param mixed     $model_object_data
      * @param EEM_Base $model
-     * @param type     $old_db_to_new_db_mapping
+     * @param mixed     $old_db_to_new_db_mapping
      * @return
      */
     protected function _decide_whether_to_insert_or_update_given_data_from_same_db(
@@ -660,9 +655,9 @@ class EE_Import implements ResettableInterface
      * Also, if there is no temp ID for the INT foreign keys from another database,
      * replaces them with 0 or the field's default.
      *
-     * @param type     $model_object_data
+     * @param mixed     $model_object_data
      * @param EEM_Base $model
-     * @param type     $old_db_to_new_db_mapping
+     * @param mixed     $old_db_to_new_db_mapping
      * @param boolean  $export_from_site_a_to_b
      * @return array updated model object data with temp IDs removed
      */
@@ -740,9 +735,9 @@ class EE_Import implements ResettableInterface
     /**
      * If the data was exported PRE-4.2, but then imported POST-4.2, then the term_id
      * this term-taxonomy refers to may be out-of-date so we need to update it.
-     * see https://make.wordpress.org/core/2015/02/16/taxonomy-term-splitting-in-4-2-a-developer-guide/
+     * @see https://make.wordpress.org/core/2015/02/16/taxonomy-term-splitting-in-4-2-a-developer-guide/
      *
-     * @param type $model_object_data
+     * @param mixed $model_object_data
      * @return array new model object data
      */
     protected function _handle_split_term_ids($model_object_data)
@@ -768,10 +763,10 @@ class EE_Import implements ResettableInterface
      * Given the object's ID and its model's name, find it int he mapping data,
      * bearing in mind where it came from
      *
-     * @param type   $object_id
+     * @param mixed   $object_id
      * @param string $model_name
      * @param array  $old_db_to_new_db_mapping
-     * @param type   $export_from_site_a_to_b
+     * @param mixed   $export_from_site_a_to_b
      * @return int
      */
     protected function _find_mapping_in($object_id, $model_name, $old_db_to_new_db_mapping, $export_from_site_a_to_b)
@@ -794,10 +789,10 @@ class EE_Import implements ResettableInterface
 
     /**
      *
-     * @param type     $id_in_csv
-     * @param type     $model_object_data
+     * @param mixed     $id_in_csv
+     * @param mixed     $model_object_data
      * @param EEM_Base $model
-     * @param type     $old_db_to_new_db_mapping
+     * @param mixed     $old_db_to_new_db_mapping
      * @return array updated $old_db_to_new_db_mapping
      */
     protected function _insert_from_data_array($id_in_csv, $model_object_data, $model, $old_db_to_new_db_mapping)

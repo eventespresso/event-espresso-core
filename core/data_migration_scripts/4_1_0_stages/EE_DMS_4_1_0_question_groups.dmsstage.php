@@ -45,7 +45,6 @@
  */
 class EE_DMS_4_1_0_question_groups extends EE_Data_Migration_Script_Stage
 {
-
     public function __construct()
     {
         global $wpdb;

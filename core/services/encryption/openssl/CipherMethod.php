@@ -20,7 +20,7 @@ class CipherMethod
      * list of cipher methods that we consider usable,
      * essentially all of the installed_cipher_methods minus weak_algorithms
      */
-    protected array  $cipher_methods        = [];
+    protected array $cipher_methods        = [];
 
     protected string $default_cipher_method = '';
 

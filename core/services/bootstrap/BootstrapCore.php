@@ -53,15 +53,15 @@ use Throwable;
  */
 class BootstrapCore
 {
-    private LoaderInterface       $loader;
+    private LoaderInterface $loader;
 
-    protected RequestInterface    $request;
+    protected RequestInterface $request;
 
-    protected ResponseInterface   $response;
+    protected ResponseInterface $response;
 
     protected RequestStackBuilder $request_stack_builder;
 
-    protected RequestStack        $request_stack;
+    protected RequestStack $request_stack;
 
 
     /**

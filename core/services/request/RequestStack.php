@@ -14,13 +14,13 @@ namespace EventEspresso\core\services\request;
  */
 class RequestStack
 {
-    protected RequestDecoratorInterface    $request_stack_app;
+    protected RequestDecoratorInterface $request_stack_app;
 
-    protected RequestInterface             $request;
+    protected RequestInterface $request;
 
     protected RequestStackCoreAppInterface $core_app;
 
-    protected ResponseInterface            $response;
+    protected ResponseInterface $response;
 
 
     /**

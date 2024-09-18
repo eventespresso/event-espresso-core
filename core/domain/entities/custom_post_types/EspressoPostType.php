@@ -9,5 +9,4 @@ class EspressoPostType
     public const VENUES = 'espresso_venues';
 
     public const ATTENDEES = 'espresso_attendees';
-
 }

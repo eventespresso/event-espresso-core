@@ -58,7 +58,7 @@ class EED_Event_Single extends EED_Module
         );
         $custom_post_types = $custom_post_type_definitions->getDefinitions();
         EED_Module::registerRoute(
-            $custom_post_types[EspressoPostType::EVENTS]['singular_slug'],
+            $custom_post_types[ EspressoPostType::EVENTS ]['singular_slug'],
             'Event_Single',
             'run'
         );

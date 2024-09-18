@@ -145,9 +145,9 @@ class EEG_PayPalCheckout extends EE_Onsite_Gateway
      */
     public static function updatePaymentStatus(
         EE_Payment $payment,
-        string     $status,
-                   $response_data,
-        string     $update_message = ''
+        string $status,
+        $response_data,
+        string $update_message = ''
     ): EE_Payment {
         $paypal_pm = ! empty($payment->payment_method())
             ? EEM_Payment_Method::instance()->get_one_by_slug($payment->payment_method()->name())
@@ -195,10 +195,10 @@ class EEG_PayPalCheckout extends EE_Onsite_Gateway
      * @throws ReflectionException
      */
     public static function saveBillingDetails(
-        EE_Payment     $payment,
+        EE_Payment $payment,
         EE_Transaction $transaction,
-        array          $order,
-        array          $billing_info
+        array $order,
+        array $billing_info
     ): void {
         $primary_reg    = $transaction->primary_registration();
         $attendee       = $primary_reg instanceof EE_Registration ? $primary_reg->attendee() : null;

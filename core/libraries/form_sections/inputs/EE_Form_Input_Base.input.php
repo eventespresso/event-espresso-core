@@ -236,14 +236,14 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
             $setter = 'set_' . $key;
             if (method_exists($this, $setter)) {
                 $this->$setter($value);
-                unset($input_args[$key]);
+                unset($input_args[ $key ]);
                 continue;
             }
             // add underscore to $key to match property names
             $_key = "_$key";
             if (property_exists($this, $_key)) {
                 $this->{$_key} = $value;
-                unset($input_args[$key]);
+                unset($input_args[ $key ]);
             }
         }
         // ensure that "required" is set correctly

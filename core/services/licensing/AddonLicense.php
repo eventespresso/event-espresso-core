@@ -25,7 +25,7 @@ class AddonLicense
      * @var array|string[]
      */
     private static array $addon_names = [
-        //Add-ons
+        // Add-ons
         'eea-affiliate-wp'                          => 'AffiliateWP Integration',
         'eea-attendee-mover'                        => 'Attendee Mover',
         'eea-automated-upcoming-event-notification' => 'Automatic Event Notifications',

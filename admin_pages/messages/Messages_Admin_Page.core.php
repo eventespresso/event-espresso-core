@@ -19,19 +19,19 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
  */
 class Messages_Admin_Page extends EE_Admin_Page
 {
-    private ?EEM_Message                   $MSG_MODEL                 = null;
+    private ?EEM_Message $MSG_MODEL                 = null;
 
-    private ?EEM_Message_Template          $MTP_MODEL                 = null;
+    private ?EEM_Message_Template $MTP_MODEL                 = null;
 
-    private ?EEM_Message_Template_Group    $MTG_MODEL                 = null;
+    private ?EEM_Message_Template_Group $MTG_MODEL                 = null;
 
     protected ?EE_Message_Resource_Manager $_message_resource_manager = null;
 
-    protected ?EE_Message_Template_Group   $_message_template_group   = null;
+    protected ?EE_Message_Template_Group $_message_template_group   = null;
 
-    protected ?EE_messenger                $_active_messenger         = null;
+    protected ?EE_messenger $_active_messenger         = null;
 
-    protected ?MessageTemplateManager      $message_template_manager  = null;
+    protected ?MessageTemplateManager $message_template_manager  = null;
 
 
     /**
@@ -42,19 +42,19 @@ class Messages_Admin_Page extends EE_Admin_Page
      */
     protected ?EE_Messages_Template_Pack $_template_pack            = null;
 
-    protected array                      $_active_messengers        = [];
+    protected array $_active_messengers        = [];
 
-    protected array                      $_active_message_types     = [];
+    protected array $_active_message_types     = [];
 
-    protected array                      $_shortcodes               = [];
+    protected array $_shortcodes               = [];
 
-    protected array                      $_m_mt_settings            = [];
+    protected array $_m_mt_settings            = [];
 
-    protected string                     $_active_message_type_name = '';
+    protected string $_active_message_type_name = '';
 
-    protected string                     $_active_messenger_name    = '';
+    protected string $_active_messenger_name    = '';
 
-    protected string                     $_context_switcher         = '';
+    protected string $_context_switcher         = '';
 
 
     /**
@@ -3839,17 +3839,17 @@ class Messages_Admin_Page extends EE_Admin_Page
                 EE_Error::add_error(
                     $message_type instanceof EE_message_type
                         ? sprintf(
-                        esc_html__(
-                            '%s message type was not successfully activated with the %s messenger',
-                            'event_espresso'
-                        ),
-                        ucwords($message_type->label['singular']),
-                        ucwords($messenger->label['singular'])
-                    )
+                            esc_html__(
+                                '%s message type was not successfully activated with the %s messenger',
+                                'event_espresso'
+                            ),
+                            ucwords($message_type->label['singular']),
+                            ucwords($messenger->label['singular'])
+                        )
                         : sprintf(
-                        esc_html__('%s messenger was not successfully activated', 'event_espresso'),
-                        ucwords($messenger->label['singular'])
-                    ),
+                            esc_html__('%s messenger was not successfully activated', 'event_espresso'),
+                            ucwords($messenger->label['singular'])
+                        ),
                     __FILE__,
                     __FUNCTION__,
                     __LINE__

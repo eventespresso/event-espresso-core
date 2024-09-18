@@ -12,7 +12,6 @@
  */
 class EE_DMS_4_3_0_event_message_templates extends EE_Data_Migration_Script_Stage_Table
 {
-
     /**
      * This property will hold the table name for event_message_templates
      *
@@ -38,13 +37,13 @@ class EE_DMS_4_3_0_event_message_templates extends EE_Data_Migration_Script_Stag
         if ($old_row['EVT_ID'] > 0) {
             // let's get the EVT for this id so we can update the custom name on the old row.
             $event_name = 'Custom Template for ' . $wpdb->get_var(
-                    $wpdb->prepare(
-                        "SELECT post_title from $wpdb->posts WHERE ID = %d",
-                        absint(
-                            $old_row['EVT_ID']
-                        )
+                $wpdb->prepare(
+                    "SELECT post_title from $wpdb->posts WHERE ID = %d",
+                    absint(
+                        $old_row['EVT_ID']
                     )
-                );
+                )
+            );
 
             // update name
             $updated = $wpdb->update(

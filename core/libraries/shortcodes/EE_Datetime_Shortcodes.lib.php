@@ -71,7 +71,6 @@ class EE_Datetime_Shortcodes extends EE_Shortcodes
 
             case '[TIME_END]':
                 return $this->_data->get_i18n_datetime('DTT_EVT_end', get_option('time_format'));
-
         }
 
         if (strpos($shortcode, '[ICAL_LINK_*') !== false) {

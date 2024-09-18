@@ -144,7 +144,7 @@ class EE_PMT_PayPalCheckout extends EE_PMT_Base
             }
             // Try loading the template.
             EE_Registry::instance()->load_helper('Template');
-        } catch (EE_Error|ReflectionException $e) {
+        } catch (EE_Error | ReflectionException $e) {
             // Just return, adding nothing.
             return;
         }
@@ -174,12 +174,12 @@ class EE_PMT_PayPalCheckout extends EE_PMT_Base
      */
     public function process_payment(
         EE_Transaction $transaction,
-                       $amount = null,
-                       $billing_info = null,
-                       $return_url = null,
-                       $fail_url = '',
-                       $method = 'CART',
-                       $by_admin = false
+        $amount = null,
+        $billing_info = null,
+        $return_url = null,
+        $fail_url = '',
+        $method = 'CART',
+        $by_admin = false
     ): EE_Payment {
         // This payment should have been processed in the background, while the Order was created and charged.
         // So simply return the last payment. Unless it's somehow missing.

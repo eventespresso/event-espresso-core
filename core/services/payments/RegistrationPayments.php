@@ -22,7 +22,6 @@ use ReflectionException;
  */
 class RegistrationPayments
 {
-
     /**
      * update registrations REG_paid field after successful payment and link registrations with payment
      *

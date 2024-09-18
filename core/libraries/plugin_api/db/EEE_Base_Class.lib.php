@@ -59,7 +59,6 @@ class EEE_Base_Class
                     "When declaring a class extension, you must define its _model_name_extended property. It should be a model name like 'Attendee' or 'Event'",
                     "event_espresso"
                 )
-
             );
         }
         if (did_action('AHEE__EE_' . $this->_model_name_extended . '__construct__end')) {

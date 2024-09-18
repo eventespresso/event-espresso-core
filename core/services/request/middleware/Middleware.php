@@ -24,13 +24,13 @@ use EventEspresso\core\services\request\ResponseInterface;
  */
 abstract class Middleware implements RequestDecoratorInterface
 {
-    protected LoaderInterface           $loader;
+    protected LoaderInterface $loader;
 
     protected RequestDecoratorInterface $request_stack_app;
 
-    protected RequestInterface          $request;
+    protected RequestInterface $request;
 
-    protected ResponseInterface         $response;
+    protected ResponseInterface $response;
 
 
     /**

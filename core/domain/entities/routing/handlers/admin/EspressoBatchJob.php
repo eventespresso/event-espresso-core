@@ -17,7 +17,6 @@ use EventEspresso\core\domain\services\assets\LegacyAccountingAssetManager;
  */
 class EspressoBatchJob extends AdminRoute
 {
-
     /**
      * returns true if the current request matches this route
      *

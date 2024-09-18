@@ -68,7 +68,6 @@ class EEH_MSG_Template
 
         EEH_MSG_Template::_set_autoloader();
         foreach ($message_types as $message_type) {
-
             // if this is global template generation.
             if ($global) {
                 // let's attempt to get the GRP_ID for this combo IF GRP_ID is empty.

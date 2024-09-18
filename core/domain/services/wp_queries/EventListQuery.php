@@ -31,7 +31,7 @@ class EventListQuery extends WP_Query
     /**
      * @var array|string|null
      */
-    private $order_by =[];
+    private $order_by = [];
 
     private ?string $sort = '';
 

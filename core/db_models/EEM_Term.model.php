@@ -31,7 +31,10 @@ class EEM_Term extends EEM_Base
                 'name'       => new EE_Plain_Text_Field('name', esc_html__('Term Name', 'event_espresso'), false, ''),
                 'slug'       => new EE_Slug_Field('slug', esc_html__('Term Slug', 'event_espresso'), false),
                 'term_group' => new EE_Integer_Field(
-                    'term_group', esc_html__("Term Group", "event_espresso"), false, 0
+                    'term_group',
+                    esc_html__("Term Group", "event_espresso"),
+                    false,
+                    0
                 ),
             ],
         ];

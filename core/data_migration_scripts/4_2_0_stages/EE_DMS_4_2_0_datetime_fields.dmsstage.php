@@ -8,7 +8,6 @@
 
 class EE_DMS_4_2_0_datetime_fields extends EE_Data_Migration_Script_Stage_Table
 {
-
     public function __construct()
     {
         global $wpdb;
@@ -25,15 +24,19 @@ class EE_DMS_4_2_0_datetime_fields extends EE_Data_Migration_Script_Stage_Table
         global $wpdb;
 
         $updated = $wpdb->update(
-            $this->_old_table, [
+            $this->_old_table,
+            [
                                  'DTT_name' => '',
                                  'DTT_description' => '',
-                             ], [
+                             ],
+            [
                 'DTT_ID' => $old_row['DTT_ID'],
-            ], [
+            ],
+            [
                 '%s',// DTT_name,
                 '%s',// DTT_description
-            ], [
+            ],
+            [
                 '%d',// DTT_ID
             ]
         );

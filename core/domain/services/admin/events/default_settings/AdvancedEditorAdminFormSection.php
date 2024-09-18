@@ -37,7 +37,7 @@ use EEH_HTML;
  */
 class AdvancedEditorAdminFormSection
 {
-    protected  EE_Admin_Config $admin_config;
+    protected EE_Admin_Config $admin_config;
 
 
     /**

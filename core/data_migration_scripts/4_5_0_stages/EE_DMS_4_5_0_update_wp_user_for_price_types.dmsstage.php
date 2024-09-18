@@ -10,7 +10,6 @@
  */
 class EE_DMS_4_5_0_update_wp_user_for_price_types extends EE_Data_Migration_Script_Stage_Table
 {
-
     public function __construct()
     {
         global $wpdb;

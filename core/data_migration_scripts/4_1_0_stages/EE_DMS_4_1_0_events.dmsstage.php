@@ -176,7 +176,6 @@ use EventEspresso\core\domain\entities\custom_post_types\EspressoPostType;
  */
 class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage
 {
-
     private string $_old_start_end_table;
 
     private string $_new_meta_table;
@@ -607,7 +606,7 @@ class EE_DMS_4_1_0_events extends EE_Data_Migration_Script_Stage
             if ($new_id) {
                 $this->_insert_venue_into_meta_table($new_id, $old_event);
                 $guid = $old_event['venue_image'] ?? null;
-                if($guid) {
+                if ($guid) {
                     $this->get_migration_script()->convert_image_url_to_attachment_and_attach_to_post(
                         $guid,
                         $new_id,

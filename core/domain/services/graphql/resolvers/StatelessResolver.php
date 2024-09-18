@@ -56,7 +56,9 @@ trait StatelessResolver
                 break;
         }
 
-        if (! ($event instanceof EE_Event)) return null;
+        if (! ($event instanceof EE_Event)) {
+return null;
+        }
 
         return $context->get_loader('post')->load_deferred($event->ID());
     }

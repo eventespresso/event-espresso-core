@@ -78,7 +78,7 @@ abstract class EE_Config_Base
             }
             if ($is_static_property) {
                 // double $$ is not a typo, it's how to access a static variable dynamically.
-                $class_name::$$property = $static_defaults[$property];
+                $class_name::$$property = $static_defaults[ $property ];
                 continue;
             }
             if ($is_public_property) {

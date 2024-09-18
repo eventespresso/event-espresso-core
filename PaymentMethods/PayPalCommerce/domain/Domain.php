@@ -107,6 +107,11 @@ class Domain
     public const META_KEY_CHECKOUT_TYPE = 'checkout_type';
 
     /**
+     * Name of the extra meta that stores the selected PP function options.
+     */
+    public const META_KEY_FUNDING_OPTIONS = 'funding_options';
+
+    /**
      * Name of the PayPal API parameter that holds the auth code.
      */
     public const API_KEY_AUTH_CODE = 'authCode';

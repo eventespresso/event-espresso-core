@@ -9,7 +9,6 @@
  */
 class EE_DMS_4_7_0_Add_Taxes_To_REG_Final_Price extends EE_Data_Migration_Script_Stage_Table
 {
-
     protected string $_ticket_table;
 
     protected string $_line_item_table;

@@ -31,13 +31,13 @@ class Router
 {
     protected EE_Dependency_Map $dependency_map;
 
-    protected LoaderInterface   $loader;
+    protected LoaderInterface $loader;
 
-    protected RouteHandler      $route_handler;
+    protected RouteHandler $route_handler;
 
-    protected string            $route_request_type;
+    protected string $route_request_type;
 
-    protected array             $routes_loaded;
+    protected array $routes_loaded;
 
 
     /**

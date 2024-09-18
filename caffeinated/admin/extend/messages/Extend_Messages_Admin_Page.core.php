@@ -187,10 +187,10 @@ class Extend_Messages_Admin_Page extends Messages_Admin_Page
             ],
         ];
         if (
-        EE_Registry::instance()->CAP->current_user_can(
-            'ee_delete_messages',
-            'espresso_messages_trash_message_template'
-        )
+            EE_Registry::instance()->CAP->current_user_can(
+                'ee_delete_messages',
+                'espresso_messages_trash_message_template'
+            )
         ) {
             $this->_views['trashed'] = [
                 'slug'        => 'trashed',

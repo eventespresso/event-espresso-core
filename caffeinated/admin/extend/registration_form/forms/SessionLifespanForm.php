@@ -63,7 +63,7 @@ class SessionLifespanForm extends EE_Form_Section_Proper
                                 'event_espresso'
                             ),
                             'layout_container_class' => 'ee-feature-highlight-2024',
-                            'extra_container_html' => '<span class="ee-feature-highlight-2024-notice">✨ ' . esc_html__('NEW','event_espresso') . '</span>',
+                            'extra_container_html' => '<span class="ee-feature-highlight-2024-notice">✨ ' . esc_html__('NEW', 'event_espresso') . '</span>',
                         ],
                         [
                             EE_Switch_Input::OPTION_OFF => esc_html__(

@@ -294,7 +294,7 @@ class EE_Attendee_Contact_List_Table extends EE_Admin_List_Table
                     'ee_delete_contacts',
                     'espresso_registrations_delete_attendees',
                     $attendee->ID()
-                ) 
+                )
                 && $attendee->count_related('Registration') === 0
             ) {
                 // perm delete attendee

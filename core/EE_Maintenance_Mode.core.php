@@ -199,7 +199,7 @@ class EE_Maintenance_Mode implements ResettableInterface
     public function set_maintenance_mode_if_db_old(): bool
     {
         /** @var EE_Data_Migration_Manager $data_migration_manager */
-        $data_migration_manager = $this->loader->getShared(EE_Data_Migration_Manager::class );
+        $data_migration_manager = $this->loader->getShared(EE_Data_Migration_Manager::class);
         $scripts_that_should_run = $data_migration_manager->check_for_applicable_data_migration_scripts();
         if (! empty($scripts_that_should_run)) { //  && $this->status !== EE_Maintenance_Mode::STATUS_FULL_SITE
             $this->activateFullSiteMaintenanceMode();

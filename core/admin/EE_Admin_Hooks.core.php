@@ -14,7 +14,6 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 abstract class EE_Admin_Hooks extends EE_Base
 {
-
     /**
      * This just holds an instance of the page object for this hook
      *
@@ -28,9 +27,9 @@ abstract class EE_Admin_Hooks extends EE_Base
      *
      * @var EE_Admin_Page|EE_Admin_Page_CPT|null
      */
-    protected                   $_adminpage_obj = null;
+    protected $_adminpage_obj = null;
 
-    protected ?EE_Registry      $EE             = null;
+    protected ?EE_Registry $EE             = null;
 
     protected ?RequestInterface $request        = null;
 
@@ -148,7 +147,7 @@ abstract class EE_Admin_Hooks extends EE_Base
     /**
      * we're just going to use this to hold the name of the caller class (child class name)
      */
-    public string    $caller         = '';
+    public string $caller         = '';
 
     protected string $_current_route = '';
 
@@ -276,11 +275,11 @@ abstract class EE_Admin_Hooks extends EE_Base
                 $type == 'js'
                     ? wp_register_script($ref, $url, $depends, $version, $footer)
                     : wp_register_style(
-                    $ref,
-                    $url,
-                    $depends,
-                    $version
-                );
+                        $ref,
+                        $url,
+                        $depends,
+                        $version
+                    );
             }
             // k now let's do the enqueues
             if (! isset($this->_scripts_styles['enqueues'])) {
@@ -548,9 +547,9 @@ abstract class EE_Admin_Hooks extends EE_Base
             // make sure method exists
             if (! method_exists($this, $method)) {
                 $msg[] = esc_html__(
-                             'There is no corresponding method for the hook labeled in the _ajax_func array',
-                             'event_espresso'
-                         ) . '<br />';
+                    'There is no corresponding method for the hook labeled in the _ajax_func array',
+                    'event_espresso'
+                ) . '<br />';
                 $msg[] = sprintf(
                     esc_html__(
                         'The method name given in the array is %s, check the spelling and make sure it exists in the %s class',
@@ -583,9 +582,9 @@ abstract class EE_Admin_Hooks extends EE_Base
             // make sure method exists
             if (! method_exists($this, $method)) {
                 $msg[] = esc_html__(
-                             'There is no corresponding method for the hook labeled in the _init_func array',
-                             'event_espresso'
-                         ) . '<br />';
+                    'There is no corresponding method for the hook labeled in the _init_func array',
+                    'event_espresso'
+                ) . '<br />';
                 $msg[] = sprintf(
                     esc_html__(
                         'The method name given in the array is %s, check the spelling and make sure it exists in the %s class',

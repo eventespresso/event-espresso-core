@@ -14,7 +14,6 @@ use EventEspresso\core\domain\services\database\DbStatus;
  */
 final class EE_Capabilities extends EE_Base
 {
-
     const ROLE_ADMINISTRATOR = 'administrator';
 
     const ROLE_EVENTS_ADMINISTRATOR = 'ee_events_administrator';

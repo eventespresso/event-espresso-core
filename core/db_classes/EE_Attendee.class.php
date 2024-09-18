@@ -615,6 +615,9 @@ class EE_Attendee extends EE_CPT_Base implements EEI_Contact, AddressInterface, 
             return null;
         }
         $billing_form = $pm_type->billing_form();
+        if (! $billing_form instanceof EE_Billing_Info_Form) {
+            return null;
+        }
         // double-check the form isn't totally hidden, in which case pretend there is no form
         $form_totally_hidden = true;
         foreach ($billing_form->inputs_in_subsections() as $input) {

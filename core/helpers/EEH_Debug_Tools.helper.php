@@ -554,7 +554,7 @@ class EEH_Debug_Tools
         if (EEH_Debug_Tools::plainOutput()) {
             return rtrim($var, "\n");
         }
-        $style =[
+        $style = [
             'background: #334',
             'color: #9C3',
             'display: inline-block',

@@ -195,7 +195,7 @@ class ModuleRoutesManager
             }
             if (! method_exists($forward[0], $forward[1])) {
                 $msg = sprintf(
-                    esc_html__('The class method %s for the %s forwarding route is in invalid.', 'event_espresso'),
+                    esc_html__('The class method %1$s for the %2$s forwarding route is in invalid.', 'event_espresso'),
                     $forward[1],
                     $route
                 );
@@ -204,7 +204,7 @@ class ModuleRoutesManager
             }
         } elseif (! function_exists($forward)) {
             $msg = sprintf(
-                esc_html__('The function %s for the %s forwarding route is in invalid.', 'event_espresso'),
+                esc_html__('The function %1$s for the %2$s forwarding route is in invalid.', 'event_espresso'),
                 $forward,
                 $route
             );

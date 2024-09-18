@@ -533,10 +533,10 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
         $group_count = '
             <span class="reg-count-group-size" >
                 ' . sprintf(
-                esc_html__('(%1$s / %2$s)', 'event_espresso'),
-                $registration->count(),
-                $registration->group_size()
-            ) . '
+            esc_html__('(%1$s / %2$s)', 'event_espresso'),
+            $registration->count(),
+            $registration->group_size()
+        ) . '
             </span >';
 
         $content = '
@@ -734,7 +734,7 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
         $content = $registration->final_price() > 0
             ? '<span class="reg-overview-paid-event-spn">' . $registration->pretty_final_price() . '</span>'
             : '<span class="reg-overview-free-event-spn">' . esc_html__('free', 'event_espresso') . '</span>';
-        return $this->columnContent( '_REG_final_price', $content, 'end' );
+        return $this->columnContent('_REG_final_price', $content, 'end');
     }
 
 
@@ -776,9 +776,9 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
             $content .= '
             <span class="ee-status-text-small">
                 ' . sprintf(
-                        esc_html__('...via %s', 'event_espresso'),
-                        $payment_method_name
-                    ) . '
+                esc_html__('...via %s', 'event_espresso'),
+                $payment_method_name
+            ) . '
             </span>';
         }
         return $this->columnContent('_REG_paid', $content, 'end', 'stack');
@@ -1017,9 +1017,9 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
                 <a class="ee-aria-tooltip button button--icon-only"
                    href="' . $this->viewTransactionUrl($transaction) . '"
                    aria-label="' . sprintf(
-                    esc_html__('View Transaction Details (%s)', 'event_espresso'),
-                    EEH_Template::pretty_status($transaction->status_ID(), false, 'sentence')
-                ) . '"
+                       esc_html__('View Transaction Details (%s)', 'event_espresso'),
+                       EEH_Template::pretty_status($transaction->status_ID(), false, 'sentence')
+                   ) . '"
                 >
                     <span class="dashicons dashicons-cart"></span>
                 </a>';
@@ -1242,9 +1242,9 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
             <a  class="ee-aria-tooltip ee-ticket-filter-link"
                 href="' . $ticket_filter_url . '"
                 aria-label="' . sprintf(
-                esc_attr__('Filter this list to only show registrations for ticket %s', 'event_espresso'),
-                $ticket->name()
-            ) . '"
+                    esc_attr__('Filter this list to only show registrations for ticket %s', 'event_espresso'),
+                    $ticket->name()
+                ) . '"
             >
                 <span class="dashicons dashicons-groups dashicons--small"></span>'
                 . esc_html__('View Registrations', 'event_espresso') . '

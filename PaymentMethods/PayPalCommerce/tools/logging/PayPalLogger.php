@@ -86,7 +86,7 @@ class PayPalLogger
             if ($popup_log) {
                 PayPalLogger::logInWindow(json_encode($data));
             }
-        } catch (ReflectionException|EE_Error $error) {
+        } catch (ReflectionException | EE_Error $error) {
             new ExceptionLogger($error);
             return false;
         }

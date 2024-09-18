@@ -44,27 +44,27 @@ class EE_Ticket_Shortcodes extends EE_Shortcodes
                 'event_espresso'
             ),
             '[TKT_USES_*]'              => esc_html__(
-                    'This attribute based shortcode parses to show the number of uses the ticket has.  The optional "schema" attribute can be used to indicate what schema is used when the uses is infinite.  Options are:',
-                    'event_espresso'
-                ) . '
+                'This attribute based shortcode parses to show the number of uses the ticket has.  The optional "schema" attribute can be used to indicate what schema is used when the uses is infinite.  Options are:',
+                'event_espresso'
+            ) . '
         <ul>
             <li>
                 <strong>symbol</strong>:' . esc_html__(
-                    'This returns the &infin; symbol.',
-                    'event_espresso'
-                ) . '
+                'This returns the &infin; symbol.',
+                'event_espresso'
+            ) . '
             </li>
             <li>
                 <strong>text</strong>:' . esc_html__(
-                    'This returns the word, "Unlimited". This is also the default if the "schema" attribute is not used.',
-                    'event_espresso'
-                ) . '
+                'This returns the word, "Unlimited". This is also the default if the "schema" attribute is not used.',
+                'event_espresso'
+            ) . '
             </li>
             <li>
                 <strong>{custom}</strong>:' . esc_html__(
-                    'You can put anything you want as a string instead and that will be used.  So you could have the world "any" and whenever uses for a ticket is infinity, this shortcode will parse to "any".',
-                    'event_espresso'
-                ) . '
+                'You can put anything you want as a string instead and that will be used.  So you could have the world "any" and whenever uses for a ticket is infinity, this shortcode will parse to "any".',
+                'event_espresso'
+            ) . '
             </li>
         </ul>',
         ];

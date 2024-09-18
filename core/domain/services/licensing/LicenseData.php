@@ -9,7 +9,6 @@ use EventEspresso\core\services\loaders\LoaderFactory;
 
 class LicenseData
 {
-
     public const  LICENSE_ACTIVE  = 'active';
 
     public const  LICENSE_DECAF   = 'decaf';

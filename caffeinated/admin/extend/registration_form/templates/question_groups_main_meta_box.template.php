@@ -14,7 +14,6 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
  */
 
 try {
-
     $question_order           = 0;
     $QSG_system               = $question_group->system_group();
     $question_group_questions = $question_group->questions();
@@ -27,7 +26,7 @@ try {
     $allowed_question_group_questions  = EEM_Question::instance()->allowed_system_questions_in_system_question_group(
         $QSG_system
     );
-?>
+    ?>
 
 <div class="questions-group-wrap ee-layout-row">
     <div id="group-details" class="edit-group">
@@ -283,7 +282,6 @@ try {
 </div>
 
 <?php
-
 } catch (Exception $e) {
     EE_Error::add_error($e->getMessage(), __FILE__, __LINE__, __METHOD__);
 }

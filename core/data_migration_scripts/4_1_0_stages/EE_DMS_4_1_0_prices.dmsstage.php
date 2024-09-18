@@ -107,7 +107,6 @@
  */
 class EE_DMS_4_1_0_prices extends EE_Data_Migration_Script_Stage_Table
 {
-
     const price_type_base = 1;
 
     const price_type_member_discount = 3;
@@ -178,12 +177,18 @@ class EE_DMS_4_1_0_prices extends EE_Data_Migration_Script_Stage_Table
         if (floatval($old_row['surcharge']) >= 0.01) {
             $surcharge_price_id = $this->_insert_new_surcharge_price($old_row);
             $this->get_migration_script()->set_mapping(
-                $this->_old_table, $old_row['id'], $this->_new_price_table, [$new_price_id, $surcharge_price_id]
+                $this->_old_table,
+                $old_row['id'],
+                $this->_new_price_table,
+                [$new_price_id, $surcharge_price_id]
             );
         } else {
             $surcharge_price_id = 0;
             $this->get_migration_script()->set_mapping(
-                $this->_old_table, $old_row['id'], $this->_new_price_table, [$new_price_id]
+                $this->_old_table,
+                $old_row['id'],
+                $this->_new_price_table,
+                [$new_price_id]
             );
         }
         // associate the ticket to all datetimes for event (ie, this ONE ticket grants access to ALL datetimes, not just one of the attendee's choice.

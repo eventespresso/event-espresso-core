@@ -224,7 +224,6 @@ use EventEspresso\core\domain\entities\custom_post_types\EspressoPostType;
  */
 class EE_DMS_4_1_0_attendees extends EE_Data_Migration_Script_Stage_Table
 {
-
     private string $_new_attendee_cpt_table;
 
     private string $_new_attendee_meta_table;

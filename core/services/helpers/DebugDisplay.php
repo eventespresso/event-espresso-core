@@ -24,7 +24,7 @@ trait DebugDisplay
 
     public function initializeDebugDisplay(int $threshold = 0, ?array $levels = null)
     {
-        $this->threshold = defined('WP_DEBUG') && WP_DEBUG ? $threshold: 0;
+        $this->threshold = defined('WP_DEBUG') && WP_DEBUG ? $threshold : 0;
         $this->levels = $levels ?: $this->levels;
     }
 

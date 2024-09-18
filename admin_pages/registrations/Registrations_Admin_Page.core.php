@@ -1225,11 +1225,11 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             )
         ) {
             $this->_admin_page_title .= ' ' . $this->get_action_link_or_button(
-                    'new_registration',
-                    'add-registrant',
-                    ['event_id' => $EVT_ID],
-                    'add-new-h2'
-                );
+                'new_registration',
+                'add-registrant',
+                ['event_id' => $EVT_ID],
+                'add-new-h2'
+            );
         }
     }
 
@@ -3322,9 +3322,9 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     {
         foreach ($query_params as $key => $value) {
             if (is_array($value)) {
-                $query_params[$key] = $this->convertDatetimeObjectsToStrings($value);
+                $query_params[ $key ] = $this->convertDatetimeObjectsToStrings($value);
             } elseif ($value instanceof DateTime) {
-                $query_params[$key] = $value->format('Y-m-d H:i:s');
+                $query_params[ $key ] = $value->format('Y-m-d H:i:s');
             }
         }
         return $query_params;
@@ -3791,7 +3791,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             $attendee = $this->getAttendeeModel()->get_one_by_ID($att_id);
             if ($attendee instanceof EE_Attendee) {
                 $deleted = $attendee->delete_permanently();
-                if($deleted) {
+                if ($deleted) {
                     $success++;
                 }
             }

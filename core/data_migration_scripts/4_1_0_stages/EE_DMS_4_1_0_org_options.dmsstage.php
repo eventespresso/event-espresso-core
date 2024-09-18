@@ -89,7 +89,6 @@
  */
 class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage
 {
-
     public function __construct()
     {
         $this->_pretty_name                        = esc_html__("Organization Options/Config", "event_espresso");

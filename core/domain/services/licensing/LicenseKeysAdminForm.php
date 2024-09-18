@@ -13,7 +13,6 @@ use EventEspresso\core\libraries\form_sections\form_handlers\FormHandler;
 
 class LicenseKeysAdminForm extends FormHandler
 {
-
     public function __construct(EE_Registry $registry)
     {
         parent::__construct(
@@ -112,8 +111,8 @@ class LicenseKeysAdminForm extends FormHandler
         ];
 
         if ($core_license_key instanceof LicenseKeyFormInput && $core_license_key->get_default()) {
-            unset ($new_subsections['support_license_notice']);
-            unset ($new_subsections['add-on-license-keys-notice']);
+            unset($new_subsections['support_license_notice']);
+            unset($new_subsections['add-on-license-keys-notice']);
         }
         return EEH_Array::insert_into_array($subsections, $new_subsections);
     }

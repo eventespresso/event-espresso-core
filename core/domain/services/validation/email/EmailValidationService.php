@@ -17,7 +17,7 @@ class EmailValidationService implements EmailValidatorInterface
 {
     protected EE_Registration_Config $registration_config;
 
-    protected LoaderInterface        $loader;
+    protected LoaderInterface $loader;
 
 
     /**

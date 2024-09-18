@@ -56,13 +56,13 @@ class EE_Datetime_Field extends EE_Model_Field_Base
      * (and corresponding set_date_format, set_time_format methods);
      */
 
-    protected string        $_date_format        = '';
+    protected string $_date_format        = '';
 
-    protected string        $_time_format        = '';
+    protected string $_time_format        = '';
 
-    protected string        $_pretty_date_format = '';
+    protected string $_pretty_date_format = '';
 
-    protected string        $_pretty_time_format = '';
+    protected string $_pretty_time_format = '';
 
     protected ?DateTimeZone $_DateTimeZone       = null;
 

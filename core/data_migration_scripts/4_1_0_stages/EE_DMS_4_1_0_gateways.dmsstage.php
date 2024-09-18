@@ -14,7 +14,6 @@
  */
 class EE_DMS_4_1_0_gateways extends EE_Data_Migration_Script_Stage
 {
-
     private bool $_converted_active_gateways = false;
 
     protected array $_gateways_we_know_how_to_migrate = [

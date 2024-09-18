@@ -48,7 +48,7 @@ abstract class EE_Model_Relation_Base implements HasSchemaInterface
      */
     protected ?string $_blocking_delete_error_message;
 
-    protected bool   $_blocking_delete = false;
+    protected bool $_blocking_delete = false;
 
 
     /**

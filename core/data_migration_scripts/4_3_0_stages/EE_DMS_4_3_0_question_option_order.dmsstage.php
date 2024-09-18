@@ -7,7 +7,6 @@
 
 class EE_DMS_4_3_0_question_option_order extends EE_Data_Migration_Script_Stage_Table
 {
-
     public function __construct()
     {
         global $wpdb;

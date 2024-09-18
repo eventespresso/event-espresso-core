@@ -9,7 +9,6 @@
  */
 class EE_DMS_4_8_0_event_subtotals extends EE_Data_Migration_Script_Stage_Table
 {
-
     public function __construct()
     {
         global $wpdb;

@@ -355,7 +355,7 @@ class OnboardingFormHtml
             '',
             '',
             '',
-           'for="' . 'eep_ppc_checkout_type_' . $this->pm_slug .'-express_checkout"'
+            'for="' . 'eep_ppc_checkout_type_' . $this->pm_slug . '-express_checkout"'
         );
         $ppcp_lbl = EEH_HTML::label(
             esc_html__('Accept credit and debit card payments with PayPal ', 'event_espresso')
@@ -368,7 +368,7 @@ class OnboardingFormHtml
             '',
             '',
             '',
-           'for="' . 'eep_ppc_checkout_type_' . $this->pm_slug .'-ppcp"'
+            'for="' . 'eep_ppc_checkout_type_' . $this->pm_slug . '-ppcp"'
         );
         $checkbox = new EE_Checkbox_Multi_Input(
             [

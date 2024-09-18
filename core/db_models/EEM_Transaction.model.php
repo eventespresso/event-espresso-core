@@ -84,7 +84,8 @@ class EEM_Transaction extends EEM_Base
         $this->_fields                 = [
             'TransactionTable' => [
                 'TXN_ID'           => new EE_Primary_Key_Int_Field(
-                    'TXN_ID', esc_html__('Transaction ID', 'event_espresso')
+                    'TXN_ID',
+                    esc_html__('Transaction ID', 'event_espresso')
                 ),
                 'TXN_timestamp'    => new EE_Datetime_Field(
                     'TXN_timestamp',

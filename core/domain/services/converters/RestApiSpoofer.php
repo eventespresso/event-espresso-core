@@ -31,9 +31,9 @@ class RestApiSpoofer
 {
     protected EED_Core_Rest_Api $rest_module;
 
-    protected Read              $rest_controller;
+    protected Read $rest_controller;
 
-    protected WP_REST_Server    $wp_rest_server;
+    protected WP_REST_Server $wp_rest_server;
 
 
     /**

@@ -17,15 +17,15 @@ class AdminListTableFilters
      */
     protected RequestInterface $request;
 
-    protected string           $search_term;
+    protected string $search_term;
 
-    protected ?string          $orderby;
+    protected ?string $orderby;
 
-    protected ?string          $order;
+    protected ?string $order;
 
-    protected ?string          $detached;
+    protected ?string $detached;
 
-    protected ?string          $post_mime_type;
+    protected ?string $post_mime_type;
 
 
     public function __construct(RequestInterface $request)
@@ -92,7 +92,7 @@ class AdminListTableFilters
                 <span class="ee-search-btn-text"><?php esc_html_e($text); ?></span>
 
             </button>
-            <?php //submit_button($text, '', '', false, ['id' => 'search-submit']); ?>
+            <?php // submit_button($text, '', '', false, ['id' => 'search-submit']); ?>
             <?php
             if (! empty($this->search_term)) {
                 echo wp_kses($this->generateResetButton($url), AllowedTags::getAllowedTags());

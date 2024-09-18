@@ -26,15 +26,15 @@ class BootstrapDependencyInjectionContainer
 {
     private ClassInterfaceCache $class_cache;
 
-    private Mirror              $mirror;
+    private Mirror $mirror;
 
-    private ObjectIdentifier    $object_identifier;
+    private ObjectIdentifier $object_identifier;
 
     protected EE_Dependency_Map $dependency_map;
 
-    protected EE_Registry       $registry;
+    protected EE_Registry $registry;
 
-    protected LoaderInterface   $loader;
+    protected LoaderInterface $loader;
 
 
     // /**

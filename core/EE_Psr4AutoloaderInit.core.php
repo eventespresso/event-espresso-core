@@ -15,7 +15,7 @@ class EE_Psr4AutoloaderInit
 {
     protected static ?Psr4Autoloader $psr4_loader = null;
 
-    private static bool              $initialized = false;
+    private static bool $initialized = false;
 
 
     /**

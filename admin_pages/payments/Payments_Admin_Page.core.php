@@ -470,9 +470,9 @@ class Payments_Admin_Page extends EE_Admin_Page
         return $payment_method instanceof EE_Payment_Method
                && $payment_method->type_obj() instanceof EE_PMT_Base
                && $this->capabilities->current_user_can(
-                $payment_method->type_obj()->cap_name(),
-                'specific_payment_method_type_access'
-            );
+                   $payment_method->type_obj()->cap_name(),
+                   'specific_payment_method_type_access'
+               );
     }
 
 

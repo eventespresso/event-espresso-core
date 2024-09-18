@@ -31,11 +31,11 @@ class BootstrapRequestResponseObjects
 {
     protected LegacyRequestInterface $legacy_request;
 
-    protected LoaderInterface        $loader;
+    protected LoaderInterface $loader;
 
-    protected RequestInterface       $request;
+    protected RequestInterface $request;
 
-    protected ResponseInterface      $response;
+    protected ResponseInterface $response;
 
 
     /**

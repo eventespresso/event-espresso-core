@@ -8,7 +8,7 @@ use EventEspresso\core\interfaces\ResettableInterface;
  * This data is used for generating the Transaction and Registrations, and the
  * Line Items on cart are themselves saved for creating a persistent snapshot of
  * what was purchased and for how much.
- * @ version        2.0
+ * @version        2.0
  *
  * @version        2.0
  * @subpackage     includes/core/EE_Cart.core.php
@@ -19,7 +19,6 @@ class EE_Cart implements ResettableInterface
     /**
      * instance of the EE_Cart object
      *
-     * @access    private
      * @var EE_Cart $_instance
      */
     private static $_instance;
@@ -27,7 +26,6 @@ class EE_Cart implements ResettableInterface
     /**
      * instance of the EE_Session object
      *
-     * @access    protected
      * @var EE_Session $_session
      */
     protected $_session;
@@ -51,8 +49,7 @@ class EE_Cart implements ResettableInterface
 
 
     /**
-     * @singleton method used to instantiate class object
-     * @access    public
+     * singleton method used to instantiate class object
      * @param EE_Line_Item $grand_total
      * @param EE_Session   $session
      * @return EE_Cart
@@ -85,8 +82,6 @@ class EE_Cart implements ResettableInterface
     /**
      * private constructor to prevent direct creation
      *
-     * @Constructor
-     * @access private
      * @param EE_Line_Item $grand_total
      * @param EE_Session   $session
      */
@@ -156,7 +151,6 @@ class EE_Cart implements ResettableInterface
     /**
      * get_cart_from_reg_url_link
      *
-     * @access public
      * @param EE_Transaction $transaction
      * @param EE_Session     $session
      * @return EE_Cart
@@ -189,7 +183,6 @@ class EE_Cart implements ResettableInterface
     /**
      * Gets all the line items of object type Ticket
      *
-     * @access public
      * @return EE_Line_Item[]
      * @throws EE_Error
      * @throws ReflectionException
@@ -206,7 +199,6 @@ class EE_Cart implements ResettableInterface
     /**
      * returns the total quantity of tickets in the cart
      *
-     * @access public
      * @return int
      * @throws EE_Error
      * @throws ReflectionException
@@ -252,8 +244,7 @@ class EE_Cart implements ResettableInterface
 
 
     /**
-     * @process items for adding to cart
-     * @access  public
+     * process items for adding to cart
      * @param EE_Ticket $ticket
      * @param int       $qty
      * @return bool TRUE on success, FALSE on fail
@@ -270,7 +261,6 @@ class EE_Cart implements ResettableInterface
     /**
      * get_cart_total_before_tax
      *
-     * @access public
      * @return float
      * @throws EE_Error
      * @throws ReflectionException
@@ -284,7 +274,6 @@ class EE_Cart implements ResettableInterface
     /**
      * gets the total amount of tax paid for items in this cart
      *
-     * @access public
      * @return float
      * @throws EE_Error
      * @throws ReflectionException
@@ -298,7 +287,6 @@ class EE_Cart implements ResettableInterface
     /**
      * Gets the total amount to be paid for the items in the cart, including taxes and other modifiers
      *
-     * @access public
      * @return float
      * @throws EE_Error
      * @throws ReflectionException
@@ -313,7 +301,6 @@ class EE_Cart implements ResettableInterface
     /**
      * Gets the total amount to be paid for the items in the cart, including taxes and other modifiers
      *
-     * @access public
      * @return float
      * @throws EE_Error
      * @throws ReflectionException
@@ -331,7 +318,6 @@ class EE_Cart implements ResettableInterface
     /**
      * deletes an item from the cart
      *
-     * @access public
      * @param array|bool|string $line_item_codes
      * @return int on success, FALSE on fail
      * @throws EE_Error
@@ -346,7 +332,6 @@ class EE_Cart implements ResettableInterface
 
     /**
      * @remove ALL items from cart and zero ALL totals
-     * @access public
      * @return bool
      * @throws EE_Error
      * @throws ReflectionException
@@ -360,8 +345,7 @@ class EE_Cart implements ResettableInterface
 
 
     /**
-     * @remove ALL items from cart and delete total as well
-     * @access public
+     * remove ALL items from cart and delete total as well
      * @return bool
      * @throws EE_Error
      * @throws ReflectionException
@@ -381,8 +365,7 @@ class EE_Cart implements ResettableInterface
 
 
     /**
-     * @save   cart to session
-     * @access public
+     * save   cart to session
      * @param bool $apply_taxes
      * @return bool TRUE on success, FALSE on fail
      * @throws EE_Error

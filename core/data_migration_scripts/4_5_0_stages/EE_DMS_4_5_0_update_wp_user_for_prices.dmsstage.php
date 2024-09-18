@@ -10,7 +10,6 @@
  */
 class EE_DMS_4_5_0_update_wp_user_for_prices extends EE_Data_Migration_Script_Stage_Table
 {
-
     public function __construct()
     {
         global $wpdb;
@@ -34,7 +33,7 @@ class EE_DMS_4_5_0_update_wp_user_for_prices extends EE_Data_Migration_Script_St
             $this->_old_table,
             ['PRC_wp_user' => $user_id],
             ['PRC_ID' => $old_row['PRC_ID']],
-            ['%d'],// PRC_wp_user
+            ['%d'], // PRC_wp_user
             ['%d'] // PRC_ID
         );
         if (false === $updated) {

@@ -32,7 +32,7 @@ class FieldResolverV2 extends ResolverBase
     {
         $array = [];
         foreach ($fields as $f) {
-            $array[$f->name()] = $f;
+            $array[ $f->name() ] = $f;
         }
         return $array;
     }
@@ -88,10 +88,10 @@ class FieldResolverV2 extends ResolverBase
     {
         $key = $info->fieldName;
 
-        if (! isset($this->fields[$key])) {
+        if (! isset($this->fields[ $key ])) {
             return false;
         }
 
-        return $this->fields[$key];
+        return $this->fields[ $key ];
     }
 }

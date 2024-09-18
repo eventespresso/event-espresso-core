@@ -1139,9 +1139,9 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
         $header_text .= '
             <div class="description ee-status-outline ee-status-bg--info ee-status-outline--fit-content">
                 <strong>' . esc_html__(
-                'In this view, the check-in status represents the latest check-in record for the registration in that row.',
-                'event_espresso'
-            ) . '</strong>
+            'In this view, the check-in status represents the latest check-in record for the registration in that row.',
+            'event_espresso'
+        ) . '</strong>
             </div>';
         return $header_text;
     }

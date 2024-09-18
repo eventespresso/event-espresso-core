@@ -40,27 +40,27 @@ abstract class TypeBase implements TypeInterface
     /**
      * The graphql namespace/prefix.
      */
-    protected string    $namespace   = 'Espresso';
+    protected string $namespace   = 'Espresso';
 
     protected ?EEM_Base $model       = null;
 
-    protected string    $name        = '';
+    protected string $name        = '';
 
-    protected string    $description = '';
+    protected string $description = '';
 
     /**
      * @var GraphQLFieldInterface[] $fields
      */
-    protected array         $fields              = [];
+    protected array $fields              = [];
 
     /**
      * @var GraphQLInterfaceInterface[] $interfaces
      */
-    protected array         $interfaces          = [];
+    protected array $interfaces          = [];
 
     protected FieldResolver $field_resolver;
 
-    protected bool          $is_custom_post_type = false;
+    protected bool $is_custom_post_type = false;
 
 
     /**

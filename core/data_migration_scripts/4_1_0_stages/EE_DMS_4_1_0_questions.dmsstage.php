@@ -66,7 +66,6 @@
  */
 class EE_DMS_4_1_0_questions extends EE_Data_Migration_Script_Stage
 {
-
     private string $_option_table;
 
 

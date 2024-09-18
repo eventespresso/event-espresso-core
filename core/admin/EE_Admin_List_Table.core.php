@@ -668,8 +668,8 @@ abstract class EE_Admin_List_Table extends WP_List_Table
                 $filter                           .= $view['class'] ? " class='" . esc_attr($view['class']) . "'" : '';
                 $filter                           .= ">";
                 $filter                           .= '<a href="' . esc_url_raw($view['url']) . '">' . esc_html(
-                        $view['label']
-                    ) . '</a>';
+                    $view['label']
+                ) . '</a>';
                 $filter                           .= '<span class="count">(' . $count . ')</span>';
                 $filter                           .= '</li>';
                 $assembled_views[ $view['slug'] ] = $filter;
@@ -831,7 +831,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table
     {
         if ($which === 'top') {
             $this->_filters();
-        } elseif($this->_bottom_buttons) {
+        } elseif ($this->_bottom_buttons) {
             echo '<div class="list-table-bottom-buttons alignleft actions">';
             foreach ($this->_bottom_buttons as $type => $action) {
                 $route         = $action['route'] ?? '';

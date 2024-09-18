@@ -6,7 +6,6 @@
 
 class EE_DMS_4_2_0_question_group_questions extends EE_Data_Migration_Script_Stage_Table
 {
-
     private string $_qgq_table;
 
 
@@ -26,8 +25,11 @@ class EE_DMS_4_2_0_question_group_questions extends EE_Data_Migration_Script_Sta
         // QSG_order equal to this question's QST_order
         global $wpdb;
         $updated = $wpdb->update(
-            $this->_qgq_table, ['QGQ_order' => $old_row['QST_order']], ['QST_ID' => $old_row['QST_ID']], ['%d'],
-                                                                                              // QGQ_order
+            $this->_qgq_table,
+            ['QGQ_order' => $old_row['QST_order']],
+            ['QST_ID' => $old_row['QST_ID']],
+            ['%d'],
+            // QGQ_order
             ['%d']                                                                            // QST_ID
         );
         if (false === $updated) {

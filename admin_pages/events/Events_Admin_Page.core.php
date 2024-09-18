@@ -994,11 +994,11 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
 
         $after_list_table['legend'] = $this->_display_legend($this->_event_legend_items());
         $this->_admin_page_title    .= ' ' . $this->get_action_link_or_button(
-                'create_new',
-                'add',
-                [],
-                'add-new-h2'
-            );
+            'create_new',
+            'add',
+            [],
+            'add-new-h2'
+        );
 
         $this->_template_args['after_list_table'] = array_merge(
             (array) $this->_template_args['after_list_table'],
@@ -1373,8 +1373,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                     );
                 }
                 $ticket_sold = $existing_ticket->count_related(
-                        'Registration',
-                        [
+                    'Registration',
+                    [
                             [
                                 'STS_ID' => [
                                     'NOT IN',
@@ -1382,7 +1382,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                                 ],
                             ],
                         ]
-                    ) > 0;
+                ) > 0;
                 // let's just check the total price for the existing ticket and determine if it matches the new total price.
                 // if they are different then we create a new ticket (if $ticket_sold)
                 // if they aren't different then we go ahead and modify existing ticket.
@@ -2574,8 +2574,8 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                                     : RegStatus::PENDING_PAYMENT,
                                 'html_label_text' => esc_html__('Default Registration Status', 'event_espresso')
                                                      . EEH_Template::get_help_tab_link(
-                                        'default_settings_status_help_tab'
-                                    ),
+                                                         'default_settings_status_help_tab'
+                                                     ),
                                 'html_help_text'  => esc_html__(
                                     'This setting allows you to preselect what the default registration status setting is when creating an event.  Note that changing this setting does NOT retroactively apply it to existing events.',
                                     'event_espresso'
@@ -2588,12 +2588,12 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                                 'default'         => $registration_config->default_maximum_number_of_tickets
                                                      ?? EEM_Event::get_default_additional_limit(),
                                 'html_label_text' => esc_html__(
-                                                         'Default Maximum Tickets Allowed Per Order:',
-                                                         'event_espresso'
-                                                     )
+                                    'Default Maximum Tickets Allowed Per Order:',
+                                    'event_espresso'
+                                )
                                                      . EEH_Template::get_help_tab_link(
-                                        'default_maximum_tickets_help_tab"'
-                                    ),
+                                                         'default_maximum_tickets_help_tab"'
+                                                     ),
                                 'html_help_text'  => esc_html__(
                                     'This setting allows you to indicate what will be the default for the maximum number of tickets per order when creating new events.',
                                     'event_espresso'

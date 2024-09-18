@@ -78,7 +78,7 @@ class EED_Events_Archive extends EED_Module
         $custom_post_type_definitions = LoaderFactory::getLoader()->getShared(CustomPostTypeDefinitions::class);
         $custom_post_types            = $custom_post_type_definitions->getDefinitions();
         EED_Module::registerRoute(
-            $custom_post_types[EspressoPostType::EVENTS]['plural_slug'],
+            $custom_post_types[ EspressoPostType::EVENTS ]['plural_slug'],
             'Events_Archive',
             'run'
         );

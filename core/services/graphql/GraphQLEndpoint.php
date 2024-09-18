@@ -22,7 +22,7 @@ class GraphQLEndpoint extends WordPressOption
 
     const OPTION_NAME      = 'ee-graphql-endpoint';
 
-    private bool $is_gql_request = false;
+    private bool $is_gql_request;
 
 
     /**
@@ -32,11 +32,20 @@ class GraphQLEndpoint extends WordPressOption
     {
         parent::__construct(GraphQLEndpoint::OPTION_NAME, GraphQLEndpoint::DEFAULT_ENDPOINT, true);
         add_action('graphql_register_settings', [$this, 'verifyAndSetEndpoint'], 20);
-        if (! defined('GRAPHQL_DEBUG') || ! GRAPHQL_DEBUG) {
+        if (! $this->graphqlDebug()) {
             // disable WPGraphQL admin by default.
             add_filter('graphql_show_admin', '__return_false');
             add_filter('graphql_enable_graphiql', '__return_false');
         }
+    }
+
+    /**
+     * Determine the value of global constant GRAPHQL_DEBUG
+     * @return bool
+     */
+    private function graphqlDebug(): bool
+    {
+        return defined('GRAPHQL_DEBUG') && GRAPHQL_DEBUG;
     }
 
 

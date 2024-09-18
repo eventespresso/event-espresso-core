@@ -54,7 +54,7 @@ class EED_Venue_Single extends EED_Module
         );
         $custom_post_types = $custom_post_type_definitions->getDefinitions();
         EED_Module::registerRoute(
-            $custom_post_types[EspressoPostType::VENUES]['singular_slug'],
+            $custom_post_types[ EspressoPostType::VENUES ]['singular_slug'],
             'Venue_Single',
             'run'
         );

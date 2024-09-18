@@ -90,7 +90,8 @@ class CaptureOrder extends OrdersApi
             return $response;
         }
         // This also could be a retry capture, so consider this valid, if order already captured.
-        if (! empty($response['message']['details']['issue'])
+        if (
+            ! empty($response['message']['details']['issue'])
             && $response['message']['details']['issue'] === 'ORDER_ALREADY_CAPTURED'
         ) {
             // Need to make sure we pass on the order ID.

@@ -30,7 +30,6 @@
 
 class EE_DMS_4_1_0_answers extends EE_Data_Migration_Script_Stage_Table
 {
-
     private string $_new_answer_table;
 
     private string $_new_question_table;
@@ -108,7 +107,7 @@ class EE_DMS_4_1_0_answers extends EE_Data_Migration_Script_Stage_Table
 
         // If we don't have a mapped question_id we don't have an EE4 question to migrate this answer to.
         // The EE3 question may have been deleted but registration answers remain in the DB.
-        if(empty($new_question_id)) {
+        if (empty($new_question_id)) {
             return;
         }
 

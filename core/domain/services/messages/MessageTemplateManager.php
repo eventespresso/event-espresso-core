@@ -17,15 +17,15 @@ use RuntimeException;
  */
 class MessageTemplateManager
 {
-    private EEM_Message_Template         $message_template_model;
+    private EEM_Message_Template $message_template_model;
 
-    private EEM_Message_Template_Group   $message_template_group_model;
+    private EEM_Message_Template_Group $message_template_group_model;
 
     protected MessageTemplateRequestData $form_data;
 
-    protected MessageTemplateValidator   $validator;
+    protected MessageTemplateValidator $validator;
 
-    protected RequestInterface           $request;
+    protected RequestInterface $request;
 
 
     /**

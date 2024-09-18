@@ -1205,7 +1205,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
     public function payment_method()
     {
         $PMD_ID = $this->payment_method_ID();
-        if($PMD_ID) {
+        if ($PMD_ID) {
             $pm = EEM_Payment_Method::instance()->get_one_by_ID($this->payment_method_ID());
             if ($pm instanceof EE_Payment_Method) {
                 return $pm;

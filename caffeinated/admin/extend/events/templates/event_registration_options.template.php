@@ -41,13 +41,11 @@ $settings_array                = [
             . '</p>',
     'alternative_registration_page'   => '<p>
             <label>' . esc_html__('Alternative Registration Page', 'event_espresso') . '</label>
-            <input name="externalURL" class="ee-input-width--big" size="20" type="text" value="' . esc_url_raw
-        ($_event->external_url()) . '"> 
+            <input name="externalURL" class="ee-input-width--big" size="20" type="text" value="' . esc_url_raw($_event->external_url()) . '"> 
             </p>',
     'event_phone_number'              => '<p>
             <label>' . esc_html__('Event Phone Number', 'event_espresso') . '</label>
-            <input name="event_phone" class="ee-input-width--reg" size="20" type="text" value="' . esc_attr
-        ($_event->phone()) . '">
+            <input name="event_phone" class="ee-input-width--reg" size="20" type="text" value="' . esc_attr($_event->phone()) . '">
             </p>',
     'default_registration_status'     => '<p>
             <label>

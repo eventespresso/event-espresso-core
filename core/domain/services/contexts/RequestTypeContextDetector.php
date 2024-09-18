@@ -50,7 +50,7 @@ class RequestTypeContextDetector
         $this->request = $request;
         $this->factory = $factory;
         $this->globalRouteConditions = $globalRouteConditions;
-        $permalink_structure = ltrim((string) get_option( 'permalink_structure' ), '/');
+        $permalink_structure = ltrim((string) get_option('permalink_structure'), '/');
         $this->permalink_prefix = strpos($permalink_structure, 'index.php') === 0 ? '/index.php/' : '';
     }
 

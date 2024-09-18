@@ -44,7 +44,6 @@
  */
 class EE_DMS_4_1_0_line_items extends EE_Data_Migration_Script_Stage_Table
 {
-
     private string $_new_line_table;
 
     private string $_new_transaction_table;

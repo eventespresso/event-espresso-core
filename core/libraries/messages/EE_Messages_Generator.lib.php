@@ -15,7 +15,7 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  */
 class EE_Messages_Generator
 {
-    protected EE_Messages_Data_Handler_Collection  $_data_handler_collection;
+    protected EE_Messages_Data_Handler_Collection $_data_handler_collection;
 
     protected EE_Message_Template_Group_Collection $_template_collection;
 
@@ -53,7 +53,7 @@ class EE_Messages_Generator
     /**
      * This will hold the current message type object corresponding with the current EE_Message in the generation queue.
      */
-    protected ?EE_message_type     $_current_message_type = null;
+    protected ?EE_message_type $_current_message_type = null;
 
     protected EEH_Parse_Shortcodes $_shortcode_parser;
 
@@ -493,8 +493,7 @@ class EE_Messages_Generator
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    protected function _get_global_message_template_group_for_current_messenger_and_message_type(
-    ): ?EE_Message_Template_Group
+    protected function _get_global_message_template_group_for_current_messenger_and_message_type(): ?EE_Message_Template_Group
     {
         // first check the collection (we use an array with 0 in it to represent global groups).
         $global_message_template_group = $this->_template_collection->get_by_key(

@@ -622,12 +622,12 @@ class RegistrationsReport extends JobHandlerFile
     ): array {
         foreach ($query_params as $key => $value) {
             if (is_array($value)) {
-                $query_params[$key] = $this->convertDateStringsToObjects($value, $site_timezone, $utc_timezone);
+                $query_params[ $key ] = $this->convertDateStringsToObjects($value, $site_timezone, $utc_timezone);
                 continue;
             }
             if (preg_match('/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/', $value)) {
-                $query_params[$key] = DbSafeDateTime::createFromFormat('Y-m-d H:i:s', $value, $site_timezone);
-                $query_params[$key] = $query_params[$key]->setTimezone($utc_timezone);
+                $query_params[ $key ] = DbSafeDateTime::createFromFormat('Y-m-d H:i:s', $value, $site_timezone);
+                $query_params[ $key ] = $query_params[ $key ]->setTimezone($utc_timezone);
             }
         }
         return $query_params;

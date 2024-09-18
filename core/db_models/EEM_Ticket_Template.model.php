@@ -32,7 +32,8 @@ class EEM_Ticket_Template extends EEM_Base
         $this->_fields                                            = [
             'Ticket_Template' => [
                 'TTM_ID'          => new EE_Primary_Key_Int_Field(
-                    'TTM_ID', esc_html__('Ticket Template ID', 'event_espresso')
+                    'TTM_ID',
+                    esc_html__('Ticket Template ID', 'event_espresso')
                 ),
                 'TTM_name'        => new EE_Plain_Text_Field(
                     'TTM_name',

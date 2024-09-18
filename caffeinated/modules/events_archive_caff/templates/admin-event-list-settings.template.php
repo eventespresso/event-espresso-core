@@ -291,7 +291,7 @@ $description = EEH_Form_Fields::prep_answer_options(
                 ); ?>
             </p>
             <span class="ee-feature-highlight-2024-notice">
-                ✨ <?php esc_html_e('NEW','event_espresso'); ?>
+                ✨ <?php esc_html_e('NEW', 'event_espresso'); ?>
             </span>
         </td>
     </tr>

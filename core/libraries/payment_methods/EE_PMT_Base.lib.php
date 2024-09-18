@@ -377,9 +377,9 @@ abstract class EE_PMT_Base
      */
     public function process_payment(
         EE_Transaction $transaction,
-        $amount = NULL,
-        $billing_info = NULL,
-        $return_url = NULL,
+        $amount = null,
+        $billing_info = null,
+        $return_url = null,
         $fail_url = '',
         $method = 'CART',
         $by_admin = false

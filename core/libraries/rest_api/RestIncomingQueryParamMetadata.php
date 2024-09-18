@@ -590,9 +590,9 @@ class RestIncomingQueryParamMetadata
     {
         $valueArray = $this->getQueryParamValue();
         return array_key_exists(
-                $operator,
-                $this->getContext()->getModel()->valid_in_style_operators()
-            )
+            $operator,
+            $this->getContext()->getModel()->valid_in_style_operators()
+        )
             && isset($valueArray[1])
             && is_array($valueArray[1])
             && ! isset($valueArray[2]);

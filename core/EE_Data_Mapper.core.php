@@ -16,8 +16,6 @@ class EE_Data_Mapper
 {
     /**
      * instance of the EE_Data_Mapper Object
-     *
-     * @private _instance
      */
     private static $_instance = null;
 
@@ -26,10 +24,8 @@ class EE_Data_Mapper
 
 
     /**
-     *private constructor to prevent direct creation
+     * private constructor to prevent direct creation
      *
-     * @Constructor
-     * @access private
      * @return void
      */
     private function __construct()
@@ -38,9 +34,9 @@ class EE_Data_Mapper
 
 
     /**
-     *@ singleton method used to instantiate class object
-     *@ access public
-     *@ return class instance
+     * singleton method used to instantiate class object
+     *
+     * @return class instance
      */
     public function &instance()
     {
@@ -57,8 +53,9 @@ class EE_Data_Mapper
 
 
     /**
-     *        @ override magic methods
-     *        @ return void
+     * override magic methods
+     *
+     * @return void
      */
     final public function __destruct()
     {

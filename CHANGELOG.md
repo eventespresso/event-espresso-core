@@ -6,7 +6,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Releases
 
+### [5.0.27]
+
+#### Added
+ - [Add Venmo funding option to PayPal Commerce (#1522)](https://github.com/eventespresso/cafe/pull/1522)
+
+#### Fixed
+ - [Dont replace checkout type with PPC funding options in extra meta inputs (#1534)](https://github.com/eventespresso/cafe/pull/1534)
+ - [Add Billing Form Instance Check (#1537)](https://github.com/eventespresso/cafe/pull/1537)
+ - [Fix GraphQL requests when WP is installed in a subdirectory (#1531)](https://github.com/eventespresso/cafe/pull/1531)
+
+#### Changed
+ - [Fix phpdoc tags (#1505)](https://github.com/eventespresso/cafe/pull/1505)
+ - [auto lint fixes (#1358)](https://github.com/eventespresso/cafe/pull/1358)
+
+
 ### [5.0.26]
+
 
 #### Fixed
  - Fixed PHP 7.4 Incompatible Code in InterfaceManager

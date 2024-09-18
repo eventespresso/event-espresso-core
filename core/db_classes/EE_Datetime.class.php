@@ -1366,7 +1366,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
     public function venue_ID(array $query_params = []): int
     {
         // If no $query_params have been passed, use the VNU_ID assigned to the Datetime itself
-        if (empty($query_params)){
+        if (empty($query_params)) {
             return (int) $this->get('VNU_ID');
         }
         // $query_params set, pull the first related venue using those
@@ -1389,7 +1389,7 @@ class EE_Datetime extends EE_Soft_Delete_Base_Class
     public function venue(array $query_params = [])
     {
         // If no $query_params have been passed, use the VNU_ID assigned to the Datetime itself
-        if (empty($query_params)){
+        if (empty($query_params)) {
             $VNU_ID = $this->venue_ID();
             return $VNU_ID ? EEM_Venue::instance()->get_one_by_ID($VNU_ID) : null;
         }

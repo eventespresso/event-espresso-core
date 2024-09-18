@@ -14,7 +14,6 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
  */
 class EE_DMS_4_5_0_invoice_settings extends EE_Data_Migration_Script_Stage
 {
-
     /**
      * Just initializes the status of the migration
      */
@@ -114,10 +113,12 @@ class EE_DMS_4_5_0_invoice_settings extends EE_Data_Migration_Script_Stage
             );
             if ($overridden_invoice_body || $overridden_receipt_body) {
                 new PersistentAdminNotice(
-                    'invoice_overriding_templates', esc_html__(
-                    'Note: in this version of Event Espresso, PDF and HTML Invoices and Receipts are now Messages and can be changed just like any other messages; however we noticed you had previously overridden the old default Invoice/Receipt templates. Because of this, your old Invoice/Receipt templates will continue to be used INSTEAD of the new Invoice/Receipt message equivalents. We recommend deleting your old Invoice/Receipt templates and modifying the new Invoice and Receipt messages\'s content in Messages -> Invoice and Messages -> Receipt.',
-                    'event_espresso'
-                ),  true
+                    'invoice_overriding_templates',
+                    esc_html__(
+                        'Note: in this version of Event Espresso, PDF and HTML Invoices and Receipts are now Messages and can be changed just like any other messages; however we noticed you had previously overridden the old default Invoice/Receipt templates. Because of this, your old Invoice/Receipt templates will continue to be used INSTEAD of the new Invoice/Receipt message equivalents. We recommend deleting your old Invoice/Receipt templates and modifying the new Invoice and Receipt messages\'s content in Messages -> Invoice and Messages -> Receipt.',
+                        'event_espresso'
+                    ),
+                    true
                 );
             }
         }

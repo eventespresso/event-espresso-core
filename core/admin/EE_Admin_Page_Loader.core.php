@@ -131,15 +131,15 @@ class EE_Admin_Page_Loader
     private function findAndLoadAdminPages()
     {
         $admin_pages = $this->findAdminPages();
-		$isCaffeinated = ! (defined('EE_DECAF') && EE_DECAF) && is_dir(EE_PLUGIN_DIR_PATH . 'caffeinated/admin');
-		// first let's check if there IS a caffeinated folder.
-		if ($isCaffeinated) {
-			// this just checks the caffeinated folder and takes care of setting up any caffeinated stuff.
-			$admin_pages = $this->findCaffeinatedAdminPages($admin_pages);
-			// then extensions and hooks, although they don't get added to the admin pages array
-			$this->findAdminPageExtensions();
-			$this->findAdminPageHooks();
-		}
+        $isCaffeinated = ! (defined('EE_DECAF') && EE_DECAF) && is_dir(EE_PLUGIN_DIR_PATH . 'caffeinated/admin');
+        // first let's check if there IS a caffeinated folder.
+        if ($isCaffeinated) {
+            // this just checks the caffeinated folder and takes care of setting up any caffeinated stuff.
+            $admin_pages = $this->findCaffeinatedAdminPages($admin_pages);
+            // then extensions and hooks, although they don't get added to the admin pages array
+            $this->findAdminPageExtensions();
+            $this->findAdminPageHooks();
+        }
         // allow plugins to add in their own pages (note at this point they will need to have an autoloader defined for their class) OR hook into EEH_Autoloader::load_admin_page() to add their path.;
         // loop through admin pages and setup the $_installed_pages array.
         $hooks_ref = [];
@@ -175,7 +175,7 @@ class EE_Admin_Page_Loader
             );
             $hooks_ref = array_merge($hooks_ref, $extended_hooks);
         }
-		// the hooks_ref is all the pages where we have $extended _Hooks files
+        // the hooks_ref is all the pages where we have $extended _Hooks files
         // that will extend a class in a different folder.
         // So we want to make sure we load the file for the parent.
         // first make sure we've got unique values
@@ -184,7 +184,7 @@ class EE_Admin_Page_Loader
         foreach ($hooks_ref as $path) {
             // if we're not caffeinated, then we don't need to do any of the following.
             if (! $isCaffeinated && strpos($path, 'caffeinated') !== false) {
-            	continue;
+                continue;
             }
             require_once($path);
         }

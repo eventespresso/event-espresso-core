@@ -7,7 +7,6 @@ use EventEspresso\core\services\payments\PaymentProcessorFees;
 use EventEspresso\PaymentMethods\PayPalCommerce\tools\currency\CurrencyManager;
 use Exception;
 
-
 /**
  * Class PartnerPaymentFees
  *

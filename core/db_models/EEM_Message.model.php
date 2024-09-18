@@ -126,7 +126,8 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
         $this->_fields          = [
             'Message' => [
                 'MSG_ID'             => new EE_Primary_Key_Int_Field(
-                    'MSG_ID', esc_html__('Message ID', 'event_espresso')
+                    'MSG_ID',
+                    esc_html__('Message ID', 'event_espresso')
                 ),
                 'MSG_token'          => new EE_Plain_Text_Field(
                     'MSG_token',

@@ -45,22 +45,22 @@ class EE_Has_Many_Relation extends EE_Model_Relation_Base
         $other_table_fk_field =
             $this->get_other_model()->get_foreign_key_to($this->get_this_model()->get_this_model_name());
         $pk_table_alias       = EE_Model_Parser::extract_table_alias_model_relation_chain_prefix(
-                $model_relation_chain,
-                $this->get_this_model()->get_this_model_name()
-            ) . $this_table_pk_field->get_table_alias();
+            $model_relation_chain,
+            $this->get_this_model()->get_this_model_name()
+        ) . $this_table_pk_field->get_table_alias();
         $fk_table_alias       = EE_Model_Parser::extract_table_alias_model_relation_chain_prefix(
-                $model_relation_chain,
-                $this->get_other_model()->get_this_model_name()
-            ) . $other_table_fk_field->get_table_alias();
+            $model_relation_chain,
+            $this->get_other_model()->get_this_model_name()
+        ) . $other_table_fk_field->get_table_alias();
         $fk_table             = $this->get_other_model()->get_table_for_alias($fk_table_alias);
 
         return $this->_left_join(
-                $fk_table,
-                $fk_table_alias,
-                $other_table_fk_field->get_table_column(),
-                $pk_table_alias,
-                $this_table_pk_field->get_table_column()
-            ) . $this->get_other_model()->_construct_internal_join_to_table_with_alias($fk_table_alias);
+            $fk_table,
+            $fk_table_alias,
+            $other_table_fk_field->get_table_column(),
+            $pk_table_alias,
+            $this_table_pk_field->get_table_column()
+        ) . $this->get_other_model()->_construct_internal_join_to_table_with_alias($fk_table_alias);
     }
 
 

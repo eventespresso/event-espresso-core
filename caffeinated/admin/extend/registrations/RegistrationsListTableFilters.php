@@ -218,10 +218,10 @@ class RegistrationsListTableFilters
             <span class="ee-datetime-selector">
                 <label for="DTT_ID">' . esc_html__('Datetime', 'event_espresso') . '</label>
                 ' . EEH_Form_Fields::select_input(
-                'DTT_ID',
-                $datetimes,
-                $this->DTT_ID
-            ) . '
+                    'DTT_ID',
+                    $datetimes,
+                    $this->DTT_ID
+                ) . '
             </span>';
         }
         $filters[] = '

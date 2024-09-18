@@ -11,7 +11,6 @@
  */
 class EE_DMS_4_6_0_gateways extends EE_Data_Migration_Script_Stage
 {
-
     protected string $_new_table_name;
 
     protected string $_extra_meta_table_name;

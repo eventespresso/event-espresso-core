@@ -29,7 +29,6 @@
  */
 abstract class EE_Data_Migration_Script_Stage extends EE_Data_Migration_Class_Base
 {
-
     /**
      * The migration script this is a stage of
      *

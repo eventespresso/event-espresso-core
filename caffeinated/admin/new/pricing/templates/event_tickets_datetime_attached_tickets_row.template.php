@@ -24,7 +24,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                 <h3 class="ee-item-id">
                     <?php echo esc_html(
                         $DTT_ID
-                            ? sprintf( __('Datetime ID: %d', 'event_espresso'), $DTT_ID )
+                            ? sprintf(__('Datetime ID: %d', 'event_espresso'), $DTT_ID)
                             : ''
                     ); ?>
                 </h3>
@@ -53,7 +53,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
             <div class="add-datetime-ticket-container">
                 <div class="ee-layout-row ee-layout-row--fixed">
                     <h4 class="datetime-tickets-heading">
-                        <?php esc_html_e( 'Add New Ticket', 'event_espresso' ); ?>
+                        <?php esc_html_e('Add New Ticket', 'event_espresso'); ?>
                     </h4>
                     <?php echo wp_kses($add_new_datetime_ticket_help_link, AllowedTags::getAllowedTags()); ?>
                 </div>
@@ -63,17 +63,17 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                         <tr valign="top">
                             <td>
                                 <span class="ANT_TKT_name_label">
-                                    <?php esc_html_e( 'Ticket Name', 'event_espresso' ); ?>
+                                    <?php esc_html_e('Ticket Name', 'event_espresso'); ?>
                                 </span>
                             </td>
                             <td>
                                 <span class="ANT_TKT_goes_on_sale_label">
-                                    <?php esc_html_e('Sale Starts', 'event_espresso' ); ?>
+                                    <?php esc_html_e('Sale Starts', 'event_espresso'); ?>
                                 </span>
                             </td>
                             <td>
                                 <span class="ANT_TKT_sell_until_label">
-                                    <?php esc_html_e( 'Sell Until',  'event_espresso' ); ?>
+                                    <?php esc_html_e('Sell Until', 'event_espresso'); ?>
                                 </span>
                             </td>
                             <td>
