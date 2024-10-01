@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "2bf67e8fea067690dd80b0e018b63aad",
+    "content-hash": "c5db5920da2031d3080d3cde33d01d62",
     "packages": [
         {
             "name": "appsero/client",
@@ -754,16 +754,16 @@
         },
         {
             "name": "wp-graphql/wp-graphql",
-            "version": "1.27.2",
+            "version": "v1.29.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/wp-graphql/wp-graphql.git",
-                "reference": "a44eef4ea478a531245bb22263e28534300dfb9f"
+                "reference": "3af641b886536bbe8d0c626ef181588275abdf26"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/wp-graphql/wp-graphql/zipball/a44eef4ea478a531245bb22263e28534300dfb9f",
-                "reference": "a44eef4ea478a531245bb22263e28534300dfb9f",
+                "url": "https://api.github.com/repos/wp-graphql/wp-graphql/zipball/3af641b886536bbe8d0c626ef181588275abdf26",
+                "reference": "3af641b886536bbe8d0c626ef181588275abdf26",
                 "shasum": ""
             },
             "require": {
@@ -826,9 +826,9 @@
             "description": "GraphQL API for WordPress",
             "support": {
                 "issues": "https://github.com/wp-graphql/wp-graphql/issues",
-                "source": "https://github.com/wp-graphql/wp-graphql/tree/1.27.2"
+                "source": "https://github.com/wp-graphql/wp-graphql/tree/v1.29.0"
             },
-            "time": "2024-07-04T14:18:36+00:00"
+            "time": "2024-09-19T17:27:00+00:00"
         }
     ],
     "packages-dev": [],
