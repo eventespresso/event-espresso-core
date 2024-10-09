@@ -583,18 +583,6 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             ['editor-buttons'],
             EVENT_ESPRESSO_VERSION
         );
-        // scripts
-        wp_enqueue_script(
-            'event_editor_js',
-            EVENTS_ASSETS_URL . 'event_editor.js',
-            [
-                EspressoLegacyAdminAssetManager::JS_HANDLE_EE_ADMIN,
-                JqueryAssetManager::JS_HANDLE_JQUERY_UI_SLIDER,
-                JqueryAssetManager::JS_HANDLE_JQUERY_UI_TIMEPICKER_ADDON
-            ],
-            EVENT_ESPRESSO_VERSION,
-            true
-        );
     }
 
 
@@ -621,6 +609,17 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
             EVENT_ESPRESSO_VERSION
         );
         // scripts
+        wp_enqueue_script(
+            'event_editor_js',
+            EVENTS_ASSETS_URL . 'event_editor.js',
+            [
+                EspressoLegacyAdminAssetManager::JS_HANDLE_EE_ADMIN,
+                JqueryAssetManager::JS_HANDLE_JQUERY_UI_SLIDER,
+                JqueryAssetManager::JS_HANDLE_JQUERY_UI_TIMEPICKER_ADDON
+            ],
+            EVENT_ESPRESSO_VERSION,
+            true
+        );
         if (! $this->admin_config->useAdvancedEditor()) {
             wp_enqueue_script(
                 'event-datetime-metabox',

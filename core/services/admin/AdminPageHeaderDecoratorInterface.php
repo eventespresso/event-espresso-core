@@ -17,5 +17,5 @@ interface AdminPageHeaderDecoratorInterface
      * @return string
      * @since 4.10.2.p
      */
-    public function getHeaderText($text = '');
+    public function getHeaderText(string $text = ''): string;
 }

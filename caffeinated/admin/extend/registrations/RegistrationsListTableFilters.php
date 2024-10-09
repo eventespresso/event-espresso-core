@@ -69,16 +69,21 @@ class RegistrationsListTableFilters
     {
         $this->EVT_ID = $this->request->getRequestParam('EVT_ID', 0, DataType::INTEGER);
         $this->EVT_ID = $this->request->getRequestParam('event_id', $this->EVT_ID, DataType::INTEGER);
-        $this->event  = EEM_Event::instance()->get_one_by_ID($this->EVT_ID);
-        $this->datetimes_for_event = new DatetimesForEventCheckIn(EE_Capabilities::instance(), $this->event);
-        // if we're filtering for a specific event and it only has one datetime, then grab its ID
-        $this->datetime = $this->datetimes_for_event->getOneDatetimeForEvent();
-        $this->DTT_ID = $this->datetime instanceof EE_Datetime ? $this->datetime->ID() : 0;
-        // else check the request, but use the above as the default (and hope they match if BOTH exist, LOLZ)
         $this->DTT_ID        = $this->request->getRequestParam('DTT_ID', $this->DTT_ID, DataType::INTEGER);
         $this->DTT_ID        = $this->request->getRequestParam('datetime_id', $this->DTT_ID, DataType::INTEGER);
         $this->hide_expired  = $this->request->getRequestParam('hide_expired', false, DataType::BOOL);
         $this->hide_upcoming = $this->request->getRequestParam('hide_upcoming', false, DataType::BOOL);
+
+        $this->event  = EEM_Event::instance()->get_one_by_ID($this->EVT_ID);
+        $this->datetimes_for_event = new DatetimesForEventCheckIn(EE_Capabilities::instance(), $this->event);
+        // if we're filtering for a specific event and it only has one datetime, then grab its ID
+        $this->datetime = $this->datetimes_for_event->getOneDatetimeForEvent($this->DTT_ID, $this->hide_expired, $this->hide_upcoming);
+        // use the above datetime ID (and hope it matches any in the request if BOTH exist, LOLZ)
+        $this->DTT_ID = $this->datetime instanceof EE_Datetime ? $this->datetime->ID() : $this->DTT_ID;
+        if ($this->DTT_ID) {
+            // in case datetime ID was not set in the request, add it so that other filters can use it
+            $this->request->setRequestParam('DTT_ID', $this->DTT_ID);
+        }
     }
 
 
@@ -200,7 +205,9 @@ class RegistrationsListTableFilters
         $datetimes_for_event = $this->datetimes_for_event->getAllDatetimesForEvent(
             $hide_upcoming_checked === 'checked'
         );
-        if (count($datetimes_for_event) > 1) {
+        if (count($datetimes_for_event) === 1) {
+            $filters[] = EEH_Form_Fields::adminHidden('', '', 'DTT_ID', $this->DTT_ID);
+        } elseif (count($datetimes_for_event) > 1) {
             $datetimes[0] = esc_html__(' - select a datetime - ', 'event_espresso');
             foreach ($datetimes_for_event as $datetime) {
                 if ($datetime instanceof EE_Datetime) {

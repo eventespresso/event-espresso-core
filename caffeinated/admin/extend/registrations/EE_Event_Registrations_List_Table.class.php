@@ -86,13 +86,15 @@ class EE_Event_Registrations_List_Table extends EE_Registrations_List_Table
             '_REG_paid'           => esc_html__('REG Paid', 'event_espresso'),
             'TXN_total'           => esc_html__('TXN Paid/Total', 'event_espresso'),
         ];
-        // Add/remove columns when an event has been selected
+        // Add/remove columns when an event or datetime has been selected
         if (! empty($this->filters->eventID())) {
-            // Render a checkbox column
-            $columns['cb']              = '<input type="checkbox" />';
-            $this->_has_checkbox_column = true;
             // Remove the 'Event' column
             unset($this->_columns['Event']);
+        }
+        if (! empty($this->filters->datetimeID())) {
+            // Render a checkbox column for triggering bulk check-ins
+            $columns['cb']              = '<input type="checkbox" />';
+            $this->_has_checkbox_column = true;
         }
         $this->_columns        = array_merge($columns, $this->_columns);
         $this->_primary_column = '_REG_att_checked_in';
@@ -195,7 +197,7 @@ class EE_Event_Registrations_List_Table extends EE_Registrations_List_Table
      */
     public function column_cb($item): string
     {
-        return sprintf('<input type="checkbox" name="checkbox[%1$s]" value="%1$s" />', $item->ID());
+        return sprintf('<input class="bulk-check-in" type="checkbox" name="checkbox[%1$s]" value="%1$s" />', $item->ID());
     }
 
 

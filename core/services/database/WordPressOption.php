@@ -123,7 +123,10 @@ abstract class WordPressOption
     public function loadOption()
     {
         if ($this->value === WordPressOption::NOT_SET_YET) {
-            $this->value = $this->option_engine->getOption($this->getOptionName(), $this->default_value);
+            $this->value = $this->option_engine->getOption($this->getOptionName(), null);
+            if ($this->value === null) {
+                $this->updateOption($this->default_value, true);
+            }
         }
         return $this->value;
     }

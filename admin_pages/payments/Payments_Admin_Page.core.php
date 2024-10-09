@@ -439,12 +439,12 @@ class Payments_Admin_Page extends EE_Admin_Page
             // if they provided the current payment method, use it
             $payment_method_slug = sanitize_key($this->_req_data['payment_method']);
         }
-        /** @var EE_Payment_Method $payment_method */
+
         $payment_method = EEM_Payment_Method::instance()->get_one([['PMD_slug' => $payment_method_slug]]);
         // if that didn't work or wasn't provided, find another way to select the current pm
         if (! $this->_verify_payment_method($payment_method)) {
             // like, looking for an active one
-            $payment_method = EEM_Payment_Method::instance()->get_one_active('CART');
+            $payment_method = EEM_Payment_Method::instance()->get_one_active(EEM_Payment_Method::scope_cart);
             // test that one as well
             if ($this->_verify_payment_method($payment_method)) {
                 $payment_method_slug = $payment_method->slug();

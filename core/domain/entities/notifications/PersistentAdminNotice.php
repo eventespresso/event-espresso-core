@@ -28,6 +28,12 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
 
     protected string $message = '';
 
+    protected string $extra_css = '';
+
+    protected string $type = 'info';
+
+    private array $allowed_types = ['info', 'success', 'attention', 'warning', 'error'];
+
     protected bool $force_update = false;
 
     protected string $capability = 'manage_options';
@@ -63,6 +69,8 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
      * @param string $capability   user capability required to view this notice
      * @param string $cap_context  description for why the cap check is being performed
      * @param bool   $dismissed    whether the user has already dismissed/viewed this notice
+     * @param string $type         the type of notice (info, success, attention, warning, error)
+     * @param string $extra_css    additional CSS classes to be applied to the main notice container
      */
     public function __construct(
         string $name,
@@ -70,7 +78,9 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
         bool $force_update = false,
         string $capability = 'manage_options',
         string $cap_context = 'view persistent admin notice',
-        bool $dismissed = false
+        bool $dismissed = false,
+        string $type = 'info',
+        string $extra_css = ''
     ) {
         $this->setName($name);
         $this->setMessage($message);
@@ -78,6 +88,9 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
         $this->setCapability($capability);
         $this->setCapContext($cap_context);
         $this->setDismissed($dismissed);
+        $this->setType($type);
+        $this->setExtraCss($extra_css);
+
         add_action(
             'AHEE__EventEspresso_core_services_notifications_PersistentAdminNoticeManager__registerNotices',
             [$this, 'registerPersistentAdminNotice']
@@ -120,6 +133,42 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
     {
         $allowedtags   = AllowedTags::getAllowedTags();
         $this->message = wp_kses($message, $allowedtags);
+    }
+
+
+    public function getType(): string
+    {
+        return $this->type ?: 'info';
+    }
+
+
+    public function setType(string $type): void
+    {
+        if (! in_array($type, $this->allowed_types, true)) {
+            throw new DomainException(
+                sprintf(
+                    esc_html__(
+                        'The "%1$s" type is not allowed for PersistentAdminNotice. Allowed types are: %2$s',
+                        'event_espresso'
+                    ),
+                    $type,
+                    implode(', ', $this->allowed_types)
+                )
+            );
+        }
+        $this->type = $type;
+    }
+
+
+    public function extraCss(): string
+    {
+        return $this->extra_css;
+    }
+
+
+    public function setExtraCss(string $extra_css): void
+    {
+        $this->extra_css = $extra_css;
     }
 
 

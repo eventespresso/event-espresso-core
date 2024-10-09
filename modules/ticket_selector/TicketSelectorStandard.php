@@ -20,25 +20,13 @@ use ReflectionException;
  */
 class TicketSelectorStandard extends TicketSelector
 {
-    /**
-     * @var string $date_format
-     */
-    protected $date_format;
+    protected string $date_format;
 
-    /**
-     * @var string $time_format
-     */
-    protected $time_format;
+    protected string $time_format;
 
-    /**
-     * @var EE_Ticket_Selector_Config $ticket_selector_config
-     */
-    protected $ticket_selector_config;
+    protected EE_Ticket_Selector_Config $ticket_selector_config;
 
-    /**
-     * @var EE_Tax_Config $tax_config
-     */
-    protected $tax_config;
+    protected EE_Tax_Config $tax_config;
 
 
     /**
@@ -60,8 +48,8 @@ class TicketSelectorStandard extends TicketSelector
         array $tickets,
         int $max_attendees,
         array $template_args,
-        $date_format = 'Y-m-d',
-        $time_format = 'g:i a'
+        string $date_format = 'Y-m-d',
+        string $time_format = 'g:i a'
     ) {
         $this->ticket_selector_config = $ticket_selector_config;
         $this->tax_config             = $tax_config;
@@ -100,6 +88,7 @@ class TicketSelectorStandard extends TicketSelector
             );
             $this->template_args['datetime_selector'] = $datetime_selector->getDatetimeSelector();
         }
+
         $total_tickets = count($this->tickets);
         // loop through tickets
         foreach ($this->tickets as $ticket) {
@@ -118,7 +107,8 @@ class TicketSelectorStandard extends TicketSelector
                     $this->template_args['event_status'],
                     $datetime_selector instanceof DatetimeSelector
                         ? $datetime_selector->getTicketDatetimeClasses($ticket)
-                        : ''
+                        : '',
+                    $this->ticket_selector_config->useNewCheckboxSelector()
                 );
                 $ticket_row_html     = $ticket_selector_row->getHtml();
                 // check if something was actually returned
@@ -137,6 +127,9 @@ class TicketSelectorStandard extends TicketSelector
         $this->template_args['row']                              = $this->ticket_rows;
         $this->template_args['ticket_row_html']                  = $all_ticket_rows_html;
         $this->template_args['taxable_tickets']                  = $taxable_tickets;
+        $this->template_args['use_new_form_styles_class']        = $this->ticket_selector_config->useNewFormStyles()
+            ? ' tkt-slctr-use-new-form-styles'
+            : '';
         $this->template_args['prices_displayed_including_taxes'] = $this->tax_config->prices_displayed_including_taxes;
 
 

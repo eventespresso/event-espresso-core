@@ -107,7 +107,7 @@ class CaptureOrder extends OrdersApi
             try {
                 PayPalLogger::errorLog($message, [$this->request_url, $response], $this->transaction->payment_method());
             } catch (EE_Error | ReflectionException $e) {
-                // Just continue.
+                error_log("PayPalLogger Error: $message: " . json_encode($response));
             }
             return [
                 'error'   => $response['error'] ?? 'missing_order',

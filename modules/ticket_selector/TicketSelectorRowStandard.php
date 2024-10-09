@@ -59,6 +59,8 @@ class TicketSelectorRowStandard extends TicketSelectorRow
      */
     protected $ticket_datetime_classes;
 
+    private bool $use_new_checkbox_selector;
+
 
     /**
      * TicketDetails constructor.
@@ -72,6 +74,7 @@ class TicketSelectorRowStandard extends TicketSelectorRow
      * @param boolean       $required_ticket_sold_out
      * @param string        $event_status
      * @param string        $ticket_datetime_classes
+     * @param bool          $use_new_checkbox_selector
      * @throws EE_Error
      * @throws UnexpectedEntityException
      */
@@ -84,7 +87,8 @@ class TicketSelectorRowStandard extends TicketSelectorRow
         $cols,
         $required_ticket_sold_out,
         $event_status,
-        $ticket_datetime_classes
+        $ticket_datetime_classes,
+        bool $use_new_checkbox_selector = false
     ) {
         $this->ticket_details = $ticket_details;
         $this->template_settings = $ticket_details->getTemplateSettings();
@@ -92,6 +96,7 @@ class TicketSelectorRowStandard extends TicketSelectorRow
         $this->row = $row;
         $this->cols = $cols;
         $this->ticket_datetime_classes = $ticket_datetime_classes;
+        $this->use_new_checkbox_selector = $use_new_checkbox_selector;
         parent::__construct(
             $ticket_details->getTicket(),
             $max_attendees,
@@ -178,11 +183,16 @@ class TicketSelectorRowStandard extends TicketSelectorRow
         );
         $this->setTicketStatusDisplay($remaining);
         if (empty($this->ticket_status_display)) {
+            $this->hidden_input_qty = false;
+            // display submit button since we have tickets available
+            add_filter('FHEE__EE_Ticket_Selector__display_ticket_selector_submit', '__return_true');
             if ($this->max_attendees === 1) {
                 // only ONE attendee is allowed to register at a time
                 $ticket_selector_row_html .= $this->onlyOneAttendeeCanRegister();
-            } elseif ($this->max > 0) {
-                $ticket_selector_row_html .= $this->ticketQuantitySelector();
+            } else {
+                $ticket_selector_row_html .= $this->max === 1 && $this->use_new_checkbox_selector
+                    ? $this->ticketCheckboxSelector()
+                    : $this->ticketQuantitySelector();
             }
         }
         $ticket_selector_row_html .= $this->ticket_status_display;
@@ -206,6 +216,7 @@ class TicketSelectorRowStandard extends TicketSelectorRow
      *
      * @return void
      * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function setTicketPriceDetails()
     {
@@ -265,6 +276,7 @@ class TicketSelectorRowStandard extends TicketSelectorRow
      *
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function ticketPriceTableCell()
     {
@@ -309,56 +321,67 @@ class TicketSelectorRowStandard extends TicketSelectorRow
 
 
     /**
-     * onlyOneAttendeeCanRegister
-     *
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    protected function onlyOneAttendeeCanRegister()
+    protected function onlyOneAttendeeCanRegister(): string
     {
-        $this->hidden_input_qty = false;
-        // display submit button since we have tickets available
-        add_filter('FHEE__EE_Ticket_Selector__display_ticket_selector_submit', '__return_true');
-
         $TKT   = $this->ticket->ID();
         $label = esc_html__('Select this ticket', 'event_espresso');
-        $name  = "tkt-slctr-qty-{$this->EVT_ID}";
+        $name  = "tkt-slctr-qty-$this->EVT_ID";
         $class = "ticket-selector-tbl-qty-slct";
-        $id    = "{$class}-{$this->EVT_ID}-{$this->row}";
+        $id    = "$class-$this->EVT_ID-$this->row";
         $checked = $this->total_tickets === 1 ? ' checked' : '';
 
-        $html = "<label class='ee-a11y-screen-reader-text' for='{$id}' >{$label}</label>";
-        $html .= "<input type='radio'{$checked} name='{$name}' id='{$id}' class='{$class}' value='{$TKT}-1' title='' />";
-        return $html;
+        return ".
+        <label class='ee-a11y-screen-reader-text' for='$id' >$label</label>
+        <input type='radio'$checked name='$name' id='$id' class='$class' value='$TKT-1' />";
     }
 
 
     /**
-     * ticketQuantitySelector
-     *
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    protected function ticketQuantitySelector()
+    protected function ticketCheckboxSelector(): string
     {
-        $this->hidden_input_qty = false;
-        // display submit button since we have tickets available
-        add_filter('FHEE__EE_Ticket_Selector__display_ticket_selector_submit', '__return_true');
+        $TKT = $this->ticket->ID();
+        $label = esc_html__('Select this ticket', 'event_espresso');
+        $name  = "tkt-slctr-qty-$this->EVT_ID[$TKT]";
+        $class = 'ticket-selector-tbl-qty-slct';
+        $id    = "$class-$this->EVT_ID-$this->row";
+        $title = esc_html__('only one of this ticket can be purchased at a time', 'event_espresso');
 
+        return "
+        <label class='ee-a11y-screen-reader-text' for='$id' >$label</label>
+        <input type='checkbox' name='$name' id='$id' class='$class' value='1' title='$title'/>";
+    }
+
+
+    /**
+     * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    protected function ticketQuantitySelector(): string
+    {
         $TKT = $this->ticket->ID();
         $label = esc_html__('Quantity', 'event_espresso');
+        $name  = "tkt-slctr-qty-$this->EVT_ID[$TKT]";
         $class = 'ticket-selector-tbl-qty-slct';
-        $id = "{$class}-{$this->EVT_ID}-{$this->row}";
+        $id = "$class-{$this->EVT_ID}-{$this->row}";
 
-        $html = "<label class='ee-a11y-screen-reader-text' for='{$id}' >{$label}</label>";
-        $html .= "<select name='tkt-slctr-qty-{$this->EVT_ID}[{$TKT}]' id='{$id}' class='{$class}'>";
+        $html = "<label class='ee-a11y-screen-reader-text' for='$id' >$label</label>";
+        $html .= "<select name='$name' id='$id' class='$class'>";
         // this ensures that non-required tickets with non-zero MIN QTYs don't HAVE to be purchased
         if ($this->min !== 0 && ! $this->ticket->required()) {
             $html .= "<option value='0'>&nbsp;0&nbsp;</option>";
         }
         // offer ticket quantities from the min to the max
         for ($i = $this->min; $i <= $this->max; $i++) {
-            $html .= "<option value='{$i}'>&nbsp;{$i}&nbsp;</option>";
+            $html .= "<option value='$i'>&nbsp;$i&nbsp;</option>";
         }
         $html .= "</select>";
         return $html;
@@ -366,12 +389,11 @@ class TicketSelectorRowStandard extends TicketSelectorRow
 
 
     /**
-     * getHiddenInputs
-     *
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    protected function ticketQtyAndIdHiddenInputs()
+    protected function ticketQtyAndIdHiddenInputs(): string
     {
         $html = '';
         $EVT = $this->EVT_ID;

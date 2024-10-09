@@ -188,11 +188,11 @@ class EED_PayPalOnboard extends EED_Module
         $identifier_string = new OneTimeString($paypal_pm->debug_mode());
         $tracking_id       = $identifier_string->value();
         $request           = LoaderFactory::getLoader()->getShared(RequestInterface::class);
-        $checkout_type     = $request->getRequestParam('checkout_type', 'EXPRESS_CHECKOUT');
+        $selected_payment  = $request->getRequestParam('selected_payment', 'EXPRESS_CHECKOUT');
         // Save the identifier for future use.
         PayPalExtraMetaManager::savePmOption($paypal_pm, Domain::META_KEY_TRACKING_ID, $tracking_id);
         // Assemble the return URL.
-        $return_url = EED_PayPalOnboard::getReturnUrl($paypal_pm);
+        $return_url = EED_PayPalOnboard::getReturnUrl($paypal_pm, $selected_payment);
         return json_encode(
             [
                 'tracking_id'             => $tracking_id,
@@ -210,7 +210,7 @@ class EED_PayPalOnboard extends EED_Module
                         ],
                     ],
                 ],
-                'products'                => [$checkout_type],
+                'products'                => [$selected_payment],
                 'legal_consents'          => [
                     [
                         'type'    => 'SHARE_DATA_CONSENT',
@@ -229,11 +229,12 @@ class EED_PayPalOnboard extends EED_Module
      * Get the return URL.
      *
      * @param EE_Payment_Method $paypal_pm
+     * @param string            $selected_payment
      * @return string
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public static function getReturnUrl(EE_Payment_Method $paypal_pm): string
+    public static function getReturnUrl(EE_Payment_Method $paypal_pm, string $selected_payment = ''): string
     {
         $wp_nonce = EED_Module::getRequest()->getRequestParam('wp_nonce');
         $nonce    = wp_create_nonce(Domain::NONCE_NAME_ONBOARDING_RETURN);
@@ -244,6 +245,7 @@ class EED_PayPalOnboard extends EED_Module
                 'payment_method'              => $paypal_pm->slug(),
                 '_wpnonce'                    => $wp_nonce,
                 'nonce'                       => $nonce,
+                'selected_payment'            => $selected_payment,
                 Domain::META_KEY_SANDBOX_MODE => $paypal_pm->debug_mode() ? '1' : '0',
             ],
             admin_url('admin.php')
@@ -322,7 +324,7 @@ class EED_PayPalOnboard extends EED_Module
             return;
         }
         // Start saving the setup and info.
-        PayPalExtraMetaManager::parseAndSaveOptions($paypal_pm, $onboarding_status);
+        PayPalExtraMetaManager::parseAndSaveOptions($paypal_pm, $onboarding_status, $get_params);
         // Save the credentials.
         PayPalExtraMetaManager::saveSellerApiCredentials($paypal_pm, $get_params);
         // Also clen GET params by redirecting, because PP auto redirects to the return_url on closing the onboarding window.

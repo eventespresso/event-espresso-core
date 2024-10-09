@@ -18,15 +18,9 @@ use EventEspresso\modules\ticket_selector\TicketSelectorIframeEmbedButton;
  */
 class EED_Ticket_Selector extends EED_Module
 {
-    /**
-     * @var DisplayTicketSelector $ticket_selector
-     */
-    private static $ticket_selector;
+    private static ?DisplayTicketSelector $ticket_selector = null;
 
-    /**
-     * @var TicketSelectorIframeEmbedButton $iframe_embed_button
-     */
-    private static $iframe_embed_button;
+    private static ?TicketSelectorIframeEmbedButton $iframe_embed_button = null;
 
 
     /**
@@ -45,7 +39,7 @@ class EED_Ticket_Selector extends EED_Module
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public static function ticketConfig()
+    public static function ticketConfig(): EE_Ticket_Selector_Config
     {
         EED_Ticket_Selector::instance()->set_config();
         return EED_Ticket_Selector::instance()->config();
@@ -91,9 +85,9 @@ class EED_Ticket_Selector extends EED_Module
             'cancel_ticket_selections'
         );
         add_action('wp_loaded', ['EED_Ticket_Selector', 'set_definitions'], 2);
-        add_action('AHEE_event_details_header_bottom', ['EED_Ticket_Selector', 'display_ticket_selector'], 10, 1);
+        add_action('AHEE_event_details_header_bottom', ['EED_Ticket_Selector', 'display_ticket_selector']);
         add_action('wp_enqueue_scripts', ['EED_Ticket_Selector', 'translate_js_strings'], 0);
-        add_action('wp_enqueue_scripts', ['EED_Ticket_Selector', 'load_tckt_slctr_assets'], 10);
+        add_action('wp_enqueue_scripts', ['EED_Ticket_Selector', 'load_tckt_slctr_assets']);
         EED_Ticket_Selector::loadIframeAssets();
     }
 
@@ -109,8 +103,7 @@ class EED_Ticket_Selector extends EED_Module
         // to load assets for "espresso_events" page on the "edit" route (action)
         add_action(
             'admin_init',
-            ['EED_Ticket_Selector', 'ticket_selector_iframe_embed_button'],
-            10
+            ['EED_Ticket_Selector', 'ticket_selector_iframe_embed_button']
         );
         /**
          * Make sure assets for the ticket selector are loaded on the espresso registrations route so  admin side
@@ -118,8 +111,7 @@ class EED_Ticket_Selector extends EED_Module
          */
         add_action(
             'FHEE__EE_Admin_Page___load_page_dependencies__after_load__espresso_registrations__new_registration',
-            ['EED_Ticket_Selector', 'set_definitions'],
-            10
+            ['EED_Ticket_Selector', 'set_definitions']
         );
     }
 
@@ -188,10 +180,7 @@ class EED_Ticket_Selector extends EED_Module
     }
 
 
-    /**
-     * @return TicketSelectorIframeEmbedButton
-     */
-    public static function getIframeEmbedButton()
+    public static function getIframeEmbedButton(): TicketSelectorIframeEmbedButton
     {
         if (! self::$iframe_embed_button instanceof TicketSelectorIframeEmbedButton) {
             self::$iframe_embed_button = new TicketSelectorIframeEmbedButton();
@@ -241,22 +230,23 @@ class EED_Ticket_Selector extends EED_Module
      * @return string
      * @throws EE_Error
      * @throws ReflectionException
+     * @throws Throwable
      */
-    public static function display_ticket_selector($event = null, $view_details = false)
+    public static function display_ticket_selector($event = null, bool $view_details = false): string
     {
         return EED_Ticket_Selector::ticketSelector()->display($event, $view_details);
     }
 
 
     /**
-     * @return bool  or FALSE
+     * @return bool
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws ReflectionException
      */
-    public function process_ticket_selections()
+    public function process_ticket_selections(): bool
     {
         /** @var EventEspresso\modules\ticket_selector\ProcessTicketSelector $form */
         $form = LoaderFactory::getLoader()->getShared('EventEspresso\modules\ticket_selector\ProcessTicketSelector');
@@ -272,7 +262,7 @@ class EED_Ticket_Selector extends EED_Module
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public static function cancel_ticket_selections()
+    public static function cancel_ticket_selections(): bool
     {
         /** @var EventEspresso\modules\ticket_selector\ProcessTicketSelector $form */
         $form = LoaderFactory::getLoader()->getShared('EventEspresso\modules\ticket_selector\ProcessTicketSelector');
@@ -294,27 +284,38 @@ class EED_Ticket_Selector extends EED_Module
 
     /**
      * @return void
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function load_tckt_slctr_assets()
     {
         if (apply_filters('FHEE__EED_Ticket_Selector__load_tckt_slctr_assets', false)) {
             // add some style
-            wp_register_style(
+            wp_enqueue_style(
                 'ticket_selector',
                 TICKET_SELECTOR_ASSETS_URL . 'ticket_selector.css',
                 [],
                 EVENT_ESPRESSO_VERSION
             );
-            wp_enqueue_style('ticket_selector');
             // make it dance
-            wp_register_script(
+            wp_enqueue_script(
                 'ticket_selector',
                 TICKET_SELECTOR_ASSETS_URL . 'ticket_selector.js',
                 ['espresso_core'],
                 EVENT_ESPRESSO_VERSION,
                 true
             );
-            wp_enqueue_script('ticket_selector');
+            wp_localize_script(
+                'ticket_selector',
+                'EEDTicketSelectorMsg',
+                [
+                    'please_select_date_filter_notice' => esc_html__(
+                        'please select a datetime',
+                        'event_espresso'
+                    ),
+                ]
+            );
+            wp_add_inline_style('espresso_default', EED_Ticket_Selector::accentColorStyles());
             require_once EE_LIBRARIES
                          . 'form_sections/strategies/display/EE_Checkbox_Dropdown_Selector_Display_Strategy.strategy.php';
             EE_Checkbox_Dropdown_Selector_Display_Strategy::enqueue_styles_and_scripts();
@@ -350,7 +351,7 @@ class EED_Ticket_Selector extends EED_Module
      * @param array $iframe_css
      * @return array
      */
-    public static function iframeCss(array $iframe_css)
+    public static function iframeCss(array $iframe_css): array
     {
         $iframe_css['ticket_selector'] = TICKET_SELECTOR_ASSETS_URL . 'ticket_selector.css';
         return $iframe_css;
@@ -363,7 +364,7 @@ class EED_Ticket_Selector extends EED_Module
      * @param array $iframe_js
      * @return array
      */
-    public static function iframeJs(array $iframe_js)
+    public static function iframeJs(array $iframe_js): array
     {
         $iframe_js['ticket_selector'] = TICKET_SELECTOR_ASSETS_URL . 'ticket_selector.js';
         return $iframe_js;
@@ -379,7 +380,7 @@ class EED_Ticket_Selector extends EED_Module
      * @throws ReflectionException
      * @deprecated
      */
-    public static function display_view_details_btn()
+    public static function display_view_details_btn(): string
     {
         // todo add doing_it_wrong() notice during next major version
         return EED_Ticket_Selector::ticketSelector()->displayViewDetailsButton();
@@ -392,7 +393,7 @@ class EED_Ticket_Selector extends EED_Module
      * @throws ReflectionException
      * @deprecated
      */
-    public static function display_ticket_selector_submit()
+    public static function display_ticket_selector_submit(): string
     {
         // todo add doing_it_wrong() notice during next major version
         return EED_Ticket_Selector::ticketSelector()->displaySubmitButton();
@@ -410,7 +411,7 @@ class EED_Ticket_Selector extends EED_Module
      * @throws InvalidInterfaceException
      * @deprecated
      */
-    public static function iframe_code_button($permalink_string, $id, $new_title = '', $new_slug = '')
+    public static function iframe_code_button($permalink_string, $id, $new_title = '', $new_slug = ''): string
     {
         $request = self::getRequest();
         // todo add doing_it_wrong() notice during next major version
@@ -433,7 +434,7 @@ class EED_Ticket_Selector extends EED_Module
      * @throws ReflectionException
      * @deprecated
      */
-    public static function ticket_selector_form_open($ID = 0, $external_url = '')
+    public static function ticket_selector_form_open($ID = 0, $external_url = ''): string
     {
         // todo add doing_it_wrong() notice during next major version
         return EED_Ticket_Selector::ticketSelector()->formOpen($ID, $external_url);
@@ -446,7 +447,7 @@ class EED_Ticket_Selector extends EED_Module
      * @throws ReflectionException
      * @deprecated
      */
-    public static function ticket_selector_form_close()
+    public static function ticket_selector_form_close(): string
     {
         // todo add doing_it_wrong() notice during next major version
         return EED_Ticket_Selector::ticketSelector()->formClose();
@@ -459,7 +460,7 @@ class EED_Ticket_Selector extends EED_Module
      * @throws ReflectionException
      * @deprecated
      */
-    public static function no_tkt_slctr_end_dv()
+    public static function no_tkt_slctr_end_dv(): string
     {
         // todo add doing_it_wrong() notice during next major version
         return EED_Ticket_Selector::ticketSelector()->ticketSelectorEndDiv();
@@ -472,7 +473,7 @@ class EED_Ticket_Selector extends EED_Module
      * @throws ReflectionException
      * @deprecated 4.9.13
      */
-    public static function tkt_slctr_end_dv()
+    public static function tkt_slctr_end_dv(): string
     {
         return EED_Ticket_Selector::ticketSelector()->clearTicketSelector();
     }
@@ -484,7 +485,7 @@ class EED_Ticket_Selector extends EED_Module
      * @throws ReflectionException
      * @deprecated
      */
-    public static function clear_tkt_slctr()
+    public static function clear_tkt_slctr(): string
     {
         return EED_Ticket_Selector::ticketSelector()->clearTicketSelector();
     }
@@ -504,5 +505,38 @@ class EED_Ticket_Selector extends EED_Module
             $iframe_embed_button = EED_Ticket_Selector::getIframeEmbedButton();
             $iframe_embed_button->embedButtonAssets();
         }
+    }
+
+
+    /**
+     * @throws ReflectionException
+     * @throws EE_Error
+     */
+    public static function accentColorStyles(): string
+    {
+        $accent_color = EED_Ticket_Selector::ticketConfig()->accentColor();
+        $hue        = $accent_color[0] ?? 210;
+        $saturation = $accent_color[1] ?? 100;
+        $lightness  = $accent_color[2] ?? 50;
+        return "
+        :root {
+            --ee-ts-accent-color: hsl($hue $saturation% $lightness%);
+            --ee-ts-accent-color-hover: hsl($hue $saturation% " . ($lightness - 5) . "%);
+            --ee-ts-background: hsl($hue " . ($saturation * .02) . "% " . ($lightness + 80) * .95 . "%);
+            --ee-ts-border-color: hsl($hue " . ($saturation * .05) . "% " . ($lightness - 10) . "%);
+            --ee-ts-input-disabled: hsl($hue " . ($saturation * .15) . "% $lightness%);
+            --ee-ts-text-color: hsl($hue " . ($saturation * .1) . "% " . ($lightness * .6) . "%);
+            --ee-ts-button-text-color: hsl($hue " . ($saturation * .02) . "% " . (($lightness + 80) * .95) . "%);
+
+            @media (prefers-color-scheme: dark) {
+                --ee-ts-accent-color: hsl($hue $saturation% $lightness%);
+                --ee-ts-accent-color-hover: hsl($hue $saturation% " . ($lightness + 5) . "%);
+                --ee-ts-background: hsl($hue " . ($saturation * .02) . "% " . ($lightness * .35) . "%);
+                --ee-ts-border-color: hsl($hue " . ($saturation * .05) . "% " . ($lightness + 10) . "%);
+                --ee-ts-input-disabled: hsl($hue " . ($saturation * .15) . "% $lightness%);
+                --ee-ts-text-color: hsl($hue " . ($saturation * .02) . "% " . ($lightness * 1.7) . "%);
+                --ee-ts-button-text-color: hsl($hue " . ($saturation * .02) . "% " . (($lightness + 80) * .95) . "%);
+            }
+        }";
     }
 }

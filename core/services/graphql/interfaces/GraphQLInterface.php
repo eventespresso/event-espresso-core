@@ -68,7 +68,16 @@ abstract class GraphQLInterface implements GraphQLInterfaceInterface
     {
         foreach ($array as $field) {
             if (! ($field instanceof GraphQLFieldInterface)) {
-                throw new RuntimeException(esc_html__(sprintf('GraphQL interface %1$s expects its fields to be instance of %2$s', $this->name, GraphQLFieldInterface::class), 'event_espresso'));
+                throw new RuntimeException(
+                    sprintf(
+                        esc_html__(
+                            'GraphQL interface %1$s expects its fields to be instance of %2$s',
+                            'event_espresso'
+                        ),
+                        $this->name,
+                        GraphQLFieldInterface::class
+                    )
+                );
             }
         }
 

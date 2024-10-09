@@ -5,7 +5,9 @@ namespace EventEspresso\modules\ticket_selector;
 use EE_Error;
 use EE_Event;
 use EE_Ticket;
+use EE_Ticket_Selector_Config;
 use EventEspresso\core\exceptions\UnexpectedEntityException;
+use ReflectionException;
 
 /**
  * Class TicketSelectorSimple
@@ -19,23 +21,28 @@ use EventEspresso\core\exceptions\UnexpectedEntityException;
  */
 class TicketSelectorSimple extends TicketSelector
 {
-    /**
-     * @var EE_Ticket $ticket
-     */
-    protected $ticket;
+    protected EE_Ticket_Selector_Config $ticket_selector_config;
+
+    protected EE_Ticket $ticket;
 
 
     /**
      * TicketSelectorSimple constructor.
      *
-     * @param EE_Event  $event
-     * @param EE_Ticket $ticket
-     * @param int       $max_attendees
-     * @param array     $template_args
-     * @throws EE_Error
+     * @param EE_Ticket_Selector_Config $ticket_selector_config
+     * @param EE_Event                  $event
+     * @param EE_Ticket                 $ticket
+     * @param int                       $max_attendees
+     * @param array                     $template_args
      */
-    public function __construct(EE_Event $event, EE_Ticket $ticket, $max_attendees, array $template_args)
-    {
+    public function __construct(
+        EE_Ticket_Selector_Config $ticket_selector_config,
+        EE_Event $event,
+        EE_Ticket $ticket,
+        $max_attendees,
+        array $template_args
+    ) {
+        $this->ticket_selector_config = $ticket_selector_config;
         $this->ticket = $ticket;
         parent::__construct(
             $event,
@@ -52,6 +59,7 @@ class TicketSelectorSimple extends TicketSelector
      * @return void
      * @throws UnexpectedEntityException
      * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function addTemplateArgs()
     {
@@ -70,8 +78,11 @@ class TicketSelectorSimple extends TicketSelector
         if (empty($this->template_args['ticket_status_display'])) {
             add_filter('FHEE__EE_Ticket_Selector__display_ticket_selector_submit', '__return_true');
         }
-        $this->template_args['ticket_description'] = $ticket_selector_row->getTicketDescription();
-        $this->template_args['template_path']      =
+        $this->template_args['use_new_form_styles_class'] = $this->ticket_selector_config->useNewFormStyles()
+            ? ' tkt-slctr-use-new-form-styles'
+            : '';
+        $this->template_args['ticket_description']  = $ticket_selector_row->getTicketDescription();
+        $this->template_args['template_path']       =
             TICKET_SELECTOR_TEMPLATES_PATH . 'simple_ticket_selector.template.php';
     }
 }

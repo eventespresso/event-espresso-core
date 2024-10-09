@@ -6,7 +6,6 @@ use DomainException;
 use EE_Registry;
 use EE_System;
 use EEH_Template;
-use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 /**
  * Class Iframe
@@ -18,59 +17,75 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
  */
 class Iframe
 {
-    /*
-    * HTML for notices and ajax gif
-    * @var string $title
-    */
-    protected $title = '';
+    /**
+     * HTML for notices and ajax gif
+     *
+     * @var string $title
+     */
+    protected string $title = '';
 
-    /*
-    * HTML for the content being displayed
-    * @var string $content
-    */
-    protected $content = '';
+    /**
+     * HTML for the content being displayed
+     *
+     * @var string $content
+     */
+    protected string $content = '';
 
-    /*
-    * whether or not to call wp_head() and wp_footer()
-    * @var boolean $enqueue_wp_assets
-    */
-    protected $enqueue_wp_assets = false;
+    /**
+     * whether to call wp_head() and wp_footer()
+     *
+     * @var bool $enqueue_wp_assets
+     */
+    protected bool $enqueue_wp_assets = false;
 
-    /*
-    * an array of CSS URLs
-    * @var array $css
-    */
-    protected $css = array();
+    /**
+     * an array of CSS URLs
+     *
+     * @var array $css
+     */
+    protected array $css = [];
 
-    /*
-    * an array of JS URLs to be set in the HTML header.
-    * @var array $header_js
-    */
-    protected $header_js = array();
+    /**
+     * an array of JS URLs to be set in the HTML header.
+     *
+     * @var array $header_js
+     */
+    protected array $header_js = [];
 
-    /*
-    * an array of additional attributes to be added to <script> tags for header JS
-    * @var array $footer_js
-    */
-    protected $header_js_attributes = array();
+    /**
+     * an array of additional attributes to be added to <script> tags for header JS
+     *
+     * @var array $footer_js
+     */
+    protected array $header_js_attributes = [];
 
-    /*
-    * an array of JS URLs to be displayed before the HTML </body> tag
-    * @var array $footer_js
-    */
-    protected $footer_js = array();
+    /**
+     * an array of JS URLs to be displayed before the HTML </body> tag
+     *
+     * @var array $footer_js
+     */
+    protected array $footer_js = [];
 
-    /*
-    * an array of additional attributes to be added to <script> tags for footer JS
-    * @var array $footer_js_attributes
-    */
-    protected $footer_js_attributes = array();
+    /**
+     * an array of additional attributes to be added to <script> tags for footer JS
+     *
+     * @var array $footer_js_attributes
+     */
+    protected array $footer_js_attributes = [];
 
-    /*
-    * an array of JSON vars to be set in the HTML header.
-    * @var array $localized_vars
-    */
-    protected $localized_vars = array();
+    /**
+     * an array of JSON vars to be set in the HTML header.
+     *
+     * @var array $localized_vars
+     */
+    protected array $localized_vars = [];
+
+    /**
+     * array of CSS styles to be printed inline before/after another CSS file
+     *
+     * @var array $inline_styles
+     */
+    protected array $inline_styles = [];
 
 
     /**
@@ -80,7 +95,7 @@ class Iframe
      * @param string $content
      * @throws DomainException
      */
-    public function __construct($title, $content)
+    public function __construct(string $title, string $content)
     {
         global $wp_version;
         if (! defined('EE_IFRAME_DIR_URL')) {
@@ -91,24 +106,24 @@ class Iframe
         $this->addStylesheets(
             apply_filters(
                 'FHEE___EventEspresso_core_libraries_iframe_display_Iframe__construct__default_css',
-                array(
+                [
                     'site_theme'       => get_stylesheet_directory_uri()
-                                          . '/style.css?ver=' . EVENT_ESPRESSO_VERSION,
+                        . '/style.css?ver=' . EVENT_ESPRESSO_VERSION,
                     'dashicons'        => includes_url('css/dashicons.min.css?ver=' . $wp_version),
                     'espresso_default' => EE_GLOBAL_ASSETS_URL
-                                          . 'css/espresso_default.css?ver=' . EVENT_ESPRESSO_VERSION,
-                ),
+                        . 'css/espresso_default.css?ver=' . EVENT_ESPRESSO_VERSION,
+                ],
                 $this
             )
         );
         $this->addScripts(
             apply_filters(
                 'FHEE___EventEspresso_core_libraries_iframe_display_Iframe__construct__default_js',
-                array(
+                [
                     'jquery'        => includes_url('js/jquery/jquery.js?ver=' . $wp_version),
                     'espresso_core' => EE_GLOBAL_ASSETS_URL
-                                       . 'scripts/espresso_core.js?ver=' . EVENT_ESPRESSO_VERSION,
-                ),
+                        . 'scripts/espresso_core.js?ver=' . EVENT_ESPRESSO_VERSION,
+                ],
                 $this
             )
         );
@@ -121,7 +136,7 @@ class Iframe
             $this->addStylesheets(
                 apply_filters(
                     'FHEE___EventEspresso_core_libraries_iframe_display_Iframe__construct__default_theme_stylesheet',
-                    array('default_theme_stylesheet' => get_stylesheet_uri()),
+                    ['default_theme_stylesheet' => get_stylesheet_uri()],
                     $this
                 )
             );
@@ -133,7 +148,7 @@ class Iframe
      * @param string $title
      * @throws DomainException
      */
-    public function setTitle($title)
+    public function setTitle(string $title)
     {
         if (empty($title)) {
             throw new DomainException(
@@ -148,7 +163,7 @@ class Iframe
      * @param string $content
      * @throws DomainException
      */
-    public function setContent($content)
+    public function setContent(string $content)
     {
         if (empty($content)) {
             throw new DomainException(
@@ -160,7 +175,7 @@ class Iframe
 
 
     /**
-     * @param boolean $enqueue_wp_assets
+     * @param bool|int|string|null $enqueue_wp_assets
      */
     public function setEnqueueWpAssets($enqueue_wp_assets)
     {
@@ -189,11 +204,28 @@ class Iframe
 
 
     /**
+     * Adds inline CSS styles to be printed before or after another CSS file.
+     *
+     * @param string $handle The unique identifier for the stylesheet.
+     * @param string $styles The CSS styles to be added inline.
+     * @param bool   $before Optional. Whether to print the styles before the stylesheet. Default true.
+     * @return void
+     * @since $VID:$
+     */
+    public function addInlineStyles(string $handle, string $styles, bool $before = true): void
+    {
+        $handle = sanitize_key($handle);
+        $handle = $before ? "{$handle}_before" : "{$handle}_after";
+        $this->inline_styles[$handle] = str_replace(['<style>', '</style>'], '', $styles);
+    }
+
+
+    /**
      * @param array $scripts
      * @param bool  $add_to_header
      * @throws DomainException
      */
-    public function addScripts(array $scripts, $add_to_header = false)
+    public function addScripts(array $scripts, bool $add_to_header = false)
     {
         if (empty($scripts)) {
             throw new DomainException(
@@ -218,7 +250,7 @@ class Iframe
      * @param bool  $add_to_header
      * @throws DomainException
      */
-    public function addScriptAttributes(array $script_attributes, $add_to_header = false)
+    public function addScriptAttributes(array $script_attributes, bool $add_to_header = false)
     {
         if (empty($script_attributes)) {
             throw new DomainException(
@@ -243,7 +275,7 @@ class Iframe
      * @param string $var_name
      * @throws DomainException
      */
-    public function addLocalizedVars(array $vars, $var_name = 'eei18n')
+    public function addLocalizedVars(array $vars, string $var_name = 'eei18n')
     {
         if (empty($vars)) {
             throw new DomainException(
@@ -260,7 +292,7 @@ class Iframe
                 $this->localized_vars[ $var_name ] = $var;
             } else {
                 if (! isset($this->localized_vars[ $var_name ])) {
-                    $this->localized_vars[ $var_name ] = array();
+                    $this->localized_vars[ $var_name ] = [];
                 }
                 $this->localized_vars[ $var_name ][ $handle ] = $var;
             }
@@ -272,12 +304,12 @@ class Iframe
      * @param string $utm_content
      * @throws DomainException
      */
-    public function display($utm_content = '')
+    public function display(string $utm_content = '')
     {
         $this->content .= EEH_Template::powered_by_event_espresso(
             '',
             '',
-            ! empty($utm_content) ? array('utm_content' => $utm_content) : array()
+            ! empty($utm_content) ? ['utm_content' => $utm_content] : []
         );
         EE_System::do_not_cache();
         echo $this->getTemplate();
@@ -289,11 +321,11 @@ class Iframe
      * @return string
      * @throws DomainException
      */
-    public function getTemplate()
+    public function getTemplate(): string
     {
         return EEH_Template::display_template(
             __DIR__ . DIRECTORY_SEPARATOR . 'iframe_wrapper.template.php',
-            array(
+            [
                 'title'                => apply_filters(
                     'FHEE___EventEspresso_core_libraries_iframe_display_Iframe__getTemplate__title',
                     $this->title,
@@ -312,6 +344,11 @@ class Iframe
                 'css'                  => (array) apply_filters(
                     'FHEE___EventEspresso_core_libraries_iframe_display_Iframe__getTemplate__css_urls',
                     $this->css,
+                    $this
+                ),
+                'inline_styles'        => apply_filters(
+                    'FHEE___EventEspresso_core_libraries_iframe_display_Iframe__getTemplate__styles',
+                    $this->inline_styles,
                     $this
                 ),
                 'header_js'            => (array) apply_filters(
@@ -341,10 +378,10 @@ class Iframe
                 ),
                 'notices'              => EEH_Template::display_template(
                     EE_TEMPLATES . 'espresso-ajax-notices.template.php',
-                    array(),
+                    [],
                     true
                 ),
-            ),
+            ],
             true,
             true
         );
@@ -356,14 +393,14 @@ class Iframe
      *
      * @return string
      */
-    public function localizeJsonVars()
+    public function localizeJsonVars(): string
     {
         $JSON = '';
         foreach ($this->localized_vars as $var_name => $vars) {
             $this->localized_vars[ $var_name ] = $this->encodeJsonVars($vars);
-            $JSON .= "/* <![CDATA[ */ var {$var_name} = ";
-            $JSON .= wp_json_encode($this->localized_vars[ $var_name ]);
-            $JSON .= '; /* ]]> */';
+            $JSON                              .= "/* <![CDATA[ */ var $var_name = ";
+            $JSON                              .= wp_json_encode($this->localized_vars[ $var_name ]);
+            $JSON                              .= '; /* ]]> */';
         }
         return $JSON;
     }
@@ -376,7 +413,7 @@ class Iframe
     public function encodeJsonVars($var)
     {
         if (is_array($var)) {
-            $localized_vars = array();
+            $localized_vars = [];
             foreach ((array) $var as $key => $value) {
                 $localized_vars[ $key ] = $this->encodeJsonVars($value);
             }

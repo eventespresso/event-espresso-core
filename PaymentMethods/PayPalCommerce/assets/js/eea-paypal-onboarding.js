@@ -210,7 +210,7 @@ jQuery(document).ready(function ($) {
             const request_params = {
                 wp_nonce: url_parameters.get('_wpnonce'),
                 country: selected_country,
-                checkout_type: checkout_type
+                selected_payment: checkout_type
             };
             this.sendRequest('eeaPpGetOnboardingUrl', request_params, this.initiatePayPalOnboarding, false);
         };

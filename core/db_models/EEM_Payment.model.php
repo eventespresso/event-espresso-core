@@ -3,9 +3,10 @@
 /**
  * Payment Model
  *
- * @package             Event Espresso
- * @subpackage          includes/models/
- * @author              Michael Nelson, Brent Christensen
+ * @package     Event Espresso
+ * @subpackage  includes/models/
+ * @author      Michael Nelson, Brent Christensen
+ * @method      EE_Payment|null get_one($query_params = [])
  */
 class EEM_Payment extends EEM_Base implements EEMI_Payment
 {

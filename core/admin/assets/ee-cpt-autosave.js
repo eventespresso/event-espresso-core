@@ -3,9 +3,12 @@ jQuery(document).ajaxSend( function( e, x, a ) {
 
 	var successname = typeof(a.success) != 'undefined' && typeof(a.success.name) !== 'undefined' ? a.success.name : false;
 
-	//console.log(dump(successname));
-	//make sure we're ONLY doing our injection on wp successcallbacks cause wp does other stuff too (and we don't want to inject on our OWN calls of course!!)
-	if ( successname == 'autosave_saved_new' || successname == 'autosave_saved' ) {
+	// make sure we're ONLY doing our injection on wp success callbacks
+    // cause wp does other stuff too (and we don't want to inject on our OWN calls of course!!)
+    if (
+        typeof EE_AUTOSAVE_IDS !== 'undefined' &&
+        (successname === 'autosave_saved_new' || successname === 'autosave_saved')
+    ) {
 		//loop through the id containers and add the fields to the ee_autosave_data object.
 		jQuery.each( EE_AUTOSAVE_IDS, function(index, value) {
 			ee_autosave_data[value] = jQuery('#' + value).find(':input').serializeFullArray();
@@ -47,7 +50,7 @@ jQuery(document).ajaxComplete( function( e, x, a ) {
 		}
 	}
 
-	
+
 
 	//doublecheck that we have a post id, cause if we don't then this is just a "keep-alive" no action needed
 	if ( stayhere ) {
@@ -61,7 +64,7 @@ jQuery(document).ajaxComplete( function( e, x, a ) {
 		if ( response && successname == 'EE_after_autosave_extras' )
 			EE_after_autosave_extras( response, 'OK', x );
 	}**/
-	
+
 });
 
 
@@ -112,7 +115,7 @@ function EE_after_autosave_extras(response, status, xhr) {
 		}
 	}
 
-		
+
 	if ( ct.indexOf('json') > -1 || isjson ) {
 		resp = resp === '' ? response : resp;
 

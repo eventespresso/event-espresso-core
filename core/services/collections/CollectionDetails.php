@@ -91,9 +91,10 @@ class CollectionDetails implements CollectionDetailsInterface
     /**
      * the pattern applied to paths when searching for class files to add to the collection
      * ie: "My_Awesome_*.class.php"
-     * defaults to "*.php"
+     * computed value (setter) defaults to "*.php"
      *
      * @var string $file_mask
+     * @see CollectionDetails::setFileMask() for details on how computed value is resolved
      */
     protected $file_mask = '';
 
@@ -165,7 +166,7 @@ class CollectionDetails implements CollectionDetailsInterface
             $this->setCollectionInterface($collection_interface);
             $this->setCollectionFQCNs($collection_FQCNs);
             $this->setCollectionPaths($collection_paths);
-            $this->setFileMasks($file_mask);
+            $this->setFileMask($file_mask);
             $this->setIdentifierType($identifier_type);
             $this->setIdentifierCallback($identifier_callback);
             $this->file_locator = $file_locator;
@@ -299,13 +300,13 @@ class CollectionDetails implements CollectionDetailsInterface
 
     /**
      * sets the file mask which is then used to filter what files get loaded
-     * when searching for classes to add to the collection. Defaults to '*.php'
+     * when searching for classes to add to the collection. Defaults to '*.php' when parameter is an empty string
      *
      * @access protected
      * @param string $file_mask
      * @throws \EventEspresso\core\exceptions\InvalidDataTypeException
      */
-    protected function setFileMasks($file_mask)
+    protected function setFileMask($file_mask)
     {
         $this->file_mask = ! empty($file_mask) ? $file_mask : '*.php';
         // we know our default is a string, so if it's not a string now,

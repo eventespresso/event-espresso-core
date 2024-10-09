@@ -255,16 +255,15 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
      */
     protected function _set_list_table_views_event_registrations()
     {
+        $DTT_ID = $this->request->getRequestParam('DTT_ID', 0, DataType::INTEGER);
         $this->_views = [
             'all' => [
                 'slug'        => 'all',
                 'label'       => esc_html__('All', 'event_espresso'),
                 'count'       => 0,
-                'bulk_action' => ! isset($this->_req_data['event_id'])
-                    ? []
-                    : [
-                        'toggle_checkin_status_bulk' => esc_html__('Toggle Check-In', 'event_espresso'),
-                    ],
+                'bulk_action' => $DTT_ID
+                    ? ['toggle_checkin_status_bulk' => esc_html__('Toggle Check-In', 'event_espresso')]
+                    : [],
             ],
         ];
     }
@@ -946,26 +945,20 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
      */
     protected function _toggle_checkin_status()
     {
-        // first let's get the query args out of the way for the redirect
-        $query_args = [
-            'action'   => 'event_registrations',
-            'event_id' => $this->_req_data['event_id'] ?? null,
-            'DTT_ID'   => $this->_req_data['DTT_ID'] ?? null,
-        ];
+        $DTT_ID = $this->request->getRequestParam('DTT_ID', 0, DataType::INTEGER);
+        $DTT_ID = $this->request->getRequestParam('dttid', $DTT_ID, DataType::INTEGER);
+        $DTT_ID = $this->request->getRequestParam('datetime_id', $DTT_ID, DataType::INTEGER);
+        $_REG_ID = $this->request->getRequestParam('_regid', 0, DataType::INTEGER);
+        $checkboxes = $this->request->getRequestParam('checkbox', [], DataType::INTEGER, true);
+
         $new_status = false;
         // bulk action check in toggle
-        if (! empty($this->_req_data['checkbox']) && is_array($this->_req_data['checkbox'])) {
-            // cycle thru checkboxes
-            $checkboxes = $this->_req_data['checkbox'];
-            foreach (array_keys($checkboxes) as $REG_ID) {
-                $DTT_ID     = $this->_req_data['DTT_ID'] ?? null;
+        if (! empty($checkboxes)) {
+            foreach ($checkboxes as $REG_ID) {
                 $new_status = $this->_toggle_checkin($REG_ID, $DTT_ID);
             }
-        } elseif (isset($this->_req_data['_regid'])) {
-            // coming from ajax request
-            $DTT_ID               = $this->_req_data['dttid'] ?? null;
-            $query_args['DTT_ID'] = $DTT_ID;
-            $new_status           = $this->_toggle_checkin($this->_req_data['_regid'], $DTT_ID);
+        } elseif ($_REG_ID) {
+            $new_status = $this->_toggle_checkin($_REG_ID, $DTT_ID);
         } else {
             EE_Error::add_error(
                 esc_html__('Missing some required data to toggle the Check-in', 'event_espresso'),
@@ -974,10 +967,17 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
                 __LINE__
             );
         }
-        if (defined('DOING_AJAX')) {
+        if (defined('DOING_AJAX') && DOING_AJAX) {
             return $new_status;
         }
-        $this->_redirect_after_action(false, '', '', $query_args, true);
+        $EVT_ID = $this->request->getRequestParam('EVT_ID', 0, DataType::INTEGER);
+        $EVT_ID = $this->request->getRequestParam('event_id', $EVT_ID, DataType::INTEGER);
+        $redirect_args = [
+            'action' => 'event_registrations',
+            'EVT_ID' => $EVT_ID,
+            'DTT_ID' => $DTT_ID,
+        ];
+        $this->_redirect_after_action(false, '', '', $redirect_args, true);
     }
 
 
@@ -986,7 +986,7 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
      *
      * @param int $REG_ID The registration we're toggling
      * @param int $DTT_ID The datetime we're toggling
-     * @return int The new status toggled to.
+     * @return bool|int   the chk_in status toggled to OR false if nothing got changed.
      * @throws EE_Error
      * @throws ReflectionException
      */
@@ -994,6 +994,18 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
     {
         /** @var EE_Registration $REG */
         $REG        = EEM_Registration::instance()->get_one_by_ID($REG_ID);
+        if (! $REG instanceof EE_Registration) {
+            EE_Error::add_error(
+                sprintf(
+                    esc_html__('There is no registration with ID (%d)', 'event_espresso'),
+                    $REG_ID
+                ),
+                __FILE__,
+                __FUNCTION__,
+                __LINE__
+            );
+            return false;
+        }
         $new_status = $REG->toggle_checkin_status($DTT_ID);
         if ($new_status !== false) {
             EE_Error::add_success($REG->get_checkin_msg($DTT_ID));

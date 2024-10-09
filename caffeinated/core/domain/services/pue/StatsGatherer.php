@@ -272,7 +272,7 @@ class StatsGatherer
         $payment_method_stats = [];
         try {
             $active_payment_methods = $this->payment_method_model->get_all_active(
-                null,
+                '',
                 ['group_by' => 'PMD_type']
             );
             if ($active_payment_methods) {

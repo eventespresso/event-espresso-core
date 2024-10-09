@@ -17,7 +17,7 @@ class Utilities
      * friendly keys.
      *
      * @param array $where_args
-     * @param array $arg_mapping        array where keys are GQL field names and values are EE modal field names
+     * @param array $arg_mapping        Array where keys are GQL field names and values are EE modal field names
      * @param array $id_fields          The fields to convert from global IDs to DB IDs.
      * @param array $options            Additional parameters for modifying args: [
      *                                  'include_all_args' => bool, // will return ALL args in $where_args if true

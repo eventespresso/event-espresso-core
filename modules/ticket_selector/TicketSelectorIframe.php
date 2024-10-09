@@ -3,11 +3,13 @@
 namespace EventEspresso\modules\ticket_selector;
 
 use EE_Error;
+use EED_Ticket_Selector;
 use EEM_Event;
 use EventEspresso\core\libraries\iframe_display\Iframe;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\CurrentPage;
 use EventEspresso\core\services\request\RequestInterface;
+use ReflectionException;
 
 /**
  * Class TicketSelectorIframe
@@ -26,6 +28,7 @@ class TicketSelectorIframe extends Iframe
      * @param CurrentPage      $current_page
      * @param RequestInterface $request
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function __construct(EEM_Event $event_model, CurrentPage $current_page, RequestInterface $request)
     {
@@ -51,6 +54,7 @@ class TicketSelectorIframe extends Iframe
                 $this
             )
         );
+        $this->addInlineStyles('ticket_selector', EED_Ticket_Selector::accentColorStyles());
         if (! apply_filters('FHEE__EED_Ticket_Selector__ticket_selector_iframe__load_theme_css', false, $this)) {
             $this->addStylesheets(array('site_theme' => ''));
         }

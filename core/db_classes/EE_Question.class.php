@@ -201,7 +201,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
 
 
     /**
-     * returns either a string of 'text', 'textfield', etc.
+     * if question is required or not (boolean)
      *
      * @access public
      * @return boolean

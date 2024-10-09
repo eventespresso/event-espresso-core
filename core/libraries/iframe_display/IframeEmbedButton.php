@@ -230,7 +230,7 @@ abstract class IframeEmbedButton
         )
         . EEH_HTML::div(
             EEH_HTML::div(
-                '<iframe src="' . $iframe_url . '" width="100%" height="100%"></iframe>',
+                esc_html('<iframe src="' . $iframe_url . '" width="100%" height="100%"></iframe>'),
                 '',
                 '',
                 'width:100%; height: 500px;'

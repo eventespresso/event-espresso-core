@@ -2,7 +2,9 @@
 
 namespace EventEspresso\core\services\graphql\connections;
 
-use EE_Base_Class;
+use EE_Base;
+use WPGraphQL\AppContext;
+use GraphQL\Type\Definition\ResolveInfo;
 
 /**
  * Interface ConnectionInterface
@@ -21,10 +23,10 @@ interface ConnectionInterface
     public function config();
 
     /**
-     * @param $entity
-     * @param $args
-     * @param $context
-     * @param $info
+     * @param EE_Base      $entity
+     * @param array        $args
+     * @param AppContext   $context
+     * @param ResolveInfo  $info
      * @return array
      * @since 5.0.0.p
      */

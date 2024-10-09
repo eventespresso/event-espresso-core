@@ -109,7 +109,7 @@
 .ee-status-bg--RNA,
 .ee-status-bg--TOP {
     background-color: var(--ee-status-color-orange) !important;
-    color: var(--ee-color-white) !important;
+    color: var(--ee-status-color-dark-grey) !important;
     font-weight: 600;
 }
 
@@ -124,7 +124,7 @@
 /* txn abandoned, reg incomplete, dtt sold out */
 .ee-status-bg--attention {
     background-color: var(--ee-status-color-pale-yellow) !important;
-    font-weight: 600;
+    font-weight: 500;
 }
 
 .ee-status-bg--active,
@@ -155,7 +155,7 @@
 
 .ee-status-bg--info {
     background-color: var(--ee-status-color-pale-blue) !important;
-    color: var(--ee-font-color-light) !important;
+    color: var(--ee-font-color) !important;
 }
 
 /* dtt sold out */
@@ -199,17 +199,27 @@
     font-weight: 600;
 }
 .ee-status-bg--ok a,
-.ee-status-bg--error a,
-.ee-status-bg--warning a {
-    color: var(--ee-status-color-pale-blue) !important;
+.ee-status-bg--error a {
+    color: var(--ee-status-color-light-blue) !important;
     text-decoration: underline;
     font-weight: 600;
 }
 
 .ee-status-bg--ok a:hover,
-.ee-status-bg--error a:hover,
+.ee-status-bg--error a:hover {
+    background-color: var(--ee-color-white);
+    color: var(--ee-status-color-blue) !important;
+    text-decoration: underline;
+    font-weight: 600;
+}
+.ee-status-bg--warning a {
+    color: var(--ee-status-color-dark-blue) !important;
+    text-decoration: underline;
+    font-weight: 600;
+}
 .ee-status-bg--warning a:hover {
-    color: var(--ee-status-color-light-blue) !important;
+    background-color: var(--ee-color-white);
+    color: var(--ee-status-color-dark-blue) !important;
     text-decoration: underline;
     font-weight: 600;
 }
@@ -246,7 +256,6 @@
     word-wrap: break-word;
 }
 .espresso-admin .ee-status-outline p {
-    font-size: inherit;
     margin: 0;
     word-wrap: inherit;
     white-space: inherit;
@@ -630,6 +639,7 @@ div.espresso-admin a:not(.ee-link):not(.ee-text-link):not(.nav-tab):not(.button)
 #sample-permalink a:hover,
 .espresso-admin.wp-core-ui .wp-list-table a:hover,
 div.espresso-admin :not(.manage-column) > a:not(.ee-link):not(.ee-text-link):not(.nav-tab):not(.button):not(.submitdelete):not(.add-new-h2):not(.page-title-action):not(.button-primary):not(.button-secondary):hover {
+    background-color: var(--ee-color-white-transparent);
     color: var(--ee-link-color-hover);
     border-color: var(--ee-link-color-hover);
 }
@@ -638,6 +648,7 @@ div.espresso-admin :not(.manage-column) > a:not(.ee-link):not(.ee-text-link):not
 .espresso-admin.wp-core-ui .wp-list-table a:focus,
 div.espresso-admin :not(.manage-column) > a:not(.ee-link):not(.ee-text-link):not(.nav-tab):not(.button):not(.submitdelete):not(.add-new-h2):not(.page-title-action):not(.button-primary):not(.button-secondary):focus,
 div.espresso-admin.wp-core-ui button:not(.ee-btn-base):not(.button--primary):not(.button--secondary):not(.ee-filter-tag__close-btn):not(.toggle-row):not(.wp-switch-editor):focus {
+    background-color: var(--ee-color-white-transparent);
     color: var(--ee-link-color-focus);
     border-color: var(--ee-link-color);
 }
@@ -5811,13 +5822,41 @@ body.espresso-admin #contextual-help-wrap strong {
     margin-inline-end: 2px;
 }
 
-.espresso-admin.wp-core-ui .dashicons.dashicons--small,
-.espresso-admin.wp-core-ui .dashicons.dashicons--small:before {
+.espresso-admin.wp-core-ui .dashicons,
+.espresso-admin.wp-core-ui .dashicons:before {
     align-items: center;
     display: inline-flex;
+    font-size: var(--ee-font-size-2xl);
+    height: var(--ee-font-size-2xl);
+    width: var(--ee-font-size-2xl);
+}
+
+.espresso-admin.wp-core-ui .dashicons.dashicons--small,
+.espresso-admin.wp-core-ui .dashicons.dashicons--small:before {
     font-size: var(--ee-font-size-bigger);
     height: var(--ee-font-size-bigger);
     width: var(--ee-font-size-bigger);
+}
+
+.espresso-admin.wp-core-ui .dashicons.dashicons--big,
+.espresso-admin.wp-core-ui .dashicons.dashicons--big:before {
+    font-size: var(--ee-font-size-4xl);
+    height: var(--ee-font-size-4xl);
+    width: var(--ee-font-size-4xl);
+}
+
+.espresso-admin.wp-core-ui .dashicons.dashicons--bigger,
+.espresso-admin.wp-core-ui .dashicons.dashicons--bigger:before {
+    font-size: var(--ee-font-size-7xl);
+    height: var(--ee-font-size-7xl);
+    width: var(--ee-font-size-7xl);
+}
+
+.espresso-admin.wp-core-ui .dashicons.dashicons--huge,
+.espresso-admin.wp-core-ui .dashicons.dashicons--huge:before {
+    font-size: var(--ee-font-size-9xl);
+    height: var(--ee-font-size-9xl);
+    width: var(--ee-font-size-9xl);
 }
 
 .espresso-admin table.striped > tbody > tr:not(.hidden):nth-child(even) {
@@ -7028,6 +7067,19 @@ body.espresso-admin #contextual-help-wrap strong {
     padding: var(--ee-padding-small) var(--ee-padding-default);
     position: relative;
 }
+.ee-feature-highlight-2024:has( + .ee-feature-highlight-2024) {
+    border-bottom: none;
+    border-bottom-left-radius: 0;
+    border-bottom-right-radius: 0;
+}
+.ee-feature-highlight-2024 + .ee-feature-highlight-2024 {
+    border-top: none;
+    border-top-left-radius: 0;
+    border-top-right-radius: 0;
+}
+.ee-feature-highlight-2024 + .ee-feature-highlight-2024 .ee-feature-highlight-2024-notice {
+    display: none;
+}
 .ee-feature-highlight-2024 p,
 .ee-feature-highlight-2024 label {
     color: var(--ee-feature-highlight-2024-font) !important;
@@ -7056,4 +7108,12 @@ body.espresso-admin #contextual-help-wrap strong {
         padding-block: var(--ee-padding-smaller);
         padding-inline: var(--ee-padding-tiny);
     }
+}
+
+
+.espresso-admin input[type="color"] {
+    height: 2.5rem !important;
+    max-width: unset !important;
+    min-width: unset !important;
+    width: 3rem !important;
 }

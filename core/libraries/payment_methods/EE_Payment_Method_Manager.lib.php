@@ -3,6 +3,7 @@
 use EventEspresso\core\domain\entities\notifications\PersistentAdminNotice;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\interfaces\ResettableInterface;
+use EventEspresso\core\services\notifications\PersistentAdminNoticeManager;
 
 /**
  * Class EE_Payment_Method_Manager
@@ -153,7 +154,10 @@ class EE_Payment_Method_Manager implements ResettableInterface
         foreach ($pm_to_register as $pm_path) {
             $this->register_payment_method($pm_path);
         }
-        do_action('FHEE__EE_Payment_Method_Manager__register_payment_methods__registered_payment_methods');
+        do_action(
+            'FHEE__EE_Payment_Method_Manager__register_payment_methods__registered_payment_methods',
+            $this->_payment_method_types
+        );
         // filter list of installed modules
         // keep them organized alphabetically by the payment method type's name
         ksort($this->_payment_method_types);
@@ -342,6 +346,10 @@ class EE_Payment_Method_Manager implements ResettableInterface
         }
         $payment_method->set_active();
         $payment_method->save();
+
+        // delete any auto-deactivation notices that may have been set
+        PersistentAdminNoticeManager::deletePersistentAdminNotice('auto-deactivated-' . $payment_method->slug());
+
         /** @type EE_Message_Resource_Manager $message_resource_manager */
         // if this was the invoice message type, make sure users can view their invoices
         if (
@@ -366,6 +374,12 @@ class EE_Payment_Method_Manager implements ResettableInterface
                 true
             );
         }
+
+        do_action(
+            'AHEE__EE_Payment_Method_Manager__activate_a_payment_method_of_type__after_activation',
+            $payment_method,
+            $payment_method_type
+        );
         return $payment_method;
     }
 

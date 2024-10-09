@@ -22,40 +22,19 @@ abstract class EE_PMT_Base
 
     const offline = 'off-line';
 
-    /**
-     * @var EE_Payment_Method
-     */
-    protected $_pm_instance = null;
+    protected ?EE_Payment_Method $_pm_instance = null;
 
-    /**
-     * @var boolean
-     */
-    protected $_requires_https = false;
+    protected ?EE_Gateway $_gateway = null;
 
-    /**
-     * @var boolean
-     */
-    protected $_has_billing_form;
+    protected ?EE_Payment_Method_Form $_settings_form = null;
 
-    /**
-     * @var EE_Gateway
-     */
-    protected $_gateway = null;
+    protected ?EE_Form_Section_Proper $_billing_form = null;
 
-    /**
-     * @var EE_Payment_Method_Form
-     */
-    protected $_settings_form = null;
+    protected bool $_cache_billing_form = true;
 
-    /**
-     * @var EE_Form_Section_Proper
-     */
-    protected $_billing_form = null;
+    protected ?bool $_has_billing_form;
 
-    /**
-     * @var boolean
-     */
-    protected $_cache_billing_form = true;
+    protected bool $_requires_https = false;
 
     /**
      * String of the absolute path to the folder containing this file, with a trailing slash.
@@ -91,9 +70,10 @@ abstract class EE_PMT_Base
     protected $_default_description = null;
 
     /**
-     *  @var string|null
+     * @var string|null
      */
     protected $_template_path = null;
+
 
     /**
      * @param EE_Payment_Method|null $pm_instance
@@ -140,9 +120,9 @@ abstract class EE_PMT_Base
 
 
     /**
-     * @param boolean $has_billing_form
+     * @param bool|int|string $has_billing_form
      */
-    public function set_has_billing_form(bool $has_billing_form)
+    public function set_has_billing_form($has_billing_form)
     {
         $this->_has_billing_form = filter_var($has_billing_form, FILTER_VALIDATE_BOOLEAN);
     }
@@ -344,9 +324,9 @@ abstract class EE_PMT_Base
      * Sets the billing form for this payment method type. You may want to use this
      * if you have form
      *
-     * @param EE_Payment_Method $form
+     * @param EE_Billing_Info_Form $form
      */
-    public function set_billing_form(EE_Payment_Method $form)
+    public function set_billing_form(EE_Billing_Info_Form $form)
     {
         $this->_billing_form = $form;
     }
@@ -381,80 +361,23 @@ abstract class EE_PMT_Base
         $billing_info = null,
         $return_url = null,
         $fail_url = '',
-        $method = 'CART',
+        $method = EEM_Payment_Method::scope_cart,
         $by_admin = false
     ) {
-        // @todo: add surcharge for the payment method, if any
-        if ($this->_gateway) {
-            // there is a gateway, so we're going to make a payment object
-            // but wait! do they already have a payment in progress that we thought was failed?
-            $duplicate_properties = [
-                'STS_ID'               => EEM_Payment::status_id_failed,
-                'TXN_ID'               => $transaction->ID(),
-                'PMD_ID'               => $this->_pm_instance->ID(),
-                'PAY_source'           => $method,
-                'PAY_amount'           => $amount !== null
-                    ? $amount
-                    : $transaction->remaining(),
-                'PAY_gateway_response' => null,
-            ];
-            $payment              = EEM_Payment::instance()->get_one([$duplicate_properties]);
-            // if we didn't already have a payment in progress for the same thing,
-            // then we actually want to make a new payment
-            if (! $payment instanceof EE_Payment) {
-                $payment = EE_Payment::new_instance(
-                    array_merge(
-                        $duplicate_properties,
-                        [
-                            'PAY_timestamp'       => time(),
-                            'PAY_txn_id_chq_nmbr' => null,
-                            'PAY_po_number'       => null,
-                            'PAY_extra_accntng'   => null,
-                            'PAY_details'         => null,
-                        ]
-                    )
-                );
-            }
-            // make sure the payment has been saved to show we started it, and so it has an ID should the gateway try to log it
-            $payment->save();
-            $billing_values = $this->_get_billing_values_from_form($billing_info);
+        $amount = $amount ?: $transaction->remaining();
+        $method = EEM_Payment_Method::instance()->is_valid_scope($method) ? $method : EEM_Payment_Method::scope_cart;
 
-            //  Offsite Gateway
-            if ($this->_gateway instanceof EE_Offsite_Gateway) {
-                $payment = $this->_gateway->set_redirection_info(
-                    $payment,
-                    $billing_values,
-                    $return_url,
-                    EE_Config::instance()->core->txn_page_url(
-                        [
-                            'e_reg_url_link'    => $transaction->primary_registration()->reg_url_link(),
-                            'ee_payment_method' => $this->_pm_instance->slug(),
-                        ]
-                    ),
-                    $fail_url
-                );
-                $payment->save();
-                //  Onsite Gateway
-            } elseif ($this->_gateway instanceof EE_Onsite_Gateway) {
-                $payment = $this->_gateway->do_direct_payment($payment, $billing_values);
-                $payment->save();
-            } else {
-                throw new EE_Error(
-                    sprintf(
-                        esc_html__(
-                            'Gateway for payment method type "%s" is "%s", not a subclass of either EE_Offsite_Gateway or EE_Onsite_Gateway, or null (to indicate NO gateway)',
-                            'event_espresso'
-                        ),
-                        get_class($this),
-                        gettype($this->_gateway)
-                    )
-                );
-            }
-        } else {
+        // if there is billing info, clean it and save it NOW before doing anything else
+        if ($billing_info instanceof EE_Billing_Attendee_Info_Form) {
+            $this->_save_billing_info_to_attendee($billing_info, $transaction);
+        }
+
+        // @todo: add surcharge for the payment method, if any
+        if (! $this->_gateway instanceof EE_Gateway) {
             // no gateway provided
             // there is no payment. Must be an offline gateway
-            // create a payment object anyways, but dont save it
-            $payment = EE_Payment::new_instance(
+            // create a payment object anyways, but don't save it
+            return EE_Payment::new_instance(
                 [
                     'STS_ID'        => EEM_Payment::status_id_pending,
                     'TXN_ID'        => $transaction->ID(),
@@ -465,11 +388,180 @@ abstract class EE_PMT_Base
             );
         }
 
-        // if there is billing info, clean it and save it now
-        if ($billing_info instanceof EE_Billing_Attendee_Info_Form) {
-            $this->_save_billing_info_to_attendee($billing_info, $transaction);
+        $payment = $this->getLastPayment($transaction, $amount, $method);
+        $payment = $this->validatePayment($transaction, $payment, $amount, $method);
+
+        $max_payment_attempts   = apply_filters(
+            'FHEE__EE_PMT_Base__process_payment__max_payment_attempts',
+            5,
+            $transaction
+        );
+        $previous_payment_count = $this->getPreviousPaymentCount($transaction, $amount, $method);
+        if ($previous_payment_count >= $max_payment_attempts) {
+            return $payment;
         }
 
+        return $this->passPaymentToGateway($payment, $transaction, $billing_info, $return_url, $fail_url);
+    }
+
+
+    /**
+     * Checks for any existing payments that are in a failed state for the same TXN, amount, and method
+     *
+     * @param EE_Transaction $transaction
+     * @param float          $amount
+     * @param string         $method
+     * @return EE_Payment|null
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since $VID:$
+     */
+    private function getLastPayment(EE_Transaction $transaction, float $amount, string $method): ?EE_Payment
+    {
+        return EEM_Payment::instance()->get_one(
+            [
+                [
+                    'STS_ID'     => EEM_Payment::status_id_failed,
+                    'TXN_ID'     => $transaction->ID(),
+                    'PMD_ID'     => $this->_pm_instance->ID(),
+                    'PAY_source' => $method,
+                    'PAY_amount' => $amount,
+                ],
+            ]
+        );
+    }
+
+
+    /**
+     * IF the last payment was not a failed payment
+     * (which indicates a payment in progress that has yet to be updated),
+     * then create a new payment, otherwise just return the existing payment,
+     * but save it to ensure it has an ID
+     *
+     * @param EE_Transaction  $transaction
+     * @param EE_Payment|null $payment
+     * @param float           $amount
+     * @param string          $method
+     * @return EE_Payment
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since $VID:$
+     */
+    private function validatePayment(
+        EE_Transaction $transaction,
+        ?EE_Payment $payment,
+        float $amount,
+        string $method
+    ): EE_Payment {
+        if (! $payment instanceof EE_Payment || ! $payment->is_failed()) {
+            $payment = EE_Payment::new_instance(
+                [
+                    'PAY_amount'           => $amount,
+                    'PAY_details'          => null,
+                    'PAY_extra_accntng'    => null,
+                    'PAY_gateway_response' => null,
+                    'PAY_po_number'        => null,
+                    'PAY_source'           => $method,
+                    'PAY_timestamp'        => time(),
+                    'PAY_txn_id_chq_nmbr'  => null,
+                    'PMD_ID'               => $this->_pm_instance->ID(),
+                    'STS_ID'               => EEM_Payment::status_id_failed,
+                    'TXN_ID'               => $transaction->ID(),
+                ]
+            );
+        }
+        // make sure the payment has been saved to show we started it,
+        // and so it has an ID should the gateway try to log it
+        $payment->save();
+
+        return $payment;
+    }
+
+
+    /**
+     * Checks for any existing payments that are in a failed state for the same TXN, amount, and method
+     *
+     * @param EE_Transaction $transaction
+     * @param float          $amount
+     * @param string         $method
+     * @return int
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since $VID:$
+     */
+    private function getPreviousPaymentCount(EE_Transaction $transaction, float $amount, string $method): int
+    {
+        return EEM_Payment::instance()->count(
+            [
+                [
+                    'STS_ID'     => [
+                        'IN',
+                        [
+                            EEM_Payment::status_id_pending,
+                            EEM_Payment::status_id_cancelled,
+                            EEM_Payment::status_id_declined,
+                            EEM_Payment::status_id_failed,
+                        ],
+                    ],
+                    'TXN_ID'     => $transaction->ID(),
+                    'PMD_ID'     => $this->_pm_instance->ID(),
+                    'PAY_source' => $method,
+                    'PAY_amount' => $amount,
+                ],
+                'order_by' => ['PAY_timestamp' => 'DESC'],
+            ]
+        );
+    }
+
+
+    /**
+     * @param EE_Payment                $payment
+     * @param EE_Transaction            $transaction
+     * @param EE_Billing_Info_Form|null $billing_info
+     * @param string|null               $return_url
+     * @param string|null               $fail_url
+     * @return EE_Payment
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since $VID:$
+     */
+    private function passPaymentToGateway(
+        EE_Payment $payment,
+        EE_Transaction $transaction,
+        ?EE_Billing_Info_Form $billing_info,
+        ?string $return_url = null,
+        ?string $fail_url = ''
+    ): EE_Payment {
+        $billing_values = $this->_get_billing_values_from_form($billing_info);
+        if ($this->_gateway instanceof EE_Offsite_Gateway) {
+            $payment = $this->_gateway->set_redirection_info(
+                $payment,
+                $billing_values,
+                $return_url,
+                EE_Config::instance()->core->txn_page_url(
+                    [
+                        'e_reg_url_link'    => $transaction->primary_registration()->reg_url_link(),
+                        'ee_payment_method' => $this->_pm_instance->slug(),
+                    ]
+                ),
+                $fail_url
+            );
+            $payment->save();
+        } elseif ($this->_gateway instanceof EE_Onsite_Gateway) {
+            $payment = $this->_gateway->do_direct_payment($payment, $billing_values);
+            $payment->save();
+        } else {
+            throw new EE_Error(
+                sprintf(
+                    esc_html__(
+                        'Gateway for payment method type "%s" is "%s", not a subclass of either EE_Offsite_Gateway or EE_Onsite_Gateway, or null (to indicate NO gateway)',
+                        'event_espresso'
+                    ),
+                    get_class($this),
+                    gettype($this->_gateway)
+                )
+            );
+        }
         return $payment;
     }
 

@@ -607,7 +607,7 @@ if (! function_exists('espresso_list_of_event_dates')) {
                         $datetime_html .= $venue_name . '</a></span>';
                     }
 
-                    $datetime_description = $datetime->description();
+                    $datetime_description = str_replace(['<p>', '</p>'], '', $datetime->description());
                     $datetime_html .= ! empty($datetime_description)
                         ? '
                         <span class="ee-event-datetimes-li-date-desc">

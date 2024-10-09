@@ -57,6 +57,8 @@ class EEM_WP_User extends EEM_Base
                 'user_registered'     => $model_field_factory->createDatetimeField(
                     'user_registered',
                     esc_html__('Date User Registered', 'event_espresso'),
+                    false,
+                    EE_Datetime_Field::now,
                     $timezone
                 ),
                 'user_activation_key' => $model_field_factory->createPlainTextField(

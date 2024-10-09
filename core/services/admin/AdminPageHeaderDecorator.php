@@ -15,10 +15,7 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 abstract class AdminPageHeaderDecorator implements AdminPageHeaderDecoratorInterface
 {
-    /**
-     * @var RequestInterface $request
-     */
-    protected $request;
+    protected RequestInterface $request;
 
 
     /**

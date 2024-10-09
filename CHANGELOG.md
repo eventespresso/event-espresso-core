@@ -6,6 +6,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Releases
 
+### [5.0.28]
+
+#### Added
+ - [New Ticket Selector Checkbox and Form Styles (#1527)](https://github.com/eventespresso/cafe/pull/1527)
+ - [Add Payment Method Deprecation Notices (#1564)](https://github.com/eventespresso/cafe/pull/1564)
+ - [Bypass Payment Processing if Too Many Payment Attempts (#1577)](https://github.com/eventespresso/cafe/pull/1577)
+
+#### Fixed
+ - [PPC. Fix success payment set as pending (#1538)](https://github.com/eventespresso/cafe/pull/1538)
+ - [Ensure EE_AUTOSAVE_IDS is Defined (#1471)](https://github.com/eventespresso/cafe/pull/1471)
+ - [PPC. Fix an issue with a missing checkout type meta (#1548)](https://github.com/eventespresso/cafe/pull/1548)
+ - [Fix meta caps for Registration Form caps (#1546)](https://github.com/eventespresso/cafe/pull/1546)
+ - [Fix CSS Output in iFrames (#1552)](https://github.com/eventespresso/cafe/pull/1552)
+ - [Fix venue not being unassigned in EDTR (GraphQL) (#1561)](https://github.com/eventespresso/cafe/pull/1561)
+ - [Fix Missing Check-ins Bulk Actions (#1549)](https://github.com/eventespresso/cafe/pull/1549)
+ - [Fix Typing for EE_Datetime_Field::_prepare_for_display() (#1570)](https://github.com/eventespresso/cafe/pull/1570)
+ - [Fix List Table Views (#1576)](https://github.com/eventespresso/cafe/pull/1576)
+ - [Fix MER Max Ticket Quantity Violations (#1567)](https://github.com/eventespresso/cafe/pull/1567)
+
+#### Changed
+ - [ Loosen Upcoming Events Widget Permissions (#1554)](https://github.com/eventespresso/cafe/pull/1554)
+ - [When copying datetime include venue id (Barista#1338) (#1568)](https://github.com/eventespresso/cafe/pull/1568)
+ - [Ensure WordPress Options Are Saved (#1574)](https://github.com/eventespresso/cafe/pull/1574)
+
+
 ### [5.0.27]
 
 #### Added
@@ -32,6 +57,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ### [5.0.25]
+
 
 #### Changed
  - [BuildMachine changes - 5.0.24.p (#1486)](https://github.com/eventespresso/cafe/pull/1486)

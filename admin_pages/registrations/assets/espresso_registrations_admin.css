@@ -1,5 +1,9 @@
 /* TABLE COLUMNS */
 
+.espresso-admin .wp-list-table.widefat th.check-column input[type="checkbox"].bulk-check-in {
+    margin-top: var(--ee-margin-smaller) !important;
+}
+
 .espresso-admin .wp-list-table .column-ATT_fname {
     width: max(15%, 20rem);
 }

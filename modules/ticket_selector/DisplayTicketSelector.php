@@ -26,6 +26,7 @@ use EventEspresso\core\services\request\RequestInterface;
 use Exception;
 use InvalidArgumentException;
 use ReflectionException;
+use Throwable;
 use WP_Post;
 
 // phpcs:disable PSR1.Methods.CamelCapsMethodName.NotCamelCaps
@@ -41,57 +42,44 @@ use WP_Post;
  */
 class DisplayTicketSelector
 {
-    /**
-     * @var RequestInterface
-     */
-    protected $request;
+    private CurrentUser $current_user;
 
-    /**
-     * @var EE_Ticket_Selector_Config
-     */
-    protected $config;
+    protected RequestInterface $request;
+
+    protected EE_Ticket_Selector_Config $config;
 
     /**
      * event that ticket selector is being generated for
      *
-     * @access protected
-     * @var EE_Event $event
+     * @var EE_Event|null $event
      */
-    protected $event;
+    protected ?EE_Event $event = null;
 
     /**
      * Used to flag when the ticket selector is being called from an external iframe.
      *
      * @var bool $iframe
      */
-    protected $iframe = false;
+    protected bool $iframe = false;
 
     /**
      * max attendees that can register for event at one time
      *
-     * @var int $max_attendees
+     * @var int|float $max_attendees
      */
     private $max_attendees = EE_INF;
 
     /**
      * @var string $date_format
      */
-    private $date_format;
+    private string $date_format;
 
     /**
      * @var string $time_format
      */
-    private $time_format;
+    private string $time_format;
 
-    /**
-     * @var boolean $display_full_ui
-     */
-    private $display_full_ui;
-
-    /**
-     * @var CurrentUser
-     */
-    private $current_user;
+    private ?bool $display_full_ui = null;
 
 
     /**
@@ -114,11 +102,11 @@ class DisplayTicketSelector
         $this->setIframe($iframe);
         $this->date_format = apply_filters(
             'FHEE__EED_Ticket_Selector__display_ticket_selector__date_format',
-            get_option('date_format')
+            (string) get_option('date_format')
         );
         $this->time_format  = apply_filters(
             'FHEE__EED_Ticket_Selector__display_ticket_selector__time_format',
-            get_option('time_format')
+            (string) get_option('time_format')
         );
     }
 
@@ -147,9 +135,7 @@ class DisplayTicketSelector
      * @param mixed $event
      * @return bool
      * @throws EE_Error
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     * @throws InvalidArgumentException
+     * @throws ReflectionException
      */
     protected function setEvent($event = null): bool
     {
@@ -210,7 +196,7 @@ class DisplayTicketSelector
 
 
     /**
-     * Returns whether or not the full ticket selector should be shown or not.
+     * Returns whether the full ticket selector should be shown or not.
      * Currently, it displays on the frontend (including ajax requests) but not the backend
      *
      * @return bool
@@ -231,13 +217,11 @@ class DisplayTicketSelector
      * @param bool        $view_details
      * @return string
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      * @throws Exception
+     * @throws Throwable
      */
-    public function display($event = null, bool $view_details = false)
+    public function display($event = null, bool $view_details = false): string
     {
         // reset filter for displaying submit button
         remove_filter('FHEE__EE_Ticket_Selector__display_ticket_selector_submit', '__return_true');
@@ -415,7 +399,7 @@ class DisplayTicketSelector
      * @throws InvalidArgumentException
      * @throws ReflectionException
      */
-    protected function getTickets()
+    protected function getTickets(): array
     {
         $show_expired_tickets = is_admin() || $this->config->show_expired_tickets;
 
@@ -445,7 +429,6 @@ class DisplayTicketSelector
                 : current_time('timestamp');
             $ticket_query_args[0]['TKT_end_date'] = ['>', $current_time];
         }
-        /** @var EE_Ticket[] $tickets */
         $tickets = EEM_Ticket::instance()->get_all($ticket_query_args);
         // remove tickets based on their visibility and the current user's allowed access (crudely based on roles)
         // and filter the returned results
@@ -563,6 +546,7 @@ class DisplayTicketSelector
             )
         ) {
             return new TicketSelectorSimple(
+                $this->config,
                 $this->event,
                 $ticket,
                 $this->getMaxAttendees(),
@@ -598,6 +582,8 @@ class DisplayTicketSelector
      * @param int    $ID
      * @param string $external_url
      * @return        string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function formOpen(int $ID = 0, string $external_url = ''): string
     {
@@ -867,11 +853,10 @@ class DisplayTicketSelector
      * Returns either false or an error to display when no valid event is passed.
      *
      * @return string
-     * @throws ExceptionStackTraceDisplay
-     * @throws InvalidInterfaceException
-     * @throws Exception
+     * @throws ReflectionException
+     * @throws Throwable
      */
-    protected function handleMissingEvent()
+    protected function handleMissingEvent(): string
     {
         // If this is not an iFrame request, simply return false.
         if (! $this->isIframe()) {
@@ -910,7 +895,7 @@ class DisplayTicketSelector
      * @return EE_Tax_Config
      * @since   4.10.14.p
      */
-    protected function getTaxConfig()
+    protected function getTaxConfig(): EE_Tax_Config
     {
         return isset(EE_Registry::instance()->CFG->tax_settings)
                && EE_Registry::instance()->CFG->tax_settings instanceof EE_Tax_Config

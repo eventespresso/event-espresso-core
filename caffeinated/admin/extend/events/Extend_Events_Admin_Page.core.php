@@ -301,6 +301,7 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
      */
     public function load_scripts_styles_edit()
     {
+        parent::load_scripts_styles_edit();
         if (! $this->admin_config->useAdvancedEditor()) {
             wp_register_script(
                 'ee-event-editor-heartbeat',

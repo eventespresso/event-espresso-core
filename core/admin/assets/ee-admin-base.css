@@ -166,6 +166,7 @@
     /* COLORS */
 
     --ee-color-white: hsl(207, 0%, 100%);
+    --ee-color-white-transparent: hsla(207, 0%, 100%, 50%);
     --ee-color-may-as-well-be-white: hsl(207, 0%, 97.5%);
     --ee-color-almost-white: hsl(207, 0%, 95%);
     --ee-color-off-white: hsl(207, 0%, 90%);
@@ -174,8 +175,8 @@
     --ee-status-color-pink: hsl(340, 100%, 75%);
     --ee-status-color-hot-pink: hsl(342, 79%, 68%);
     --ee-status-color-red: hsl(350, 95%, 65%);
-    --ee-status-color-orange: hsl(20, 100%, 65%);
-    --ee-status-color-orange-high-contrast: hsl(20, 100%, 41%);
+    --ee-status-color-orange: hsl(20, 100%, 70%);
+    --ee-status-color-orange-high-contrast: hsl(20, 100%, 40%);
     --ee-status-color-gold: hsl(40, 100%, 55%);
     --ee-status-color-yellow: hsl(50, 100%, 50%);
     --ee-status-color-pale-yellow: hsl(50, 75%, 80%);
@@ -188,7 +189,9 @@
     --ee-status-color-blue-green: hsl(176, 100%, 35%);
     --ee-status-color-blue: hsl(203, 65%, 55%);
     --ee-status-color-blue-grey: hsl(203, 45%, 75%);
+    --ee-status-color-dark-blue: hsl(210, 100%, 30%);
     --ee-status-color-blue-high-contrast: hsl(203, 65%, 42%);
+    --ee-status-color-blue-low-contrast: hsl(203, 75%, 65%);
     --ee-status-color-light-blue: hsl(203, 95%, 75%);
     --ee-status-color-pale-blue: hsl(203, 60%, 95%);
     --ee-status-color-violet: hsl(239, 40%, 65%);
@@ -860,9 +863,6 @@
 
 
 /** persistent admin (nag) notices **/
-.wp-core-ui .espresso-notices.ee-nag-notice .button.dismiss-ee-nag-notice-btn {
-    box-shadow: 0 1px 1px hsla(203, 0%, 0%, 0.5), 1px 1px 3px hsla(203, 10%, 10%, 0.25), -1px -1px 3px hsla(203, 60%, 97.5%, 0.25);
-}
 
 .wp-core-ui .espresso-notices.notice,
 .wp-core-ui .espresso-notices.error,
@@ -876,9 +876,126 @@
 .wp-core-ui .espresso-notices.notice p,
 .wp-core-ui .espresso-notices.error p,
 .wp-core-ui .espresso-notices.updated p {
-    font-size: var(--ee-font-size-default);
+    font-size: var(--ee-font-size-big);
     margin: 0;
     padding: 0;
     margin-inline-end: auto;
     max-width: 150ch;
+}
+
+.wp-core-ui .espresso-notices.notice.ee-nag-notice {
+    display: block;
+    padding-block: var(--ee-padding-default);
+    padding-inline: var(--ee-padding-big);
+    position: relative;
+}
+
+.wp-core-ui .espresso-notices.notice.ee-nag-notice .button.dismiss-ee-nag-notice-btn {
+    box-shadow: 0 1px 1px hsla(203, 0%, 0%, 0.5), 1px 1px 3px hsla(203, 10%, 10%, 0.25), -1px -1px 3px hsla(203, 60%, 97.5%, 0.25);
+    position: absolute;
+    inset-block-start: var(--ee-margin-nano);
+    inset-inline-end: var(--ee-margin-nano);
+    z-index: 1000;
+}
+
+.wp-core-ui .espresso-notices.notice.ee-nag-notice .ee-nag-notice__body {
+    display: flex;
+    flex-flow: column wrap;
+    font-size: var(--ee-font-size-big);
+    position: relative;
+    width: 100%;
+}
+.wp-core-ui .espresso-notices.notice.ee-nag-notice .ee-nag-notice__body h3 {
+    line-height: 1.25;
+    margin: var(--ee-margin-micro) 0 var(--ee-margin-nano);
+    font-size: var(--ee-font-size-3xl);
+}
+.wp-core-ui .espresso-notices.notice.ee-nag-notice.ee-status-bg--attention .ee-nag-notice__body h3 {
+    font-size: var(--ee-font-size-4xl);
+    margin-block-start: var(--ee-margin-nano);
+}
+.wp-core-ui .espresso-notices.notice.ee-nag-notice.ee-status-bg--warning .ee-nag-notice__body h3 {
+    color: var(--ee-status-color-dark-grey);
+    font-size: var(--ee-font-size-5xl);
+    margin-block-start: var(--ee-margin-pico);
+}
+.wp-core-ui .espresso-notices.notice.ee-nag-notice.ee-status-bg--error .ee-nag-notice__body h3 {
+    color: var(--ee-color-white);
+    font-size: var(--ee-font-size-6xl);
+    margin-block-start: 0;
+}
+.wp-core-ui .espresso-notices.notice.ee-nag-notice .ee-nag-notice__body h4 {
+    margin: var(--ee-margin-big) 0 var(--ee-margin-nano);
+    font-size: var(--ee-font-size-lg);
+}
+.wp-core-ui .espresso-notices.notice.ee-nag-notice .ee-nag-notice__body h5 {
+    margin: var(--ee-margin-default) 0 var(--ee-margin-nano);
+    font-size: var(--ee-font-size-big);
+}
+.wp-core-ui .espresso-notices.notice.ee-nag-notice .ee-nag-notice__body p {
+    margin-block-end: var(--ee-margin-smaller);
+}
+.wp-core-ui .espresso-notices.notice.ee-nag-notice .ee-nag-notice__body p strong {
+    font-weight: 900;
+}
+
+.wp-core-ui .espresso-notices.notice.ee-nag-notice .ee-nag-notice__body .ee-nag-notice__message {
+    line-height: 1.5;
+    position: relative;
+    width: 100%;
+    z-index: 10;
+}
+
+.wp-core-ui .espresso-notices.notice.ee-nag-notice .ee-nag-notice__body .ee-nag-notice__message br {
+    padding-block: .25rem;
+}
+
+.wp-core-ui .espresso-notices.notice.ee-nag-notice .ee-nag-notice__body .ee-nag-notice__icons {
+    display: flex;
+    height: var(--ee-font-size-5xl);
+    justify-content: center;
+    width: 100%;
+}
+.wp-core-ui .espresso-notices.notice.ee-nag-notice .ee-nag-notice__body .ee-nag-notice__icons .dashicons-info {
+    color: var(--ee-status-color-blue) !important;
+}
+.wp-core-ui .espresso-notices.notice.ee-nag-notice .ee-nag-notice__body .ee-nag-notice__icons .dashicons {
+    inset-inline-start: calc(var(--ee-size-small) * -1);
+    position: relative;
+}
+
+@media screen and (min-width: 1024px) {
+    .wp-core-ui .espresso-notices.notice.ee-nag-notice .ee-nag-notice__body {
+        flex-flow: row nowrap;
+    }
+    .wp-core-ui .espresso-notices.notice.ee-nag-notice .ee-nag-notice__body .ee-nag-notice__icons {
+        height: 100%;
+        width: clamp(var(--ee-font-size-5xl), 10%, var(--ee-font-size-9xl));
+        inset-block-start: var(--ee-size-small);
+        inset-inline-start: calc(var(--ee-size-smaller) * -1);
+    }
+}
+
+.wp-core-ui .espresso-notices.notice.ee-nag-notice.ee-service-change .dashicons.dashicons-bank,
+.wp-core-ui .espresso-notices.notice.ee-nag-notice.ee-service-change .dashicons.dashicons-bank:before {
+    align-items: center;
+    display: inline-flex;
+    font-size: calc(var(--ee-font-size-9xl) * 3.5);
+    height: calc(var(--ee-font-size-9xl) * 3.5);
+    width: calc(var(--ee-font-size-9xl) * 3.5);
+}
+.wp-core-ui .espresso-notices.notice.ee-nag-notice.ee-service-change .dashicons.dashicons-bank {
+    opacity: .0625;
+    position: absolute;
+    inset-block-start: 0;
+    inset-inline-end: 0;
+    z-index: 0;
+}
+
+.wp-core-ui .espresso-notices.notice.ee-nag-notice .ee-icon-ee-cup-thick,
+.wp-core-ui .espresso-notices.notice.ee-nag-notice .ee-icon-ee-cup-thick:before {
+    content: "\e60e";
+    font-size: var(--ee-font-size-4xl) !important;
+    height: var(--ee-font-size-4xl);
+    width: var(--ee-font-size-4xl);
 }

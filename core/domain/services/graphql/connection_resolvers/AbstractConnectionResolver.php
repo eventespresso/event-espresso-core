@@ -5,7 +5,6 @@ namespace EventEspresso\core\domain\services\graphql\connection_resolvers;
 use EE_Base_Class;
 use EventEspresso\core\domain\services\graphql\Utilities;
 use EventEspresso\core\services\loaders\LoaderFactory;
-use Exception;
 use GraphQL\Type\Definition\ResolveInfo;
 use WPGraphQL\AppContext;
 use WPGraphQL\Data\Connection\AbstractConnectionResolver as WPGraphQLConnectionResolver;
@@ -125,8 +124,7 @@ abstract class AbstractConnectionResolver extends WPGraphQLConnectionResolver
 
 
     /**
-     * This sets up the "allowed" args, and translates the GraphQL-friendly keys to model
-     * friendly keys.
+     * Map the orderby inputArgs to the WP_Query
      *
      * @param array  $query_args
      * @param array  $where_params
@@ -139,9 +137,7 @@ abstract class AbstractConnectionResolver extends WPGraphQLConnectionResolver
         $cursor = $this->args['after'] ?? null;
         $cursor = $cursor ?: ($this->args['before'] ?? null);
         $offset = $this->get_offset_for_cursor($cursor);
-        /**
-         * Map the orderby inputArgs to the WP_Query
-         */
+
         if (! empty($this->args['where']['orderby']) && is_array($this->args['where']['orderby'])) {
             $query_args['order_by'] = [];
             foreach ($this->args['where']['orderby'] as $orderby_input) {
@@ -160,7 +156,7 @@ abstract class AbstractConnectionResolver extends WPGraphQLConnectionResolver
      * friendly keys.
      *
      * @param array $where_args
-     * @param array $arg_mapping
+     * @param array $arg_mapping Array where keys are GQL field names and values are EE model field names.
      * @param array $id_fields The fields to convert from global IDs to DB IDs.
      * @return array
      */

@@ -207,7 +207,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * Keys are all the cap contexts (ie constants EEM_Base::_caps_*) and values are their 'action'
      * as how they'd be used in capability names. Eg EEM_Base::caps_read ('read_frontend')
      * maps to 'read' because when looking for relevant permissions we're going to use
-     * 'read' in teh capabilities names like 'ee_read_events' etc.
+     * 'read' in the capabilities names like 'ee_read_events' etc.
      *
      * @var array
      */
@@ -1442,7 +1442,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             if ($this->has_primary_key_field()) {
                 $field_to_order_by = $this->get_primary_key_field()->get_name();
             } else {
-                if (WP_DEBUG) {
+                if (defined('WP_DEBUG') && WP_DEBUG) {
                     throw new EE_Error(
                         esc_html__(
                             'EEM_Base::_get_consecutive() has been called with no $field_to_order_by argument and there is no primary key on the field.  Please provide the field you would like to use as the base for retrieving the next item(s).',
@@ -1863,17 +1863,17 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
 
 
     /**
-     * Analogous to $wpdb->get_col, returns a 1-dimensional array where teh values
-     * are teh values of the field specified (or by default the primary key field)
+     * Analogous to $wpdb->get_col, returns a 1-dimensional array where the values
+     * are the values of the field specified (or by default the primary key field)
      * that matched the query params. Note that you should pass the name of the
      * model FIELD, not the database table's column name.
      *
-     * @param array  $query_params @see
-     *                             https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
+     * @param array  $query_params 
      * @param string $field_to_select
      * @return array just like $wpdb->get_col()
      * @throws EE_Error
      * @throws ReflectionException
+     * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md for $query_params values
      */
     public function get_col($query_params = [], $field_to_select = null)
     {
@@ -2445,12 +2445,12 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             );
         }
         $old_show_errors_value = $wpdb->show_errors;
-        if (WP_DEBUG) {
+        if (defined('WP_DEBUG') && WP_DEBUG) {
             $wpdb->show_errors(false);
         }
         $result = $this->_process_wpdb_query($wpdb_method, $arguments_to_provide);
         $this->show_db_query_if_previously_requested($wpdb->last_query);
-        if (WP_DEBUG) {
+        if (defined('WP_DEBUG') && WP_DEBUG) {
             $wpdb->show_errors($old_show_errors_value);
             if (! empty($wpdb->last_error)) {
                 throw new EE_Error(sprintf(esc_html__('WPDB Error: "%s"', 'event_espresso'), $wpdb->last_error));
@@ -6275,7 +6275,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     public function get_IDs($model_objects, $filter_out_empty_ids = false)
     {
         if (! $this->has_primary_key_field()) {
-            if (WP_DEBUG) {
+            if (defined('WP_DEBUG') && WP_DEBUG) {
                 EE_Error::add_error(
                     esc_html__('Trying to get IDs from a model than has no primary key', 'event_espresso'),
                     __FILE__,
@@ -6291,7 +6291,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                 if ($filter_out_empty_ids) {
                     continue;
                 }
-                if (WP_DEBUG) {
+                if (defined('WP_DEBUG') && WP_DEBUG) {
                     EE_Error::add_error(
                         esc_html__(
                             'Called %1$s on a model object that has no ID and so probably hasn\'t been saved to the database',

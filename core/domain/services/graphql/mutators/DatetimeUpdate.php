@@ -51,7 +51,7 @@ class DatetimeUpdate extends EntityMutator
                     DatetimeMutation::setRelatedTickets($entity, $tickets);
                 }
 
-                if ($venue) {
+                if (isset($venue)) {
                     DatetimeMutation::setVenue($entity, $venue);
                 }
 

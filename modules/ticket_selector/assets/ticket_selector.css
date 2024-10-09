@@ -13,7 +13,7 @@
 }
 
 .tkt-slctr-tbl th,
-.tkt-slctr-tbl td { 
+.tkt-slctr-tbl td {
 	word-break: normal;
 }
 
@@ -194,7 +194,7 @@
 	display: inline-block;
 	width: 12px;
 	height: 12px;
-	padding: 0px;
+	padding: 0;
 	margin: 2px .4em -1px .2em;
 }
 
@@ -305,7 +305,7 @@
 .ee-gmap img,
 .espresso-paid-status-icon-img {
 	box-shadow: none !important;
-	box-radius: 0 !important;
+	border-radius: 0 !important;
 }
 
 .ticket-selector-submit-btn,
@@ -320,7 +320,7 @@
 	margin: .25em 1.5em;
 	font-size: .75em;
 	line-height: 1.4em;
-	letter-spacing: .25px;
+	letter-spacing: 0.015625rem;
 }
 
 .ee-event-expired-notice {
@@ -491,11 +491,11 @@
 }
 
 @media (max-width: 400px) {
- 
-	.ticket-selector-tbl-qty-slct { 
-		width: auto; 
-		padding: 0; 
-	} 
+
+	.ticket-selector-tbl-qty-slct {
+		width: auto;
+		padding: 0;
+	}
 	.tkt-slctr-tbl {
 		display: block;
 		overflow-x: auto;
@@ -509,4 +509,88 @@
 		padding-left: 3px;
 		padding-right: 3px;
 	}
+}
+
+
+/* NEW TICKET SELECTOR STYLES*/
+
+
+
+.tkt-slctr-use-new-form-styles {
+
+    input[type="submit"] {
+        background: var(--ee-ts-accent-color);
+        border-color: var(--ee-ts-accent-color);
+        color: var(--ee-ts-button-text-color);
+        cursor: pointer;
+        font: inherit;
+        min-height: 1.875em;
+        margin: 0 auto;
+        padding: .5em 1em;
+    }
+    input[type="submit"]:hover {
+        background-color: var(--ee-ts-accent-color-hover);
+        border-color: var(--ee-ts-accent-color-hover);
+    }
+
+    input[type="checkbox"] {
+        appearance: none;
+        background-color: var(--ee-ts-background);
+        border-radius: 0.25em;
+        border: 0.125em solid var(--ee-ts-border-color);
+        color: var(--ee-ts-text-color);
+        display: grid;
+        font: inherit;
+        height: 1.25em;
+        margin: 0 auto;
+        place-content: center;
+        width: 1.25em;
+    }
+
+    input[type="checkbox"]::before {
+        background-color: var(--ee-ts-background);
+        box-shadow: inset 1em 1em var(--ee-ts-button-text-color);
+        clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+        content: "";
+        height: 0.875em;
+        transform-origin: bottom left;
+        transform: scale(0);
+        transition: 120ms transform ease-in-out;
+        width: 0.875em;
+    }
+
+    input[type="checkbox"]:checked {
+        background-color: var(--ee-ts-accent-color);
+        border-color: var(--ee-ts-accent-color);
+    }
+
+    input[type="checkbox"]:checked::before {
+        transform: scale(1);
+    }
+
+    select {
+        background-color: var(--ee-ts-background);
+        border-radius: 0.25em;
+        border: 0.125em solid var(--ee-ts-border-color);
+        color: var(--ee-ts-text-color);
+        font: inherit;
+        height: 1.875em;
+        margin: 0 auto;
+        min-width: 3em;
+    }
+
+    select:focus,
+    input[type="submit"]:focus,
+    input[type="checkbox"]:focus {
+        outline: max(2px, 0.15em) solid var(--ee-ts-accent-color);
+        outline-offset: max(2px, 0.15em);
+    }
+
+    select:disabled,
+    input[type="submit"]:disabled,
+    input[type="checkbox"]:disabled {
+        --form-control-color: var(--ee-ts-input-disabled);
+        color: var(--ee-ts-input-disabled);
+        cursor: not-allowed;
+    }
 }

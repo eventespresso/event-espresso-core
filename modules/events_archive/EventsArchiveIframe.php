@@ -5,6 +5,7 @@ namespace EventEspresso\modules\events_archive;
 use EE_Error;
 use EE_Registry;
 use EED_Events_Archive;
+use EED_Ticket_Selector;
 use EEH_Maps;
 use EventEspresso\core\domain\entities\shortcodes\EspressoEvents;
 use EventEspresso\core\libraries\iframe_display\Iframe;
@@ -56,6 +57,7 @@ class EventsArchiveIframe extends Iframe
                 $this
             )
         );
+        $this->addInlineStyles('ticket_selector', EED_Ticket_Selector::accentColorStyles());
         $this->addScripts(
             apply_filters(
                 'FHEE__EventEspresso_modules_events_archive_EventsArchiveIframe__display__js',

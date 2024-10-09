@@ -7,11 +7,8 @@ use EE_Error;
 use EE_Event;
 use EEM_Event;
 use EEM_Status;
-use EventEspresso\core\exceptions\InvalidDataTypeException;
-use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\admin\AdminPageHeaderDecorator;
 use EventEspresso\core\services\request\RequestInterface;
-use InvalidArgumentException;
 use ReflectionException;
 
 /**
@@ -24,10 +21,7 @@ use ReflectionException;
  */
 class EventFilterHeader extends AdminPageHeaderDecorator
 {
-    /**
-     * @var EEM_Event $event_model
-     */
-    private $event_model;
+    private EEM_Event $event_model;
 
 
     /**
@@ -47,13 +41,10 @@ class EventFilterHeader extends AdminPageHeaderDecorator
      * @param string $text
      * @return string
      * @throws EE_Error
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     * @throws InvalidArgumentException
      * @throws ReflectionException
      * @since 4.10.2.p
      */
-    public function getHeaderText($text = '')
+    public function getHeaderText(string $text = ''): string
     {
         $EVT_ID = $this->request->getRequestParam('EVT_ID');
         $EVT_ID = $this->request->getRequestParam('event_id', $EVT_ID, 'int');

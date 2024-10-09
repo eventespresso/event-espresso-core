@@ -446,10 +446,10 @@ abstract class EE_Admin_List_Table extends WP_List_Table
         $actions = [];
         // the _views property should have the bulk_actions, so let's go through and extract them into a properly
         // formatted array for the wp_list_table();
-        foreach ($this->_views as $view => $args) {
+        foreach ($this->get_views() as $view => $args) {
             if ($this->_view === $view && isset($args['bulk_action']) && is_array($args['bulk_action'])) {
-                // each bulk action will correspond with a admin page route, so we can check whatever the capability is
-                // for that page route and skip adding the bulk action if no access for the current logged in user.
+                // each bulk action will correspond with an admin page route, so we can check whatever the capability is
+                // for that page route and skip adding the bulk action if no access for the current logged-in user.
                 foreach ($args['bulk_action'] as $route => $label) {
                     if ($this->_admin_page->check_user_access($route, true)) {
                         $actions[ $route ] = $label;
@@ -645,7 +645,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table
      */
     public function get_views()
     {
-        return $this->_views;
+        return $this->_admin_page->get_views();
     }
 
 
@@ -654,13 +654,12 @@ abstract class EE_Admin_List_Table extends WP_List_Table
      */
     public function display_views()
     {
-        $views           = $this->get_views();
-        $assembled_views = [];
+        $views = $this->get_views();
 
         if (empty($views)) {
             return;
         }
-        echo "<ul class='subsubsub'>\n";
+        $assembled_views = [];
         foreach ($views as $view) {
             $count = ! empty($view['count']) ? absint($view['count']) : 0;
             if (isset($view['slug'], $view['class'], $view['url'], $view['label'])) {
@@ -675,11 +674,13 @@ abstract class EE_Admin_List_Table extends WP_List_Table
                 $assembled_views[ $view['slug'] ] = $filter;
             }
         }
-
-        echo ! empty($assembled_views)
+        $assembled_views = ! empty($assembled_views)
             ? implode("<li style='margin:0 .5rem;'>|</li>", $assembled_views)
             : '';
-        echo "</ul>";
+        echo "
+        <ul class='subsubsub'>
+            $assembled_views
+        </ul>";
     }
 
 
@@ -692,8 +693,7 @@ abstract class EE_Admin_List_Table extends WP_List_Table
      */
     public function single_row($item)
     {
-        $row_class = $this->_get_row_class($item);
-        echo '<tr class="' . esc_attr($row_class) . '">';
+        echo '<tr class="' . esc_attr($this->_get_row_class($item)) . '">';
         $this->single_row_columns($item); // already escaped
         echo '</tr>';
     }

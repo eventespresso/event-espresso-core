@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\services\helpers\ColorConverter;
+
 /**
  * Stores Ticket_Selector_Config settings
  */
@@ -53,6 +55,12 @@ class EE_Ticket_Selector_Config extends EE_Config_Base
      * @var int $datetime_selector_checked
      */
     protected $datetime_selector_max_checked = 10;
+
+    private bool $use_new_checkbox_selector = false;
+
+    private bool $use_new_form_styles = false;
+
+    private array $accent_color = [210, 100, 50];
 
 
     public function __construct()
@@ -142,7 +150,7 @@ class EE_Ticket_Selector_Config extends EE_Config_Base
     public function setDatetimeSelectorThreshold($datetime_selector_threshold)
     {
         $datetime_selector_threshold = absint($datetime_selector_threshold);
-        $this->datetime_selector_threshold = $datetime_selector_threshold ? $datetime_selector_threshold : 3;
+        $this->datetime_selector_threshold = $datetime_selector_threshold ?: 3;
     }
 
 
@@ -161,5 +169,52 @@ class EE_Ticket_Selector_Config extends EE_Config_Base
     public function setDatetimeSelectorMaxChecked($datetime_selector_max_checked)
     {
         $this->datetime_selector_max_checked = absint($datetime_selector_max_checked);
+    }
+
+
+    public function useNewCheckboxSelector(): bool
+    {
+        return $this->use_new_checkbox_selector;
+    }
+
+
+    public function setUseNewCheckboxSelector(bool $use_new_checkbox_selector): void
+    {
+        $this->use_new_checkbox_selector = $use_new_checkbox_selector;
+    }
+
+
+    public function useNewFormStyles(): bool
+    {
+        return $this->use_new_form_styles;
+    }
+
+
+    public function setUseNewFormStyles(bool $use_new_form_styles): void
+    {
+        $this->use_new_form_styles = $use_new_form_styles;
+    }
+
+
+    public function accentColor(): array
+    {
+        return $this->accent_color;
+    }
+
+
+    public function accentColorAsHex(): string
+    {
+        return ColorConverter::hsl2Hex($this->accent_color);
+    }
+
+
+    public function setAccentColor(array $accent_color): void
+    {
+        $this->accent_color = $accent_color;
+    }
+
+    public function setAccentColorHex(string $accent_color): void
+    {
+        $this->accent_color = ColorConverter::rgb2Hsl(ColorConverter::hex2RGB($accent_color));
     }
 }

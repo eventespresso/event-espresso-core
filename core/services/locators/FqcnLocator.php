@@ -11,7 +11,7 @@ use FilesystemIterator;
 
 /**
  * Class FqcnLocator
- * Description
+ * Finds filepaths from full or partial FQCNs (Fully Qualified Class Name)
  *
  * @package       Event Espresso
  * @author        Brent Christensen

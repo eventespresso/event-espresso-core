@@ -160,16 +160,16 @@ class EE_Datetime_Field extends EE_Model_Field_Base
 
 
     /**
-     * this prepares any incoming date data and make sure its converted to a utc unix timestamp
+     * this prepares any incoming date data and make sure it's converted to a UTC unix timestamp
      *
-     * @param string|int $value_inputted_for_field_on_model_object  could be a string formatted date time or int unix
-     *                                                              timestamp
+     * @param string|int|null $value value inputted for field on model object
+     *                               could be a string formatted date time or int unix timestamp
      * @return DateTime
      * @throws Exception
      */
-    public function prepare_for_set($value_inputted_for_field_on_model_object)
+    public function prepare_for_set($value)
     {
-        return $this->_get_date_object($value_inputted_for_field_on_model_object);
+        return $this->_get_date_object($value);
     }
 
 
@@ -393,7 +393,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base
     /**
      * Only sets the date portion of the datetime.
      *
-     * @param string|DateTime $date_to_set_string like Friday, January 8th or a DateTime object.
+     * @param string|DateTime $date_to_set_string like "Friday, January 8th" or a DateTime object.
      * @param DateTime        $current            current DateTime object for the datetime field
      * @return DateTime
      */
@@ -417,10 +417,10 @@ class EE_Datetime_Field extends EE_Model_Field_Base
 
 
     /**
-     * This prepares the EE_DateTime value to be saved to the db as mysql timestamp (UTC +0 timezone).  When the
-     * datetime gets to this stage it should ALREADY be in UTC time
+     * This prepares the EE_DateTime value to be saved to the db as mysql timestamp (UTC +0 timezone).
+     * When the datetime gets to this stage it should ALREADY be in UTC time
      *
-     * @param DateTime $DateTime
+     * @param int|string|DateTime|null $DateTime
      * @return string formatted date time for given timezone
      * @throws EE_Error
      */
@@ -452,13 +452,13 @@ class EE_Datetime_Field extends EE_Model_Field_Base
      * This prepares the EE_DateTime value to be saved to the db as mysql timestamp (UTC +0
      * timezone).
      *
-     * @param DateTime|null $DateTime
+     * @param int|string|DateTime|null $DateTime
      * @param bool|string   $schema
      * @return string
      * @throws EE_Error
      * @throws Exception
      */
-    protected function _prepare_for_display(?DateTime $DateTime, $schema = false): string
+    protected function _prepare_for_display($DateTime, $schema = false): string
     {
         if (! $DateTime instanceof DateTime) {
             if ($this->_nullable) {
@@ -617,11 +617,9 @@ class EE_Datetime_Field extends EE_Model_Field_Base
      * EE passes around DateTime objects because they are MUCH easier to manipulate and deal
      * with.
      *
-     * @param int|string|DateTime $date_string            This should be the incoming date string.  It's assumed to be
-     *                                                    in the format that is set on the date_field (or DateTime
-     *                                                    object)!
-     * @return DateTime
-     * @throws Exception
+     * @param int|string|DateTime|null $date_string This should be the incoming date string. It's assumed to be in
+     *                                              the format that is set on the date_field (or DateTime object)!
+     * @return DateTime|null
      * @throws Exception
      */
     protected function _get_date_object($date_string)

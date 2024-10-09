@@ -145,7 +145,9 @@ class DatetimeMutation
     public static function setVenue(EE_Datetime $entity, int $venue)
     {
         if (empty($venue)) {
-            $entity->remove_venue($venue);
+            if (! is_null($entity->venue())) {
+                $entity->remove_venue($venue);
+            }
         } else {
             $entity->add_venue($venue);
         }

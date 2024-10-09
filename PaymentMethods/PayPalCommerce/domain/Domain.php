@@ -82,21 +82,6 @@ class Domain
     public const META_KEY_BN_CODE = 'bn_code';
 
     /**
-     * Name of the extra meta that holds the last order details.
-     */
-    public const META_KEY_LAST_ORDER = 'last_order_details';
-
-    /**
-     * Name of the extra meta that holds the list of in progress orders.
-     */
-    public const META_KEY_PAYPAL_ORDERS = 'paypal_orders_list';
-
-    /**
-     * Name of the extra meta that stores the allowed PP checkout type selected by merchant while onboarding.
-     */
-    public const META_KEY_ALLOWED_CHECKOUT_TYPE = 'allowed_checkout_type';
-
-    /**
      * Name of the extra meta that stores the merchant authorized scopes for our app to work within.
      */
     public const META_KEY_AUTHORIZED_SCOPES = 'authorized_scopes';
@@ -105,6 +90,11 @@ class Domain
      * Name of the extra meta that stores the PP checkout type selected by merchant after onboarding.
      */
     public const META_KEY_CHECKOUT_TYPE = 'checkout_type';
+
+    /**
+     * Name of the extra meta that stores the allowed PP checkout type selected by merchant while onboarding.
+     */
+    public const META_KEY_ALLOWED_CHECKOUT_TYPE = 'allowed_checkout_type';
 
     /**
      * Name of the extra meta that stores the selected PP function options.

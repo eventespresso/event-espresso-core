@@ -22,8 +22,9 @@ use RuntimeException;
 abstract class EntityMutator
 {
     /**
+     * Get data entity using database ID
      * @param EEM_Base $model
-     * @param integer  $ID
+     * @param integer  $ID          database ID
      * @param string   $capability
      * @return EE_Base_Class
      * @throws OutOfBoundsException
@@ -35,14 +36,15 @@ abstract class EntityMutator
         int $ID,
         string $capability = 'ee_edit_events'
     ): EE_Base_Class {
-        EntityMutator::checkPermissions($model, $capability);
+        EntityMutator::checkPermissions($model, $capability, $ID);
         return EntityMutator::getEntity($model, $ID);
     }
 
 
     /**
+     * Get data entity from request parameters
      * @param EEM_Base $model
-     * @param array    $input
+     * @param array    $input       Sanitized GraphQL request parameters
      * @param string   $capability
      * @return EE_Base_Class
      * @throws OutOfBoundsException
@@ -54,30 +56,29 @@ abstract class EntityMutator
         array $input,
         string $capability = 'ee_edit_events'
     ): EE_Base_Class {
-        EntityMutator::checkPermissions($model, $capability);
-
-        $primaryKey = $model->get_primary_key_field()->get_name();
-        // e.g. "FSC_UUID" will give us "FSC"
-        [$keyPrefix] = explode('_', $primaryKey);
-        $uuid_field  = $keyPrefix . '_UUID'; // e.g. "FSC_UUID"
-
-        // If the model has UUID field, then we will use that in place of ID.
-        $ID = $model->has_field($uuid_field) ? $input['id'] : EntityMutator::getEntityIDFromGlobalId($model, $input);
+        $ID = EntityMutator::getEntityID($model, $input);
+        EntityMutator::checkPermissions($model, $capability, $ID);
         return EntityMutator::getEntity($model, $ID);
     }
 
 
     /**
+     * Check if current user has the required permissions to perform the mutation
      * @param EEM_Base $model
      * @param string   $capability
+     * @param array    ...$args        Optional further parameters to be passed to current_user_can(), typically starting with an object ID
      * @throws UserError
+     * @see https://developer.wordpress.org/reference/functions/current_user_can/
+     * @see https://developer.wordpress.org/reference/functions/map_meta_cap/ for argument $args explanation
      */
-    protected static function checkPermissions(EEM_Base $model, string $capability = 'ee_edit_events')
+    protected static function checkPermissions(EEM_Base $model, string $capability = 'ee_edit_events', ...$args)
     {
-        /**
-         * Stop now if a user isn't allowed to execute mutation
-         */
-        if (! current_user_can($capability)) {
+        if (
+            ! (
+                (isset($args[0]) && current_user_can($capability, ...$args))
+                || (! isset($args[0]) && current_user_can($capability))
+            )
+        ) {
             $model_name = $model->get_this_model_name();
             $message    = sprintf(
                 esc_html_x(
@@ -93,8 +94,9 @@ abstract class EntityMutator
 
 
     /**
+     * Get entity ID from GraphQL Relay
      * @param EEM_Base $model
-     * @param array    $input
+     * @param array    $input  Sanitized GraphQL request parameters
      * @return int
      * @throws OutOfBoundsException
      */
@@ -121,8 +123,9 @@ abstract class EntityMutator
 
 
     /**
+     * Get data entity using database ID
      * @param EEM_Base   $model
-     * @param int|string $ID
+     * @param int|string $ID     Database ID
      * @return EE_Base_Class
      * @throws OutOfBoundsException
      * @throws EE_Error
@@ -133,6 +136,7 @@ abstract class EntityMutator
         $model_name = $model->get_this_model_name();
         $class_name = 'EE_' . $model_name;
         if ($entity instanceof $class_name) {
+            /** @var EE_Base_Class $entity */
             return $entity;
         }
         // OOPS!!! invalid entity
@@ -150,8 +154,9 @@ abstract class EntityMutator
 
 
     /**
-     * @param        $results
-     * @param string $message
+     * @param array|string  $results
+     * @param string        $message
+     * @return void
      * @throws RuntimeException
      */
     protected static function validateResults($results, string $message = '')
@@ -171,6 +176,7 @@ abstract class EntityMutator
     /**
      * @param Exception $exception
      * @param string    $message_prefix
+     * @return void
      * @throws RuntimeException
      */
     protected static function handleExceptions(Exception $exception, string $message_prefix = '')
@@ -184,5 +190,31 @@ abstract class EntityMutator
         throw new RuntimeException(
             sprintf('%1$s: %2$s', $message_prefix, $exception->getMessage())
         );
+    }
+
+    /**
+     * Check if given model has a UUID field
+     * @return bool `true` if yes and `false` if no
+     */
+    protected static function hasUuidField(EEM_Base $model): bool
+    {
+        $primaryKey = $model->get_primary_key_field()->get_name(); // e.g. "FSC_UUID" will give us "FSC"
+        [$keyPrefix] = explode('_', $primaryKey);
+        $uuid_field  = $keyPrefix . '_UUID'; // e.g. "FSC_UUID"
+        return $model->has_field($uuid_field);
+    }
+
+    /**
+     * Get database entity ID using model and request parameters
+     * @param EEM_Base $model
+     * @param array    $input  Sanitized GraphQL request parameters
+     * @return string|int
+     */
+    protected static function getEntityID(EEM_Base $model, array $input)
+    {
+        if (EntityMutator::hasUuidField($model)) {
+            return $input['id'];
+        }
+        return EntityMutator::getEntityIDFromGlobalId($model, $input);
     }
 }

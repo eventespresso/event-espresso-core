@@ -42,6 +42,24 @@
     --ee-status-color-dark-grey: hsl(225, 2%, 25%);
     --ee-status-color-charcoal: hsl(225, 0%, 15%);
 
+    /* DEFAULT TICKET SELECTOR STYLES */
+    --ee-ts-background: hsl(210 2% 97.5%);
+    --ee-ts-border-color: hsl(210 5% 40%);
+    --ee-ts-accent-color: hsl(210 100% 50%);
+    --ee-ts-accent-color-hover: hsl(210 100% 45%);
+    --ee-ts-input-disabled: hsl(210 15% 50%);
+    --ee-ts-text-color: hsl(210 10% 20%);
+    --ee-ts-button-text-color: hsl(210 2% 97.5%);
+
+    @media (prefers-color-scheme: dark) {
+        --ee-ts-background: hsl(210 2.5% 17.5%);
+        --ee-ts-border-color: hsl(210 5% 60%);
+        --ee-ts-accent-color: hsl(210 100% 40%);
+        --ee-ts-accent-color-hover: hsl(210 100% 45%);
+        --ee-ts-input-disabled: hsl(210 15% 50%);
+        --ee-ts-text-color: hsl(210 2% 85%);
+        --ee-ts-button-text-color: hsl(210 2% 85%);
+    }
 }
 
 
@@ -343,8 +361,6 @@
 /******************* UPCOMING EVENTS WIDGET ****************** */
 
 
-.ee-upcoming-events-widget-li {
-}
 .ee-upcoming-events-widget-ul li ul {
 	padding: 0 0 1em;
 }
@@ -402,11 +418,18 @@
  	list-style-type: none;
 }
 
-
-ul.ee-upcoming-events-widget-ul li{
+ul.ee-upcoming-events-widget-ul li {
 	list-style-type:none !important;
 }
 
+ul.ee-upcoming-events-widget-ul li .ee-event-datetimes-li-timerange {
+    margin-inline-end: .5rem;
+}
+
+ul.ee-upcoming-events-widget-ul li .ee-event-datetimes-li-date-desc p {
+    margin: 0;
+    margin-block-end: .5rem;
+}
 
 /******************* BUTTONS ****************** */
 
@@ -1188,7 +1211,7 @@ article .espresso_venues {
 	margin-bottom: 48px;
 }
 
-.ee-event-datetimes-ul {
+.espresso_events .ee-event-datetimes-ul {
     display: flex;
     flex-flow: row wrap;
     justify-content: space-around;
@@ -1201,25 +1224,29 @@ article .espresso_venues {
     width: 100%;
 }
 
-.ee-event-datetimes-ul .ee-event-datetimes-li {
+.espresso_events .ee-event-datetimes-ul .ee-event-datetimes-li {
     margin: 0;
     margin-block-end: 1rem;
     margin-inline-start: 1rem;
 	width: 30%;
 }
 
-.ee-event-datetimes-ul--small .ee-event-datetimes-li {
+.espresso_events .ee-event-datetimes-ul--small .ee-event-datetimes-li {
     width: 45%;
 }
 
-.ee-event-datetimes-ul .ee-event-datetimes-li span {
+.espresso_events .ee-event-datetimes-ul .ee-event-datetimes-li span {
     display: inline-block;
     margin-block: .25rem;
 }
 
-.ee-event-datetimes-ul .ee-event-datetimes-li .dashicons {
+.espresso_events .ee-event-datetimes-ul .ee-event-datetimes-li .dashicons {
     position: relative;
     top: -1px;
+}
+
+.espresso_events .ee-event-datetimes-ul .ee-event-datetimes-li .ee-event-datetimes-li-timerange {
+    margin-inline-end: .5rem;
 }
 
 
@@ -1252,7 +1279,6 @@ article .espresso_venues {
 
 .download-iCal-frm {
 	display: inline-block;
-	margin:0 1em;
 }
 
 .ee-ical-sbmt {

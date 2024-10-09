@@ -5,6 +5,7 @@ namespace EventEspresso\modules\ticket_selector;
 use EE_Cart;
 use EE_Core_Config;
 use EE_Error;
+use EE_Line_Item;
 use EE_Session;
 use EE_Ticket;
 use EEH_Event_View;
@@ -33,35 +34,17 @@ use ReflectionException;
  */
 class ProcessTicketSelector
 {
-    /**
-     * @var EE_Cart $cart
-     */
-    private $cart;
+    private ?EE_Cart $cart = null;
 
-    /**
-     * @var EE_Core_Config $core_config
-     */
-    private $core_config;
+    private EE_Core_Config $core_config;
 
-    /**
-     * @var RequestInterface $request
-     */
-    private $request;
+    private RequestInterface $request;
 
-    /**
-     * @var EE_Session $session
-     */
-    private $session;
+    private EE_Session $session;
 
-    /**
-     * @var EEM_Ticket $ticket_model
-     */
-    private $ticket_model;
+    private EEM_Ticket $ticket_model;
 
-    /**
-     * @var TicketDatetimeAvailabilityTracker $tracker
-     */
-    private $tracker;
+    private TicketDatetimeAvailabilityTracker $tracker;
 
 
     /**
@@ -86,20 +69,20 @@ class ProcessTicketSelector
         EEM_Ticket $ticket_model = null,
         TicketDatetimeAvailabilityTracker $tracker = null
     ) {
-        $loader = LoaderFactory::getLoader();
-        $this->core_config = $core_config instanceof EE_Core_Config
+        $loader             = LoaderFactory::getLoader();
+        $this->core_config  = $core_config instanceof EE_Core_Config
             ? $core_config
             : $loader->getShared('EE_Core_Config');
-        $this->request = $request instanceof RequestInterface
+        $this->request      = $request instanceof RequestInterface
             ? $request
             : $loader->getShared('EventEspresso\core\services\request\Request');
-        $this->session = $session instanceof EE_Session
+        $this->session      = $session instanceof EE_Session
             ? $session
             : $loader->getShared('EE_Session');
         $this->ticket_model = $ticket_model instanceof EEM_Ticket
             ? $ticket_model
             : $loader->getShared('EEM_Ticket');
-        $this->tracker = $tracker instanceof TicketDatetimeAvailabilityTracker
+        $this->tracker      = $tracker instanceof TicketDatetimeAvailabilityTracker
             ? $tracker
             : $loader->getShared('EventEspresso\modules\ticket_selector\TicketDatetimeAvailabilityTracker');
     }
@@ -198,7 +181,7 @@ class ProcessTicketSelector
             $this->session->clear_session(__CLASS__, __FUNCTION__);
         }
         // validate/sanitize/filter data
-        $id = null;
+        $id    = null;
         $valid = [];
         try {
             /** @var ProcessTicketSelectorPostData $post_data_validator */
@@ -208,17 +191,11 @@ class ProcessTicketSelector
                 'FHEE__EED_Ticket_Selector__process_ticket_selections__valid_post_data',
                 $post_data_validator->validatePostData()
             );
-        } catch (Exception $exception) {
-            EE_Error::add_error($exception->getMessage(), __FILE__, __FUNCTION__, __LINE__);
-        }
-        // check total tickets ordered vs max number of attendees that can register
-        if (! empty($valid) && $valid['total_tickets'] > $valid['max_atndz']) {
-            $this->maxAttendeesViolation($valid);
-        } else {
-            // all data appears to be valid
             if ($this->processSuccessfulCart($this->addTicketsToCart($valid))) {
                 return true;
             }
+        } catch (Exception $exception) {
+            EE_Error::add_error($exception->getMessage(), __FILE__, __FUNCTION__, __LINE__);
         }
         // die(); // <<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<< KILL BEFORE REDIRECT
         // at this point, just return if registration is being made from admin
@@ -238,10 +215,16 @@ class ProcessTicketSelector
 
 
     /**
+     * checks total tickets ordered vs max number of attendees that can register
+     *
      * @param array $valid
+     * @return bool
      */
-    private function maxAttendeesViolation(array $valid)
+    private function maxAttendeesViolation(array $valid): bool
     {
+        if ($valid['total_tickets'] <= $valid['max_atndz']) {
+            return false;
+        }
         // ordering too many tickets !!!
         $total_tickets_string = esc_html(
             _n(
@@ -251,7 +234,7 @@ class ProcessTicketSelector
                 'event_espresso'
             )
         );
-        $limit_error_1 = sprintf($total_tickets_string, $valid['total_tickets']);
+        $limit_error_1        = sprintf($total_tickets_string, $valid['total_tickets']);
         // dev only message
         $max_attendees_string = esc_html(
             _n(
@@ -261,8 +244,9 @@ class ProcessTicketSelector
                 'event_espresso'
             )
         );
-        $limit_error_2 = sprintf($max_attendees_string, $valid['max_atndz'], $valid['max_atndz']);
+        $limit_error_2        = sprintf($max_attendees_string, $valid['max_atndz'], $valid['max_atndz']);
         EE_Error::add_error($limit_error_1 . '<br/>' . $limit_error_2, __FILE__, __FUNCTION__, __LINE__);
+        return true;
     }
 
 
@@ -275,9 +259,12 @@ class ProcessTicketSelector
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    private function addTicketsToCart(array $valid)
+    private function addTicketsToCart(array $valid): int
     {
-        $tickets_added = 0;
+        if ($this->maxAttendeesViolation($valid)) {
+            return 0;
+        }
+        $tickets_added    = 0;
         $tickets_selected = false;
         if (! empty($valid['ticket-selections']) && $valid['total_tickets'] > 0) {
             // load cart using factory because we don't want to do so until actually needed
@@ -290,31 +277,17 @@ class ProcessTicketSelector
                 if ($qty) {
                     // YES we have a ticket quantity
                     $tickets_selected = true;
-                    $valid_ticket     = false;
                     // get ticket via the ticket id we put in the form
                     $ticket = $this->ticket_model->get_one_by_ID($ticket_id);
-                    if ($ticket instanceof EE_Ticket && ($ticket->is_on_sale() || $current_user_is_admin)) {
-                        $valid_ticket  = true;
-                        $tickets_added += $this->addTicketToCart($ticket, $qty);
-                    }
-                    if ($valid_ticket !== true) {
-                        // nothing added to cart retrieved
-                        EE_Error::add_error(
-                            sprintf(
-                                esc_html__(
-                                    'A valid ticket could not be retrieved for the event.%sPlease click the back button on your browser and try again.',
-                                    'event_espresso'
-                                ),
-                                '<br/>'
-                            ),
-                            __FILE__,
-                            __FUNCTION__,
-                            __LINE__
-                        );
-                    }
-                    if (EE_Error::has_error()) {
+                    if (
+                        ! $this->isValidTicket($ticket)
+                        || ! $this->ticketAvailableForPurchase($ticket, $current_user_is_admin)
+                        || $this->ticketMaxQtyAlreadyReached($ticket, $qty)
+                        || EE_Error::has_error()
+                    ) {
                         break;
                     }
+                    $tickets_added += $this->addTicketToCart($ticket, $qty);
                 }
             }
         }
@@ -337,6 +310,61 @@ class ProcessTicketSelector
 
 
     /**
+     * @param EE_Ticket|null $ticket
+     * @return bool
+     * @since $VID:$
+     */
+    private function isValidTicket(?EE_Ticket $ticket): bool
+    {
+        if ($ticket instanceof EE_Ticket) {
+            return true;
+        }
+        EE_Error::add_error(
+            sprintf(
+                esc_html__(
+                    'A valid ticket could not be retrieved for the event.%sPlease click the back button on your browser and try again.',
+                    'event_espresso'
+                ),
+                '<br/>'
+            ),
+            __FILE__,
+            __FUNCTION__,
+            __LINE__
+        );
+        return false;
+    }
+
+
+    /**
+     * @param EE_Ticket $ticket
+     * @param bool      $current_user_is_admin
+     * @return bool
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since $VID:$
+     */
+    private function ticketAvailableForPurchase(EE_Ticket $ticket, bool $current_user_is_admin): bool
+    {
+        if ($ticket->is_on_sale() || $current_user_is_admin) {
+            return true;
+        }
+        EE_Error::add_error(
+            sprintf(
+                esc_html__(
+                    'We\'re sorry but that ticket is no longer on sale.%sPlease click the back button on your browser and try again.',
+                    'event_espresso'
+                ),
+                '<br/>'
+            ),
+            __FILE__,
+            __FUNCTION__,
+            __LINE__
+        );
+        return false;
+    }
+
+
+    /**
      * adds a ticket to the cart
      *
      * @param EE_Ticket $ticket
@@ -346,6 +374,7 @@ class ProcessTicketSelector
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
+     * @throws ReflectionException
      */
     private function addTicketToCart(EE_Ticket $ticket, int $qty = 1): bool
     {
@@ -379,12 +408,50 @@ class ProcessTicketSelector
 
 
     /**
+     * @param EE_Ticket $ticket
+     * @param int       $qty
+     * @return bool
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since $VID:$
+     */
+    private function ticketMaxQtyAlreadyReached(EE_Ticket $ticket, int $qty): bool
+    {
+        $tickets_in_cart = $this->cart->get_tickets();
+        foreach ($tickets_in_cart as $ticket_in_cart) {
+            if (
+                $ticket_in_cart instanceof EE_Line_Item
+                && $ticket_in_cart->OBJ_ID() === $ticket->ID()
+                && $ticket_in_cart->quantity() + $qty > $ticket->max()
+            ) {
+                EE_Error::add_error(
+                    sprintf(
+                        esc_html__(
+                            'We\'re sorry but a maximum quantity of %1$d ticket can be purchased at a time, and there is already %1$d ticket(s) in the cart.',
+                            'event_espresso'
+                        ),
+                        $ticket->max(),
+                        $ticket_in_cart->quantity() + $qty
+                    ),
+                    __FILE__,
+                    __FUNCTION__,
+                    __LINE__
+                );
+                return true;
+            }
+        }
+        return false;
+    }
+
+
+    /**
      * @param $tickets_added
      * @return bool
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
      * @throws InvalidArgumentException
+     * @throws ReflectionException
      */
     private function processSuccessfulCart($tickets_added): bool
     {

@@ -6,11 +6,8 @@ use EE_Datetime;
 use EE_Error;
 use EEH_Template;
 use EEM_Datetime;
-use EventEspresso\core\exceptions\InvalidDataTypeException;
-use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\admin\AdminPageHeaderDecorator;
 use EventEspresso\core\services\request\RequestInterface;
-use InvalidArgumentException;
 use ReflectionException;
 
 /**
@@ -23,10 +20,7 @@ use ReflectionException;
  */
 class DateFilterHeader extends AdminPageHeaderDecorator
 {
-    /**
-     * @var EEM_Datetime $datetime_model
-     */
-    private $datetime_model;
+    private EEM_Datetime $datetime_model;
 
 
     /**
@@ -46,13 +40,10 @@ class DateFilterHeader extends AdminPageHeaderDecorator
      * @param string $text
      * @return string
      * @throws EE_Error
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     * @throws InvalidArgumentException
      * @throws ReflectionException
      * @since 4.10.2.p
      */
-    public function getHeaderText($text = '')
+    public function getHeaderText(string $text = ''): string
     {
         $DTT_ID = $this->request->getRequestParam('DTT_ID');
         $DTT_ID = $this->request->getRequestParam('datetime_id', $DTT_ID, 'int');

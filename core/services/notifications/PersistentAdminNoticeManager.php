@@ -49,7 +49,6 @@ class PersistentAdminNoticeManager
     private string $return_url;
 
 
-
     /**
      * PersistentAdminNoticeManager constructor
      *
@@ -63,14 +62,19 @@ class PersistentAdminNoticeManager
         string $return_url = ''
     ) {
         $this->capabilities_checker = $capabilities_checker;
-        $this->request = $request;
+        $this->request              = $request;
         $this->setReturnUrl($return_url);
+        add_action('wp_ajax_dismiss_ee_nag_notice', [$this, 'dismissNotice']);
+        add_action('shutdown', [$this, 'registerAndSaveNotices'], 998);
+    }
+
+
+    public function loadAdminNotices()
+    {
         // setup up notices at priority 9 because `EE_Admin::display_admin_notices()` runs at priority 10,
         // and we want to retrieve and generate any nag notices at the last possible moment
-        add_action('admin_notices', array($this, 'displayNotices'), 9);
-        add_action('network_admin_notices', array($this, 'displayNotices'), 9);
-        add_action('wp_ajax_dismiss_ee_nag_notice', array($this, 'dismissNotice'));
-        add_action('shutdown', array($this, 'registerAndSaveNotices'), 998);
+        add_action('admin_notices', [$this, 'displayNotices'], 9);
+        add_action('network_admin_notices', [$this, 'displayNotices'], 9);
     }
 
 
@@ -113,7 +117,7 @@ class PersistentAdminNoticeManager
      */
     protected function retrieveStoredNotices()
     {
-        $persistent_admin_notices = get_option(PersistentAdminNoticeManager::WP_OPTION_KEY, array());
+        $persistent_admin_notices = get_option(PersistentAdminNoticeManager::WP_OPTION_KEY, []);
         if (! empty($persistent_admin_notices)) {
             foreach ($persistent_admin_notices as $name => $details) {
                 if (is_array($details)) {
@@ -135,18 +139,18 @@ class PersistentAdminNoticeManager
                             )
                         );
                     }
-                    // new format for nag notices
-                    $this->notice_collection->add(
-                        new PersistentAdminNotice(
-                            (string) $name,
-                            (string) $details['message'],
-                            false,
-                            (string) $details['capability'],
-                            (string) $details['cap_context'],
-                            (bool) $details['dismissed']
-                        ),
-                        sanitize_key($name)
+                    $notice = new PersistentAdminNotice(
+                        (string) $name,
+                        (string) $details['message'],
+                        (bool) ($details['force_update'] ?? false),
+                        (string) $details['capability'],
+                        (string) $details['cap_context'],
+                        (bool) $details['dismissed'],
+                        (string) ($details['type'] ?? 'info'),
+                        (string) ($details['extra_css'] ?? '')
                     );
+                    // new format for nag notices
+                    $this->notice_collection->add($notice, sanitize_key($name));
                 } else {
                     try {
                         // old nag notices, that we want to convert to the new format
@@ -236,21 +240,21 @@ class PersistentAdminNoticeManager
         wp_register_script(
             'espresso_core',
             EE_GLOBAL_ASSETS_URL . 'scripts/espresso_core.js',
-            array('jquery'),
+            ['jquery'],
             EVENT_ESPRESSO_VERSION,
             true
         );
         wp_register_script(
             'ee_error_js',
             EE_GLOBAL_ASSETS_URL . 'scripts/EE_Error.js',
-            array('espresso_core'),
+            ['espresso_core'],
             EVENT_ESPRESSO_VERSION,
             true
         );
         wp_localize_script(
             'ee_error_js',
             'ee_dismiss',
-            array(
+            [
                 'return_url'    => urlencode($this->return_url),
                 'ajax_url'      => WP_AJAX_URL,
                 'unknown_error' => wp_strip_all_tags(
@@ -259,7 +263,7 @@ class PersistentAdminNoticeManager
                         'event_espresso'
                     )
                 ),
-            )
+            ]
         );
         wp_enqueue_script('ee_error_js');
     }
@@ -268,13 +272,16 @@ class PersistentAdminNoticeManager
     /**
      * displayPersistentAdminNoticeHtml
      *
-     * @param  PersistentAdminNotice $persistent_admin_notice
+     * @param PersistentAdminNotice $persistent_admin_notice
      */
     protected function displayPersistentAdminNotice(PersistentAdminNotice $persistent_admin_notice)
     {
         // used in template
-        $persistent_admin_notice_name = $persistent_admin_notice->getName();
+        $persistent_admin_notice_name    = $persistent_admin_notice->getName();
         $persistent_admin_notice_message = $persistent_admin_notice->getMessage();
+        $persistent_admin_notice_type    = $persistent_admin_notice->getType();
+        $persistent_admin_notice_css     = $persistent_admin_notice->extraCss();
+        $is_dismissible                  = $persistent_admin_notice->getForceUpdate() !== true;
         require EE_TEMPLATES . '/notifications/persistent_admin_notice.template.php';
     }
 
@@ -297,7 +304,7 @@ class PersistentAdminNoticeManager
      */
     public function dismissNotice(string $pan_name = '', bool $purge = false, bool $return = false)
     {
-        $pan_name = $this->request->getRequestParam('ee_nag_notice', $pan_name);
+        $pan_name                = $this->request->getRequestParam('ee_nag_notice', $pan_name);
         $this->notice_collection = $this->getPersistentAdminNoticeCollection();
         if (! empty($pan_name) && $this->notice_collection->has($pan_name)) {
             /** @var PersistentAdminNotice $persistent_admin_notice */
@@ -320,9 +327,9 @@ class PersistentAdminNoticeManager
         if ($this->request->isAjax()) {
             // grab any notices and concatenate into string
             echo wp_json_encode(
-                array(
+                [
                     'errors' => implode('<br />', EE_Error::get_notices(false)),
-                )
+                ]
             );
             exit();
         }
@@ -348,10 +355,10 @@ class PersistentAdminNoticeManager
     {
         $this->notice_collection = $this->getPersistentAdminNoticeCollection();
         if ($this->notice_collection->hasObjects()) {
-            $persistent_admin_notices = get_option(PersistentAdminNoticeManager::WP_OPTION_KEY, array());
+            $persistent_admin_notices = get_option(PersistentAdminNoticeManager::WP_OPTION_KEY, []);
             // maybe initialize persistent_admin_notices
             if (empty($persistent_admin_notices)) {
-                add_option(PersistentAdminNoticeManager::WP_OPTION_KEY, array(), '', 'no');
+                add_option(PersistentAdminNoticeManager::WP_OPTION_KEY, [], '', 'no');
             }
             $new_notices_array = [];
             foreach ($this->notice_collection as $persistent_admin_notice) {
@@ -360,12 +367,15 @@ class PersistentAdminNoticeManager
                     continue;
                 }
                 /** @var PersistentAdminNotice $persistent_admin_notice */
-                $new_notices_array[ $persistent_admin_notice->getName() ] = array(
-                    'message'     => $persistent_admin_notice->getMessage(),
-                    'capability'  => $persistent_admin_notice->getCapability(),
-                    'cap_context' => $persistent_admin_notice->getCapContext(),
-                    'dismissed'   => $persistent_admin_notice->getDismissed(),
-                );
+                $new_notices_array[ $persistent_admin_notice->getName() ] = [
+                    'message'      => $persistent_admin_notice->getMessage(),
+                    'capability'   => $persistent_admin_notice->getCapability(),
+                    'cap_context'  => $persistent_admin_notice->getCapContext(),
+                    'dismissed'    => $persistent_admin_notice->getDismissed(),
+                    'force_update' => $persistent_admin_notice->getForceUpdate(),
+                    'type'         => $persistent_admin_notice->getType(),
+                    'extra_css'    => $persistent_admin_notice->extraCss(),
+                ];
             }
             update_option(PersistentAdminNoticeManager::WP_OPTION_KEY, $new_notices_array);
         }
@@ -406,6 +416,28 @@ class PersistentAdminNoticeManager
         // if shutdown has already run, then call registerAndSaveNotices() manually
         if (did_action('shutdown')) {
             $persistent_admin_notice_manager->registerAndSaveNotices();
+        }
+    }
+
+
+    public static function dismissPersistentAdminNotice(string $notice_name)
+    {
+        /** @var PersistentAdminNoticeManager $persistent_admin_notice_manager */
+        $persistent_admin_notice_manager = LoaderFactory::getLoader()->getShared(PersistentAdminNoticeManager::class);
+        $persistent_admin_notice_manager->dismissNotice(sanitize_key($notice_name), true, true);
+    }
+
+
+    public static function deletePersistentAdminNotice(string $notice_name)
+    {
+        /** @var PersistentAdminNoticeManager $persistent_admin_notice_manager */
+        $persistent_admin_notice_manager = LoaderFactory::getLoader()->getShared(PersistentAdminNoticeManager::class);
+        $persistent_admin_notice_manager->getPersistentAdminNoticeCollection();
+        $notice = $persistent_admin_notice_manager->notice_collection->get(sanitize_key($notice_name));
+        if ($notice) {
+            $notice->setPurge(true);
+            $persistent_admin_notice_manager->notice_collection->remove($notice);
+            $persistent_admin_notice_manager->saveNotices();
         }
     }
 }

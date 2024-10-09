@@ -53,11 +53,11 @@ class EEH_Form_Fields
      *                          'append_content' => '' //this allows you to send in html content to append to the
      *                          field.
      *                          )
-     * @param array $form_id    - used for defining unique identifiers for the form.
+     * @param string|null $form_id    - used for defining unique identifiers for the form.
      * @return string
      * @todo   : at some point we can break this down into other static methods to abstract it a bit better.
      */
-    public static function get_form_fields($input_vars = [], $form_id = false)
+    public static function get_form_fields(array $input_vars = [], ?string $form_id = '')
     {
 
         if (empty($input_vars)) {
@@ -341,13 +341,13 @@ class EEH_Form_Fields
      * @return string
      * @since   4.10.14.p
      */
-    private static function adminHidden($class, $id, $name, $value)
+    public static function adminHidden($class, $id, $name, $value): string
     {
         $id    = esc_attr($id);
         $name  = esc_attr($name);
         $class = esc_attr($class);
         return "
-        <input name='{$name}' type='hidden' id='{$id}' class='{$class}' value='{$value}' />";
+        <input name='$name' type='hidden' id='$id' class='$class' value='$value' />";
     }
 
 

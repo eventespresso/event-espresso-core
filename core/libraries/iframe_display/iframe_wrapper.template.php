@@ -8,6 +8,7 @@
  * @var string  $title                HTML for notices and ajax gif
  * @var string  $notices              HTML for notices and ajax gif
  * @var string  $content              HTML for the content being displayed
+ * @var array   $inline_styles        array of CSS styles to be printed inline before/after another CSS file
  * @var array   $css                  an array of CSS URLs.
  * @var string  $eei18n               localized JSON vars
  * @var array   $header_js            an array of JS URLs.
@@ -17,6 +18,7 @@
  * @since   4.9.0
  * @package Event Espresso
  */
+
 
 use EventEspresso\core\services\request\sanitizers\AllowedTags;
 use EventEspresso\core\services\request\sanitizers\AttributesSanitizer;
@@ -30,8 +32,18 @@ use EventEspresso\core\services\request\sanitizers\AttributesSanitizer;
     <?php if ($enqueue_wp_assets) : ?>
         <?php wp_head(); ?>
     <?php else : ?>
-        <?php foreach ($css as $url) :?>
-            <link rel="stylesheet" type="text/css" href="<?php echo esc_url_raw($url); ?>">
+        <?php foreach ($css as $handle => $url) : ?>
+            <?php if (isset($inline_styles["{$handle}_before"])) :?>
+                <style>
+                    <?php echo wp_kses($inline_styles["{$handle}_before"], AllowedTags::getWithFullTags()); ?>
+                </style>
+            <?php endif; ?>
+            <link rel="stylesheet" type="text/css" id="<?php esc_attr_e($handle); ?>" href="<?php echo esc_url_raw($url); ?>">
+            <?php if (isset($inline_styles["{$handle}_after"])) :?>
+                <style>
+                    <?php echo wp_kses($inline_styles["{$handle}_after"], AllowedTags::getWithFullTags()); ?>
+                </style>
+            <?php endif; ?>
         <?php endforeach; ?>
         <script type="text/javascript">
             <?php echo $eei18n; ?>

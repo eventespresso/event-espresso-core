@@ -130,15 +130,20 @@ class ModelFieldFactory
      * @param string $nice_name
      * @param bool   $nullable
      * @param string $default_value
+     * @param string $timezone_string
      * @return EE_Datetime_Field
      */
     public function createDatetimeField(
         string $table_column,
         string $nice_name,
         bool $nullable = false,
-        string $default_value = EE_Datetime_Field::now
+        string $default_value = EE_Datetime_Field::now,
+        string $timezone_string = ''
     ): EE_Datetime_Field {
-        return $this->loader->getNew('EE_Datetime_Field', [$table_column, $nice_name, $nullable, $default_value,]);
+        return $this->loader->getNew(
+            'EE_Datetime_Field',
+            [$table_column, $nice_name, $nullable, $default_value, $timezone_string]
+        );
     }
 
 

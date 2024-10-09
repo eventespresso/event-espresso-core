@@ -11,6 +11,7 @@ use EE_Form_Section_HTML;
 use EE_Select_Input;
 use EE_Checkbox_Multi_Input;
 use EED_PayPalOnboard;
+use EEH_Array;
 use EEH_HTML;
 use EventEspresso\PaymentMethods\PayPalCommerce\domain\Domain;
 use EventEspresso\PaymentMethods\PayPalCommerce\tools\extra_meta\PayPalExtraMetaManager;
@@ -53,19 +54,29 @@ class SettingsForm extends EE_Payment_Method_Form
         $form_parameters      = [];
         $this->payment_method = $payment_method;
         $this->pm_instance    = $pm_instance;
-        // Allow Advanced Card Checkout if PPCP checkout type was possible and selected.
+        // Allow Advanced Card Checkout if PPCP checkout type was possible and selected when onboarding.
         $allowed_type = PayPalExtraMetaManager::getPmOption($pm_instance, Domain::META_KEY_ALLOWED_CHECKOUT_TYPE);
         $is_onboard   = EED_PayPalOnboard::isOnboard($pm_instance);
-        if ($is_onboard && ($allowed_type === 'ppcp' || $allowed_type === 'all')) {
-            $form_parameters = $this->addCheckoutTypeSelect($form_parameters);
-            $form_parameters = $this->addFundingOptions($form_parameters);
+        if ($is_onboard) {
+            if ($allowed_type === 'ppcp' || $allowed_type === 'all') {
+                $form_parameters = $this->addCheckoutTypeSelect($form_parameters);
+            }
+            // If the checkout type is currently set to ACDC only, don't add funding options
+            if ($pm_instance->get_extra_meta(Domain::META_KEY_CHECKOUT_TYPE, true) !== 'ppcp') {
+                $form_parameters = $this->addFundingOptions($form_parameters);
+            }
         }
         // Build the PM form.
         parent::__construct($form_parameters);
         // Add a form for PayPal Onboard.
         $this->addOnboardingForm($payment_method, $pm_instance);
         // Add a form for PayPal Onboard.
-        $this->addFeesNotice();
+        add_filter(
+            'FHEE__Payments_Admin_Page___generate_payment_method_settings_form__form_subsections',
+            [__CLASS__, 'addFeesNotice'],
+            10,
+            2
+        );
         // Add the clear data button.
         $this->clearMetadataButton($pm_instance);
         // Disable inputs if needed.
@@ -100,53 +111,52 @@ class SettingsForm extends EE_Payment_Method_Form
     /**
      * Add fees notice.
      *
-     * @return void
+     * @param array             $subsections
+     * @param EE_Payment_Method $payment_method
+     * @return array
      */
-    public function addFeesNotice(): void
+    public static function addFeesNotice(array $subsections, EE_Payment_Method $payment_method): array
     {
         if (defined('EE_PPC_USE_PAYMENT_FEES') && ! EE_PPC_USE_PAYMENT_FEES) {
             // We want to be able to disable fees.
-            return;
+            return $subsections;
         }
-        try {
-            $this->add_subsections(
-                [
-                    'partner_fees_notice' => new EE_Form_Section_HTML(
-                        EEH_HTML::tr(
-                            EEH_HTML::th()
-                            . EEH_HTML::thx()
-                            . EEH_HTML::td(
-                                EEH_HTML::div(
-                                    EEH_HTML::strong(
-                                        esc_html__(
-                                            'PayPal Partner Commission Fees are based upon the status of your Support License:',
-                                            'event_espresso'
-                                        )
-                                    )
-                                    . EEH_HTML::ul()
-                                    . EEH_HTML::li(
-                                        esc_html__('- Active licenses commission fees: 0%', 'event_espresso')
-                                    )
-                                    . EEH_HTML::li(
-                                        esc_html__('- Expired license commission fees: 3%', 'event_espresso')
-                                    )
-                                    . EEH_HTML::ulx()
-                                    . esc_html__(
-                                        'Keep your support license active for: lower fees, up-to-date software and have access to our support team. By connecting and processing payments you agree to these terms.',
+        return EEH_Array::insert_into_array(
+            $subsections,
+            [
+                'partner_fees_notice' => new EE_Form_Section_HTML(
+                    EEH_HTML::tr(
+                        EEH_HTML::th()
+                        . EEH_HTML::thx()
+                        . EEH_HTML::td(
+                            EEH_HTML::div(
+                                EEH_HTML::strong(
+                                    esc_html__(
+                                        'PayPal Partner Commission Fees are based upon the status of your Support License:',
                                         'event_espresso'
-                                    ),
-                                    '',
-                                    'ee-status-outline ee-status-bg--info'
+                                    )
                                 )
+                                . EEH_HTML::ul()
+                                . EEH_HTML::li(
+                                    esc_html__('- Active licenses commission fees: 0%', 'event_espresso')
+                                )
+                                . EEH_HTML::li(
+                                    esc_html__('- Expired license commission fees: 3%', 'event_espresso')
+                                )
+                                . EEH_HTML::ulx()
+                                . esc_html__(
+                                    'Keep your support license active for: lower fees, up-to-date software and have access to our support team. By connecting and processing payments you agree to these terms.',
+                                    'event_espresso'
+                                ),
+                                '',
+                                'ee-status-outline ee-status-bg--info'
                             )
                         )
-                    ),
-                ],
-                'paypal_onboard'
-            );
-        } catch (EE_Error $e) {
-            // Don't add this subsection then.
-        }
+                    )
+                ),
+            ],
+            'fine_print'
+        );
     }
 
 
@@ -160,7 +170,7 @@ class SettingsForm extends EE_Payment_Method_Form
      */
     public function addCheckoutTypeSelect(array $form_parameters): array
     {
-        $pm_slug               = $this->pm_instance->slug();
+        $pm_slug = $this->pm_instance->slug();
         // Section to be displayed if onboard.
         $form_parameters['extra_meta_inputs'][Domain::META_KEY_CHECKOUT_TYPE] = new EE_Select_Input(
             [
@@ -193,7 +203,7 @@ class SettingsForm extends EE_Payment_Method_Form
      */
     public function addFundingOptions(array $form_parameters): array
     {
-        $pm_slug               = $this->pm_instance->slug();
+        $pm_slug = $this->pm_instance->slug();
         // Section to be displayed if onboard.
         $form_parameters['extra_meta_inputs'][Domain::META_KEY_FUNDING_OPTIONS] = new EE_Checkbox_Multi_Input(
             [

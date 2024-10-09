@@ -273,37 +273,29 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
         /*wp_register_script('cpt-autosave', EE_ADMIN_URL . 'assets/ee-cpt-autosave.js', array('ee-serialize-full-array', 'event_editor_js'), EVENT_ESPRESSO_VERSION, TRUE );
         wp_enqueue_script('cpt-autosave');/**/ // todo re-enable when we start doing autosave again in 4.2
 
-        // filter _autosave_containers
-        $containers = apply_filters(
-            'FHEE__EE_Admin_Page_CPT___load_autosave_scripts_styles__containers',
-            $this->_autosave_containers,
-            $this
-        );
-        $containers = apply_filters(
-            'FHEE__EE_Admin_Page_CPT__' . get_class($this) . '___load_autosave_scripts_styles__containers',
-            $containers,
-            $this
+        // todo once we enable autosaves, this needs to be switched to localize with "cpt-autosave"
+        wp_localize_script(
+            'event_editor_js',
+            'EE_AUTOSAVE_IDS',
+            $this->_autosave_containers
         );
 
         wp_localize_script(
             'event_editor_js',
-            'EE_AUTOSAVE_IDS',
-            $containers
-        ); // todo once we enable autosaves, this needs to be switched to localize with "cpt-autosave"
-
-        $unsaved_data_msg = [
-            'eventmsg'     => sprintf(
-                wp_strip_all_tags(
-                    __(
-                        "The changes you made to this %s will be lost if you navigate away from this page.",
-                        'event_espresso'
-                    )
+            'UNSAVED_DATA_MSG',
+            [
+                'eventMsg'     => sprintf(
+                    wp_strip_all_tags(
+                        __(
+                            "The changes you made to this %s will be lost if you navigate away from this page.",
+                            'event_espresso'
+                        )
+                    ),
+                    $this->_cpt_object->labels->singular_name
                 ),
-                $this->_cpt_object->labels->singular_name
-            ),
-            'inputChanged' => 0,
-        ];
-        wp_localize_script('event_editor_js', 'UNSAVED_DATA_MSG', $unsaved_data_msg);
+                'inputChanged' => 0,
+            ]
+        );
     }
 
 

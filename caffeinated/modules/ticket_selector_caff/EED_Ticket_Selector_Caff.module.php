@@ -37,11 +37,12 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
     {
         add_action(
             'AHEE__ticket_selector_chart_template__ticket_details__after_description',
-            array('EED_Ticket_Selector_Caff', 'ticket_price_details'),
+            ['EED_Ticket_Selector_Caff', 'ticket_price_details'],
             10,
             3
         );
     }
+
 
     /**
      *    set_hooks_admin - for hooking into EE Admin Core, other modules, etc
@@ -57,11 +58,11 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
         );
         add_action(
             'AHEE__template_settings__template__before_settings_form',
-            array('EED_Ticket_Selector_Caff', 'template_settings_form')
+            ['EED_Ticket_Selector_Caff', 'template_settings_form']
         );
         add_filter(
             'FHEE__General_Settings_Admin_Page__update_template_settings__data',
-            array('EED_Ticket_Selector_Caff', 'update_template_settings'),
+            ['EED_Ticket_Selector_Caff', 'update_template_settings'],
             10,
             2
         );
@@ -97,21 +98,21 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
     public static function _ticket_selector_settings_form(): EE_Form_Section_Proper
     {
         return new EE_Form_Section_Proper(
-            array(
+            [
                 'name'            => 'ticket_selector_settings_form',
                 'html_id'         => 'ticket_selector_settings_form',
                 'layout_strategy' => new EE_Div_Per_Section_Layout(),
                 'subsections'     => apply_filters(
                     'FHEE__EED_Ticket_Selector_Caff___ticket_selector_settings_form__form_subsections',
-                    array(
+                    [
                         'appearance_settings_hdr' => new EE_Form_Section_HTML(
                             EEH_HTML::br(2) .
                             EEH_HTML::h2(esc_html__('Ticket Selector Template Settings', 'event_espresso'))
                         ),
                         'appearance_settings'     => EED_Ticket_Selector_Caff::_ticket_selector_appearance_settings(),
-                    )
+                    ]
                 ),
-            )
+            ]
         );
     }
 
@@ -137,16 +138,85 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
         $datetime_selector_threshold = $EE_Ticket_Selector_Config->getDatetimeSelectorThreshold();
 
         return new EE_Form_Section_Proper(
-            array(
+            [
                 'name'            => 'ticket_selector_settings_tbl',
                 'html_id'         => 'ticket_selector_settings_tbl',
                 'html_class'      => 'form-table',
                 'layout_strategy' => new EE_Admin_Two_Column_Layout(),
                 'subsections'     => apply_filters(
                     'FHEE__EED_Ticket_Selector_Caff___ticket_selector_appearance_settings__form_subsections',
-                    array(
-                        'show_ticket_details'         => new EE_Yes_No_Input(
-                            array(
+                    [
+                        'use_new_checkbox_selector' => new EE_Switch_Input(
+                            [
+                                'html_label_text' => esc_html__('Use New Checkbox Selector', 'event_espresso'),
+                                'default'        => $EE_Ticket_Selector_Config->useNewCheckboxSelector()
+                                    ? EE_Switch_Input::OPTION_ON
+                                    : EE_Switch_Input::OPTION_OFF,
+                                'html_name'      => 'use_new_checkbox_selector',
+                                'html_help_text' => esc_html__(
+                                    'Whether to display a a checkbox in the ticket selector when the max qty for a ticket is set to 1, meaning only one of that ticket can be purchased at a time. Defaults to off.',
+                                    'event_espresso'
+                                ),
+                                'layout_container_class' => 'ee-feature-highlight-2024',
+                                'extra_container_html' => '<span class="ee-feature-highlight-2024-notice">✨ ' . esc_html__('NEW','event_espresso') . '</span>',
+                            ],
+                            [
+                                EE_Switch_Input::OPTION_OFF => esc_html__(
+                                    esc_html__('new checkbox selector will NOT be used', 'event_espresso'),
+                                    'event_espresso'
+                                ),
+                                EE_Switch_Input::OPTION_ON  => esc_html__(
+                                    esc_html__('new checkbox selector WILL be used', 'event_espresso'),
+                                    'event_espresso'
+                                ),
+                            ]
+                        ),
+                        'use_new_form_styles' => new EE_Switch_Input(
+                            [
+                                'html_label_text' => esc_html__('Use New Ticket Selector Form Styles', 'event_espresso'),
+                                'default'        => $EE_Ticket_Selector_Config->useNewFormStyles()
+                                    ? EE_Switch_Input::OPTION_ON
+                                    : EE_Switch_Input::OPTION_OFF,
+                                'html_name'      => 'use_new_form_styles',
+                                'html_help_text' => esc_html__(
+                                    'Whether to use new form styles for the ticket selector inputs and submit button. Defaults to off.',
+                                    'event_espresso'
+                                ),
+                                'layout_container_class' => 'ee-feature-highlight-2024',
+                                'extra_container_html' => '<span class="ee-feature-highlight-2024-notice">✨ ' . esc_html__('NEW','event_espresso') . '</span>',
+                            ],
+                            [
+                                EE_Switch_Input::OPTION_OFF => esc_html__(
+                                    esc_html__('new form styles will NOT be used', 'event_espresso'),
+                                    'event_espresso'
+                                ),
+                                EE_Switch_Input::OPTION_ON  => esc_html__(
+                                    esc_html__('new form styles WILL be used', 'event_espresso'),
+                                    'event_espresso'
+                                ),
+                            ]
+                        ),
+                        'accent_color' => new EE_Text_Input(
+                            [
+                                'html_label_text' => esc_html__('Accent Color', 'event_espresso'),
+                                'html_help_text'  => sprintf(
+                                    esc_html__(
+                                        'Enter a hex color code to use as the accent color for the ticket selector form. Defaults to a bright blue.%1$sPRO TIP: choosing colors nearest the top right corner of the color picker tool will work best!%2$s',
+                                        'event_espresso'
+                                    ),
+                                    '<br><strong>',
+                                    '</strong>'
+                                ),
+                                'html_name'       => 'accent_color',
+                                'html_class'      => 'ee-input-width--tiny',
+                                'default'         => $EE_Ticket_Selector_Config->accentColorAsHex(),
+                                'layout_container_class' => 'ee-feature-highlight-2024',
+                                'extra_container_html' => '<span class="ee-feature-highlight-2024-notice">✨ ' . esc_html__('NEW','event_espresso') . '</span>',
+                            ],
+                            'color'
+                        ),
+                        'show_ticket_details'           => new EE_Yes_No_Input(
+                            [
                                 'html_label_text'         => esc_html__(
                                     'Show Ticket Details?',
                                     'event_espresso'
@@ -157,10 +227,10 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
                                 ),
                                 'default'                 => $EE_Ticket_Selector_Config->show_ticket_details ?? true,
                                 'display_html_label_text' => false,
-                            )
+                            ]
                         ),
-                        'show_ticket_sale_columns'    => new EE_Yes_No_Input(
-                            array(
+                        'show_ticket_sale_columns'      => new EE_Yes_No_Input(
+                            [
                                 'html_label_text'         => esc_html__(
                                     'Show Ticket Sale Info?',
                                     'event_espresso'
@@ -171,10 +241,10 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
                                 ),
                                 'default'                 => $EE_Ticket_Selector_Config->show_ticket_sale_columns ?? true,
                                 'display_html_label_text' => false,
-                            )
+                            ]
                         ),
-                        'show_expired_tickets'        => new EE_Yes_No_Input(
-                            array(
+                        'show_expired_tickets'          => new EE_Yes_No_Input(
+                            [
                                 'html_label_text'         => esc_html__(
                                     'Show Expired Tickets?',
                                     'event_espresso'
@@ -185,11 +255,11 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
                                 ),
                                 'default'                 => $EE_Ticket_Selector_Config->show_expired_tickets ?? true,
                                 'display_html_label_text' => false,
-                            )
+                            ]
                         ),
-                        'show_datetime_selector'      => new EE_Select_Input(
+                        'show_datetime_selector'        => new EE_Select_Input(
                             $EE_Ticket_Selector_Config->getShowDatetimeSelectorOptions(false),
-                            array(
+                            [
                                 'html_label_text'         => esc_html__(
                                     'Show Date & Time Filter?',
                                     'event_espresso'
@@ -208,11 +278,11 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
                                     : EE_Ticket_Selector_Config::DO_NOT_SHOW_DATETIME_SELECTOR,
                                 'display_html_label_text' => false,
                                 'html_class'              => 'ee-input-width--reg',
-                            )
+                            ]
                         ),
-                        'datetime_selector_threshold' => new EE_Select_Input(
+                        'datetime_selector_threshold'   => new EE_Select_Input(
                             array_combine($r = range(1, 10), $r),
-                            array(
+                            [
                                 'html_label_text'         => esc_html__(
                                     'Date & Time Filter Threshold',
                                     'event_espresso'
@@ -226,10 +296,10 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
                                     : 3,
                                 'display_html_label_text' => false,
                                 'html_class'              => 'ee-input-width--tiny',
-                            )
+                            ]
                         ),
                         'datetime_selector_max_checked' => new EE_Integer_Input(
-                            array(
+                            [
                                 'html_label_text'         => esc_html__(
                                     'Date & Time Filter Max Checked',
                                     'event_espresso'
@@ -241,15 +311,16 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
                                     ),
                                     '<br>'
                                 ),
-                                'default'                 => $EE_Ticket_Selector_Config->getDatetimeSelectorMaxChecked(),
+                                'default'                 => $EE_Ticket_Selector_Config->getDatetimeSelectorMaxChecked(
+                                ),
                                 'display_html_label_text' => false,
                                 'min_value'               => 0,
                                 'html_class'              => 'ee-input-width--tiny',
-                            )
+                            ]
                         ),
-                    )
+                    ]
                 ),
-            )
+            ]
         );
     }
 
@@ -265,7 +336,7 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
      * @throws ReflectionException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
-     *@since 4.6.18.rc.006
+     * @since 4.6.18.rc.006
      */
     public static function update_template_settings(EE_Template_Config $CFG, array $REQ): EE_Template_Config
     {
@@ -292,17 +363,30 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
                     $valid_data = $ticket_selector_form->valid_data();
 
                     // set data on config
-                    $CFG->EED_Ticket_Selector->show_ticket_sale_columns = $valid_data['appearance_settings']['show_ticket_sale_columns'];
-                    $CFG->EED_Ticket_Selector->show_ticket_details = $valid_data['appearance_settings']['show_ticket_details'];
-                    $CFG->EED_Ticket_Selector->show_expired_tickets = $valid_data['appearance_settings']['show_expired_tickets'];
+                    $CFG->EED_Ticket_Selector->show_ticket_sale_columns =
+                        $valid_data['appearance_settings']['show_ticket_sale_columns'] ?? false;
+                    $CFG->EED_Ticket_Selector->show_ticket_details      =
+                        $valid_data['appearance_settings']['show_ticket_details'] ?? false;
+                    $CFG->EED_Ticket_Selector->show_expired_tickets     =
+                        $valid_data['appearance_settings']['show_expired_tickets'] ?? false;
                     $CFG->EED_Ticket_Selector->setShowDatetimeSelector(
                         $valid_data['appearance_settings']['show_datetime_selector']
+                            ?? EE_Ticket_Selector_Config::DO_NOT_SHOW_DATETIME_SELECTOR
                     );
                     $CFG->EED_Ticket_Selector->setDatetimeSelectorThreshold(
-                        $valid_data['appearance_settings']['datetime_selector_threshold']
+                        $valid_data['appearance_settings']['datetime_selector_threshold'] ?? 3
                     );
                     $CFG->EED_Ticket_Selector->setDatetimeSelectorMaxChecked(
-                        $valid_data['appearance_settings']['datetime_selector_max_checked']
+                        $valid_data['appearance_settings']['datetime_selector_max_checked'] ?? 10
+                    );
+                    $CFG->EED_Ticket_Selector->setUseNewCheckboxSelector(
+                        $valid_data['appearance_settings']['use_new_checkbox_selector'] ?? false
+                    );
+                    $CFG->EED_Ticket_Selector->setUseNewFormStyles(
+                        $valid_data['appearance_settings']['use_new_form_styles'] ?? false
+                    );
+                    $CFG->EED_Ticket_Selector->setAccentColorHex(
+                        $valid_data['appearance_settings']['accent_color'] ?? '#0080FF'
                     );
                 } else {
                     if ($ticket_selector_form->submission_error_message() !== '') {
@@ -328,9 +412,12 @@ class EED_Ticket_Selector_Caff extends EED_Ticket_Selector
      * @param float     $ticket_price
      * @param bool      $display_ticket_price
      */
-    public static function ticket_price_details(EE_Ticket $ticket, float $ticket_price = 0, bool $display_ticket_price = false)
-    {
+    public static function ticket_price_details(
+        EE_Ticket $ticket,
+        float $ticket_price = 0.0,
+        bool $display_ticket_price = false
+    ) {
         require str_replace('\\', '/', plugin_dir_path(__FILE__))
-                . 'templates/ticket_selector_price_details.template.php';
+            . 'templates/ticket_selector_price_details.template.php';
     }
 }

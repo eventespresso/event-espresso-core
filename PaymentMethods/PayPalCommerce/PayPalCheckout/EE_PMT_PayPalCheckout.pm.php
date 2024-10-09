@@ -156,46 +156,4 @@ class EE_PMT_PayPalCheckout extends EE_PMT_Base
         );
         echo $html;
     }
-
-
-    /**
-     * Override the parent.
-     *
-     * @param EE_Transaction            $transaction
-     * @param float|null                $amount
-     * @param EE_Billing_Info_Form|null $billing_info
-     * @param string|null               $return_url
-     * @param string                    $fail_url
-     * @param string                    $method
-     * @param bool                      $by_admin
-     * @return EE_Payment
-     * @throws EE_Error
-     * @throws ReflectionException
-     */
-    public function process_payment(
-        EE_Transaction $transaction,
-        $amount = null,
-        $billing_info = null,
-        $return_url = null,
-        $fail_url = '',
-        $method = 'CART',
-        $by_admin = false
-    ): EE_Payment {
-        // This payment should have been processed in the background, while the Order was created and charged.
-        // So simply return the last payment. Unless it's somehow missing.
-        $payment = $transaction->last_payment();
-        if (empty($payment) || $payment->status() === EEM_Payment::status_id_failed) {
-            // Then we try processing the payment as usual.
-            return parent::process_payment(
-                $transaction,
-                $amount,
-                $billing_info,
-                $return_url,
-                $fail_url,
-                $method,
-                $by_admin
-            );
-        }
-        return $transaction->last_payment();
-    }
 }

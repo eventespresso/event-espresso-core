@@ -120,7 +120,11 @@ class Manager
      */
     public static function hidePaymentMethods(array $pms_to_list): array
     {
-        foreach (self::$pms_can_hide as $pm_name => $pm_option) {
+        $pms_can_hide = apply_filters(
+            'FHEE__EventEspresso_PaymentMethods_Manager__hidePaymentMethods__pms_can_hide',
+            self::$pms_can_hide
+        );
+        foreach ($pms_can_hide as $pm_name => $pm_option) {
             // Can we deregister this PM ?
             if (isset($pms_to_list[ $pm_name ]) && self::pmCanBeHidden($pm_name, $pm_option)) {
                 unset($pms_to_list[ $pm_name ]);
@@ -204,16 +208,20 @@ class Manager
      */
     public static function usePayPalCommerceNotice()
     {
-        echo '<div class="error"><p>'
-         . sprintf(
-             esc_html__(
-                 'We recommend using our latest PayPal integration - %1$sPayPal Commerce%2$s payment method in place of PayPal Standard, PayPal Express and PayPal Pro.',
-                 'event_espresso'
-             ),
-             '<strong>',
-             '</strong>'
-         )
-         . '</p></div>';
+        echo '
+        <div class="notice ee-status-outline ee-status-outline--ok ee-status-bg--ok">
+            <p class="big-text">
+                <span class="dashicons dashicons-info"></span> &nbsp; '
+                 . sprintf(
+                     esc_html__(
+                         'We recommend using our latest PayPal integration - %1$sPayPal Commerce%2$s payment method in place of PayPal Standard, PayPal Express and PayPal Pro.',
+                         'event_espresso'
+                     ),
+                     '<strong>',
+                     '</strong>'
+                 ) . '
+            </p>
+        </div>';
     }
 
 

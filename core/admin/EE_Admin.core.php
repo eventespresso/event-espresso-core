@@ -233,23 +233,26 @@ final class EE_Admin implements InterminableInterface
      *
      * @return void
      * @throws EE_Error
+     * @throws ReflectionException
      * @since 4.9.63.p
      */
     protected function initModelsReady()
     {
+        $page = $this->request->getRequestParam('page', '');
         // ok so we want to enable the entire admin
-        $this->persistent_admin_notice_manager = $this->loader->getShared(
-            'EventEspresso\core\services\notifications\PersistentAdminNoticeManager'
-        );
+        $this->persistent_admin_notice_manager = $this->loader->getShared(PersistentAdminNoticeManager::class);
         $this->persistent_admin_notice_manager->setReturnUrl(
             EE_Admin_Page::add_query_args_and_nonce(
                 [
-                    'page'   => $this->request->getRequestParam('page', ''),
+                    'page'   => $page,
                     'action' => $this->request->getRequestParam('action', ''),
                 ],
                 EE_ADMIN_URL
             )
         );
+        if ($page === 'pricing' || strpos($page, 'espresso') !== false) {
+            $this->persistent_admin_notice_manager->loadAdminNotices();
+        }
         $this->maybeSetDatetimeWarningNotice();
         // at a glance dashboard widget
         add_filter('dashboard_glance_items', [$this, 'dashboard_glance_items']);

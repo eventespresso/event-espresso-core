@@ -209,13 +209,13 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      */
     public function __construct($routing = true)
     {
+        $this->_routing = $routing;
+
         $this->loader       = LoaderFactory::getLoader();
         $this->admin_config = $this->loader->getShared(EE_Admin_Config::class);
         $this->feature      = $this->loader->getShared(FeatureFlags::class);
         $this->request      = $this->loader->getShared(RequestInterface::class);
         $this->capabilities = $this->loader->getShared(EE_Capabilities::class);
-        // routing enabled?
-        $this->_routing = $routing;
 
         $this->class_name      = get_class($this);
         $this->base_class_name = strpos($this->class_name, 'Extend_') === 0
@@ -1986,7 +1986,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         } //not a list_table view so get out.
         // list table functions are per view specific (because some admin pages might have more than one list table!)
         $list_table_view = '_set_list_table_views_' . $this->_req_action;
-        if (! method_exists($this, $list_table_view) || $this->{$list_table_view}() === false) {
+        if (! method_exists($this, $list_table_view)) {
             // user error msg
             $error_msg = esc_html__(
                 'An error occurred. The requested list table views could not be found.',
@@ -2004,6 +2004,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                           );
             throw new EE_Error($error_msg);
         }
+        $this->{$list_table_view}();
         // let's provide the ability to filter the views per PAGE AND ROUTE, per PAGE, and globally
         $this->_views = apply_filters(
             'FHEE_list_table_views_' . $this->page_slug . '_' . $this->_req_action,
@@ -2082,14 +2083,18 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
             $extra_query_args,
             $this
         );
+        $action_nonce = "{$this->_req_action}_nonce";
+        $nonce = wp_create_nonce($action_nonce);
         // cycle thru views
         foreach ($this->_views as $key => $view) {
             $query_args = [];
+            if ( ! isset($this->_views[ $key ]['class'])) {
+                $this->_views[ $key ]['class'] = '';
+            }
             // check for current view
-            $this->_views[ $key ]['class'] = $this->_view === $view['slug'] ? 'current' : '';
+            $this->_views[ $key ]['class'] .= $this->_view === $view['slug'] ? ' current' : '';
             $query_args['action']          = $this->_req_action;
-            $action_nonce                  = "{$this->_req_action}_nonce";
-            $query_args[ $action_nonce ]   = wp_create_nonce($action_nonce);
+            $query_args[ $action_nonce ]   = $nonce;
             $query_args['status']          = $view['slug'];
             // merge any other arguments sent in.
             if (isset($extra_query_args[ $view['slug'] ])) {
@@ -3235,7 +3240,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      *
      * @param array  $input_vars - array of input field details
      * @param string $generator  indicates which generator to use: options are 'string' or 'array'
-     * @param bool   $id
+     * @param string $id
      * @return array|string
      * @uses   EEH_Form_Fields::get_form_fields (/helper/EEH_Form_Fields.helper.php)
      * @uses   EEH_Form_Fields::get_form_fields_array (/helper/EEH_Form_Fields.helper.php)
@@ -3243,7 +3248,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
     protected function _generate_admin_form_fields(
         array $input_vars = [],
         string $generator = 'string',
-        bool $id = false
+        string $id = ''
     ) {
         return $generator === 'string'
             ? EEH_Form_Fields::get_form_fields($input_vars, $id)
@@ -4016,6 +4021,8 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @param string                   $func function  where error occurred
      * @param string                   $line line no where error occurred
      * @return bool
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _update_espresso_configuration(
         string $tab,

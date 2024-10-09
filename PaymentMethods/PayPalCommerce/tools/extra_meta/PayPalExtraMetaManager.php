@@ -289,27 +289,31 @@ class PayPalExtraMetaManager
      *
      * @param EE_Payment_Method $paypal_pm
      * @param array             $data
+     * @param array             $get_params
      * @return bool
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public static function parseAndSaveOptions(EE_Payment_Method $paypal_pm, array $data): bool
+    public static function parseAndSaveOptions(EE_Payment_Method $paypal_pm, array $data, array $get_params): bool
     {
         $allowed_checkout_type = 'express_checkout';
-        // Note, although PayPal shows that this should include PPCP_CUSTOM or EXPRESS_CHECKOUT only,
-        // in reality, it will also include other products like MOBILE_PAYMENT_ACCEPTANCE etc.
-        if (! empty($data['response']['products'][0]['name'])) {
-            foreach ($data['response']['products'] as $product) {
-                if (str_contains($product['name'], 'PPCP')) {
-                    // This merchant has PPCP in the products list, so we can enable both (all) checkout types.
-                    $allowed_checkout_type = 'all';
-                    break;
+        // Did the merchant onboard with PPCP enabled or no.
+        if (! empty($get_params['selected_payment']) && $get_params['selected_payment'] === 'PPCP') {
+            // Make sure that merchant's account really supports advanced card fields (included in the PPCP scope).
+            // Has to include "PPCP_CUSTOM" product for ACDC support. "EXPRESS_CHECKOUT" otherwise.
+            if (! empty($data['response']['products'][0]['name'])) {
+                foreach ($data['response']['products'] as $product) {
+                    if ($product['name'] === 'PPCP_CUSTOM') {
+                        // This merchant has PPCP in the products list, so we can enable both (all supported) checkout types.
+                        $allowed_checkout_type = 'all';
+                        break;
+                    }
                 }
             }
         }
-        // Set the Checkout type (a PM option), just in case merchant doesn't save PM options manually.
-        $checkout_type = $paypal_pm->get_extra_meta(Domain::META_KEY_CHECKOUT_TYPE, true, false);
-        if (! $checkout_type) {
+        // Set the PM option Checkout type, just in case merchant doesn't save PM options manually.
+        $checkout_type_setting = $paypal_pm->get_extra_meta(Domain::META_KEY_CHECKOUT_TYPE, true, false);
+        if (! $checkout_type_setting || $checkout_type_setting !== $allowed_checkout_type) {
             $paypal_pm->update_extra_meta(Domain::META_KEY_CHECKOUT_TYPE, $allowed_checkout_type);
         }
         // Save the scopes that were authorized.

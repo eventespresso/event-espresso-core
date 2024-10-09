@@ -17,7 +17,6 @@ use EE_Template_Layout;
 use EE_Text_Input;
 use EE_Transaction;
 use EED_PayPalCommerce;
-use EEG_PayPalCheckout;
 use EEH_HTML;
 use EEM_Payment_Method;
 use EventEspresso\core\services\loaders\LoaderFactory;
@@ -66,7 +65,11 @@ class BillingForm extends EE_Billing_Attendee_Info_Form
         // Can't be too careful.
         $this->transaction   = $options['transaction'] ?? null;
         $this->template_path = $options['template_path'] ?? '';
-        $this->checkout_type = $payment_method->get_extra_meta(Domain::META_KEY_CHECKOUT_TYPE, true, '');
+        $this->checkout_type = $payment_method->get_extra_meta(
+            Domain::META_KEY_CHECKOUT_TYPE,
+            true,
+            'express_checkout'
+        );
         $pm_slug             = $payment_method->slug();
         $parameters          = array_replace_recursive(
             $options,
@@ -103,13 +106,6 @@ class BillingForm extends EE_Billing_Attendee_Info_Form
                             'default'   => '',
                         ]
                     ),
-                    'pp_order_amount'           => new EE_Hidden_Input(
-                        [
-                            'html_id'   => 'eea-' . $pm_slug . '-order-amount',
-                            'html_name' => 'pp_order_amount',
-                            'default'   => '',
-                        ]
-                    ),
                 ],
             ]
         );
@@ -141,7 +137,7 @@ class BillingForm extends EE_Billing_Attendee_Info_Form
             ]
         );
         // Add PayPal Hosted Fields.
-        if ($this->checkout_type !== 'express_checkout') {
+        if (! empty($this->checkout_type) && $this->checkout_type !== 'express_checkout') {
             $this->addAdvancedCardFields();
         }
         // Add payment types separator, if both are enabled.

@@ -47,30 +47,15 @@ class ProcessTicketSelectorPostData
     const INPUT_KEY_RETURN_URL   = 'tkt-slctr-return-url-';
 
 
-    /**
-     * @var int
-     */
-    protected $event_id;
+    protected EEM_Event $event_model;
 
-    /**
-     * @var EEM_Event
-     */
-    protected $event_model;
+    protected RequestInterface $request;
 
-    /**
-     * @var array
-     */
-    protected $inputs_to_clean = [];
+    protected ?int $event_id = null;
 
-    /**
-     * @var array
-     */
-    protected $valid_data = [];
+    protected array $inputs_to_clean = [];
 
-    /**
-     * @var RequestInterface
-     */
-    protected $request;
+    protected array $valid_data = [];
 
 
     /**
@@ -145,7 +130,7 @@ class ProcessTicketSelectorPostData
     {
         // grab valid id
         $this->valid_data[ self::DATA_KEY_EVENT_ID ] = $this->getEventId();
-        // let's track the total number of tickets ordered.'
+        // let's track the total number of tickets ordered.
         $this->valid_data[ self:: DATA_KEY_TOTAL_TICKETS ] = 0;
         // cycle through $inputs_to_clean array
         foreach ($this->inputs_to_clean as $what => $input_to_clean) {

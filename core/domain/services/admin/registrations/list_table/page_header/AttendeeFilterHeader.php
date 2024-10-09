@@ -8,6 +8,7 @@ use EE_Error;
 use EEM_Attendee;
 use EventEspresso\core\services\admin\AdminPageHeaderDecorator;
 use EventEspresso\core\services\request\RequestInterface;
+use ReflectionException;
 
 /**
  * Class AttendeeFilterHeader
@@ -19,10 +20,7 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 class AttendeeFilterHeader extends AdminPageHeaderDecorator
 {
-    /**
-     * @var EEM_Attendee $attendee_model
-     */
-    private $attendee_model;
+    private EEM_Attendee $attendee_model;
 
 
     /**
@@ -42,9 +40,10 @@ class AttendeeFilterHeader extends AdminPageHeaderDecorator
      * @param string $text
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      * @since 4.10.2.p
      */
-    public function getHeaderText($text = '')
+    public function getHeaderText(string $text = ''): string
     {
         $ATT_ID = $this->request->getRequestParam('ATT_ID');
         $ATT_ID = $this->request->getRequestParam('attendee_id', $ATT_ID, 'int');

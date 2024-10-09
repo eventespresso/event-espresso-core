@@ -79,7 +79,9 @@ jQuery(document).ready(function ($) {
             // PayPal components will require re-setup even if PM already initialized.
             if (this.initialized) {
                 // PayPal buttons or Hosted Fields ?
-                if (eeaPPCommerceParameters.checkout_type !== 'express_checkout') {
+                if (eeaPPCommerceParameters.checkout_type
+                    && eeaPPCommerceParameters.checkout_type !== 'express_checkout'
+                ) {
                     this.setupHostedFields();
                 }
                 if (eeaPPCommerceParameters.checkout_type !== 'ppcp') {
@@ -101,7 +103,7 @@ jQuery(document).ready(function ($) {
          * @return boolean
          */
         this.initializeObjects = function () {
-            this.pp_order_id = this.pp_order_status = this.pp_order_amount = '';
+            this.pp_order_id = this.pp_order_status = '';
             this.pp_order_nonce = eeaPPCommerceParameters.pp_order_nonce;
             this.button_container_id = '#eep-' + pm_slug + '-payment-buttons';
             this.payment_method_selector = $('#ee-available-payment-method-inputs');
@@ -112,7 +114,6 @@ jQuery(document).ready(function ($) {
             this.order_nonce_input = $('#eea-' + pm_slug + '-order-nonce');
             this.order_id_input = $('#eea-' + pm_slug + '-order-id');
             this.order_status_input = $('#eea-' + pm_slug + '-order-status');
-            this.order_amount_input = $('#eea-' + pm_slug + '-order-amount');
             // PP credit card fields
             this.card_input_id = '#' + this.slug + '-card-number';
             this.cvv_input_id = '#' + this.slug + '-cvv';
@@ -125,7 +126,7 @@ jQuery(document).ready(function ($) {
             this.acdc_submit_btn_dv = '#' + this.slug + '-submit-dv';
             // Billing inputs.
             this.bill_address = $('#pp-' + this.slug + '-billing-form-address');
-            this.bill_address_2 = $('#pp-' + this.slug + '-billing-form-address2');
+            this.bill_address2 = $('#pp-' + this.slug + '-billing-form-address2');
             this.bill_city = $('#pp-' + this.slug + '-billing-form-city');
             this.bill_state = $('#pp-' + this.slug + '-billing-form-state');
             this.bill_country = $('#pp-' + this.slug + '-billing-form-country');
@@ -210,7 +211,7 @@ jQuery(document).ready(function ($) {
                 // Finalize the transaction after payer approval
                 onApprove: function (data, actions) {
                     this_pm.hideACDCForm();
-                    return this_pm.captureOrder(data, this_pm.getBillingInfo());
+                    this_pm.completePayment(this_pm.getBillingInfo(), this_pm);
                 },
                 onError: function (error) {
                     console.error(eeaPPCommerceParameters.general_pp_error, error);
@@ -318,8 +319,8 @@ jQuery(document).ready(function ($) {
                 if (form_valid) {
                     const billing_info = this.getBillingInfo();
                     billing_info.card_holder_name = $(this_pm.card_holder_name_input_id).val();
-                    if (! billing_info.address_2) {
-                        billing_info.address_2 = '';
+                    if (! billing_info.address2) {
+                        billing_info.address2 = '';
                     }
                     // Make sure that we don't already have a Complete order. In which case we don't want to make PP re-capture this order.
                     if (this_pm.pp_order_id && this_pm.pp_order_status && this_pm.pp_order_status === 'COMPLETED') {
@@ -328,7 +329,6 @@ jQuery(document).ready(function ($) {
                             pp_order_id: this_pm.pp_order_id,
                             pp_order_nonce: this_pm.pp_order_nonce,
                             pp_order_status: this_pm.pp_order_status,
-                            pp_order_amount: this_pm.pp_order_amount
                         };
                         return this_pm.completePayment(response_data, this_pm);
                     }
@@ -337,14 +337,14 @@ jQuery(document).ready(function ($) {
                         cardholderName: billing_info.card_holder_name,
                         billingAddress: {
                             streetAddress: billing_info.address,
-                            extendedAddress: billing_info.address_2,
+                            extendedAddress: billing_info.address2,
                             region: billing_info.state,
                             locality: billing_info.city,
                             postalCode: billing_info.zip,
                             countryCodeAlpha2: billing_info.country
                         }
                     }).then(function () {
-                        return this_pm.captureOrder([], billing_info);
+                        this_pm.completePayment(billing_info, this_pm);
                     }).catch(function (err) {
                         this_pm.throwError(
                             eeaPPCommerceParameters.pm_capture_error,
@@ -370,13 +370,13 @@ jQuery(document).ready(function ($) {
                     state = eeaPPCommerceParameters.active_states[key];
                 }
             }
-            let bill_address_2 = this.bill_address_2.val();
-            if (!bill_address_2) {
-                bill_address_2 = '';
+            let bill_address2 = this.bill_address2.val();
+            if (!bill_address2) {
+                bill_address2 = '';
             }
             return {
                 address: this.bill_address.val(),
-                address_2: bill_address_2,
+                address2: bill_address2,
                 city: this.bill_city.val(),
                 state: state,
                 state_id: state_id,
@@ -435,51 +435,6 @@ jQuery(document).ready(function ($) {
 
 
         /**
-         * Send a request to the server side to capture the Order through the PayPal API.
-         * @function
-         */
-        this.captureOrder = function (order_data, billing_info) {
-            console.log('function captureOrder()');
-            const this_pm = this;
-            this_pm.spco.do_before_sending_ajax();
-            const request_data = new FormData();
-            let order_id = this.getOrderId();
-            if (typeof order_data.orderID !== 'undefined' && order_data.orderID) {
-                order_id = order_data.orderID;
-            }
-            request_data.append('action', 'eeaPPCCaptureOrder');
-            request_data.append('payment_method', this.slug);
-            request_data.append('txn_id', this_pm.transaction['TXN_ID']);
-            request_data.append('order_id', order_id);
-            request_data.append('billing_info', JSON.stringify(billing_info));
-
-            // Do a request to capture the Order.
-            return fetch(eei18n.ajax_url, {
-                method: 'POST',
-                body: request_data
-            })
-                .then((response) => response.json())
-                .then((response_data) => {
-                    console.log('-- captureOrder response:', response_data);
-                    if (typeof response_data.error !== 'undefined') {
-                        if (response_data.name === 'INSTRUMENT_DECLINED') {
-                            this_pm.clearOrder();
-                        }
-                        let message = eeaPPCommerceParameters.payment_error;
-                        if (response_data.message) message += '\n\n' + response_data.message;
-                        this_pm.throwError(message, response_data, this_pm.slug);
-                        // order_actions.restart();
-                        this_pm.spco.end_ajax();
-                        return [];
-                    }
-                    // All seems to be good if we got here. Submit the form with some order data.
-                    this_pm.saveOrderData(response_data);
-                    return this_pm.completePayment(response_data, this_pm);
-                });
-        };
-
-
-        /**
          * Hide the advanced credit debit card fields.
          * @function
          */
@@ -493,7 +448,7 @@ jQuery(document).ready(function ($) {
             const bill_fields = [
                 $(this.card_holder_name_input_id),
                 this.bill_address,
-                this.bill_address_2,
+                this.bill_address2,
                 this.bill_city,
                 this.bill_state,
                 this.bill_country,
@@ -527,19 +482,16 @@ jQuery(document).ready(function ($) {
             // Check each parameter before setting its value.
             if (typeof order_data.pp_order_id !== 'undefined' && order_data.pp_order_id) {
                 this.pp_order_id = order_data.pp_order_id;
+                this.order_id_input.val(order_data.pp_order_id);
             }
             if (typeof order_data.pp_order_nonce !== 'undefined' && order_data.pp_order_nonce) {
                 this.pp_order_nonce = order_data.pp_order_nonce;
+                this.order_nonce_input.val(order_data.pp_order_nonce);
             }
             if (typeof order_data.pp_order_status !== 'undefined' && order_data.pp_order_status) {
                 this.pp_order_status = order_data.pp_order_status;
                 this.order_status_input.val(order_data.pp_order_status);
             }
-            if (typeof order_data.pp_order_amount !== 'undefined' && order_data.pp_order_amount) {
-                this.pp_order_amount = order_data.pp_order_amount;
-                this.order_amount_input.val(order_data.pp_order_amount);
-            }
-            this.saveOrderInDom();
         };
 
 
@@ -553,9 +505,7 @@ jQuery(document).ready(function ($) {
             // Trigger click event on SPCO "Proceed to Next Step" button.
             this_pm.spco.enable_submit_buttons();
             this_pm.order_nonce_input.parents('form:first').find('.spco-next-step-btn').trigger('click');
-            console.log('-- captureOrder return response_data:', response_data);
             this_pm.spco.end_ajax();
-
             this_pm.spco.main_container.on('spco_process_response', (event, nextStep, response) => {
                 // Disable the spco submit button in case there was an error response.
                 if (! response.success) {
@@ -563,16 +513,6 @@ jQuery(document).ready(function ($) {
                 }
             });
             return response_data
-        };
-
-
-        /**
-         * Get paypal_order_id.
-         * @function
-         */
-        this.saveOrderInDom = function () {
-            this.order_id_input.val(this.pp_order_id);
-            this.order_nonce_input.val(this.pp_order_nonce);
         };
 
 

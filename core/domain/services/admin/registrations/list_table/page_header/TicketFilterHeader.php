@@ -5,11 +5,8 @@ namespace EventEspresso\core\domain\services\admin\registrations\list_table\page
 use EE_Error;
 use EE_Ticket;
 use EEM_Ticket;
-use EventEspresso\core\exceptions\InvalidDataTypeException;
-use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\admin\AdminPageHeaderDecorator;
 use EventEspresso\core\services\request\RequestInterface;
-use InvalidArgumentException;
 use ReflectionException;
 
 /**
@@ -22,10 +19,7 @@ use ReflectionException;
  */
 class TicketFilterHeader extends AdminPageHeaderDecorator
 {
-    /**
-     * @var EEM_Ticket $ticket_model
-     */
-    private $ticket_model;
+    private EEM_Ticket $ticket_model;
 
 
     /**
@@ -45,13 +39,10 @@ class TicketFilterHeader extends AdminPageHeaderDecorator
      * @param string $text
      * @return string
      * @throws EE_Error
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     * @throws InvalidArgumentException
      * @throws ReflectionException
      * @since 4.10.2.p
      */
-    public function getHeaderText($text = '')
+    public function getHeaderText(string $text = ''): string
     {
         $TKT_ID = $this->request->getRequestParam('TKT_ID');
         $TKT_ID = $this->request->getRequestParam('ticket_id', $TKT_ID, 'int');

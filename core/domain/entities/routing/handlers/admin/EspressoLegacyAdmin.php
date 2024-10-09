@@ -6,6 +6,7 @@ use EE_Dependency_Map;
 use EventEspresso\core\domain\services\assets\EspressoLegacyAdminAssetManager;
 use EventEspresso\core\domain\services\assets\JqueryAssetManager;
 use EventEspresso\core\domain\services\assets\LegacyAccountingAssetManager;
+use EventEspresso\core\services\service_changes\ServiceChangesManager;
 
 /**
  * Class EspressoLegacyAdmin
@@ -36,7 +37,7 @@ class EspressoLegacyAdmin extends AdminRoute
         return ($pagenow === 'admin.php' || $pagenow === 'admin-ajax.php')
                && (
                    $page === 'pricing'
-                   || str_contains($page, 'espresso')
+                   || strpos($page, 'espresso') !== false
                    || apply_filters(
                        'FHEE__EspressoLegacyAdmin__matchesCurrentRequest__page',
                        false,
@@ -134,6 +135,13 @@ class EspressoLegacyAdmin extends AdminRoute
                 'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
             ]
         );
+        $this->dependency_map->registerDependencies(
+            ServiceChangesManager::class,
+            [
+                'EE_Dependency_Map'                                   => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\loaders\LoaderInterface' => EE_Dependency_Map::load_from_cache,
+            ]
+        );
     }
 
 
@@ -157,6 +165,7 @@ class EspressoLegacyAdmin extends AdminRoute
         $this->loader->getShared(JqueryAssetManager::class);
         $this->loader->getShared(EspressoLegacyAdminAssetManager::class);
         $this->loader->getShared(LegacyAccountingAssetManager::class);
+        $this->loader->getShared(ServiceChangesManager::class);
         return true;
     }
 }

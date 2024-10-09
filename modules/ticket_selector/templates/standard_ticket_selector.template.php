@@ -18,17 +18,22 @@ use EventEspresso\modules\ticket_selector\TicketDetails;
  * @var string                    $table_header_price
  * @var string                    $table_header_qty
  * @var string                    $ticket_row_html
+ * @var string                    $use_new_form_styles_class
  */
+
 ?>
-<div id="tkt-slctr-tbl-wrap-dv-<?php echo esc_attr($EVT_ID); ?>" class="tkt-slctr-tbl-wrap-dv">
+
+<div id="tkt-slctr-tbl-wrap-dv-<?php esc_attr_e($EVT_ID); ?>"
+     class="tkt-slctr-tbl-wrap-dv<?php esc_attr_e($use_new_form_styles_class); ?>"
+>
 
 <?php do_action('AHEE__ticket_selector_chart__template__before_ticket_selector', $event); ?>
 <?php echo wp_kses($datetime_selector, AllowedTags::getWithFormTags()); ?>
 
-    <table id="tkt-slctr-tbl-<?php echo esc_attr($EVT_ID); ?>" class="tkt-slctr-tbl">
+    <table id="tkt-slctr-tbl-<?php esc_attr_e($EVT_ID); ?>" class="tkt-slctr-tbl">
         <thead>
         <tr>
-            <th id="details-<?php echo esc_attr($EVT_ID); ?>" scope="col" class="ee-ticket-selector-ticket-details-th">
+            <th id="details-<?php esc_attr_e($EVT_ID); ?>" scope="col" class="ee-ticket-selector-ticket-details-th">
                 <?php
                 echo apply_filters(
                     'FHEE__ticket_selector_chart_template__table_header_available_tickets',
@@ -38,12 +43,12 @@ use EventEspresso\modules\ticket_selector\TicketDetails;
                 ?>
             </th>
             <?php if (apply_filters('FHEE__ticket_selector_chart_template__display_ticket_price_details', true)) { ?>
-                <th id="price-<?php echo esc_attr($EVT_ID); ?>" scope="col" class="ee-ticket-selector-ticket-price-th
+                <th id="price-<?php esc_attr_e($EVT_ID); ?>" scope="col" class="ee-ticket-selector-ticket-price-th
                  cntr">
                     <?php echo $table_header_price; ?>
                 </th>
             <?php } ?>
-            <th id="quantity-<?php echo esc_attr($EVT_ID); ?>" scope="col" class="ee-ticket-selector-ticket-qty-th cntr">
+            <th id="quantity-<?php esc_attr_e($EVT_ID); ?>" scope="col" class="ee-ticket-selector-ticket-qty-th cntr">
                 <?php echo $table_header_qty; ?>
             </th>
         </tr>

@@ -9,7 +9,7 @@ use GlobIterator;
 
 /**
  * Class FileLocator
- * finds filepaths from folder paths or FQCNs (Fully Qualified Class Name) from partial FQCNs
+ * Finds filepaths from folder paths
  *
  * @package       Event Espresso
  * @author        Brent Christensen
