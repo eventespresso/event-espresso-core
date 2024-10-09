@@ -210,7 +210,7 @@ class Iframe
      * @param string $styles The CSS styles to be added inline.
      * @param bool   $before Optional. Whether to print the styles before the stylesheet. Default true.
      * @return void
-     * @since $VID:$
+     * @since 5.0.28.p
      */
     public function addInlineStyles(string $handle, string $styles, bool $before = true): void
     {

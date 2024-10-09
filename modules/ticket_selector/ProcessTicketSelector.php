@@ -312,7 +312,7 @@ class ProcessTicketSelector
     /**
      * @param EE_Ticket|null $ticket
      * @return bool
-     * @since $VID:$
+     * @since 5.0.28.p
      */
     private function isValidTicket(?EE_Ticket $ticket): bool
     {
@@ -341,7 +341,7 @@ class ProcessTicketSelector
      * @return bool
      * @throws EE_Error
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 5.0.28.p
      */
     private function ticketAvailableForPurchase(EE_Ticket $ticket, bool $current_user_is_admin): bool
     {
@@ -413,7 +413,7 @@ class ProcessTicketSelector
      * @return bool
      * @throws EE_Error
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 5.0.28.p
      */
     private function ticketMaxQtyAlreadyReached(EE_Ticket $ticket, int $qty): bool
     {

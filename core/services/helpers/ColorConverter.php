@@ -9,7 +9,7 @@ namespace EventEspresso\core\services\helpers;
  * @package     Event Espresso
  * @subpackage  EventEspresso\core\services\helpers
  * @author      The Interweb
- * @since       $VID:$
+ * @since       5.0.28.p
  */
 class ColorConverter
 {

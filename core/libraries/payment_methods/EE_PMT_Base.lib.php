@@ -414,7 +414,7 @@ abstract class EE_PMT_Base
      * @return EE_Payment|null
      * @throws EE_Error
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 5.0.28.p
      */
     private function getLastPayment(EE_Transaction $transaction, float $amount, string $method): ?EE_Payment
     {
@@ -445,7 +445,7 @@ abstract class EE_PMT_Base
      * @return EE_Payment
      * @throws EE_Error
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 5.0.28.p
      */
     private function validatePayment(
         EE_Transaction $transaction,
@@ -487,7 +487,7 @@ abstract class EE_PMT_Base
      * @return int
      * @throws EE_Error
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 5.0.28.p
      */
     private function getPreviousPaymentCount(EE_Transaction $transaction, float $amount, string $method): int
     {
@@ -523,7 +523,7 @@ abstract class EE_PMT_Base
      * @return EE_Payment
      * @throws EE_Error
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 5.0.28.p
      */
     private function passPaymentToGateway(
         EE_Payment $payment,

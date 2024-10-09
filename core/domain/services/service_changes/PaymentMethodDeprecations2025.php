@@ -22,7 +22,7 @@ use ReflectionException;
  * @package     Event Espresso
  * @subpackage  EventEspresso\core\domain\services\notifications
  * @author      Brent Christensen
- * @since       $VID:$
+ * @since       5.0.28.p
  */
 class PaymentMethodDeprecations2025
 {

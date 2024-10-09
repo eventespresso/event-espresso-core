@@ -13,7 +13,7 @@ use EventEspresso\core\services\loaders\LoaderInterface;
  * @package     Event Espresso
  * @subpackage  EventEspresso\core\services\notifications
  * @author      Brent Christensen
- * @since       $VID:$
+ * @since       5.0.28.p
  */
 class ServiceChangesManager
 {
