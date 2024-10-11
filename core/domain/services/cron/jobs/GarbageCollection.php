@@ -15,8 +15,6 @@ use EventEspresso\core\domain\services\cron\CronJob;
 use EventEspresso\core\domain\services\database\DbStatus;
 use Exception;
 use ReflectionException;
-use EventEspresso\core\libraries\batch\JobHandlerBaseClasses\JobHandlerFile;
-use EEH_File;
 
 class GarbageCollection extends CronJob
 {
@@ -29,10 +27,6 @@ class GarbageCollection extends CronJob
         add_action(
             'AHEE_EE_Cron_Tasks__clean_out_old_gateway_logs',
             [$this, 'cleanUpOldGatewayLogs']
-        );
-        add_action(
-            'AHEE__EE_Cron_Tasks__clean_up_temp_directories',
-            [$this, 'cleanUpTempDirectories']
         );
     }
 
@@ -72,26 +66,6 @@ class GarbageCollection extends CronJob
                 '-' . $reg_config->gateway_log_lifespan
             );
             EEM_Change_Log::instance()->delete_gateway_logs_older_than(new DateTime($time_diff_for_comparison));
-        }
-    }
-
-
-    /**
-     * Deletes old gateway logs. After about a week we usually don't need them for debugging. But folks can filter that.
-     *
-     * @throws EE_Error
-     * @throws ReflectionException
-     * @throws Exception
-     */
-    public function cleanUpTempDirectories(): void
-    {
-        if (DbStatus::isOnline()) {
-            $base_folder = apply_filters(
-                'FHEE__EventEspressoBatchRequest\JobHandlerBaseClasses\JobHandlerFile__get_base_folder',
-                EVENT_ESPRESSO_UPLOAD_DIR
-            );
-            $temp_batch_dir = $base_folder . JobHandlerFile::temp_folder_name;
-            EEH_File::delete($temp_batch_dir);
         }
     }
 }

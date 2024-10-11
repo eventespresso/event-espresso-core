@@ -6,6 +6,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Releases
 
+### [5.0.29]
+
+#### Fixed
+ - [Clean Billing Info AFTER Passing Payment to Gateway (#1582)](https://github.com/eventespresso/cafe/pull/1582)
+
+#### Changed
+ - [BuildMachine 5.0.28 changes (#1579)](https://github.com/eventespresso/cafe/pull/1579)
+
+
 ### [5.0.28]
 
 #### Added
@@ -31,6 +40,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - [Ensure WordPress Options Are Saved (#1574)](https://github.com/eventespresso/cafe/pull/1574)
 
 
+
+
+
+
 ### [5.0.27]
 
 #### Added
@@ -46,6 +59,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - [auto lint fixes (#1358)](https://github.com/eventespresso/cafe/pull/1358)
 
 
+
+
+
+
 ### [5.0.26]
 
 
@@ -56,7 +73,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - [BuildMachine changes - 5.0.25.p (#1511)](https://github.com/eventespresso/cafe/pull/1511)
 
 
+
+
+
+
 ### [5.0.25]
+
 
 
 #### Changed
@@ -65,6 +87,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - [Add GraphQL interface EspressoNode (#1478)](https://github.com/eventespresso/cafe/pull/1478)
  - [Keap. Refactor error logging (#1500)](https://github.com/eventespresso/cafe/pull/1500)
  - [Remove USE_ADVANCED_EDITOR Feature Flag (Barista#1332) (#1503)](https://github.com/eventespresso/cafe/pull/1503)
+
+
+
 
 
 ### [5.0.24]

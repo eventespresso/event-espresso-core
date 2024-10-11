@@ -367,16 +367,15 @@ abstract class EE_PMT_Base
         $amount = $amount ?: $transaction->remaining();
         $method = EEM_Payment_Method::instance()->is_valid_scope($method) ? $method : EEM_Payment_Method::scope_cart;
 
-        // if there is billing info, clean it and save it NOW before doing anything else
-        if ($billing_info instanceof EE_Billing_Attendee_Info_Form) {
-            $this->_save_billing_info_to_attendee($billing_info, $transaction);
-        }
 
         // @todo: add surcharge for the payment method, if any
         if (! $this->_gateway instanceof EE_Gateway) {
-            // no gateway provided
-            // there is no payment. Must be an offline gateway
+            // no gateway provided, must be an offline gateway
             // create a payment object anyways, but don't save it
+            // but if there is billing info, clean it and save it first
+            if ($billing_info instanceof EE_Billing_Attendee_Info_Form) {
+                $this->_save_billing_info_to_attendee($billing_info, $transaction);
+            }
             return EE_Payment::new_instance(
                 [
                     'STS_ID'        => EEM_Payment::status_id_pending,
@@ -397,11 +396,17 @@ abstract class EE_PMT_Base
             $transaction
         );
         $previous_payment_count = $this->getPreviousPaymentCount($transaction, $amount, $method);
-        if ($previous_payment_count >= $max_payment_attempts) {
-            return $payment;
+        // only pass payment to gateway if we haven't exceeded the max attempts
+        $payment = $previous_payment_count < $max_payment_attempts
+            ? $this->passPaymentToGateway($payment, $transaction, $billing_info, $return_url, $fail_url)
+            : $payment;
+
+        // if there is billing info, clean it and save it
+        if ($billing_info instanceof EE_Billing_Attendee_Info_Form) {
+            $this->_save_billing_info_to_attendee($billing_info, $transaction);
         }
 
-        return $this->passPaymentToGateway($payment, $transaction, $billing_info, $return_url, $fail_url);
+        return $payment;
     }
 
 
