@@ -12,7 +12,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - [Advanced Registration Forms (#1155)](https://github.com/eventespresso/cafe/pull/1155)
  - [New Self-Serve Registration Cancellation Add-on (#1581)](https://github.com/eventespresso/cafe/pull/1581)
  - [Add author bundle for Loco Translate (#1602)](https://github.com/eventespresso/cafe/pull/1602)
- - NEW
 
 #### Fixed
  - [Check DbStatus::isOnline() Before Loading Service Change Notifications (#1586)](https://github.com/eventespresso/cafe/pull/1586)
@@ -24,7 +23,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - [Fix iFrame CSS IDs (#1613)](https://github.com/eventespresso/cafe/pull/1613)
  - [Allow Checkbox Inputs When Using Datetime Selector (#1606)](https://github.com/eventespresso/cafe/pull/1606)
  - [PPC. Fix ACDC removing country field (#1621)](https://github.com/eventespresso/cafe/pull/1621)
- - FIX
 
 #### Changed
  - [BuildMachine 5.0.29 changes (#1585)](https://github.com/eventespresso/cafe/pull/1585)
@@ -33,17 +31,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - [Dont Load Payment Method Deprecation 2025 Notices on Event Smart (#1603)](https://github.com/eventespresso/cafe/pull/1603)
  - [Update jQuery Validate to v1.19.5 (#1592)](https://github.com/eventespresso/cafe/pull/1592)
  - [Improve Loco Translate bundle to include both translation filenames (#1626)](https://github.com/eventespresso/cafe/pull/1626)
- - MOD
-
-#### Deprecated
- - DEP
-
-#### Removed
- - RMV
-
-#### Security
- - SEC
-
 
 
 ### [5.0.29]
