@@ -12,7 +12,7 @@ use Throwable;
  * for tracking and loading routes for add-ons
  *
  * @package EventEspresso\core\services\addon\api
- * @since $VID:$
+ * @since 5.0.30.p
  */
 class AddonRoutes
 {

@@ -8,7 +8,7 @@ use EEM_Country;
 use ReflectionException;
 
 /**
- * @since $VID:$
+ * @since 5.0.30.p
  */
 class Countries
 {

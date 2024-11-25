@@ -13,7 +13,7 @@ use EventEspresso\core\domain\entities\custom_post_types\EspressoPostType;
  * Class LegacySpcoForm
  *
  * @package EventEspresso\modules\single_page_checkout\form
- * @since $VID:$
+ * @since 5.0.30.p
  */
 class LegacySpcoForm extends EE_Form_Section_Proper
 {

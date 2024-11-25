@@ -10,7 +10,7 @@ use EventEspresso\core\services\request\DataType;
  *
  * @package EventEspresso\core\domain\entities\routing\handlers\frontend
  * @author  Brent Christensen
- * @since   $VID:$
+ * @since   5.0.30.p
  */
 class RegistrationCheckoutRequests extends FrontendRequests
 {

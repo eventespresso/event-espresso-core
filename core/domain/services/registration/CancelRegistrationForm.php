@@ -24,7 +24,7 @@ use ReflectionException;
  * @package     Event Espresso
  * @subpackage  EventEspresso\core\domain\services\registration
  * @author      Brent Christensen
- * @since       $VID:$
+ * @since       5.0.30.p
  */
 class CancelRegistrationForm extends FormHandler
 {

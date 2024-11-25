@@ -13,7 +13,7 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  * Dependency handlers are classes that implement the DependencyHandlerInterface
  *
  * @package EventEspresso\core\services\addon\api
- * @since $VID:$
+ * @since 5.0.30.p
  */
 class DependencyHandlers
 {

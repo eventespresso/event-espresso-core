@@ -543,7 +543,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      * @param string $html_name
      * @return EE_Form_Input_Base|null
      * @throws EE_Error
-     * @since $VID:$
+     * @since 5.0.30.p
      */
     public function findInput(string $html_name): ?EE_Form_Input_Base
     {
@@ -1599,7 +1599,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      * @param int                  $depth
      * @return void
      * @throws EE_Error
-     * @since $VID:$
+     * @since 5.0.30.p
      */
     public static function visualize(EE_Form_Section_Base $form_section, int $depth = 0)
     {

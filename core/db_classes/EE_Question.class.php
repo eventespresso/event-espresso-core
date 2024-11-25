@@ -51,7 +51,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
      * @return EEM_Question
      * @throws EE_Error
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 5.0.30.p
      */
     private function getModel(): EEM_Question
     {
@@ -747,7 +747,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
      * @return bool
      * @throws EE_Error
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 5.0.30.p
      */
     public function isEnumType(): bool
     {

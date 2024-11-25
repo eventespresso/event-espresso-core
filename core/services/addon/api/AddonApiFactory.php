@@ -14,7 +14,7 @@ use RuntimeException;
  * encapsulates the complex creation of AddonApi objects
  *
  * @package EventEspresso\core\services\addon\api
- * @since $VID:$
+ * @since 5.0.30.p
  */
 class AddonApiFactory
 {

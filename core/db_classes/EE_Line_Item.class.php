@@ -270,7 +270,7 @@ class EE_Line_Item extends EE_Base_Class
      * @return void
      * @throws EE_Error
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 5.0.30.p
      */
     public function incrementQuantity(int $quantity = 1)
     {
@@ -283,7 +283,7 @@ class EE_Line_Item extends EE_Base_Class
      * @return void
      * @throws EE_Error
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 5.0.30.p
      */
     public function decrementQuantity(int $quantity = 1)
     {

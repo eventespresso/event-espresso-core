@@ -2603,7 +2603,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @return string
      * @throws EE_Error
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 5.0.30.p
      */
     public function cancelRegistrationConfirmationCode(): string
     {

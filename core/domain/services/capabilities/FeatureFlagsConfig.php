@@ -43,7 +43,7 @@ class FeatureFlagsConfig extends JsonDataWordpressOption
 
     /**
      * @var array|null
-     * @since $VID:$
+     * @since 5.0.30.p
      */
     private ?array $feature_flags_form_options = null;
 

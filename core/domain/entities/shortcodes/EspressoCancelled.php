@@ -114,7 +114,7 @@ class EspressoCancelled extends EspressoShortcode
      * @param EE_Registration $registration
      * @return string
      * @throws EE_Error
-     * @since $VID:$
+     * @since 5.0.30.p
      */
     private function cancelRegistrationConfirmationForm(EE_Registration $registration): string
     {
@@ -129,7 +129,7 @@ class EspressoCancelled extends EspressoShortcode
      * @return string
      * @throws EE_Error
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 5.0.30.p
      */
     private function cancelRegistration(EE_Registration $registration, string $confirmation_code): string
     {
@@ -164,7 +164,7 @@ class EspressoCancelled extends EspressoShortcode
      * @return string
      * @throws EE_Error
      * @throws ReflectionException
-     * @since $VID:$
+     * @since 5.0.30.p
      */
     private function clearCartAndCancelAllRegistrations(): string
     {

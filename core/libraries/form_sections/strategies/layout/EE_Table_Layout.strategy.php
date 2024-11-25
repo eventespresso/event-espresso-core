@@ -8,7 +8,7 @@
  * @package     Event Espresso
  * @subpackage  core/libraries/form_sections
  * @author      Brent Christensen
- * @since       $VID:$
+ * @since       5.0.30.p
  */
 class EE_Table_Layout extends EE_Form_Section_Layout_Base
 {

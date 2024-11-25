@@ -343,7 +343,7 @@ abstract class AddonApiVersion
     /**
      * @param string $dependency_handler_fqcn FQCN of a DependencyHandler class
      * @return void
-     * @since $VID:$
+     * @since 5.0.30.p
      */
     public function addDependencyHandler(string $dependency_handler_fqcn): void
     {
@@ -357,7 +357,7 @@ abstract class AddonApiVersion
 
     /**
      * @return void
-     * @since $VID:$
+     * @since 5.0.30.p
      */
     public function registerDependencies()
     {
