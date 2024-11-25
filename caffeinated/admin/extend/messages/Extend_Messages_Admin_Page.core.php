@@ -7,12 +7,9 @@
  * parent class, however, it is likely that at some point in the future this will change so having this extended class
  * will be handy.  We also need this if we're going to have an extended "hooks" file.
  *
- *
  * @package         Extend_Messages_Admin_Page
  * @subpackage      caffeinated/admin/extend/messages/Extend_Messages_Admin_Page.core.php
  * @author          Darren Ethier
- *
- * ------------------------------------------------------------------------
  */
 class Extend_Messages_Admin_Page extends Messages_Admin_Page
 {
@@ -34,7 +31,7 @@ class Extend_Messages_Admin_Page extends Messages_Admin_Page
 
         $this->_admin_base_path            = EE_CORE_CAF_ADMIN_EXTEND . 'messages';
         $this->_page_routes['custom_mtps'] = [
-            'func'       => '_ee_custom_messages_overview_list_table',
+            'func'       => [$this, '_ee_custom_messages_overview_list_table'],
             'capability' => 'ee_read_messages',
         ];
         $this->_page_config['custom_mtps'] = [
@@ -61,7 +58,7 @@ class Extend_Messages_Admin_Page extends Messages_Admin_Page
             'require_nonce' => false,
         ];
 
-        add_action('current_screen', [$this, 'dynamic_screen_hooks'], 10);
+        add_action('current_screen', [$this, 'dynamic_screen_hooks']);
     }
 
 

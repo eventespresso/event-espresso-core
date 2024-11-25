@@ -2393,6 +2393,7 @@ class Messages_Admin_Page extends EE_Admin_Page
             ); ?>
         </p>
         <?php
+        do_action('AHEE__Messages_Admin_Page__shortcode_meta_box', $shortcodes, $this);
     }
 
 

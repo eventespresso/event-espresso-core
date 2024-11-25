@@ -15,7 +15,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 ?>
 
-<div id="ee-single-page-checkout-dv" class="">
+<div id="ee-single-page-checkout-dv">
     <?php
     if (! $empty_cart) {
         if ($use_session_countdown) { ?>

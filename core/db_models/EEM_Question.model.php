@@ -6,6 +6,7 @@
  * @package     Event Espresso
  * @subpackage  includes/models/
  * @author      Michael Nelson
+ * @method EE_Question[] get_all($query_params = [])
  */
 class EEM_Question extends EEM_Soft_Delete_Base
 {
@@ -212,6 +213,18 @@ class EEM_Question extends EEM_Soft_Delete_Base
                     EEM_Question::QST_type_url,
                     EEM_Question::QST_type_us_phone,
                     EEM_Question::QST_type_year,
+                ],
+                'date' => [
+                    EEM_Question::QST_type_date,
+                    EEM_Question::QST_type_year,
+                ],
+                'geographic' => [
+                    EEM_Question::QST_type_country,
+                    EEM_Question::QST_type_state,
+                ],
+                'numeric' => [
+                    EEM_Question::QST_type_decimal,
+                    EEM_Question::QST_type_int,
                 ],
                 'single-answer-enum' => [
                     EEM_Question::QST_type_dropdown,

@@ -170,7 +170,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
 
     protected array $_data_attributes = [];
 
-    protected bool $_no_label = false; // if true, then no hrml label will be displayed for this input
+    protected bool $_no_label = false; // if true, then no html label will be displayed for this input
 
     /**
      * adds a class to the input's container
@@ -479,6 +479,12 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     }
 
 
+    public function removeAllValidationStrategies()
+    {
+        $this->_validation_strategies = [];
+    }
+
+
     /**
      * returns true if input employs any of the validation strategy defined by the supplied array of classnames
      *
@@ -706,14 +712,28 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
 
 
     /**
+     * @param string $html_label_id
+     */
+    public function set_html_label_id(string $html_label_id)
+    {
+        // if the html_label_id doesn't end in -lbl, then add it
+        if (strpos($html_label_id, '-lbl') !== (strlen($html_label_id) - 4)) {
+            $html_label_id .= '-lbl';
+        }
+        $this->_html_label_id = $html_label_id;
+    }
+
+
+    /**
      * @return string
      * @throws EE_Error
      */
     public function html_label_id()
     {
-        return ! empty($this->_html_label_id)
-            ? $this->_html_label_id
-            : $this->html_id() . '-lbl';
+        if (empty($this->_html_label_id)) {
+            $this->set_html_label_id($this->html_id());
+        }
+        return $this->_html_label_id;
     }
 
 
@@ -1275,5 +1295,13 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     public function extraContainerHtml(): string
     {
         return $this->_extra_container_html;
+    }
+
+
+    public function hasLabel(): bool
+    {
+        return ! $this->_no_label
+            && $this->html_label_text()
+            && ! $this->get_display_strategy() instanceof EE_Hidden_Display_Strategy;
     }
 }

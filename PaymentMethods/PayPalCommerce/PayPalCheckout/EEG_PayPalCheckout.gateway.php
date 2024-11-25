@@ -273,7 +273,7 @@ class EEG_PayPalCheckout extends EE_Onsite_Gateway
      * @param EE_Payment     $payment
      * @param EE_Transaction $transaction
      * @param array          $order
-     * @param array          $billing_info
+     * @param array          $billing
      * @return void
      * @throws EE_Error
      * @throws ReflectionException
@@ -282,55 +282,66 @@ class EEG_PayPalCheckout extends EE_Onsite_Gateway
         EE_Payment $payment,
         EE_Transaction $transaction,
         array $order,
-        array $billing_info
+        array $billing
     ): void {
-        $primary_reg    = $transaction->primary_registration();
-        $attendee       = $primary_reg instanceof EE_Registration ? $primary_reg->attendee() : null;
-        $payment_method = $transaction->payment_method();
-        $post_meta_name = $payment_method->type_obj() instanceof EE_PMT_Base
-            ? 'billing_info_' . $payment_method->type_obj()->system_name()
-            : '';
-        if (empty($order['payment_source']) || ! $attendee instanceof EE_Attendee) {
+        $primary_reg = $transaction->primary_registration();
+        $att    = $primary_reg instanceof EE_Registration ? $primary_reg->attendee() : null;
+        if (! $att instanceof EE_Attendee) {
             // I guess we are done here then. Just save what we have.
             $payment->set_details($order);
             return;
         }
-        // Do we have order information from the express checkout (PayPal button) ?
-        $billing_info['first_name'] = $billing_info['first_name'] ?? $attendee->fname();
-        $billing_info['last_name']  = $billing_info['last_name'] ?? $attendee->lname();
-        $billing_info['email']      = $billing_info['email'] ?? $attendee->email();
-        if (! empty($billing_info['address'])) {
-            $attendee->set_address($billing_info['address']);
-        }
-        if (! empty($billing_info['address2'])) {
-            $attendee->set_address2($billing_info['address2']);
-        }
-        if (! empty($billing_info['city'])) {
-            $attendee->set_city($billing_info['city']);
-        }
-        if (! empty($billing_info['state_id'])) {
-            $attendee->set_state((int) $billing_info['state_id']);
-        }
-        if (! empty($billing_info['country'])) {
-            $attendee->set_country($billing_info['country']);
-        }
-        if (! empty($billing_info['zip'])) {
-            $attendee->set_zip($billing_info['zip']);
-        }
-        // Or card information from advanced card fields ?
-        $billing_info['credit_card'] = '';
-        if (! empty($order['payment_source']['card'])) {
-            $payer_card = $order['payment_source']['card'];
-            if (! empty($payer_card['name'])) {
-                $full_name = explode(' ', $payer_card['name']);
-                // Don't need to save each field because others should be populated from the billing form.
-                $billing_info['credit_card'] = $payer_card['last_digits'] ?? '';
-                $billing_info['first_name']  = $full_name[0] ?? $attendee->fname();
-                $billing_info['last_name']   = $full_name[1] ?? $attendee->lname();
+        // Defaults:
+        $billing['credit_card'] = 'empty';
+        $billing['first_name']  = empty($billing['first_name']) ? ($att->fname() ?: 'empty') : $billing['first_name'];
+        $billing['last_name']   = empty($billing['last_name']) ? ($att->lname() ?: 'empty') : $billing['last_name'];
+        $billing['email']       = empty($billing['email']) ? ($att->email() ?: 'empty') : $billing['email'];
+        $billing['country']     = empty($billing['country']) ? ($att->country() ?: 'empty') : $billing['country'];
+        $billing['city']        = empty($billing['city']) ? ($att->city() ?: 'empty') : $billing['city'];
+        $billing['state']       = empty($billing['state']) ? ($att->state_name() ?: 'empty') : $billing['state'];
+        $billing['address']     = empty($billing['address']) ? ($att->address() ?: 'empty') : $billing['address'];
+        $billing['address2']    = empty($billing['address2']) ? ($att->address2() ?: 'empty') : $billing['address2'];
+        $billing['zip']         = empty($billing['zip']) ? ($att->zip() ?: 'empty') : $billing['zip'];
+        $billing['phone']       = empty($billing['phone']) ? ($att->phone() ?: 'empty') : $billing['phone'];
+
+        // Try getting the payer information from the payment source (PayPal).
+        if (! empty($order['payment_source'])) {
+            // A card (ACDC) payment ?
+            if (! empty($order['payment_source']['card'])) {
+                $payer = $order['payment_source']['card'];
+            // Or maybe a PayPal Express payment ?
+            } elseif (! empty($order['payment_source']['paypal'])) {
+                $payer = $order['payment_source']['paypal'];
+            }
+            if (! empty($payer)) {
+                if (! empty($payer['name'])) {
+                    // Yup, payment_source card vs PayPal have different info about the payer. So need to differentiate.
+                    if (is_string($payer['name'])) {
+                        $full_name                  = explode(' ', $payer['name']);
+                        $billing['first_name'] = $full_name[0] ?? $billing['first_name'];
+                        $billing['last_name']  = $full_name[1] ?? $billing['last_name'];
+                    }
+                    // PayPal info on the Payment:
+                    if (is_array($payer['name'])) {
+                        $billing['first_name'] = $payer['name']['given_name'] ?? $billing['first_name'];
+                        $billing['last_name']  = $payer['name']['surname'] ?? $billing['last_name'];
+                    }
+                }
+                // Possible info on the payer.
+                $billing['credit_card'] = $payer['last_digits'] ?? $billing['credit_card'];
+                $billing['email']       = $payer['email_address'] ?? $billing['email'];
+                $billing['country']     = $payer['address']['country_code'] ?? $billing['country'];
+                $billing['city']        = $payer['address']['city'] ?? $billing['city'];
+                $billing['state']       = $payer['address']['state'] ?? $billing['state'];
+                $billing['address']     = $payer['address']['address'] ?? $billing['address'];
+                $billing['zip']         = $payer['address']['zip'] ?? $billing['zip'];
             }
         }
         // Update attendee billing info in the transaction details.
-        update_post_meta($attendee->ID(), $post_meta_name, $billing_info);
-        $attendee->save();
+        $payment_method = $transaction->payment_method();
+        $post_meta_name = $payment_method->type_obj() instanceof EE_PMT_Base
+            ? 'billing_info_' . $payment_method->type_obj()->system_name()
+            : '';
+        update_post_meta($att->ID(), $post_meta_name, $billing);
     }
 }

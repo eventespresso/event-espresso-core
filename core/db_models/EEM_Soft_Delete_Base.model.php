@@ -47,23 +47,23 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base
      * @return string
      * @throws EE_Error
      */
-    public function deleted_field_name()
+    public function deleted_field_name(): string
     {
         $field = $this->get_a_field_of_type('EE_Trashed_Flag_Field');
         if ($field) {
             return $field->get_name();
-        } else {
-            throw new EE_Error(
-                sprintf(
-                    esc_html__(
-                        'We are trying to find the deleted flag field on %s, but none was found. Are you sure there is a field of type EE_Trashed_Flag_Field in %s constructor?',
-                        'event_espresso'
-                    ),
-                    get_class($this),
-                    get_class($this)
-                )
-            );
         }
+
+        throw new EE_Error(
+            sprintf(
+                esc_html__(
+                    'We are trying to find the deleted flag field on %s, but none was found. Are you sure there is a field of type EE_Trashed_Flag_Field in %s constructor?',
+                    'event_espresso'
+                ),
+                get_class($this),
+                get_class($this)
+            )
+        );
     }
 
 
@@ -71,11 +71,12 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base
      * Gets one item that's been deleted, according to $query_params
      *
      * @param array $query_params
-     * @return EE_Soft_Delete_Base_Class
+     * @return EE_Soft_Delete_Base_Class|null
      * @throws EE_Error
+     * @throws ReflectionException
      * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      */
-    public function get_one_deleted($query_params = [])
+    public function get_one_deleted(array $query_params = []): ?EE_Soft_Delete_Base_Class
     {
         $query_params = $this->_alter_query_params_so_only_trashed_items_included($query_params);
         return $this->get_one($query_params);
@@ -86,10 +87,11 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base
      * Gets one item from the DB, regardless of whether it's been soft-deleted or not
      *
      * @param array $query_params like EEM_base::get_all's $query_params
-     * @return EE_Soft_Delete_Base_Class
+     * @return EE_Soft_Delete_Base_Class|null
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function get_one_deleted_or_undeleted($query_params = [])
+    public function get_one_deleted_or_undeleted(array $query_params = []): ?EE_Soft_Delete_Base_Class
     {
         $query_params = $this->_alter_query_params_so_deleted_and_undeleted_items_included($query_params);
         return $this->get_one($query_params);
@@ -100,10 +102,11 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base
      * Gets the item indicated by its ID. But if it's soft-deleted, pretends it doesn't exist.
      *
      * @param int|string $id
-     * @return EE_Soft_Delete_Base_Class
+     * @return EE_Soft_Delete_Base_Class|null
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function get_one_by_ID_but_ignore_deleted($id)
+    public function get_one_by_ID_but_ignore_deleted($id): ?EE_Soft_Delete_Base_Class
     {
         return $this->get_one(
             $this->alter_query_params_to_restrict_by_ID(
@@ -123,9 +126,10 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base
      *                             that by the setting $distinct to TRUE;
      * @return int
      * @throws EE_Error
+     * @throws ReflectionException
      * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      */
-    public function count_deleted($query_params = [], $field_to_count = null, $distinct = false)
+    public function count_deleted(array $query_params = [], string $field_to_count = '', bool $distinct = false): int
     {
         $query_params = $this->_alter_query_params_so_only_trashed_items_included($query_params);
         return $this->count($query_params, $field_to_count, $distinct);
@@ -140,7 +144,7 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base
      * @throws EE_Error
      * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      */
-    protected function _alter_query_params_so_only_trashed_items_included($query_params)
+    protected function _alter_query_params_so_only_trashed_items_included(array $query_params): array
     {
         $deletedFlagFieldName                     = $this->deleted_field_name();
         $query_params[0][ $deletedFlagFieldName ] = true;
@@ -156,7 +160,7 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base
      * @throws EE_Error
      * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      */
-    public function alter_query_params_so_only_trashed_items_included($query_params)
+    public function alter_query_params_so_only_trashed_items_included(array $query_params): array
     {
         return $this->_alter_query_params_so_only_trashed_items_included($query_params);
     }
@@ -168,7 +172,7 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base
      * @param array $query_params
      * @return array
      */
-    public function alter_query_params_so_deleted_and_undeleted_items_included($query_params = [])
+    public function alter_query_params_so_deleted_and_undeleted_items_included(array $query_params = []): array
     {
         return $this->_alter_query_params_so_deleted_and_undeleted_items_included($query_params);
     }
@@ -180,7 +184,7 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base
      * @param array $query_params
      * @return array
      */
-    protected function _alter_query_params_so_deleted_and_undeleted_items_included($query_params)
+    protected function _alter_query_params_so_deleted_and_undeleted_items_included(array $query_params): array
     {
         if (! isset($query_params['default_where_conditions'])) {
             $query_params['default_where_conditions'] = 'minimum';
@@ -198,10 +202,14 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base
      *                             that by the setting $distinct to TRUE;
      * @return int
      * @throws EE_Error
+     * @throws ReflectionException
      * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      */
-    public function count_deleted_and_undeleted($query_params = [], $field_to_count = null, $distinct = false)
-    {
+    public function count_deleted_and_undeleted(
+        array $query_params = [],
+        string $field_to_count = '',
+        bool $distinct = false
+    ): int {
         $query_params = $this->_alter_query_params_so_deleted_and_undeleted_items_included($query_params);
         return $this->count($query_params, $field_to_count, $distinct);
     }
@@ -214,9 +222,10 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base
      * @param string $field_to_sum
      * @return float
      * @throws EE_Error
+     * @throws ReflectionException
      * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      */
-    public function sum_deleted($query_params = [], $field_to_sum = null)
+    public function sum_deleted(array $query_params = [], string $field_to_sum = ''): float
     {
         $query_params = $this->_alter_query_params_so_only_trashed_items_included($query_params);
         return $this->sum($query_params, $field_to_sum);
@@ -230,9 +239,10 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base
      * @param string $field_to_sum
      * @return float
      * @throws EE_Error
+     * @throws ReflectionException
      * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      */
-    public function sum_deleted_and_undeleted($query_params = [], $field_to_sum = null)
+    public function sum_deleted_and_undeleted(array $query_params = [], string $field_to_sum = ''): float
     {
         $query_params = $this->_alter_query_params_so_deleted_and_undeleted_items_included($query_params);
         return $this->sum($query_params, $field_to_sum);
@@ -246,9 +256,10 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base
      * @param array $query_params
      * @return EE_Soft_Delete_Base_Class[]
      * @throws EE_Error
+     * @throws ReflectionException
      * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      */
-    public function get_all_deleted_and_undeleted($query_params = [])
+    public function get_all_deleted_and_undeleted(array $query_params = []): array
     {
         $query_params = $this->_alter_query_params_so_deleted_and_undeleted_items_included($query_params);
         return $this->get_all($query_params);
@@ -261,9 +272,10 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base
      * @param array $query_params
      * @return EE_Soft_Delete_Base_Class[]
      * @throws EE_Error
+     * @throws ReflectionException
      * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      */
-    public function get_all_deleted($query_params = [])
+    public function get_all_deleted(array $query_params = []): array
     {
         $query_params = $this->_alter_query_params_so_only_trashed_items_included($query_params);
         return $this->get_all($query_params);
@@ -271,23 +283,24 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base
 
 
     /**
-     * Permanently deletes the selected rows. When selecting rows for deletion, ignores
-     * whether they've been soft-deleted or not. (ie, you don't have to soft-delete objects
-     * before you can permanently delete them).
-     * Because this will cause a real deletion, related models may block this deletion (ie, add an error
-     * and abort the delete)
+     * Permanently deletes the selected rows.
+     * When selecting rows for deletion, ignores whether they've been soft-deleted or not.
+     * (ie, you don't have to soft-delete objects before you can permanently delete them).
+     * Because this will cause a real deletion, related models may block this deletion
+     * (ie, add an error and abort the delete process)
      *
      * @param array   $query_params
      * @param boolean $allow_blocking if TRUE, matched objects will only be deleted if there is no related model info
      *                                that blocks it (ie, there' sno other data that depends on this data);
      *                                if false, deletes regardless of other objects which may depend on it.
-     *                                Its generally advisable to always leave this as TRUE,
+     *                                It's generally advisable to always leave this as TRUE,
      *                                otherwise you could easily corrupt your DB
      * @return int                    number of rows deleted
      * @throws EE_Error
+     * @throws ReflectionException
      * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      */
-    public function delete_permanently($query_params, $allow_blocking = true)
+    public function delete_permanently($query_params, $allow_blocking = true): int
     {
         $query_params = $this->_alter_query_params_so_deleted_and_undeleted_items_included($query_params);
         return parent::delete_permanently($query_params, $allow_blocking);
@@ -299,10 +312,11 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base
      * has been soft-deleted or not.
      *
      * @param mixed $ID int if primary key is an int, string otherwise
-     * @return boolean success
+     * @return int success
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function restore_by_ID($ID = false)
+    public function restore_by_ID($ID = false): int
     {
         return $this->delete_or_restore_by_ID(false, $ID);
     }
@@ -312,15 +326,16 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base
      * For deleting or restoring a particular item. Note that this model is a SOFT-DELETABLE model! However,
      * this function will ignore whether the items have been soft-deleted or not.
      *
-     * @param boolean $delete true for delete, false for restore
-     * @param mixed   $ID     int if primary key is an int, string otherwise
-     * @return bool
+     * @param boolean    $delete true for delete, false for restore
+     * @param int|string $ID     int if primary key is an int, string otherwise
+     * @return int
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function delete_or_restore_by_ID($delete = true, $ID = false)
+    public function delete_or_restore_by_ID(bool $delete = true, $ID = 0): int
     {
         // returns false if entity doesn't have an ID or if delete/restore action failed
-        return $ID && $this->delete_or_restore($delete, $this->alter_query_params_to_restrict_by_ID($ID));
+        return $ID ? $this->delete_or_restore($delete, $this->alter_query_params_to_restrict_by_ID($ID)) : 0;
     }
 
 
@@ -332,11 +347,12 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base
      *
      * @param array $query_params
      * @param bool  $block_deletes
-     * @return bool
+     * @return int
      * @throws EE_Error
+     * @throws ReflectionException
      * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      */
-    public function delete($query_params = [], $block_deletes = false)
+    public function delete($query_params = [], $block_deletes = false): int
     {
         // no matter what, we WON'T block soft deletes.
         return $this->delete_or_restore(true, $query_params);
@@ -349,11 +365,12 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base
      * have been soft-deleted or not.
      *
      * @param array $query_params
-     * @return bool
+     * @return int
      * @throws EE_Error
+     * @throws ReflectionException
      * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      */
-    public function restore($query_params = [])
+    public function restore(array $query_params = []): int
     {
         return $this->delete_or_restore(false, $query_params);
     }
@@ -364,15 +381,16 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base
      *
      * @param boolean $delete true to indicate deletion, false to indicate restoration
      * @param array   $query_params
-     * @return boolean
+     * @return int
      * @throws EE_Error
+     * @throws ReflectionException
      * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      */
-    public function delete_or_restore($delete = true, $query_params = [])
+    public function delete_or_restore(bool $delete = true, array $query_params = []): int
     {
         $deletedFlagFieldName = $this->deleted_field_name();
         $query_params         = $this->_alter_query_params_so_deleted_and_undeleted_items_included($query_params);
-        return (bool) $this->update([$deletedFlagFieldName => $delete], $query_params);
+        return (int) $this->update([$deletedFlagFieldName => $delete], $query_params);
     }
 
 
@@ -389,10 +407,14 @@ abstract class EEM_Soft_Delete_Base extends EEM_Base
      *                                         could get out-of-sync with the database
      * @return int number of items updated
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function update_deleted_and_undeleted($fields_n_values, $query_params, $keep_model_objs_in_sync = true)
-    {
+    public function update_deleted_and_undeleted(
+        array $fields_n_values,
+        array $query_params,
+        bool $keep_model_objs_in_sync = true
+    ): int {
         $query_params = $this->_alter_query_params_so_deleted_and_undeleted_items_included($query_params);
-        return $this->update($fields_n_values, $query_params, $keep_model_objs_in_sync);
+        return (int) $this->update($fields_n_values, $query_params, $keep_model_objs_in_sync);
     }
 }

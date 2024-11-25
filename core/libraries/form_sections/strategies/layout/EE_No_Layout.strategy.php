@@ -96,7 +96,6 @@ class EE_No_Layout extends EE_Div_Per_Section_Layout
      */
     public function layout_subsection($form_section)
     {
-        //      d( $form_section );
         return EEH_HTML::nl(1) . $form_section->get_html() . EEH_HTML::nl(-1);
     }
 

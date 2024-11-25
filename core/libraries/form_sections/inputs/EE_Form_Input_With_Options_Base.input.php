@@ -83,16 +83,16 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base
 
 
     /**
-     * Sets the allowed options for this input. Also has the side-effect of
+     * Sets the allowed options for this input. Also has the side effect of
      * updating the normalization strategy to match the keys provided in the array
      *
      * @param array $answer_options
-     * @return void  just has the side-effect of setting the options for this input
+     * @return void  just has the side effect of setting the options for this input
      */
     public function set_select_options($answer_options = array())
     {
         $answer_options = is_array($answer_options) ? $answer_options : array($answer_options);
-        // get the first item in the select options and check it's type
+        // get the first item in the select options and check its type
         $this->_options = reset($answer_options) instanceof EE_Question_Option
             ? $this->_process_question_options($answer_options)
             : $answer_options;
@@ -110,11 +110,11 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base
             // values appear to be boolean, like TRUE, FALSE, 1, 0
             $normalization = new EE_Boolean_Normalization();
         } else {
-            // are ALL the options ints (even if we're using a multi-dimensional array)? If so use int validation
-            $all_ints = true;
+            // are ALL the options integers (even if we're using a multidimensional array)? If so use int validation
+            $all_integers = true;
             array_walk_recursive(
                 $this->_options,
-                function ($value, $key) use (&$all_ints) {
+                function ($value, $key) use (&$all_integers) {
                     // is this a top-level key? ignore it
                     if (
                         ! is_array($value)
@@ -122,15 +122,11 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base
                         && $key !== ''
                         && $key !== null
                     ) {
-                        $all_ints = false;
+                        $all_integers = false;
                     }
                 }
             );
-            if ($all_ints) {
-                $normalization = new EE_Int_Normalization();
-            } else {
-                $normalization = new EE_Text_Normalization();
-            }
+            $normalization = $all_integers ? new EE_Int_Normalization() : new EE_Text_Normalization();
         }
         // does input type have multiple options ?
         if ($this->_multiple_selections) {
@@ -331,4 +327,12 @@ class EE_Form_Input_With_Options_Base extends EE_Form_Input_Base
     {
         $this->_display_html_label_text = filter_var($display_html_label_text, FILTER_VALIDATE_BOOLEAN);
     }
+
+
+    public function hasMultipleSelections(): bool
+    {
+        return $this->_multiple_selections;
+    }
+
+
 }

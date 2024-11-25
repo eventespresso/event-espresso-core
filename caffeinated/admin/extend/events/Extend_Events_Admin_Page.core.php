@@ -48,47 +48,47 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
         $TKT_ID                                          = $this->request->getRequestParam('TKT_ID', 0, 'int');
         $new_page_routes                                 = [
             'duplicate_event'          => [
-                'func'       => '_duplicate_event',
+                'func'       => [$this, '_duplicate_event'],
                 'capability' => 'ee_edit_event',
                 'obj_id'     => $EVT_ID,
                 'noheader'   => true,
             ],
             'import_page'              => [
-                'func'       => '_import_page',
+                'func'       => [$this, '_import_page'],
                 'capability' => 'import',
             ],
             'import'                   => [
-                'func'       => '_import_events',
+                'func'       => [$this, '_import_events'],
                 'capability' => 'import',
                 'noheader'   => true,
             ],
             'import_events'            => [
-                'func'       => '_import_events',
+                'func'       => [$this, '_import_events'],
                 'capability' => 'import',
                 'noheader'   => true,
             ],
             'export_events'            => [
-                'func'       => '_events_export',
+                'func'       => [$this, '_events_export'],
                 'capability' => 'export',
                 'noheader'   => true,
             ],
             'export_categories'        => [
-                'func'       => '_categories_export',
+                'func'       => [$this, '_categories_export'],
                 'capability' => 'export',
                 'noheader'   => true,
             ],
             'sample_export_file'       => [
-                'func'       => '_sample_export_file',
+                'func'       => [$this, '_sample_export_file'],
                 'capability' => 'export',
                 'noheader'   => true,
             ],
             'update_template_settings' => [
-                'func'       => '_update_template_settings',
+                'func'       => [$this, '_update_template_settings'],
                 'capability' => 'manage_options',
                 'noheader'   => true,
             ],
             'ticket_list_table'        => [
-                'func'       => '_tickets_overview_list_table',
+                'func'       => [$this, '_tickets_overview_list_table'],
                 'capability' => 'ee_read_default_tickets',
             ],
         ];
@@ -104,37 +104,37 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
 
             $legacy_editor_page_routes = [
                 'trash_ticket'    => [
-                    'func'       => '_trash_or_restore_ticket',
+                    'func'       => [$this, '_trash_or_restore_ticket'],
                     'capability' => 'ee_delete_default_ticket',
                     'obj_id'     => $TKT_ID,
                     'noheader'   => true,
                     'args'       => ['trash' => true],
                 ],
                 'trash_tickets'   => [
-                    'func'       => '_trash_or_restore_ticket',
+                    'func'       => [$this, '_trash_or_restore_ticket'],
                     'capability' => 'ee_delete_default_tickets',
                     'noheader'   => true,
                     'args'       => ['trash' => true],
                 ],
                 'restore_ticket'  => [
-                    'func'       => '_trash_or_restore_ticket',
+                    'func'       => [$this, '_trash_or_restore_ticket'],
                     'capability' => 'ee_delete_default_ticket',
                     'obj_id'     => $TKT_ID,
                     'noheader'   => true,
                 ],
                 'restore_tickets' => [
-                    'func'       => '_trash_or_restore_ticket',
+                    'func'       => [$this, '_trash_or_restore_ticket'],
                     'capability' => 'ee_delete_default_tickets',
                     'noheader'   => true,
                 ],
                 'delete_ticket'   => [
-                    'func'       => '_delete_ticket',
+                    'func'       => [$this, '_delete_ticket'],
                     'capability' => 'ee_delete_default_ticket',
                     'obj_id'     => $TKT_ID,
                     'noheader'   => true,
                 ],
                 'delete_tickets'  => [
-                    'func'       => '_delete_ticket',
+                    'func'       => [$this, '_delete_ticket'],
                     'capability' => 'ee_delete_default_tickets',
                     'noheader'   => true,
                 ],

@@ -36,10 +36,7 @@ class EE_Ticket_List_Shortcodes extends EE_Shortcodes
      */
     protected function _parser($shortcode)
     {
-        if ($shortcode == '[TICKET_LIST]') {
-            return $this->_get_ticket_list();
-        }
-        return '';
+        return $shortcode === '[TICKET_LIST]' ? $this->_get_ticket_list() : '';
     }
 
 
@@ -50,7 +47,7 @@ class EE_Ticket_List_Shortcodes extends EE_Shortcodes
      * @throws EE_Error
      * @throws ReflectionException
      */
-    private function _get_ticket_list()
+    private function _get_ticket_list(): string
     {
         $this->_validate_list_requirements();
 
@@ -71,7 +68,7 @@ class EE_Ticket_List_Shortcodes extends EE_Shortcodes
     /**
      * This returns the parsed ticket list for main template;
      */
-    private function _get_ticket_list_for_main()
+    private function _get_ticket_list_for_main(): string
     {
         $valid_shortcodes = [
             'ticket',
@@ -109,7 +106,7 @@ class EE_Ticket_List_Shortcodes extends EE_Shortcodes
      * @throws EE_Error
      * @throws ReflectionException
      */
-    private function _get_ticket_list_for_event()
+    private function _get_ticket_list_for_event(): string
     {
         $valid_shortcodes = [
             'ticket',
@@ -154,7 +151,7 @@ class EE_Ticket_List_Shortcodes extends EE_Shortcodes
      * @throws EE_Error
      * @throws ReflectionException
      */
-    private function _get_ticket_list_for_attendee()
+    private function _get_ticket_list_for_attendee(): string
     {
         $valid_shortcodes = [
             'ticket',
@@ -177,7 +174,7 @@ class EE_Ticket_List_Shortcodes extends EE_Shortcodes
         $tkt_parsed = '';
         $tickets    = $this->_get_ticket_list_from_registration($registration);
 
-        // each ticket in this case should be an ticket object.
+        // each ticket in this case should be a ticket object.
         foreach ($tickets as $ticket) {
             $tkt_parsed .= $this->_shortcode_helper->parse_ticket_list_template(
                 $template,
@@ -193,13 +190,13 @@ class EE_Ticket_List_Shortcodes extends EE_Shortcodes
 
     /**
      * @param EE_Event $event
-     * @return array|mixed
+     * @return array
      * @throws EE_Error
      * @throws ReflectionException
      */
-    private function _get_tickets_from_event(EE_Event $event)
+    private function _get_tickets_from_event(EE_Event $event): array
     {
-        return isset($this->_extra_data['data']->events)
+        return isset($this->_extra_data['data']->events[ $event->ID() ]['tkt_objs'])
             ? $this->_extra_data['data']->events[ $event->ID() ]['tkt_objs']
             : [];
     }
@@ -211,9 +208,9 @@ class EE_Ticket_List_Shortcodes extends EE_Shortcodes
      * @throws EE_Error
      * @throws ReflectionException
      */
-    private function _get_ticket_list_from_registration(EE_Registration $registration)
+    private function _get_ticket_list_from_registration(EE_Registration $registration): array
     {
-        return isset($this->_extra_data['data']->registrations)
+        return isset($this->_extra_data['data']->registrations[ $registration->ID() ]['tkt_obj'])
             ? [$this->_extra_data['data']->registrations[ $registration->ID() ]['tkt_obj']]
             : [];
     }

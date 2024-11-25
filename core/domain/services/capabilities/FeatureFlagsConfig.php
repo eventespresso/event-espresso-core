@@ -41,6 +41,13 @@ class FeatureFlagsConfig extends JsonDataWordpressOption
     private ?stdClass $feature_flags = null;
 
 
+    /**
+     * @var array|null
+     * @since $VID:$
+     */
+    private ?array $feature_flags_form_options = null;
+
+
     public function __construct(Domain $domain, JsonDataHandler $json_data_handler)
     {
         $this->domain = $domain;

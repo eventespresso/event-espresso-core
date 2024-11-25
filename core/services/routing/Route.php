@@ -2,7 +2,6 @@
 
 namespace EventEspresso\core\services\routing;
 
-use DomainException;
 use EE_Dependency_Map;
 use EventEspresso\core\domain\entities\routing\specifications\RouteMatchSpecificationInterface;
 use EventEspresso\core\domain\services\capabilities\PublicCapabilities;
@@ -28,54 +27,28 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 abstract class Route implements RouteInterface, RequiresCapCheckInterface
 {
-    /**
-     * @var AssetManagerInterface $asset_manager
-     */
-    protected $asset_manager;
 
-    /**
-     * @var EE_Dependency_Map $dependency_map
-     */
-    protected $dependency_map;
+    protected EE_Dependency_Map $dependency_map;
 
-    /**
-     * @var JsonDataNode $data_node
-     */
-    protected $data_node;
+    protected LoaderInterface $loader;
 
-    /**
-     * @var LoaderInterface $loader
-     */
-    protected $loader;
+    protected RequestInterface $request;
 
-    /**
-     * @var RequestInterface $request
-     */
-    protected $request;
+    protected ?AssetManagerInterface $asset_manager = null;
 
-    /**
-     * @var RouteMatchSpecificationInterface $specification
-     */
-    protected $specification;
+    protected ?JsonDataNode $data_node = null;
 
-    /**
-     * @var boolean $handled
-     */
-    private $handled = false;
+    protected ?RouteMatchSpecificationInterface $specification = null;
 
-    /**
-     * @var array $default_dependencies
-     */
-    protected static $default_dependencies = [
+    private bool $handled = false;
+
+    protected static array $default_dependencies = [
         'EE_Dependency_Map'                           => EE_Dependency_Map::load_from_cache,
         'EventEspresso\core\services\loaders\Loader'  => EE_Dependency_Map::load_from_cache,
         'EventEspresso\core\services\request\Request' => EE_Dependency_Map::load_from_cache,
     ];
 
-    /**
-     * @var array $full_dependencies
-     */
-    protected static $full_dependencies = [
+    protected static array $full_dependencies = [
         'EE_Dependency_Map'                             => EE_Dependency_Map::load_from_cache,
         'EventEspresso\core\services\loaders\Loader'    => EE_Dependency_Map::load_from_cache,
         'EventEspresso\core\services\request\Request'   => EE_Dependency_Map::load_from_cache,
@@ -97,8 +70,8 @@ abstract class Route implements RouteInterface, RequiresCapCheckInterface
         EE_Dependency_Map $dependency_map,
         LoaderInterface $loader,
         RequestInterface $request,
-        JsonDataNode $data_node = null,
-        RouteMatchSpecificationInterface $specification = null
+        ?JsonDataNode $data_node = null,
+        ?RouteMatchSpecificationInterface $specification = null
     ) {
         $this->dependency_map = $dependency_map;
         $this->data_node      = $data_node;
@@ -195,7 +168,7 @@ abstract class Route implements RouteInterface, RequiresCapCheckInterface
     /**
      * @param RouteMatchSpecificationInterface|null $specification
      */
-    protected function setSpecification(RouteMatchSpecificationInterface $specification = null)
+    protected function setSpecification(?RouteMatchSpecificationInterface $specification = null)
     {
         $this->specification = $specification;
     }
@@ -265,6 +238,8 @@ abstract class Route implements RouteInterface, RequiresCapCheckInterface
 
 
     /**
+     * loads production assets for the given domain
+     *
      * @param string $domain_fqcn
      */
     public function initializeBaristaForDomain(string $domain_fqcn)
@@ -281,18 +256,10 @@ abstract class Route implements RouteInterface, RequiresCapCheckInterface
 
 
     /**
-     * @var bool
+     * @param bool|int|string|null $handled
      */
     private function verifyIsHandled($handled)
     {
-        if (! is_bool($handled)) {
-            throw new DomainException(
-                esc_html__(
-                    'Route::requestHandler() must return a boolean to indicate whether the request has been handled or not.',
-                    'event_espresso'
-                )
-            );
-        }
         $this->handled = filter_var($handled, FILTER_VALIDATE_BOOLEAN);
     }
 }

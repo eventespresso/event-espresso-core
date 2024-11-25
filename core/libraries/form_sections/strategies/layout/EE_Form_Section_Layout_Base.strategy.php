@@ -171,21 +171,22 @@ abstract class EE_Form_Section_Layout_Base
      */
     public function display_label($input)
     {
-        $label_text = $input->html_label_text();
-        if (! $label_text || $input->get_display_strategy() instanceof EE_Hidden_Display_Strategy) {
+        if (! $input->hasLabel()) {
             return '';
         }
         $class = $input->required()
             ? 'ee-required-label ' . $input->html_label_class()
             : $input->html_label_class();
-        $label_text .= $input->required() ? '<span class="ee-asterisk">*</span>' : '';
+
+        $label_text = $input->html_label_text();
+        $required   = $input->required() ? '<span class="ee-asterisk">*</span>' : '';
         return '
-        <label id="' . $input->html_label_id() . '"
-               class="' . $class . '"
-               style="' . $input->html_label_style() . '"
-               for="' . $input->html_id() . '"
+        <label id="' . esc_attr($input->html_label_id()) . '"
+               class="' . esc_attr($class) . '"
+               style="' . esc_attr($input->html_label_style()) . '"
+               for="' . esc_attr($input->html_id()) . '"
         >
-            ' . $label_text . '
+            ' . $label_text . $required . '
         </label>';
     }
 
@@ -230,11 +231,13 @@ abstract class EE_Form_Section_Layout_Base
     public function display_errors($input)
     {
         if ($input->get_validation_errors()) {
-            return "<label  id='"
-                   . $input->html_id()
-                   . "-error' class='error' for='{$input->html_name()}'>"
-                   . $input->get_validation_error_string()
-                   . '</label>';
+            return "
+            <label  id='" . esc_attr($input->html_id()) . "-error'
+                    class='error'
+                    for='" . esc_attr($input->html_name()) . "'
+            >
+                " . esc_html($input->get_validation_error_string()) . '
+            </label>';
         }
         return '';
     }
@@ -271,18 +274,15 @@ abstract class EE_Form_Section_Layout_Base
      * @return string
      * @throws EE_Error
      */
-    public function add_form_section_hooks_and_filters($html)
+    public function add_form_section_hooks_and_filters(string $html): string
     {
         // replace dashes and spaces with underscores
         $hook_name = str_replace(array('-', ' '), '_', $this->_form_section->html_id());
         do_action('AHEE__Form_Section_Layout__' . $hook_name, $this->_form_section);
-        $html = (string) apply_filters(
+        return (string) apply_filters(
             'AFEE__Form_Section_Layout__' . $hook_name . '__html',
             $html,
             $this->_form_section
         );
-        $html .= EEH_HTML::nl() . '<!-- AHEE__Form_Section_Layout__' . $hook_name . '__html -->';
-        $html .= EEH_HTML::nl() . '<!-- AFEE__Form_Section_Layout__' . $hook_name . ' -->';
-        return $html;
     }
 }

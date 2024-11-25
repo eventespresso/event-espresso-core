@@ -61,6 +61,9 @@ class EE_Admin_File_Uploader_Display_Strategy extends EE_Display_Strategy_Base
         $input .= $this->_input->html_class() !== ''
             ? 'class="large-text ee_media_url ' . $this->_input->html_class() . '" '
             : 'class="large-text ee_media_url" ';
+        if ($this->_input->hasLabel()) {
+            $input .= ' aria-labelledby="' . $this->_input->html_label_id() . '"';
+        }
         $input .= 'value="' . $this->_input->raw_value_in_form() . '" ';
         $input .= $this->_input->other_html_attributes();
         $input .= $this->dataAttributesString($this->_input->dataAttributes());

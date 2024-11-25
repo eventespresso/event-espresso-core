@@ -177,11 +177,11 @@ class EEM_Price_Type extends EEM_Soft_Delete_Base
      *                                if false, deletes regardless of other objects which may depend on it.
      *                                Its generally advisable to always leave this as TRUE,
      *                                otherwise you could easily corrupt your DB
-     * @return bool
+     * @return int
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function delete_permanently($query_params = [], $allow_blocking = true)
+    public function delete_permanently($query_params = [], $allow_blocking = true): int
     {
         $would_be_deleted_price_types    = $this->get_all_deleted_and_undeleted($query_params);
         $would_be_deleted_price_type_ids = array_keys($would_be_deleted_price_types);

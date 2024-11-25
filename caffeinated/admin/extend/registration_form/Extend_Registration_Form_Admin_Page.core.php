@@ -56,33 +56,33 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
 
         $new_page_routes    = [
             'question_groups'    => [
-                'func'       => '_question_groups_overview_list_table',
+                'func'       => [$this, '_question_groups_overview_list_table'],
                 'capability' => 'ee_read_question_groups',
             ],
             'add_question'       => [
-                'func'       => '_edit_question',
+                'func'       => [$this, '_edit_question'],
                 'capability' => 'ee_edit_questions',
             ],
             'insert_question'    => [
-                'func'       => '_insert_or_update_question',
+                'func'       => [$this, '_insert_or_update_question'],
                 'args'       => ['new_question' => true],
                 'capability' => 'ee_edit_questions',
                 'noheader'   => true,
             ],
             'duplicate_question' => [
-                'func'       => '_duplicate_question',
+                'func'       => [$this, '_duplicate_question'],
                 'capability' => 'ee_edit_questions',
                 'noheader'   => true,
             ],
             'trash_question'     => [
-                'func'       => '_trash_question',
+                'func'       => [$this, '_trash_question'],
                 'capability' => 'ee_delete_question',
                 'obj_id'     => $qst_id,
                 'noheader'   => true,
             ],
 
             'restore_question' => [
-                'func'       => '_trash_or_restore_questions',
+                'func'       => [$this, '_trash_or_restore_questions'],
                 'capability' => 'ee_delete_question',
                 'obj_id'     => $qst_id,
                 'args'       => ['trash' => false],
@@ -90,60 +90,60 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
             ],
 
             'delete_question' => [
-                'func'       => '_delete_question',
+                'func'       => [$this, '_delete_question'],
                 'capability' => 'ee_delete_question',
                 'obj_id'     => $qst_id,
                 'noheader'   => true,
             ],
 
             'trash_questions' => [
-                'func'       => '_trash_or_restore_questions',
+                'func'       => [$this, '_trash_or_restore_questions'],
                 'capability' => 'ee_delete_questions',
                 'args'       => ['trash' => true],
                 'noheader'   => true,
             ],
 
             'restore_questions' => [
-                'func'       => '_trash_or_restore_questions',
+                'func'       => [$this, '_trash_or_restore_questions'],
                 'capability' => 'ee_delete_questions',
                 'args'       => ['trash' => false],
                 'noheader'   => true,
             ],
 
             'delete_questions' => [
-                'func'       => '_delete_questions',
+                'func'       => [$this, '_delete_questions'],
                 'args'       => [],
                 'capability' => 'ee_delete_questions',
                 'noheader'   => true,
             ],
 
             'add_question_group' => [
-                'func'       => '_edit_question_group',
+                'func'       => [$this, '_edit_question_group'],
                 'capability' => 'ee_edit_question_groups',
             ],
 
             'edit_question_group' => [
-                'func'       => '_edit_question_group',
+                'func'       => [$this, '_edit_question_group'],
                 'capability' => 'ee_edit_question_group',
                 'obj_id'     => $qsg_id,
                 'args'       => ['edit'],
             ],
 
             'delete_question_groups' => [
-                'func'       => '_delete_question_groups',
+                'func'       => [$this, '_delete_question_groups'],
                 'capability' => 'ee_delete_question_groups',
                 'noheader'   => true,
             ],
 
             'delete_question_group' => [
-                'func'       => '_delete_question_groups',
+                'func'       => [$this, '_delete_question_groups'],
                 'capability' => 'ee_delete_question_group',
                 'obj_id'     => $qsg_id,
                 'noheader'   => true,
             ],
 
             'trash_question_group' => [
-                'func'       => '_trash_or_restore_question_groups',
+                'func'       => [$this, '_trash_or_restore_question_groups'],
                 'args'       => ['trash' => true],
                 'capability' => 'ee_delete_question_group',
                 'obj_id'     => $qsg_id,
@@ -151,7 +151,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
             ],
 
             'restore_question_group' => [
-                'func'       => '_trash_or_restore_question_groups',
+                'func'       => [$this, '_trash_or_restore_question_groups'],
                 'args'       => ['trash' => false],
                 'capability' => 'ee_delete_question_group',
                 'obj_id'     => $qsg_id,
@@ -159,14 +159,14 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
             ],
 
             'insert_question_group' => [
-                'func'       => '_insert_or_update_question_group',
+                'func'       => [$this, '_insert_or_update_question_group'],
                 'args'       => ['new_question_group' => true],
                 'capability' => 'ee_edit_question_groups',
                 'noheader'   => true,
             ],
 
             'update_question_group' => [
-                'func'       => '_insert_or_update_question_group',
+                'func'       => [$this, '_insert_or_update_question_group'],
                 'args'       => ['new_question_group' => false],
                 'capability' => 'ee_edit_question_group',
                 'obj_id'     => $qsg_id,
@@ -174,14 +174,14 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
             ],
 
             'trash_question_groups' => [
-                'func'       => '_trash_or_restore_question_groups',
+                'func'       => [$this, '_trash_or_restore_question_groups'],
                 'args'       => ['trash' => true],
                 'capability' => 'ee_delete_question_groups',
                 'noheader'   => ['trash' => false],
             ],
 
             'restore_question_groups' => [
-                'func'       => '_trash_or_restore_question_groups',
+                'func'       => [$this, '_trash_or_restore_question_groups'],
                 'args'       => ['trash' => false],
                 'capability' => 'ee_delete_question_groups',
                 'noheader'   => true,
@@ -189,18 +189,18 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
 
 
             'espresso_update_question_group_order' => [
-                'func'       => 'update_question_group_order',
+                'func'       => [$this, 'update_question_group_order'],
                 'capability' => 'ee_edit_question_groups',
                 'noheader'   => true,
             ],
 
             'view_reg_form_settings' => [
-                'func'       => '_reg_form_settings',
+                'func'       => [$this, '_reg_form_settings'],
                 'capability' => 'manage_options',
             ],
 
             'update_reg_form_settings' => [
-                'func'       => '_update_reg_form_settings',
+                'func'       => [$this, '_update_reg_form_settings'],
                 'capability' => 'manage_options',
                 'noheader'   => true,
             ],

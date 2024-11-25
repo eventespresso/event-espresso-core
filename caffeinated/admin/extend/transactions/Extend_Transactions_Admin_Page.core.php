@@ -47,7 +47,7 @@ class Extend_Transactions_Admin_Page extends Transactions_Admin_Page
 
         $new_page_routes = [
             'reports' => [
-                'func'       => '_transaction_reports',
+                'func'       => [$this, '_transaction_reports'],
                 'capability' => 'ee_read_transactions',
             ],
         ];

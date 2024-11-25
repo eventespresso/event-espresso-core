@@ -26,7 +26,7 @@ class Extend_Support_Admin_Page extends Support_Admin_Page
         // new routes and new configs (or overrides )
         $new_page_routes                              = [
             'faq' => [
-                'func'       => '_faq',
+                'func'       => [$this, '_faq'],
                 'capability' => 'ee_read_ee',
             ],
         ];

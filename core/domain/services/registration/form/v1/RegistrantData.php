@@ -18,63 +18,43 @@ use ReflectionException;
  */
 class RegistrantData
 {
-    /**
-     * @var int
-     */
-    private $attendee_counter = 0;
+    private int $attendee_counter = 0;
 
-    /**
-     * @var array
-     */
-    private $registrant_data = [];
+    private array $registrant_data = [];
 
-    /**
-     * @var bool
-     */
-    private $copy_primary = false;
+    private bool $copy_primary = false;
 
-    /**
-     * @var array
-     */
-    private $required_questions = [];
+    private array $required_questions = [];
 
     /**
      * @var EE_Registration[]
      */
-    private $registrations = [];
+    private array $registrations = [];
 
     /**
      * @var EE_Answer[][]
      */
-    private $registrant_answers = [];
+    private array $registrant_answers = [];
 
     /**
      * array for tracking reg form data for the primary registrant
      *
      * @var array
      */
-    private $primary_registrant_data;
+    private array $primary_registrant_data = ['line_item_id' => null];
 
     /**
      * the attendee object created for the primary registrant
      *
-     * @var EE_Attendee
+     * @var EE_Attendee|null
      */
-    private $primary_registrant;
-
-
-    /**
-     * RegistrantData constructor.
-     */
-    public function __construct()
-    {
-        $this->primary_registrant_data = ['line_item_id' => null,];
-    }
+    private ?EE_Attendee $primary_registrant = null;
 
 
     /**
      * @param EE_Registration $registration
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function initializeRegistrantData(EE_Registration $registration): void
     {
@@ -334,8 +314,7 @@ class RegistrantData
     {
         return $this->attendeeCount() === 1
             || (
-                $this->attendeeCount() === 1
-                && $reg_url_link !== ''
+                $reg_url_link !== ''
                 && $this->getPrimaryRegistrantDataValue('reg_url_link') === $reg_url_link
             );
     }

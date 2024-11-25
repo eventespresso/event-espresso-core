@@ -16,25 +16,13 @@ use InvalidArgumentException;
  */
 class CachingLoader extends CachingLoaderDecorator
 {
-    /**
-     * @var bool
-     */
-    protected $bypass;
+    protected bool $bypass = false;
 
-    /**
-     * @var CollectionInterface
-     */
-    protected $cache;
+    protected CollectionInterface $cache;
 
-    /**
-     * @var string
-     */
-    protected $identifier;
+    protected string $identifier;
 
-    /**
-     * @var ObjectIdentifier
-     */
-    private $object_identifier;
+    private ObjectIdentifier $object_identifier;
 
 
     /**
@@ -116,10 +104,21 @@ class CachingLoader extends CachingLoaderDecorator
     public function share($fqcn, $object, array $arguments = []): bool
     {
         if ($object instanceof $fqcn) {
-            return $this->cache->add(
-                $object,
-                $this->object_identifier->getIdentifier($fqcn, $arguments)
-            );
+            $added = false;
+            if ($arguments) {
+                // first cache the object using the identifier that includes the arguments
+                $added = $this->cache->add($object, $this->object_identifier->getIdentifier($fqcn, $arguments));
+            }
+            // then again using the identifier without the arguments
+            // WHY? because most requests for the object will not include arguments
+            $object_identifier = $this->object_identifier->getIdentifier($fqcn);
+            // but only if the object is not already in the cache
+            if (! $this->cache->has($object_identifier)) {
+                $added = $this->cache->add($object, $object_identifier)
+                    ? true
+                    : $added;
+            }
+            return $added;
         }
         throw new InvalidArgumentException(
             sprintf(

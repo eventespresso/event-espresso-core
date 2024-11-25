@@ -6,6 +6,46 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Releases
 
+### [5.0.30]
+
+#### Added
+ - [Advanced Registration Forms (#1155)](https://github.com/eventespresso/cafe/pull/1155)
+ - [New Self-Serve Registration Cancellation Add-on (#1581)](https://github.com/eventespresso/cafe/pull/1581)
+ - [Add author bundle for Loco Translate (#1602)](https://github.com/eventespresso/cafe/pull/1602)
+ - NEW
+
+#### Fixed
+ - [Check DbStatus::isOnline() Before Loading Service Change Notifications (#1586)](https://github.com/eventespresso/cafe/pull/1586)
+ - [Remove period shown when only one attendee can register (#1583)](https://github.com/eventespresso/cafe/pull/1583)
+ - [Welp! Just Sanitize and Return Widget Settings! (#1591)](https://github.com/eventespresso/cafe/pull/1591)
+ - [Fix Event Subtotal Line Item Selection When Using Event Cart (#1598)](https://github.com/eventespresso/cafe/pull/1598)
+ - [Fix Event Cart UI Update When Deleting Tickets (#1599)](https://github.com/eventespresso/cafe/pull/1599)
+ - [Fix Registration Status Updates (#1612)](https://github.com/eventespresso/cafe/pull/1612)
+ - [Fix iFrame CSS IDs (#1613)](https://github.com/eventespresso/cafe/pull/1613)
+ - [Allow Checkbox Inputs When Using Datetime Selector (#1606)](https://github.com/eventespresso/cafe/pull/1606)
+ - [PPC. Fix ACDC removing country field (#1621)](https://github.com/eventespresso/cafe/pull/1621)
+ - FIX
+
+#### Changed
+ - [BuildMachine 5.0.29 changes (#1585)](https://github.com/eventespresso/cafe/pull/1585)
+ - [Update Unit Tests (#1597)](https://github.com/eventespresso/cafe/pull/1597)
+ - [Update Registration Admin Questions Form Submission (#1593)](https://github.com/eventespresso/cafe/pull/1593)
+ - [Dont Load Payment Method Deprecation 2025 Notices on Event Smart (#1603)](https://github.com/eventespresso/cafe/pull/1603)
+ - [Update jQuery Validate to v1.19.5 (#1592)](https://github.com/eventespresso/cafe/pull/1592)
+ - [Improve Loco Translate bundle to include both translation filenames (#1626)](https://github.com/eventespresso/cafe/pull/1626)
+ - MOD
+
+#### Deprecated
+ - DEP
+
+#### Removed
+ - RMV
+
+#### Security
+ - SEC
+
+
+
 ### [5.0.29]
 
 #### Fixed
@@ -13,6 +53,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Changed
  - [BuildMachine 5.0.28 changes (#1579)](https://github.com/eventespresso/cafe/pull/1579)
+
+
+
+
 
 
 ### [5.0.28]
@@ -41,9 +85,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
-
-
-
 ### [5.0.27]
 
 #### Added
@@ -60,11 +101,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
-
-
-
 ### [5.0.26]
-
 
 #### Fixed
  - Fixed PHP 7.4 Incompatible Code in InterfaceManager
@@ -74,12 +111,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
-
-
-
 ### [5.0.25]
-
-
 
 #### Changed
  - [BuildMachine changes - 5.0.24.p (#1486)](https://github.com/eventespresso/cafe/pull/1486)
@@ -87,8 +119,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - [Add GraphQL interface EspressoNode (#1478)](https://github.com/eventespresso/cafe/pull/1478)
  - [Keap. Refactor error logging (#1500)](https://github.com/eventespresso/cafe/pull/1500)
  - [Remove USE_ADVANCED_EDITOR Feature Flag (Barista#1332) (#1503)](https://github.com/eventespresso/cafe/pull/1503)
-
-
 
 
 
@@ -112,6 +142,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - [Add current_user_can() Check When Updating Timezone (#1475)](https://github.com/eventespresso/cafe/pull/1475)
 
 
+
 ### [5.0.23]
 
 #### Fixed
@@ -119,6 +150,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Changed
  - [BuildMachine 5.0.22 changes (#1450)](https://github.com/eventespresso/cafe/pull/1450)
+
 
 
 ### [5.0.22]
@@ -155,6 +187,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - [BuildMachine 5.0.22 changes (#1450)](https://github.com/eventespresso/cafe/pull/1450)
 
 
+
 ### [5.0.21]
 
 #### Fixed
@@ -186,6 +219,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - [Reduce Vendor Folder Size (#1349)](https://github.com/eventespresso/cafe/pull/1349)
  - [BuildMachine 5.0.21 changes (#1374)](https://github.com/eventespresso/cafe/pull/1374)
  - [PPC. Add partner Fees (#1355)](https://github.com/eventespresso/cafe/pull/1355)
+
 
 
 ### [5.0.20]
@@ -228,6 +262,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - [PUE to EDD Tweaks (#1268)](https://github.com/eventespresso/cafe/pull/1268)
 
 
+
 ### [5.0.19]
 
 #### Fixed
@@ -243,6 +278,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - [PPC. Update order status/error messages (#1162)](https://github.com/eventespresso/cafe/pull/1162)
  - [Prevent fatal error from get_edit_post_link returning null (#1166)](https://github.com/eventespresso/cafe/pull/1166)
  - [Remove Serialized Objects from Registration Report Requests (#1154)](https://github.com/eventespresso/cafe/pull/1154)
+
 
 
 ### [5.0.18]
@@ -267,6 +303,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - [Improve Custom Post Type Defense Against Hostile Themes and Plugins (#1136)](https://github.com/eventespresso/cafe/pull/1136)
 
 
+
 ### [5.0.17]
 
 #### Fixed
@@ -274,6 +311,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Changed
  - [BuildMachine 5.0.16.p changes (#1088)](https://github.com/eventespresso/cafe/pull/1088)
+
+
 
 ### [5.0.16]
 
@@ -284,6 +323,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 #### Changed
  - [BuildMachine 5.0.16.p changes (#1088)](https://github.com/eventespresso/cafe/pull/1088)
 
+
+
 ### [5.0.15]
 
 #### Fixed
@@ -291,10 +332,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - [Dont set type properties of ?EEM_Base (#1074)](https://github.com/eventespresso/cafe/pull/1074)
 
 
+
 ### [5.0.14]
 
 #### Fixed
  - [Fix paypal exception causing fatal on PHP7.4 (#1071)](https://github.com/eventespresso/cafe/pull/1071)
+
+
 
 ### [5.0.13]
 

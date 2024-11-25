@@ -800,11 +800,12 @@ abstract class EE_Base_Class
      *                                                     Eg 'Registration'
      * @param mixed  $object_to_remove_or_index_into_array or an index into the array of cached things, or NULL
      *                                                     if you intend to use $clear_all = TRUE, or the relation only
-     *                                                     has 1 object anyways (ie, it's a BelongsToRelation)
+     *                                                     has 1 object anyway (ie, it's a BelongsToRelation)
      * @param bool   $clear_all                            This flags clearing the entire cache relation property if
      *                                                     this is HasMany or HABTM.
-     * @return EE_Base_Class | boolean from which was cleared from the cache, or true if we requested to remove a
-     *                                                     relation from all
+     * @return EE_Base_Class|bool                          entity that was cleared from the cache,
+     *                                                     or true if we requested to remove a relation from all
+     *                                                     or false if entity was never cached anyway.
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
@@ -880,8 +881,8 @@ abstract class EE_Base_Class
                 $obj_removed = $this->_model_relations[ $relation_name ][ $index_in_cache ];
                 unset($this->_model_relations[ $relation_name ][ $index_in_cache ]);
             } else {
-                // that thing was never cached anyways.
-                $obj_removed = null;
+                // that thing was never cached anyway.
+                $obj_removed = false;
             }
         }
         return $obj_removed;
@@ -1637,7 +1638,7 @@ abstract class EE_Base_Class
      * override
      * `EE_Base_Class::_delete` NOT this class.
      *
-     * @return boolean | int
+     * @return int
      * @throws ReflectionException
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
@@ -1657,7 +1658,7 @@ abstract class EE_Base_Class
          * @param EE_Base_Class $model_object about to be 'deleted'
          */
         do_action('AHEE__EE_Base_Class__delete__before', $this);
-        $result = $this->_delete();
+        $deleted = $this->_delete();
         /**
          * Called just after the `EE_Base_Class::_delete` method call.
          * Note:
@@ -1667,10 +1668,10 @@ abstract class EE_Base_Class
          * soft deletes (trash) the object and does not permanently delete it.
          *
          * @param EE_Base_Class $model_object that was just 'deleted'
-         * @param boolean       $result
+         * @param boolean       $deleted
          */
-        do_action('AHEE__EE_Base_Class__delete__end', $this, $result);
-        return $result;
+        do_action('AHEE__EE_Base_Class__delete__end', $this, $deleted);
+        return $deleted;
     }
 
 
@@ -1680,14 +1681,14 @@ abstract class EE_Base_Class
      * default functionality for "delete" (which is to call `permanently_delete`) should override this method NOT
      * `EE_Base_Class::delete`
      *
-     * @return bool|int
+     * @return int
      * @throws ReflectionException
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    protected function _delete()
+    protected function _delete(): int
     {
         return $this->delete_permanently();
     }
@@ -1697,14 +1698,14 @@ abstract class EE_Base_Class
      * Deletes this model object permanently from db
      * (but keep in mind related models may block the delete and return an error)
      *
-     * @return bool | int
+     * @return int
      * @throws ReflectionException
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException
      * @throws EE_Error
      */
-    public function delete_permanently()
+    public function delete_permanently(): int
     {
         /**
          * Called just before HARD deleting a model object
@@ -2331,7 +2332,9 @@ abstract class EE_Base_Class
      *                on the JOIN table and currently only the HABTM models accept these additional conditions. Also
      *                remember that if an exact match isn't found for these extra cols/val pairs, then no row is
      *                deleted.
-     * @return EE_Base_Class the relation was removed from
+     * @return EE_Base_Class|bool   the related entity that was removed
+     *                              or true if multiple entities removed
+     *                              or false if nothing was cached
      * @throws ReflectionException
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
@@ -2857,7 +2860,7 @@ abstract class EE_Base_Class
      *
      * @param string $meta_key
      * @param mixed  $meta_value
-     * @return int|bool number of extra meta rows deleted
+     * @return int number of extra meta rows deleted
      * @throws InvalidArgumentException
      * @throws InvalidInterfaceException
      * @throws InvalidDataTypeException

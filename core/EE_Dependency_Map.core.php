@@ -807,9 +807,9 @@ class EE_Dependency_Map
             ],
             'EventEspresso\core\services\addon\AddonManager'                                                                     => [
                 'EventEspresso\core\services\addon\AddonCollection'              => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\Psr4Autoloader'                              => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\services\addon\api\v1\RegisterAddon'         => EE_Dependency_Map::load_from_cache,
+                'EE_Dependency_Map'                                              => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\addon\api\IncompatibleAddonHandler' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\addon\api\v1\RegisterAddon'         => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\addon\api\ThirdPartyPluginHandler'  => EE_Dependency_Map::load_from_cache,
             ],
             'EventEspresso\core\services\addon\api\ThirdPartyPluginHandler'                                                      => [
@@ -927,6 +927,12 @@ class EE_Dependency_Map
             ],
             'EventEspresso\core\domain\services\licensing\LicenseDataPue' => [
                 'EE_Network_Core_Config' => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\services\addon\api\DependencyHandlers' => [
+                'EE_Dependency_Map' => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\services\addon\api\AddonRoutes' => [
+                'EventEspresso\core\services\routing\RouteHandler' => EE_Dependency_Map::load_from_cache,
             ],
         ];
     }

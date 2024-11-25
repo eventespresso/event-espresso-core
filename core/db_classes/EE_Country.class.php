@@ -18,7 +18,7 @@ class EE_Country extends EE_Base_Class
     public static function new_instance($props_n_values = [])
     {
         $has_object = parent::_check_for_object($props_n_values, __CLASS__);
-        return $has_object ? $has_object : new self($props_n_values);
+        return $has_object ?: new self($props_n_values);
     }
 
 
@@ -43,7 +43,7 @@ class EE_Country extends EE_Base_Class
      */
     public function name(): string
     {
-        return $this->get('CNT_name');
+        return (string) $this->get('CNT_name');
     }
 
 
@@ -61,7 +61,20 @@ class EE_Country extends EE_Base_Class
 
 
     /**
-     * Gets the country ISO3
+     * Gets the country ISO code
+     *
+     * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function ISO(): string
+    {
+        return (string) $this->get('CNT_ISO');
+    }
+
+
+    /**
+     * Gets the country ISO3 code
      *
      * @return string
      * @throws EE_Error
@@ -69,7 +82,7 @@ class EE_Country extends EE_Base_Class
      */
     public function ISO3(): string
     {
-        return $this->get('CNT_ISO3');
+        return (string) $this->get('CNT_ISO3');
     }
 
 
@@ -82,7 +95,7 @@ class EE_Country extends EE_Base_Class
      */
     public function currency_code(): string
     {
-        return $this->get('CNT_cur_code');
+        return (string) $this->get('CNT_cur_code');
     }
 
 
@@ -95,8 +108,7 @@ class EE_Country extends EE_Base_Class
      */
     public function currency_sign(): string
     {
-        $CNT_cur_sign = $this->get('CNT_cur_sign');
-        return $CNT_cur_sign ?: '';
+        return (string) $this->get('CNT_cur_sign');
     }
 
 
@@ -109,7 +121,7 @@ class EE_Country extends EE_Base_Class
      */
     public function currency_name_single(): string
     {
-        return $this->get('CNT_cur_single');
+        return (string) $this->get('CNT_cur_single');
     }
 
 
@@ -122,7 +134,7 @@ class EE_Country extends EE_Base_Class
      */
     public function currency_name_plural(): string
     {
-        return $this->get('CNT_cur_plural');
+        return (string) $this->get('CNT_cur_plural');
     }
 
 
@@ -148,7 +160,7 @@ class EE_Country extends EE_Base_Class
      */
     public function currency_decimal_places(): int
     {
-        return $this->get('CNT_cur_dec_plc');
+        return (int) $this->get('CNT_cur_dec_plc');
     }
 
 
@@ -161,7 +173,7 @@ class EE_Country extends EE_Base_Class
      */
     public function currency_decimal_mark(): string
     {
-        return $this->get('CNT_cur_dec_mrk');
+        return (string) $this->get('CNT_cur_dec_mrk');
     }
 
 
@@ -174,7 +186,7 @@ class EE_Country extends EE_Base_Class
      */
     public function currency_thousands_separator(): string
     {
-        return $this->get('CNT_cur_thsnds');
+        return (string) $this->get('CNT_cur_thsnds');
     }
 
 
@@ -200,12 +212,14 @@ class EE_Country extends EE_Base_Class
      */
     public function telephoneCode(): string
     {
-        return $this->get('CNT_tel_code');
+        return (string) $this->get('CNT_tel_code');
     }
 
 
     /**
      * @return bool
+     * @throws EE_Error
+     * @throws ReflectionException
      * @deprecated 4.10.30.p
      */
     public function is_active(): bool

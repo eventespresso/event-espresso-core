@@ -138,7 +138,7 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
      */
     protected function _standard_attributes_array(): array
     {
-        return [
+        $attributes = [
             'name'  => $this->_input->html_name(),
             'id'    => $this->_input->html_id(),
             'class' => $this->_input->html_class(true),
@@ -146,6 +146,10 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
             1       => $this->_input->other_html_attributes(),
             'style' => $this->_input->html_style(),
         ];
+        if ($this->_input->hasLabel()) {
+            $attributes['aria-labelledby'] = $this->_input->html_label_id();
+        }
+        return $attributes;
     }
 
 
@@ -199,8 +203,9 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
         if ($value === null) {
             return '';
         }
-        $value = esc_attr($value);
-        return " $attribute=\"$value\"";
+        $value = esc_attr(trim($value));
+        // don't add the attribute if the value is empty, unless the attribute is 'value'
+        return $value || $attribute === 'value' ? " $attribute=\"$value\"" : '';
     }
 
 
@@ -244,8 +249,7 @@ abstract class EE_Display_Strategy_Base extends EE_Form_Input_Strategy_Base
      */
     protected function _single_attribute(string $attribute, bool $add = true): string
     {
-        return $add
-            ? " $attribute"
-            : '';
+        $attribute = trim($attribute);
+        return $attribute && $add ? " $attribute" : '';
     }
 }

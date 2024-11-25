@@ -13,25 +13,13 @@ use ReflectionException;
 
 class RegFormInputHandler
 {
-    /**
-     * @var EEM_Attendee
-     */
-    private $attendee_model;
+    private EEM_Attendee $attendee_model;
 
-    /**
-     * @var string
-     */
-    private $checkout_reg_url_link;
+    private string $checkout_reg_url_link;
 
-    /**
-     * @var RegistrantData
-     */
-    private $registrant_data;
+    private RegistrantData $registrant_data;
 
-    /**
-     * @var array
-     */
-    private $required_questions;
+    private array $required_questions;
 
 
     /**

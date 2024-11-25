@@ -26,6 +26,8 @@ class EE_Switch_Display_Strategy extends EE_Compound_Input_Display_Strategy
             ? "$html_class ee-switch__input"
             : 'ee-switch__input';
 
+        $labelledby = $input->hasLabel() ? ' aria-labelledby="' . $html_id . '-lbl"' : '';
+
         $html .= "
 			<input type='checkbox'
 				   class='$html_class'
@@ -33,11 +35,12 @@ class EE_Switch_Display_Strategy extends EE_Compound_Input_Display_Strategy
 				   name='{$input->html_name()}'
 				   style='{$input->html_style()}'
 				   value=$switch_value
-				   {$this->_input->other_html_attributes()}
-				   {$this->dataAttributesString($this->_input->dataAttributes())}
+				   {$input->other_html_attributes()}
+				   {$this->dataAttributesString($input->dataAttributes())}
 				   $checked
+				   $labelledby
 			/>
-			<label class='ee-switch__toggle' for='$html_id'></label>
+			<label id='$html_id-lbl' class='ee-switch__toggle' for='$html_id'></label>
 			<div class='ee-switch__label'>
 			";
 

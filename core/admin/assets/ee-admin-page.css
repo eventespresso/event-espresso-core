@@ -26,9 +26,12 @@
 .ee-status-color--MRS,
 .ee-status-color--RIC,
 .ee-status-color--TAB {
-    color: var(--ee-text-on-status-color-yellow) !important;
+    /* Yellow text is NOT accessible, so we're using dark grey text with a thick yellow underline instead */
+    color: var(--ee-font-color) !important;
     font-weight: 400 !important;
-    text-shadow: -1px 0 var(--ee-status-color-yellow), 0 1px var(--ee-status-color-yellow), 1px 0 var(--ee-status-color-yellow), 0 -1px var(--ee-status-color-yellow);
+    text-decoration: underline !important;
+    text-decoration-color: hsl(50, 100%, 50%) !important;
+    text-decoration-thickness: 3px !important;
 }
 
 /* txn complete, payment approved, reg approved, dtt active*/
@@ -2443,6 +2446,7 @@ label.error {
 .espresso-admin .ee-admin-two-column-layout > thead > tr,
 .espresso-admin .ee-admin-two-column-layout > tbody > tr,
 .espresso-admin .ee-admin-two-column-layout > tfoot > tr {
+    box-sizing: border-box;
     display: flex;
     flex-flow: column wrap;
     flex-grow: 1;
@@ -3228,12 +3232,12 @@ input.ee-register-button {
 }
 
 
-.ee-admin-container .ee-new-edtr-notice p {
+.ee-admin-container .ee-new-edtr-notice p:not(.ee-status-outline) {
     font-weight: 400;
     line-height: 1.5;
     margin: 0;
     margin-block-start: var(--ee-margin-micro);
-    margin-inline-start: var(--ee-margin-smaller);
+    margin-inline-start: var(--ee-margin-default);
     opacity: .9;
 }
 
@@ -3262,7 +3266,7 @@ input.ee-register-button {
 }
 
 .ee-new-edtr-notice .ee-new-edtr-notice__img {
-    margin: var(--ee-margin-default) var(--ee-margin-smaller);
+    margin: var(--ee-margin-default) var(--ee-margin-smaller) var(--ee-margin-default) var(--ee-margin-default);
     max-width: clamp(10rem, 24rem, 60%);
     opacity: 1;
 }
@@ -7058,7 +7062,8 @@ body.espresso-admin #contextual-help-wrap strong {
 }
 
 
-.ee-feature-highlight-2024 {
+.ee-feature-highlight-2024,
+.espresso-admin .postbox .inside > .ee-feature-highlight-2024 {
     background: var(--ee-feature-highlight-2024-bg);
     border: 1px solid var(--ee-feature-highlight-2024);
     border-radius: var(--ee-border-radius);

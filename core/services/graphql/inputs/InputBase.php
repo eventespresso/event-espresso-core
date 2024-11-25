@@ -7,7 +7,9 @@ use EventEspresso\core\services\graphql\fields\GraphQLFieldInterface;
 
 /**
  * Class InputBase
- * Description
+ * provides a structure for defining GraphQL input types in Event Espresso.
+ * Each input type will have a name, a description, and a set of fields.
+ * The actual fields are defined in the classes that extend InputBase.
  *
  * @package EventEspresso\core\services\graphql
  * @author  Manzoor Wani

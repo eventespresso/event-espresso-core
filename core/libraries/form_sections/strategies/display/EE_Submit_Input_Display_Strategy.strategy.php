@@ -15,6 +15,7 @@ class EE_Submit_Input_Display_Strategy extends EE_Display_Strategy_Base
      */
     public function display(): string
     {
+        $this->_input->set_html_id($this->_input->html_id() . '-submit');
         $default_value = $this->_input->get_default();
         if ($this->_input->get_normalization_strategy() instanceof EE_Normalization_Strategy_Base) {
             $default_value = $this->_input->get_normalization_strategy()->unnormalize($default_value);
@@ -27,7 +28,7 @@ class EE_Submit_Input_Display_Strategy extends EE_Display_Strategy_Base
                     'type'  => 'submit',
                     'value' => $default_value,
                     // overwrite the standard id with the backwards compatible one
-                    'id'    => $this->_input->html_id() . '-submit',
+                    'id'    => $this->_input->html_id(),
                     'class' => $this->_input->html_class() . ' ' . $this->_input->button_css_attributes(),
                 ]
             )

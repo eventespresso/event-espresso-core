@@ -101,7 +101,6 @@ class EEM_Event_Message_Template extends EEM_Base
      * @param array $EVT_IDs An array of EVT_IDs.  Optional. If empty then there must be GRP IDs.
      * @return int             How many rows were deleted.
      * @throws EE_Error
-     * @throws EE_Error
      */
     public function delete_event_group_relations($GRP_IDs = [], $EVT_IDs = [])
     {

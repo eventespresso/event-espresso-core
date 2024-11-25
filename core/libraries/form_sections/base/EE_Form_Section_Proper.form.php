@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\services\assets\JqueryAssetManager;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
@@ -187,7 +188,9 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
                         ),
                         $subsection_name,
                         get_class($this),
-                        $subsection ? get_class($subsection) : esc_html__('NULL', 'event_espresso')
+                        $subsection && is_object($subsection)
+                            ? get_class($subsection)
+                            : gettype($subsection)
                     )
                 );
             }
@@ -451,9 +454,9 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      * @param string $name
      * @return boolean
      */
-    public function subsection_exists($name)
+    public function subsection_exists(string $name): bool
     {
-        return isset($this->_subsections[ $name ]) ? true : false;
+        return isset($this->_subsections[ $name ]);
     }
 
 
@@ -498,7 +501,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
 
 
     /**
-     * Gets an input by the given name. If not found, or if its not an EE_FOrm_Input_Base child,
+     * Gets an input by the given name. If not found, or if it's not an EE_Form_Input_Base child,
      * throw an EE_Error.
      *
      * @param string  $name
@@ -531,6 +534,38 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
             );
         }
         return $subsection;
+    }
+
+
+    /**
+     * drills down recursively through form subsections and finds the input with the given html name
+     *
+     * @param string $html_name
+     * @return EE_Form_Input_Base|null
+     * @throws EE_Error
+     * @since $VID:$
+     */
+    public function findInput(string $html_name): ?EE_Form_Input_Base
+    {
+        // breadth first search
+        if ($this->subsection_exists($html_name)) {
+            return $this->_subsections[ $html_name ];
+        }
+        $input = null;
+        foreach ($this->subsections() as $subsection) {
+            if ($subsection instanceof EE_Form_Section_Proper) {
+                $input = $subsection->findInput($html_name);
+                if ($input !== null) {
+                    return $input;
+                }
+            } else if (
+                $subsection instanceof EE_Form_Input_Base
+                && $subsection->html_name() === $html_name
+            ) {
+                return $subsection;
+            }
+        }
+        return $input;
     }
 
 
@@ -719,7 +754,11 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
         wp_register_script(
             'ee_form_section_validation',
             EE_GLOBAL_ASSETS_URL . 'scripts' . '/form_section_validation.js',
-            array('jquery-validate', 'jquery-ui-datepicker', 'jquery-validate-extra-methods'),
+            [
+                JqueryAssetManager::JS_HANDLE_JQUERY_VALIDATE,
+                JqueryAssetManager::JS_HANDLE_JQUERY_UI_DATEPICKER,
+                JqueryAssetManager::JS_HANDLE_JQUERY_VALIDATE_EXTRA
+            ],
             EVENT_ESPRESSO_VERSION,
             true
         );
@@ -959,7 +998,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      */
     protected function _validate()
     {
-        // reset the cache of whether this form is valid or not- we're re-validating it now
+        // reset the cache of whether this form is valid or not - we're re-validating it now
         $this->is_valid = null;
         foreach ($this->get_validatable_subsections() as $subsection_name => $subsection) {
             if (method_exists($this, '_validate_' . $subsection_name)) {
@@ -1238,7 +1277,7 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      *
      * @param EE_Form_Section_Base[] $new_subsections           array of new form subsections
      *                                                          where keys are their names
-     * @param string                 $subsection_name_to_target an existing for section that $new_subsections
+     * @param string|null            $subsection_name_to_target an existing form section that $new_subsections
      *                                                          should be added before or after
      *                                                          IF $subsection_name_to_target is null,
      *                                                          then $new_subsections will be added to
@@ -1250,8 +1289,11 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
      * @return void
      * @throws EE_Error
      */
-    public function add_subsections($new_subsections, $subsection_name_to_target = null, $add_before = true)
-    {
+    public function add_subsections(
+        array $new_subsections,
+        ?string $subsection_name_to_target = null,
+        bool $add_before = true
+    ) {
         foreach ($new_subsections as $subsection_name => $subsection) {
             if (! $subsection instanceof EE_Form_Section_Base) {
                 EE_Error::add_error(
@@ -1549,5 +1591,31 @@ class EE_Form_Section_Proper extends EE_Form_Section_Validatable
             return $child_section->find_section_from_path($subpath);
         }
         return null;
+    }
+
+
+    /**
+     * @param EE_Form_Section_Base $form_section
+     * @param int                  $depth
+     * @return void
+     * @throws EE_Error
+     * @since $VID:$
+     */
+    public static function visualize(EE_Form_Section_Base $form_section, int $depth = 0)
+    {
+        $indent = str_repeat(' .', $depth * 2);
+        echo "$indent form_section: " . ($form_section->_name ?: get_class($form_section));
+        $depth++;
+        if ($form_section instanceof EE_Form_Section_Proper) {
+            foreach ($form_section->_subsections as $subsection) {
+                if ($subsection instanceof EE_Form_Section_Proper) {
+                    self::visualize($subsection, $depth);
+                } elseif ($subsection instanceof EE_Form_Input_Base) {
+                    echo "$indent input: " . ($subsection->html_name() ?: get_class($subsection));
+                } else {
+                    echo "$indent input: " . ($subsection->_name ?: get_class($subsection));
+                }
+            }
+        }
     }
 }

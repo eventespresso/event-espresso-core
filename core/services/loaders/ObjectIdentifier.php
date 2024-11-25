@@ -3,6 +3,7 @@
 namespace EventEspresso\core\services\loaders;
 
 use Closure;
+use EventEspresso\core\interfaces\ReservedInstanceInterface;
 
 /**
  * Class ObjectIdentifier
@@ -20,10 +21,7 @@ class ObjectIdentifier
      */
     const DELIMITER = '____';
 
-    /**
-     * @var ClassInterfaceCache $class_cache
-     */
-    private $class_cache;
+    private ClassInterfaceCache $class_cache;
 
 
     /**
@@ -39,17 +37,17 @@ class ObjectIdentifier
 
     /**
      * Returns true if the supplied $object_identifier contains
-     * the delimiter used to separate an fqcn from the arguments hash
+     * the delimiter used to separate a fqcn from the arguments hash
      *
      * @param string $object_identifier
      * @return bool
      */
-    public function hasArguments($object_identifier)
+    public function hasArguments(string $object_identifier): bool
     {
-        // type casting to bool instead of using strpos() !== false
+        // not using strpos() !== false
         // because an object identifier should never begin with the delimiter
         // therefore the delimiter should NOT be found at position 0
-        return (bool) strpos($object_identifier, ObjectIdentifier::DELIMITER);
+        return strpos($object_identifier, ObjectIdentifier::DELIMITER) > 0;
     }
 
 
@@ -65,11 +63,11 @@ class ObjectIdentifier
      * @param string $object_identifier
      * @return bool
      */
-    public function fqcnMatchesObjectIdentifier($fqcn, $object_identifier)
+    public function fqcnMatchesObjectIdentifier(string $fqcn, string $object_identifier): bool
     {
         $fqcn = str_replace('\\', '_', $fqcn);
         return $fqcn === $object_identifier
-               || strpos($object_identifier, $fqcn . ObjectIdentifier::DELIMITER) === 0;
+            || strpos($object_identifier, $fqcn . ObjectIdentifier::DELIMITER) === 0;
     }
 
 
@@ -80,31 +78,27 @@ class ObjectIdentifier
      * @param array  $arguments
      * @return string
      */
-    public function getIdentifier($fqcn, array $arguments = array())
+    public function getIdentifier(string $fqcn, array $arguments = []): string
     {
         // only build identifier from arguments if class is not ReservedInstanceInterface
-        $identifier = ! $this->class_cache->hasInterface(
-            $fqcn,
-            'EventEspresso\core\interfaces\ReservedInstanceInterface'
-        )
+        $identifier = ! $this->class_cache->hasInterface($fqcn, ReservedInstanceInterface::class)
             ? $this->getIdentifierForArguments($arguments)
             : '';
         if (! empty($identifier)) {
             $fqcn .= ObjectIdentifier::DELIMITER . md5($identifier);
         }
-        $fqcn = str_replace('\\', '_', $fqcn);
-        return $fqcn;
+        return str_replace('\\', '_', $fqcn);
     }
 
 
     /**
-     * build a string representation of a object's arguments
+     * build a string representation of an object's arguments
      * (mostly because Closures can't be serialized)
      *
      * @param array $arguments
      * @return string
      */
-    protected function getIdentifierForArguments(array $arguments)
+    protected function getIdentifierForArguments(array $arguments): string
     {
         if (empty($arguments)) {
             return '';
@@ -124,7 +118,7 @@ class ObjectIdentifier
                     $identifier .= $this->getIdentifierForArguments($argument);
                     break;
                 default:
-                    $identifier .= $argument;
+                    $identifier .= sanitize_key($argument);
                     break;
             }
         }

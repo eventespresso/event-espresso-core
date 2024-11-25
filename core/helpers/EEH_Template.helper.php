@@ -397,7 +397,11 @@ class EEH_Template
          * @since 4.6.0
          */
         $template_path = (string) apply_filters('FHEE__EEH_Template__display_template__template_path', $template_path);
-        $template_args = (array) apply_filters('FHEE__EEH_Template__display_template__template_args', $template_args);
+        $template_args = (array) apply_filters(
+            'FHEE__EEH_Template__display_template__template_args',
+            $template_args,
+            $template_path
+        );
 
         // you gimme nuttin - YOU GET NUTTIN !!
         if (! $template_path || ! is_readable($template_path)) {
@@ -908,14 +912,14 @@ class EEH_Template
 
 
     /**
-     * @param string $wrap_class
-     * @param string $wrap_id
-     * @param array  $query_args
+     * @param string|null $wrap_class
+     * @param string|null $wrap_id
+     * @param array       $query_args
      * @return string
      */
     public static function powered_by_event_espresso(
-        string $wrap_class = '',
-        string $wrap_id = '',
+        ?string $wrap_class = '',
+        ?string $wrap_id = '',
         array $query_args = []
     ): string {
         $request = LoaderFactory::getShared(RequestInterface::class);
@@ -942,10 +946,10 @@ class EEH_Template
             return '';
         }
         $tag        = $admin ? 'span' : 'div';
-        $attributes = ! empty($wrap_id) ? " id=\"{$wrap_id}\"" : '';
-        $wrap_class = $admin ? "{$wrap_class} float-left" : $wrap_class;
+        $attributes = ! empty($wrap_id) ? " id='$wrap_id'" : '';
+        $wrap_class = $admin ? "$wrap_class ee-layout-row ee-layout-row--inline" : $wrap_class;
         $attributes .= ! empty($wrap_class)
-            ? " class=\"{$wrap_class} powered-by-event-espresso-credit\""
+            ? " class='$wrap_class powered-by-event-espresso-credit'"
             : ' class="powered-by-event-espresso-credit"';
         $query_args = array_merge(
             [
@@ -970,8 +974,8 @@ class EEH_Template
                     'Online event registration and ticketing powered by [link to eventespresso.com]',
                     'event_espresso'
                 ),
-                "<$tag$attributes>",
-                "<a href=\"$url\" target=\"_blank\" rel=\"nofollow\">$powered_by</a></$tag>",
+                "<$tag$attributes style='margin-inline:.5rem;'>",
+                " <a href='$url' target='_blank' rel='nofollow' style='margin-inline: .25rem;'>$powered_by</a></$tag> ",
                 $admin ? '' : '<br />'
             ),
             $wrap_class,

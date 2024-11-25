@@ -23,30 +23,15 @@ class Version
 
     const RELEASE_TYPE_PROD  = 'p';
 
-    /**
-     * @var int $major
-     */
-    private $major;
+    private int $major;
 
-    /**
-     * @var int $minor
-     */
-    private $minor;
+    private int $minor;
 
-    /**
-     * @var int $patch
-     */
-    private $patch;
+    private int $patch;
 
-    /**
-     * @var string $release
-     */
-    private $release;
+    private string $release;
 
-    /**
-     * @var int $build
-     */
-    private $build;
+    private int $build;
 
 
     /**
@@ -60,8 +45,13 @@ class Version
      * @throws InvalidDataTypeException
      * @throws InvalidArgumentException
      */
-    public function __construct($major, $minor, $patch, $release = Version::RELEASE_TYPE_PROD, $build = 0)
-    {
+    public function __construct(
+        int $major,
+        int $minor,
+        int $patch,
+        string $release = Version::RELEASE_TYPE_PROD,
+        int $build = 0
+    ) {
         $this->setMajor($major);
         $this->setMinor($minor);
         $this->setPatch($patch);
@@ -75,7 +65,7 @@ class Version
      * @return Version
      * @throws InvalidArgumentException
      */
-    public static function fromString($version_string)
+    public static function fromString(string $version_string): Version
     {
         // compare incoming version string against the lowest possible valid version
         if (version_compare($version_string, '0.0.1.dev.001', '<')) {
@@ -100,10 +90,23 @@ class Version
                 )
             );
         }
+        // convert semver 1.2.3.001 to 1.2.3.p.001 style... FOR THE TIME BEING
+        if (count($version_parts) === 4 && is_numeric($version_parts[3])) {
+            $version_parts[4] = $version_parts[3];
+            unset($version_parts[3]);
+        }
+        $release = isset($version_parts[4]) && (string) $version_parts[4] === '000'
+            ? Version::RELEASE_TYPE_PROD
+            : Version::RELEASE_TYPE_RC;
+        // semver styles like 1.2.3 will be considered production releases
+        $release = ! isset($version_parts[3], $version_parts[4])
+            ? Version::RELEASE_TYPE_PROD
+            : $release;
         // add defaults for missing pieces
-        $version_parts += array(0,0,0,'p',0);
+        $version_parts += [0, 0, 0, $release, 0];
+        ksort($version_parts, SORT_NUMERIC);
         // reassign to individual variables
-        list($major, $minor, $patch, $release, $build) = $version_parts;
+        [$major, $minor, $patch, $release, $build] = $version_parts;
         return new Version(
             (int) $major,
             (int) $minor,
@@ -117,7 +120,7 @@ class Version
     /**
      * @return int
      */
-    public function major()
+    public function major(): int
     {
         return $this->major;
     }
@@ -143,7 +146,7 @@ class Version
     /**
      * @return int
      */
-    public function minor()
+    public function minor(): int
     {
         return $this->minor;
     }
@@ -169,7 +172,7 @@ class Version
     /**
      * @return int
      */
-    public function patch()
+    public function patch(): int
     {
         return $this->patch;
     }
@@ -195,7 +198,7 @@ class Version
     /**
      * @return string
      */
-    public function release()
+    public function release(): string
     {
         return $this->release;
     }
@@ -205,14 +208,14 @@ class Version
      * @param string $release
      * @throws InvalidArgumentException
      */
-    private function setRelease($release)
+    private function setRelease(string $release)
     {
-        $valid_release_types = array(
+        $valid_release_types = [
             Version::RELEASE_TYPE_RC,
             Version::RELEASE_TYPE_BETA,
             Version::RELEASE_TYPE_DECAF,
             Version::RELEASE_TYPE_PROD,
-        );
+        ];
         if (! in_array($release, $valid_release_types, true)) {
             throw new InvalidArgumentException(
                 sprintf(
@@ -232,7 +235,7 @@ class Version
     /**
      * @return int
      */
-    public function build()
+    public function build(): int
     {
         return $this->build;
     }
@@ -259,7 +262,7 @@ class Version
      * @param Version $other_version
      * @return int
      */
-    public function compare(Version $other_version)
+    public function compare(Version $other_version): int
     {
         return version_compare((string) $this, (string) $other_version);
     }
@@ -269,7 +272,7 @@ class Version
      * @param Version $other_version
      * @return bool
      */
-    public function equals(Version $other_version)
+    public function equals(Version $other_version): bool
     {
         return version_compare((string) $this, (string) $other_version, '==');
     }
@@ -279,7 +282,7 @@ class Version
      * @param Version $other_version
      * @return bool
      */
-    public function newerThan(Version $other_version)
+    public function newerThan(Version $other_version): bool
     {
         return version_compare((string) $this, (string) $other_version, '>');
     }
@@ -289,7 +292,7 @@ class Version
      * @param Version $other_version
      * @return bool
      */
-    public function olderThan(Version $other_version)
+    public function olderThan(Version $other_version): bool
     {
         return version_compare((string) $this, (string) $other_version, '<');
     }
@@ -300,7 +303,7 @@ class Version
      */
     public function __toString()
     {
-        $version_string = "{$this->major}.{$this->minor}.{$this->patch}.{$this->release}";
+        $version_string = "$this->major.$this->minor.$this->patch.$this->release";
         if ($this->release !== Version::RELEASE_TYPE_PROD && $this->release !== Version::RELEASE_TYPE_DECAF) {
             $version_string .= '.' . str_pad($this->build, 3, '0', STR_PAD_LEFT);
         }

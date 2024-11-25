@@ -255,7 +255,7 @@ class EED_Recaptcha_Invisible extends EED_Module
         if (! EED_Recaptcha_Invisible::verifyToken($request)) {
             if ($request->isAjax()) {
                 $json_response = new EE_SPCO_JSON_Response();
-                $json_response->echoAndExit();
+                $json_response->sendResponse();
             }
             EEH_URL::safeRedirectAndExit(
                 EE_Registry::instance()->CFG->core->reg_page_url()

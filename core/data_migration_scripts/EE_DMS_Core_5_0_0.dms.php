@@ -665,7 +665,7 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
         // $this->_get_table_manager()->dropIndex('esp_question_group_question', 'QSG_ID_order');
 
 
-        $this->_table_has_not_changed_since_previous(
+        $this->_table_is_changed_in_this_version(
             'esp_question_option',
             "QSO_ID int(10) unsigned NOT NULL AUTO_INCREMENT,
 				QSO_value varchar(255) NOT NULL,
@@ -673,6 +673,7 @@ class EE_DMS_Core_5_0_0 extends EE_Data_Migration_Script_Base
 				QST_ID int(10) unsigned NOT NULL,
 				QSO_order int(10) unsigned NOT NULL DEFAULT 0,
 				QSO_system varchar(25) DEFAULT NULL,
+				QSO_default tinyint(1) DEFAULT '0',
 				QSO_deleted tinyint(1) unsigned NOT NULL DEFAULT 0,
 				PRIMARY KEY  (QSO_ID)"
         );

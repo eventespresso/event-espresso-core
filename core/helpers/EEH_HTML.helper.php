@@ -15,17 +15,31 @@
  */
 class EEH_HTML
 {
-    /**
-     *  instance of the EEH_Autoloader object
-     *
-     * @var    $_instance
-     */
-    private static $_instance;
+    private static ?EEH_HTML $_instance = null;
 
     /**
-     * @var array $_indent
+     * some initial formatting for table indentation
+     *
+     * @var int[]
      */
-    private static $_indent = [];
+    private static array $_indent = [
+        'table' => 0,
+        'thead' => 1,
+        'tbody' => 1,
+        'tr'    => 2,
+        'th'    => 3,
+        'td'    => 3,
+        'div'   => 0,
+        'h1'    => 0,
+        'h2'    => 0,
+        'h3'    => 0,
+        'h4'    => 0,
+        'h5'    => 0,
+        'h6'    => 0,
+        'p'     => 0,
+        'ul'    => 0,
+        'li'    => 1,
+    ];
 
 
     /**
@@ -39,33 +53,6 @@ class EEH_HTML
             self::$_instance = new EEH_HTML();
         }
         return self::$_instance;
-    }
-
-
-    /**
-     * @return void
-     */
-    private function __construct()
-    {
-        // set some initial formatting for table indentation
-        EEH_HTML::$_indent = [
-            'table' => 0,
-            'thead' => 1,
-            'tbody' => 1,
-            'tr'    => 2,
-            'th'    => 3,
-            'td'    => 3,
-            'div'   => 0,
-            'h1'    => 0,
-            'h2'    => 0,
-            'h3'    => 0,
-            'h4'    => 0,
-            'h5'    => 0,
-            'h6'    => 0,
-            'p'     => 0,
-            'ul'    => 0,
-            'li'    => 1,
-        ];
     }
 
 
@@ -98,7 +85,9 @@ class EEH_HTML
         $html       = EEH_HTML::nl(0, $tag) . '<' . $tag . $attributes . '>';
         $html       .= trim($content) !== '' ? EEH_HTML::nl(1, $tag) . $content : '';
         $indent     = ! empty($content) || $force_close;
-        $html       .= ! empty($content) || $force_close ? EEH_HTML::_close_tag($tag, $id, $class, $indent) : '';
+        $html       .= ! empty($content) || $force_close
+            ? EEH_HTML::_close_tag($tag, $id, $class, $indent, $content)
+            : '';
         return $html;
     }
 
@@ -112,18 +101,21 @@ class EEH_HTML
      * @param string $id    - html id attribute
      * @param string $class - html class attribute
      * @param bool   $indent
+     * @param string $content
      * @return string
      */
     protected static function _close_tag(
         string $tag = 'div',
         string $id = '',
         string $class = '',
-        bool $indent = true
+        bool $indent = true,
+        string $content = ''
     ): string {
-        $comment = '';
-        if ($id) {
+        $alotta_content = strlen($content) > 500;
+        $comment         = '';
+        if ($id && $alotta_content) {
             $comment = EEH_HTML::comment('close ' . $id) . EEH_HTML::nl(0, $tag);
-        } elseif ($class) {
+        } elseif ($class && $alotta_content) {
             $comment = EEH_HTML::comment('close ' . $class) . EEH_HTML::nl(0, $tag);
         }
         $html = $indent ? EEH_HTML::nl(-1, $tag) : '';
@@ -555,7 +547,7 @@ class EEH_HTML
         string $id = '',
         string $class = '',
         string $style = '',
-        string $other_attributes = ''
+        string $other_attributes = 'scope="col"'
     ): string {
         return EEH_HTML::_open_tag('th', $content, $id, $class, $style, $other_attributes);
     }
@@ -723,7 +715,7 @@ class EEH_HTML
 
 
     /**
-     * Generates HTML <label></label> tags, inserts content, and adds any passed attributes
+     * Generates HTML <tag></tag> tags, inserts content, and adds any passed attributes
      * usage: echo EEH_HTML::span( 'this is some inline text' );
      *
      * @param string $tag
@@ -885,7 +877,7 @@ class EEH_HTML
 
 
     /**
-     * Changes the indents used in EEH_HTML::nl. Often its convenient to change
+     * Changes the indents used in EEH_HTML::nl. Often it's convenient to change
      * the indentation level without actually creating a new line
      *
      * @param int    $indent can be negative to decrease the indentation level

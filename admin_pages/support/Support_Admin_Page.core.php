@@ -36,15 +36,15 @@ class Support_Admin_Page extends EE_Admin_Page
     {
         $this->_page_routes = array(
             'default'    => array(
-                'func'       => '_contact_support',
+                'func'       => [$this, '_contact_support'],
                 'capability' => 'ee_read_ee',
             ),
             'developers' => array(
-                'func'       => '_developers',
+                'func'       => [$this, '_developers'],
                 'capability' => 'ee_read_ee',
             ),
             'shortcodes' => array(
-                'func'       => '_shortcodes',
+                'func'       => [$this, '_shortcodes'],
                 'capability' => 'ee_read_ee',
             ),
         );

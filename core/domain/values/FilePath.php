@@ -15,10 +15,7 @@ use EventEspresso\core\exceptions\InvalidFilePathException;
  */
 class FilePath
 {
-    /**
-     * @var string file_path
-     */
-    private $file_path;
+    private string $file_path;
 
 
     /**
@@ -30,13 +27,6 @@ class FilePath
      */
     public function __construct(string $file_path)
     {
-        if (! is_string($file_path)) {
-            throw new InvalidDataTypeException(
-                '$file_path',
-                $file_path,
-                'string'
-            );
-        }
         if (! is_readable($file_path)) {
             throw new InvalidFilePathException($file_path);
         }

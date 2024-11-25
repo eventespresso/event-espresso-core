@@ -429,10 +429,12 @@ class EED_Ticket_Sales_Monitor extends EED_Module
     {
         $ticket = EEM_Ticket::instance()->get_one_by_ID(absint($line_item->OBJ_ID()));
         if ($ticket instanceof EE_Ticket) {
-            $ticket->add_extra_meta(
-                EE_Ticket::META_KEY_TICKET_RESERVATIONS,
-                __LINE__ . ') ' . __METHOD__ . '()'
-            );
+            if (self::debug) {
+                $ticket->add_extra_meta(
+                    EE_Ticket::META_KEY_TICKET_RESERVATIONS,
+                    __LINE__ . ') ' . __METHOD__ . '()'
+                );
+            }
             if ($quantity > 0) {
                 EED_Ticket_Sales_Monitor::instance()->_reserve_ticket($ticket, $quantity);
             } else {
@@ -453,10 +455,12 @@ class EED_Ticket_Sales_Monitor extends EED_Module
      */
     public static function ticket_removed_from_cart(EE_Ticket $ticket, int $quantity = 1)
     {
-        $ticket->add_extra_meta(
-            EE_Ticket::META_KEY_TICKET_RESERVATIONS,
-            __LINE__ . ') ' . __METHOD__ . '()'
-        );
+        if (self::debug) {
+            $ticket->add_extra_meta(
+                EE_Ticket::META_KEY_TICKET_RESERVATIONS,
+                __LINE__ . ') ' . __METHOD__ . '()'
+            );
+        }
         EED_Ticket_Sales_Monitor::instance()->_release_reserved_ticket($ticket, $quantity);
     }
 
@@ -711,7 +715,7 @@ class EED_Ticket_Sales_Monitor extends EED_Module
         } else {
             if (self::debug) {
                 echo self::$nl . self::$nl . ' invalid EE_Cart: ';
-                var_export($cart, true);
+                echo var_export($cart, true);
             }
         }
     }
@@ -755,11 +759,11 @@ class EED_Ticket_Sales_Monitor extends EED_Module
                     if (self::debug) {
                         echo self::$nl . ' . . ticket->ID(): ' . $ticket->ID();
                         echo self::$nl . ' . . ticket_line_item->quantity(): ' . $ticket_line_item->quantity();
+                        $ticket->add_extra_meta(
+                            EE_Ticket::META_KEY_TICKET_RESERVATIONS,
+                            __LINE__ . ') ' . __METHOD__ . '() SID = ' . $session->id()
+                        );
                     }
-                    $ticket->add_extra_meta(
-                        EE_Ticket::META_KEY_TICKET_RESERVATIONS,
-                        __LINE__ . ') ' . __METHOD__ . '() SID = ' . $session->id()
-                    );
                     $this->_release_reserved_ticket($ticket, $ticket_line_item->quantity());
                 }
             }
@@ -1032,10 +1036,12 @@ class EED_Ticket_Sales_Monitor extends EED_Module
             }
             // Only bother saving the tickets and datetimes if we're actually going to release some spots.
             if ($expired_reservations_count > 0) {
-                $ticket_with_reservations->add_extra_meta(
-                    EE_Ticket::META_KEY_TICKET_RESERVATIONS,
-                    __LINE__ . ') ' . $source . '()'
-                );
+                if (self::debug) {
+                    $ticket_with_reservations->add_extra_meta(
+                        EE_Ticket::META_KEY_TICKET_RESERVATIONS,
+                        __LINE__ . ') ' . $source . '()'
+                    );
+                }
                 $ticket_with_reservations->decreaseReserved($expired_reservations_count, true, 'TicketSalesMonitor:' . __LINE__);
                 $total_tickets_released += $expired_reservations_count;
                 $event = $ticket_with_reservations->get_related_event();

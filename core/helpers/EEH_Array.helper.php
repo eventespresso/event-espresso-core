@@ -55,7 +55,7 @@ class EEH_Array extends EEH_Base
 
 
     /**
-     * Detects if this is a multi-dimensional array
+     * Detects if this is a multidimensional array
      * meaning that at least one top-level value is an array. Eg [ [], ...]
      *
      * @param mixed $array
@@ -115,7 +115,7 @@ class EEH_Array extends EEH_Base
      * @param array           $array_to_insert the new data to be inserted
      * @param int|string|null $offset          a known key within $target_array where new data will be inserted
      * @param bool            $add_before      whether to add new data before or after the offset key
-     * @param bool            $preserve_keys   whether or not to reset numerically indexed arrays
+     * @param bool            $preserve_keys   whether to reset numerically indexed arrays
      * @return array
      */
     public static function insert_into_array(
@@ -142,17 +142,13 @@ class EEH_Array extends EEH_Base
             // take a slice of the target array from the beginning till the offset,
             // then add the new data
             // then add another slice that starts at the offset and goes till the end
-            return array_slice($target_array, 0, $offset, true) + $array_to_insert + array_slice(
-                $target_array,
-                $offset,
-                null,
-                true
-            );
-        } else {
-            // since we don't want to preserve keys, we can use array_splice
-            array_splice($target_array, $offset, 0, $array_to_insert);
-            return $target_array;
+            return array_slice($target_array, 0, $offset, true)
+                + $array_to_insert
+                + array_slice($target_array, $offset, null, true);
         }
+        // since we don't want to preserve keys, we can use array_splice
+        array_splice($target_array, $offset, 0, $array_to_insert);
+        return $target_array;
     }
 
 
@@ -301,7 +297,7 @@ class EEH_Array extends EEH_Base
      *
      * @param array $array      the array to be flattened
      * @param bool  $to_string  [true] will flatten the entire array down into a string
-     *                          [false] will only flatten sub-arrays down into strings and return a array
+     *                          [false] will only flatten sub-arrays down into strings and return an array
      * @param bool  $top_level  used for formatting purposes only, best to leave this alone as it's set internally
      * @return array|false|string
      * @since 5.0.0.p

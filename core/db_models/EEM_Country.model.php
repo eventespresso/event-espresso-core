@@ -7,6 +7,7 @@
  * @subpackage  includes/models/
  * @author      Brent Christensen
  * @method EE_Country get_one(array $query_params = [])
+ * @method EE_Country[] get_all(array $query_params = [])
  */
 class EEM_Country extends EEM_Base
 {
@@ -23,7 +24,7 @@ class EEM_Country extends EEM_Base
      * Resets the country
      *
      * @param string|null $timezone
-     * @return EEM_Country|EEM_Base|null
+     * @return EEM_Base|EEM_Country|null
      * @throws EE_Error
      * @throws ReflectionException
      */
@@ -150,10 +151,11 @@ class EEM_Country extends EEM_Base
 
 
     /**
-     * @return EE_Country[]
+     * @return EE_Country[]|null
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function get_all_countries()
+    public function get_all_countries(): ?array
     {
         if (! self::$_all_countries) {
             self::$_all_countries = $this->get_all(['order_by' => ['CNT_name' => 'ASC'], 'limit' => [0, 99999]]);
@@ -166,10 +168,11 @@ class EEM_Country extends EEM_Base
      * Gets and caches the list of active countries. If you know the list of active countries
      * has changed during this request, first use EEM_Country::reset() to flush the cache
      *
-     * @return EE_Country[]
+     * @return EE_Country[]|null
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function get_all_active_countries()
+    public function get_all_active_countries(): ?array
     {
         if (! self::$_active_countries) {
             self::$_active_countries =
@@ -185,8 +188,9 @@ class EEM_Country extends EEM_Base
      * @param string $country_ISO
      * @return string
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function get_country_name_by_ISO($country_ISO)
+    public function get_country_name_by_ISO(string $country_ISO): string
     {
         $countries = $this->get_all_countries();
         if (isset($countries[ $country_ISO ]) && $countries[ $country_ISO ] instanceof EE_Country) {
@@ -195,9 +199,8 @@ class EEM_Country extends EEM_Base
         $names = $this->get_col([['CNT_ISO' => $country_ISO], 'limit' => 1], 'CNT_name');
         if (is_array($names) && ! empty($names)) {
             return reset($names);
-        } else {
-            return '';
         }
+        return '';
     }
 
 
@@ -207,8 +210,9 @@ class EEM_Country extends EEM_Base
      * @param string $country_name
      * @return EE_Country|null
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function getCountryByName($country_name)
+    public function getCountryByName(string $country_name): ?EE_Country
     {
         $countries = $this->get_all_countries();
         foreach ($countries as $country) {

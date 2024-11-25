@@ -29,13 +29,17 @@ class EE_Text_Normalization extends EE_Normalization_Strategy_Base
 
 
     /**
-     * IF its a string in PHP, it will be a string in the HTML form. easy
+     * IF it's a string in PHP, it will be a string in the HTML form. easy
      *
      * @param string $normalized_value
      * @return string
      */
     public function unnormalize($normalized_value)
     {
+        // form generation can sometimes result in values being arrays, so we'll just grab the first value
+        if (is_array($normalized_value)) {
+            $normalized_value = array_shift($normalized_value);
+        }
         // account for default "select here" option values
         if ($normalized_value === null) {
             return '';

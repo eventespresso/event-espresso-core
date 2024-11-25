@@ -2,6 +2,7 @@
 
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\address\Countries;
 
 /**
  * Class EE_Country_Select_Input
@@ -71,23 +72,7 @@ class EE_Country_Select_Input extends EE_Select_Input
         array $country_options = null,
         string $get = self::OPTION_GET_ACTIVE
     ): ?array {
-        // if passed something that is NOT an array
-        if (! is_array($country_options)) {
-            // get possibly cached list of countries
-            $countries = $get === self::OPTION_GET_ALL
-                ? EEM_Country::instance()->get_all_countries()
-                : EEM_Country::instance()->get_all_active_countries();
-            if (! empty($countries)) {
-                $country_options[''] = '';
-                foreach ($countries as $country) {
-                    if ($country instanceof EE_Country) {
-                        $country_options[ $country->ID() ] = $country->name();
-                    }
-                }
-            } else {
-                $country_options = [];
-            }
-        }
-        return $country_options;
+        // if passed an array, then just return it, otherwise get the list of country names
+        return is_array($country_options) ? $country_options : Countries::arrayOfNames(Countries::INDEX_TYPE_ID, $get);
     }
 }

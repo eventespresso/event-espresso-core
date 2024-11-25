@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<bundle name="Event Espresso">
+  <domain name="event_espresso">
+    <project name="Event Espresso" slug="event_espresso">
+      <source>
+        <directory>.</directory>
+        <exclude>
+          <directory>assets</directory>
+          <directory>wp-assets</directory>
+          <directory>core/third-party-libs</directory>
+        </exclude>
+      </source>
+      <target>
+        <directory>languages</directory>
+        <directory base="WP_CONTENT_DIR">uploads/espresso/languages</directory>
+      </target>
+      <template locked="true">
+        <file>languages/event_espresso.pot</file>
+      </template>
+    </project>
+    <project name="Event Espresso 4" slug="event-espresso-4">
+      <source>
+        <directory>.</directory>
+        <exclude>
+          <directory>assets</directory>
+          <directory>wp-assets</directory>
+          <directory>core/third-party-libs</directory>
+        </exclude>
+      </source>
+      <target>
+        <directory>languages</directory>
+        <directory base="WP_CONTENT_DIR">uploads/espresso/languages</directory>
+      </target>
+      <template locked="true">
+        <file>languages/event_espresso.pot</file>
+      </template>
+    </project>
+  </domain>
+  <exclude>
+    <directory>assets</directory>
+  </exclude>
+</bundle>

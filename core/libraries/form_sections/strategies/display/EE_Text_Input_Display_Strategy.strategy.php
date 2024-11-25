@@ -55,20 +55,23 @@ class EE_Text_Input_Display_Strategy extends EE_Display_Strategy_Base
      */
     public function display(): string
     {
-        $input = '<input type="' . $this->get_type() . '"';
-        $input .= ' name="' . $this->_input->html_name() . '"';
-        $input .= ' id="' . $this->_input->html_id() . '"';
+        $type = $this->get_type();
+        $name = $this->_input->html_name();
+        $html_id = $this->_input->html_id();
         $class = $this->_input->required()
             ? $this->_input->required_css_class() . ' ' . $this->_input->html_class()
             : $this->_input->html_class();
-        $input .= ' class="' . $class . '"';
+        $labelledby = $this->_input->hasLabel()
+            ? ' aria-labelledby="' . $this->_input->html_label_id() . '"'
+            : '';
         // add html5 required
-        $input .= $this->_input->required() ? ' required' : '';
-        $input .= ' value="' . $this->_input->raw_value_in_form() . '"';
-        $input .= ' style="' . $this->_input->html_style() . '"';
-        $input .= $this->_input->other_html_attributes();
-        $input .= $this->dataAttributesString($this->_input->dataAttributes());
-        $input .= '/>';
-        return $input;
+        $required = $this->_input->required() ? ' required' : '';
+        $value = $this->_input->raw_value_in_form();
+        $style = $this->_input->html_style();
+        $style = $style ? " style=\"$style\"" : '';
+        $attributes = $this->_input->other_html_attributes();
+        $data_attributes = $this->dataAttributesString($this->_input->dataAttributes());
+        return "
+        <input type=\"$type\" name=\"$name\" id=\"$html_id\" class=\"$class\" value=\"$value\"$labelledby$attributes$data_attributes$style$required />";
     }
 }

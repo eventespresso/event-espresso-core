@@ -84,7 +84,7 @@ function espresso_reg_forms_add_option(){
 	const newContent = newRowHtml.replace(new RegExp("xxcountxx", 'g'), count);
 
 	//add to dom
-    $question_options.find('tr:last').after(newContent);
+    $question_options.find('tr:last').before(newContent);
 	//add new count to dom.
     $question_options_count.val(count);
 

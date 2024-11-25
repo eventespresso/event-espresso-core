@@ -6,16 +6,16 @@
  * @package               Event Espresso
  * @subpackage            includes/classes/EE_Answer.class.php
  * @author                Mike Nelson
+ * @method EE_Question get_first_related($relation, $query_params = [])
  */
 class EE_Question_Option extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
 {
     /**
      * Question Option Opt Group Name
      *
-     * @access protected
      * @var string
      */
-    protected $_QSO_opt_group = null;
+    protected string $_QSO_opt_group = '';
 
 
     /**
@@ -25,11 +25,13 @@ class EE_Question_Option extends EE_Soft_Delete_Base_Class implements EEI_Duplic
      * @param array  $date_formats            incoming date_formats in an array where the first value is the
      *                                        date_format and the second value is the time format
      * @return EE_Question_Option
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function new_instance($props_n_values = [], $timezone = '', $date_formats = [])
     {
         $has_object = parent::_check_for_object($props_n_values, __CLASS__, $timezone, $date_formats);
-        return $has_object ? $has_object : new self($props_n_values, false, $timezone, $date_formats);
+        return $has_object ?: new self($props_n_values, false, $timezone, $date_formats);
     }
 
 
@@ -38,6 +40,8 @@ class EE_Question_Option extends EE_Soft_Delete_Base_Class implements EEI_Duplic
      * @param string $timezone        incoming timezone as set by the model.  If not set the timezone for
      *                                the website will be used.
      * @return EE_Question_Option
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function new_instance_from_db($props_n_values = [], $timezone = '')
     {
@@ -49,9 +53,10 @@ class EE_Question_Option extends EE_Soft_Delete_Base_Class implements EEI_Duplic
      * Sets the option's key value
      *
      * @param string $value
-     * @return bool success
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function set_value($value)
+    public function set_value(string $value)
     {
         $this->set('QSO_value', $value);
     }
@@ -61,9 +66,10 @@ class EE_Question_Option extends EE_Soft_Delete_Base_Class implements EEI_Duplic
      * Sets the option's Display Text
      *
      * @param string $text
-     * @return bool success
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function set_desc($text)
+    public function set_desc(string $text)
     {
         $this->set('QSO_desc', $text);
     }
@@ -72,11 +78,11 @@ class EE_Question_Option extends EE_Soft_Delete_Base_Class implements EEI_Duplic
     /**
      * Sets the order for this option
      *
-     * @access public
-     * @param integer $order
-     * @return bool      $success
+     * @param int $order
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function set_order($order)
+    public function set_order(int $order)
     {
         $this->set('QSO_order', $order);
     }
@@ -86,9 +92,10 @@ class EE_Question_Option extends EE_Soft_Delete_Base_Class implements EEI_Duplic
      * Sets the ID of the related question
      *
      * @param int $question_ID
-     * @return bool success
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function set_question_ID($question_ID)
+    public function set_question_ID(int $question_ID)
     {
         $this->set('QST_ID', $question_ID);
     }
@@ -98,18 +105,19 @@ class EE_Question_Option extends EE_Soft_Delete_Base_Class implements EEI_Duplic
      * Sets the option's opt_group
      *
      * @param string $text
-     * @return bool success
      */
-    public function set_opt_group($text)
+    public function set_opt_group(string $text)
     {
-        return $this->_QSO_opt_group = $text;
+        $this->_QSO_opt_group = $text;
     }
 
 
     /**
      * Gets the option's key value
      *
-     * @return string
+     * @return int|float|string|null
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function value()
     {
@@ -121,10 +129,12 @@ class EE_Question_Option extends EE_Soft_Delete_Base_Class implements EEI_Duplic
      * Gets the option's display text
      *
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function desc()
+    public function desc(): string
     {
-        return $this->get('QSO_desc');
+        return (string) $this->get('QSO_desc');
     }
 
 
@@ -132,22 +142,25 @@ class EE_Question_Option extends EE_Soft_Delete_Base_Class implements EEI_Duplic
      * Returns whether this option has been deleted or not
      *
      * @return boolean
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function deleted()
+    public function deleted(): bool
     {
-        return $this->get('QSO_deleted');
+        return (bool) $this->get('QSO_deleted');
     }
 
 
     /**
      * Returns the order or the Question Option
      *
-     * @access public
-     * @return integer
+     * @return int
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function order()
+    public function order(): int
     {
-        return $this->get('QSO_option');
+        return (int) $this->get('QSO_option');
     }
 
 
@@ -155,10 +168,12 @@ class EE_Question_Option extends EE_Soft_Delete_Base_Class implements EEI_Duplic
      * Gets the related question's ID
      *
      * @return int
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function question_ID()
+    public function question_ID(): int
     {
-        return $this->get('QST_ID');
+        return (int) $this->get('QST_ID');
     }
 
 
@@ -166,8 +181,10 @@ class EE_Question_Option extends EE_Soft_Delete_Base_Class implements EEI_Duplic
      * Returns the question related to this question option
      *
      * @return EE_Question
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function question()
+    public function question(): EE_Question
     {
         return $this->get_first_related('Question');
     }
@@ -178,7 +195,7 @@ class EE_Question_Option extends EE_Soft_Delete_Base_Class implements EEI_Duplic
      *
      * @return string
      */
-    public function opt_group()
+    public function opt_group(): string
     {
         return $this->_QSO_opt_group;
     }
@@ -189,8 +206,8 @@ class EE_Question_Option extends EE_Soft_Delete_Base_Class implements EEI_Duplic
      * but that can be overriden by setting the 'QST_ID' option
      *
      * @param array $options {
-     * @type int    $QST_ID  the QST_ID attribute of this question option, otherwise it will be for the same question
-     *                       as the original
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function duplicate($options = [])
     {
@@ -211,11 +228,13 @@ class EE_Question_Option extends EE_Soft_Delete_Base_Class implements EEI_Duplic
     /**
      * Gets the QSO_system value
      *
-     * @return string|null
+     * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function system()
+    public function system(): string
     {
-        return $this->get('QSO_system');
+        return (string) $this->get('QSO_system');
     }
 
 
@@ -223,10 +242,31 @@ class EE_Question_Option extends EE_Soft_Delete_Base_Class implements EEI_Duplic
      * Sets QSO_system
      *
      * @param string $QSO_system
-     * @return bool
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function set_system($QSO_system)
+    public function set_system(string $QSO_system)
     {
-        return $this->set('QSO_system', $QSO_system);
+        $this->set('QSO_system', $QSO_system);
+    }
+
+
+    /**
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function isDefault(): bool
+    {
+        return (bool) $this->get('QSO_default');
+    }
+
+
+    /**
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function setIsDefault(bool $is_default)
+    {
+        $this->set('QSO_default', $is_default);
     }
 }

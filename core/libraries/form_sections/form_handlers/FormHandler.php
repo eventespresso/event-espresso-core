@@ -9,6 +9,8 @@ use EE_Registry;
 use EE_Submit_Input;
 use EEH_HTML;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\RequestInterface;
 use InvalidArgumentException;
 use LogicException;
 use DomainException;
@@ -53,69 +55,38 @@ abstract class FormHandler implements FormHandlerInterface
      * if set to false, then this form has no displayable content,
      * and will only be used for processing data sent passed via GET or POST
      * defaults to true ( ie: form has displayable content )
-     *
-     * @var boolean $displayable
      */
-    private $displayable = true;
+    private bool $displayable = true;
 
-    /**
-     * @var string $form_name
-     */
-    private $form_name;
+    private string $form_name;
 
-    /**
-     * @var string $admin_name
-     */
-    private $admin_name;
+    private string $admin_name;
 
-    /**
-     * @var string $slug
-     */
-    private $slug;
+    private string $slug;
 
-    /**
-     * @var string $submit_btn_text
-     */
-    private $submit_btn_text;
+    private string $submit_btn_text;
 
-    /**
-     * @var string $form_action
-     */
-    private $form_action;
+    private string $form_action;
 
     /**
      * form params in key value pairs
      * can be added to form action URL or as hidden inputs
-     *
-     * @var array $form_args
      */
-    private $form_args = array();
+    private array $form_args = [];
 
     /**
      * value of one of the string constant above
-     *
-     * @var string $form_config
      */
-    private $form_config;
+    private string $form_config;
 
-    /**
-     * whether or not the form was determined to be invalid
-     *
-     * @var boolean $form_has_errors
-     */
-    private $form_has_errors;
+    private bool $form_has_errors = false;
 
     /**
      * the absolute top level form section being used on the page
-     *
-     * @var EE_Form_Section_Proper $form
      */
-    private $form;
+    private ?EE_Form_Section_Proper $form = null;
 
-    /**
-     * @var EE_Registry $registry
-     */
-    protected $registry;
+    protected ?EE_Registry $registry = null;
 
     // phpcs:disable PEAR.Functions.ValidDefaultValue.NotAtEnd
 
@@ -131,12 +102,12 @@ abstract class FormHandler implements FormHandlerInterface
      * @param EE_Registry|null $registry
      */
     public function __construct(
-        $form_name,
-        $admin_name,
-        $slug,
-        $form_action = '',
-        $form_config = FormHandler::ADD_FORM_TAGS_AND_SUBMIT,
-        EE_Registry $registry = null
+        string $form_name,
+        string $admin_name,
+        string $slug,
+        string $form_action = '',
+        string $form_config = FormHandler::ADD_FORM_TAGS_AND_SUBMIT,
+        ?EE_Registry $registry = null
     ) {
         $this->setFormName($form_name);
         $this->setAdminName($admin_name);
@@ -151,14 +122,14 @@ abstract class FormHandler implements FormHandlerInterface
     /**
      * @return array
      */
-    public static function getFormConfigConstants()
+    public static function getFormConfigConstants(): array
     {
-        return array(
+        return [
             FormHandler::ADD_FORM_TAGS_AND_SUBMIT,
             FormHandler::ADD_FORM_TAGS_ONLY,
             FormHandler::ADD_FORM_SUBMIT_ONLY,
             FormHandler::DO_NOT_SETUP_FORM,
-        );
+        ];
     }
 
 
@@ -188,10 +159,10 @@ abstract class FormHandler implements FormHandlerInterface
 
 
     /**
-     * @return boolean
+     * @return bool
      * @throws LogicException
      */
-    public function formIsValid()
+    public function formIsValid(): bool
     {
         if ($this->form instanceof EE_Form_Section_Proper) {
             return true;
@@ -213,7 +184,7 @@ abstract class FormHandler implements FormHandlerInterface
      * @return bool
      * @throws LogicException
      */
-    public function verifyForm(EE_Form_Section_Proper $form = null)
+    public function verifyForm(?EE_Form_Section_Proper $form = null): bool
     {
         $form = $form !== null ? $form : $this->form;
         if ($form instanceof EE_Form_Section_Proper) {
@@ -239,16 +210,16 @@ abstract class FormHandler implements FormHandlerInterface
 
 
     /**
-     * @return boolean
+     * @return bool
      */
-    public function displayable()
+    public function displayable(): bool
     {
         return $this->displayable;
     }
 
 
     /**
-     * @param boolean $displayable
+     * @param bool|int|string $displayable
      */
     public function setDisplayable($displayable = false)
     {
@@ -261,7 +232,7 @@ abstract class FormHandler implements FormHandlerInterface
      *
      * @return string
      */
-    public function formName()
+    public function formName(): string
     {
         return $this->form_name;
     }
@@ -271,11 +242,8 @@ abstract class FormHandler implements FormHandlerInterface
      * @param string $form_name
      * @throws InvalidDataTypeException
      */
-    public function setFormName($form_name)
+    public function setFormName(string $form_name)
     {
-        if (! is_string($form_name)) {
-            throw new InvalidDataTypeException('$form_name', $form_name, 'string');
-        }
         $this->form_name = $form_name;
     }
 
@@ -285,7 +253,7 @@ abstract class FormHandler implements FormHandlerInterface
      *
      * @return string
      */
-    public function adminName()
+    public function adminName(): string
     {
         return $this->admin_name;
     }
@@ -376,6 +344,12 @@ abstract class FormHandler implements FormHandlerInterface
         if (! is_string($form_action)) {
             throw new InvalidDataTypeException('$form_action', $form_action, 'string');
         }
+        if (empty($form_action)) {
+            $request = LoaderFactory::getShared(RequestInterface::class);
+            $form_action = $request instanceof RequestInterface
+                ? $request->requestUri()
+                : '';
+        }
         $this->form_action = $form_action;
     }
 
@@ -385,7 +359,7 @@ abstract class FormHandler implements FormHandlerInterface
      * @throws InvalidDataTypeException
      * @throws InvalidArgumentException
      */
-    public function addFormActionArgs($form_args = array())
+    public function addFormActionArgs($form_args = [])
     {
         if (is_object($form_args)) {
             throw new InvalidDataTypeException(
@@ -421,12 +395,12 @@ abstract class FormHandler implements FormHandlerInterface
         if (
             ! in_array(
                 $form_config,
-                array(
-                FormHandler::ADD_FORM_TAGS_AND_SUBMIT,
-                FormHandler::ADD_FORM_TAGS_ONLY,
-                FormHandler::ADD_FORM_SUBMIT_ONLY,
-                FormHandler::DO_NOT_SETUP_FORM,
-                ),
+                [
+                    FormHandler::ADD_FORM_TAGS_AND_SUBMIT,
+                    FormHandler::ADD_FORM_TAGS_ONLY,
+                    FormHandler::ADD_FORM_SUBMIT_ONLY,
+                    FormHandler::DO_NOT_SETUP_FORM,
+                ],
                 true
             )
         ) {
@@ -491,14 +465,14 @@ abstract class FormHandler implements FormHandlerInterface
     {
         $text = ! empty($text) ? $text : $this->submitBtnText();
         return new EE_Submit_Input(
-            array(
+            [
                 'html_name'             => 'ee-form-submit-' . $this->slug(),
                 'html_id'               => 'ee-form-submit-' . $this->slug(),
                 'html_class'            => 'ee-form-submit',
                 'html_label'            => '&nbsp;',
                 'other_html_attributes' => ' rel="' . $this->slug() . '"',
                 'default'               => $text,
-            )
+            ]
         );
     }
 
@@ -516,7 +490,7 @@ abstract class FormHandler implements FormHandlerInterface
             return;
         }
         $this->form->add_subsections(
-            array($this->slug() . '-submit-btn' => $this->generateSubmitButton($text)),
+            [$this->slug() . '-submit-btn' => $this->generateSubmitButton($text)],
             null,
             false
         );
@@ -532,14 +506,14 @@ abstract class FormHandler implements FormHandlerInterface
     public function generateCancelButton($text = '')
     {
         $cancel_button = new EE_Submit_Input(
-            array(
+            [
                 'html_name'             => 'ee-form-submit-' . $this->slug(), // YES! Same name as submit !!!
                 'html_id'               => 'ee-cancel-form-' . $this->slug(),
                 'html_class'            => 'ee-cancel-form',
                 'html_label'            => '&nbsp;',
                 'other_html_attributes' => ' rel="' . $this->slug() . '"',
                 'default'               => ! empty($text) ? $text : esc_html__('Cancel', 'event_espresso'),
-            )
+            ]
         );
         $cancel_button->set_button_css_attributes(false);
         return $cancel_button;
@@ -555,11 +529,11 @@ abstract class FormHandler implements FormHandlerInterface
     public function clearFormButtonFloats()
     {
         $this->form->add_subsections(
-            array(
+            [
                 'clear-submit-btn-float' => new EE_Form_Section_HTML(
                     EEH_HTML::div('', '', 'clear-float') . EEH_HTML::divx()
                 ),
-            ),
+            ],
             null,
             false
         );
@@ -579,7 +553,7 @@ abstract class FormHandler implements FormHandlerInterface
      */
     public function display()
     {
-        $form_html = apply_filters(
+        $form_html   = apply_filters(
             'FHEE__EventEspresso_core_libraries_form_sections_form_handlers_FormHandler__display__before_form',
             ''
         );
@@ -591,7 +565,7 @@ abstract class FormHandler implements FormHandlerInterface
             $additional_props = $this->requiresMultipartEnctype()
                 ? ' enctype="multipart/form-data"'
                 : '';
-            $form_html .= $this->form()->form_open(
+            $form_html        .= $this->form()->form_open(
                 $this->formAction(),
                 'POST',
                 $additional_props
@@ -611,13 +585,15 @@ abstract class FormHandler implements FormHandlerInterface
         return $form_html;
     }
 
+
     /**
      * Determines if this form needs "enctype='multipart/form-data'" or not.
-     * @since 4.9.80.p
+     *
      * @return bool
      * @throws EE_Error
+     * @since 4.9.80.p
      */
-    public function requiresMultipartEnctype()
+    public function requiresMultipartEnctype(): bool
     {
         foreach ($this->form()->inputs_in_subsections() as $input) {
             if ($input instanceof EE_File_Input) {
@@ -641,7 +617,7 @@ abstract class FormHandler implements FormHandlerInterface
      * @throws LogicException
      * @throws InvalidFormSubmissionException
      */
-    public function process($submitted_form_data = array())
+    public function process($submitted_form_data = [])
     {
         if (! $this->form()->was_submitted($submitted_form_data)) {
             throw new InvalidFormSubmissionException($this->form_name);

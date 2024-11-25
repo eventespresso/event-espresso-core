@@ -67,7 +67,7 @@ class AnswersCSV
 
             $data[ $question_label ] = isset($answer_row['Question.QST_type'])
                                        && $answer_row['Question.QST_type'] === EEM_Question::QST_type_state
-                ? $state_model->get_state_name_by_ID($answer_row['Answer.ANS_value'])
+                ? $state_model->get_state_name_by_ID((int) $answer_row['Answer.ANS_value'])
                 // this isn't for html, so don't show html entities
                 : html_entity_decode(
                     EEH_Export::prepare_value_from_db_for_display(

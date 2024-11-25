@@ -2,12 +2,6 @@ jQuery(document).ready(function($) {
 
 	$.ajaxSetup ({ cache: false });
 
-	// clear firefox and safari cache
-	$(window).on("unload", function() {});
-
-	$('#reg-admin-attendee-questions-submit').prop( 'disabled', true );
-
-
 	/**
 	 * datepicker functionality?
 	 */
@@ -29,31 +23,11 @@ jQuery(document).ready(function($) {
 	});
 
 
-	$( '.question-group-questions, .reg-admin-attendee-questions-input-td' ).each(function() {//also select deprecated .reg-admin-attendee-questions-input-td
-		$(this).find('input').prop( 'disabled', true );
-		$(this).find('select').prop( 'disabled', true );
-		$(this).find('textarea').prop( 'disabled', true );
-	});
-
-    const $regAdminAttendeeQuestionsFrm = $('#reg-admin-attendee-questions-frm');
-
-    $regAdminAttendeeQuestionsFrm.on( 'click', '.reg-admin-edit-attendee-question-lnk', function(e) {
-		e.preventDefault();
-		$(this).closest('table.question-group-questions').find('td, .reg-admin-attendee-questions-input-td' ).each(function() {//also select deprecated .reg-admin-attendee-questions-input-td
-			$(this).removeClass('disabled-input');
-			$(this).find('input').prop( 'disabled', false ).addClass('editable-input');
-			$(this).find('select').prop( 'disabled', false ).addClass('editable-input');
-			$(this).find('textarea').prop( 'disabled', false ).addClass('editable-input');
-		});
-		$('#reg-admin-attendee-questions-submit').prop( 'disabled', false );
-	});
-
-    $regAdminAttendeeQuestionsFrm.on( 'change', '.editable-input', function() {
-		$(this).removeClass('editable-input').addClass('edited-input');
-		let edit_lnk = $(this).closest('table').find('.reg-admin-edit-attendee-question-td' ).html();
-		edit_lnk = '<span class="reminder-spn">' + eei18n.update_att_qstns + '<span><span class="hidden">' + edit_lnk + '<span>';
-		$(this).closest('table').find('.reg-admin-edit-attendee-question-td' ).html( edit_lnk );
-	});
+    $('#reg-admin-attendee-questions-submit').on( 'click', function(e) {
+        if (! confirm(eei18n.confirm_update_reg_details)) {
+            e.preventDefault();
+        }
+    });
 
 
 	$('#wpcontent').on('click', '.ee-more-datetimes-toggle', function(e){

@@ -692,12 +692,12 @@ class EE_Checkout
      * @access    public
      * @return        string
      */
-    public function get_registration_time_limit()
+    public function get_registration_time_limit(): string
     {
         $registration_time_limit = (float) (EE_Registry::instance()->SSN->expiration() - time());
         $time_limit_format = $registration_time_limit > 60 * MINUTE_IN_SECONDS ? 'H:i:s' : 'i:s';
         $registration_time_limit = date($time_limit_format, $registration_time_limit);
-        return apply_filters(
+        return (string) apply_filters(
             'FHEE__EE_Checkout__get_registration_time_limit__registration_time_limit',
             $registration_time_limit
         );
@@ -1342,16 +1342,28 @@ class EE_Checkout
      */
     public function __wakeup()
     {
-        if (! $this->primary_attendee_obj instanceof EE_Attendee && absint($this->primary_attendee_obj) !== 0) {
-            // $this->primary_attendee_obj is actually just an ID, so use it to get the object from the db
-            $this->primary_attendee_obj = EEM_Attendee::instance()->get_one_by_ID($this->primary_attendee_obj);
-        }
-        if (! $this->transaction instanceof EE_Transaction && absint($this->transaction) !== 0) {
-            // $this->transaction is actually just an ID, so use it to get the object from the db
-            $this->transaction = EEM_Transaction::instance()->get_one_by_ID($this->transaction);
-        }
-        foreach ($this->reg_steps as $reg_step) {
-            $reg_step->checkout = $this;
+        try {
+            if (! $this->primary_attendee_obj instanceof EE_Attendee && absint($this->primary_attendee_obj) !== 0) {
+                // $this->primary_attendee_obj is actually just an ID, so use it to get the object from the db
+                $this->primary_attendee_obj = EEM_Attendee::instance()->get_one_by_ID($this->primary_attendee_obj);
+            }
+            if (! $this->transaction instanceof EE_Transaction && absint($this->transaction) !== 0) {
+                // $this->transaction is actually just an ID, so use it to get the object from the db
+                $this->transaction = EEM_Transaction::instance()->get_one_by_ID($this->transaction);
+            }
+            foreach ($this->reg_steps as $reg_step) {
+                $reg_step->checkout = $this;
+            }
+        } catch (Throwable $e) {
+            EE_Error::add_error(
+                esc_html__(
+                    'An error occurred while attempting to reinstate a EE_SPCO_Reg_Step object in EE_Checkout::__wakeup().',
+                    'event_espresso'
+                ),
+                __FILE__,
+                __FUNCTION__,
+                __LINE__
+            );
         }
     }
 
@@ -1364,7 +1376,8 @@ class EE_Checkout
      * @param string $line
      * @param array  $info
      * @param bool   $display_request
-     * @throws \EE_Error
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function log($class = '', $func = '', $line = '', $info = array(), $display_request = false)
     {

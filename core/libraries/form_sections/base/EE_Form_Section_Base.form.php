@@ -19,52 +19,52 @@ abstract class EE_Form_Section_Base
      *
      * @var string
      */
-    protected $_action = '';
+    protected string $_action = '';
 
     /**
      * POST (default) or GET
      *
      * @var string
      */
-    protected $_method = '';
+    protected string $_method = '';
 
     /**
      * html_id and html_name are derived from this by default
      *
      * @var string
      */
-    protected $_name = '';
+    protected string $_name = '';
 
     /**
      * $_html_id
      * @var string
      */
-    protected $_html_id = '';
+    protected string $_html_id = '';
 
     /**
      * $_html_class
      * @var string
      */
-    protected $_html_class = '';
+    protected string $_html_class = '';
 
     /**
      * $_html_style
      * @var string
      */
-    protected $_html_style = '';
+    protected string $_html_style = '';
 
     /**
      * $_other_html_attributes
      * @var string
      */
-    protected $_other_html_attributes = '';
+    protected string $_other_html_attributes = '';
 
     /**
      * The form section of which this form section is a part
      *
-     * @var EE_Form_Section_Proper
+     * @var EE_Form_Section_Base|null
      */
-    protected $_parent_section;
+    protected ?EE_Form_Section_Base $_parent_section = null;
 
     /**
      * flag indicating that _construct_finalize has been called.
@@ -73,14 +73,14 @@ abstract class EE_Form_Section_Base
      *
      * @var bool
      */
-    protected $_construction_finalized = false;
+    protected bool $_construction_finalized = false;
 
     /**
      * Strategy for parsing the form HTML upon display
      *
-     * @var FormHtmlFilter
+     * @var FormHtmlFilter|null
      */
-    protected $_form_html_filter;
+    protected ?FormHtmlFilter $_form_html_filter = null;
 
 
     /**
@@ -89,7 +89,7 @@ abstract class EE_Form_Section_Base
      *                             }
      * @throws InvalidDataTypeException
      */
-    public function __construct($options_array = [])
+    public function __construct(array $options_array = [])
     {
         // set parser which allows the form section's rendered HTML to be filtered
         if (isset($options_array['form_html_filter']) && $options_array['form_html_filter'] instanceof FormHtmlFilter) {

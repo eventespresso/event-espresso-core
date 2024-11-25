@@ -19,38 +19,29 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
     /**
      * $_COOKIE parameters
      *
-     * @var array
+     * @var array|null
      */
-    protected $cookies;
+    protected ?array $cookies;
 
     /**
      * $_FILES parameters
      *
-     * @var array
+     * @var array|null
      */
-    protected $files;
+    protected ?array $files;
 
     /**
      * true if current user appears to be some kind of bot
      *
      * @var bool
      */
-    protected $is_bot;
+    protected bool $is_bot;
 
-    /**
-     * @var RequestParams
-     */
-    protected $request_params;
+    protected RequestParams $request_params;
 
-    /**
-     * @var RequestTypeContextCheckerInterface
-     */
-    protected $request_type;
+    protected ?RequestTypeContextCheckerInterface $request_type = null;
 
-    /**
-     * @var ServerParams
-     */
-    protected $server_params;
+    protected ServerParams $server_params;
 
 
     public function __construct(
@@ -305,7 +296,7 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
      * @param boolean $relativeToWpRoot    If home_url() is "http://mysite.com/wp/", and a request comes to
      *                                     "http://mysite.com/wp/wp-json", setting $relativeToWpRoot=true will return
      *                                     "/wp-json", whereas $relativeToWpRoot=false will return "/wp/wp-json/".
-     * @param boolean $remove_query_params whether or not to return the uri with all query params removed.
+     * @param boolean $remove_query_params whether to return the uri with all query params removed.
      * @return string
      */
     public function requestUri($relativeToWpRoot = false, $remove_query_params = false)

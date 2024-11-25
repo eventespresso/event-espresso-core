@@ -13,11 +13,11 @@ class RegFormDependencyHandler extends DependencyHandler
     public function registerDependencies()
     {
         $reg_form_dependencies = [
-            'EventEspresso\core\domain\services\registration\form\v1\RegForm'                => [
+            'EventEspresso\core\domain\services\registration\form\v1\RegForm'             => [
                 null,
                 'EE_Registration_Config' => EE_Dependency_Map::load_from_cache,
             ],
-            'EventEspresso\core\domain\services\registration\form\v1\RegistrantForm'         => [
+            'EventEspresso\core\domain\services\registration\form\v1\subsections\AttendeeRegForm' => [
                 null,
                 null,
                 null,
@@ -29,18 +29,18 @@ class RegFormDependencyHandler extends DependencyHandler
                 null,
                 'EEM_Answer' => EE_Dependency_Map::load_from_cache,
             ],
-            'EventEspresso\core\domain\services\registration\form\v1\RegFormQuestionGroup'   => [
+            'EventEspresso\core\domain\services\registration\form\v1\subsections\RegFormQuestions' => [
                 null,
                 null,
                 null,
                 'EventEspresso\core\domain\services\registration\form\v1\RegFormQuestionFactory' => EE_Dependency_Map::load_from_cache,
             ],
-            'EventEspresso\core\domain\services\registration\form\v1\CountryOptions'         => [
+            'EventEspresso\core\domain\services\registration\form\utilities\CountryOptions' => [
                 null,
                 'EEM_Answer'  => EE_Dependency_Map::load_from_cache,
                 'EEM_Country' => EE_Dependency_Map::load_from_cache,
             ],
-            'EventEspresso\core\domain\services\registration\form\v1\StateOptions'           => [
+            'EventEspresso\core\domain\services\registration\form\utilities\StateOptions' => [
                 null,
                 'EEM_State' => EE_Dependency_Map::load_from_cache,
             ],

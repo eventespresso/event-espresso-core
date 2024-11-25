@@ -353,6 +353,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page
                         esc_html__("EE%s", 'event_espresso'),
                         espresso_version()
                     ),
+                    'real_level'                             => $this->maintenance_mode->real_level(),
                 ]
             );
         }

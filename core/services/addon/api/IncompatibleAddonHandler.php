@@ -6,10 +6,7 @@ use EE_Error;
 
 class IncompatibleAddonHandler
 {
-    /**
-     * @return void
-     */
-    public function deactivateIncompatibleAddons()
+    public function deactivateIncompatibleAddons(): void
     {
         static $done = false;
         if ($done) {
@@ -54,7 +51,7 @@ class IncompatibleAddonHandler
         string $min_version_required,
         string $load_callback,
         string $plugin_file_constant
-    ) {
+    ): void {
         if (! defined($version_constant)) {
             return;
         }
@@ -76,7 +73,7 @@ class IncompatibleAddonHandler
                     $min_version_required
                 ),
                 __FILE__,
-                __FUNCTION__ . "({$addon_name})",
+                __FUNCTION__ . "($addon_name)",
                 __LINE__
             );
             EE_Error::get_notices(false, true);

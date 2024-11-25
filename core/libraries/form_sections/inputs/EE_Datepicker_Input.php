@@ -37,10 +37,8 @@ class EE_Datepicker_Input extends EE_Form_Input_Base
 
 
     /**
-     *    enqueue_styles_and_scripts
-     *
-     * @access        public
-     * @return        void
+     * @return void
+     * @deprecated $VID:$
      */
     public static function enqueue_styles_and_scripts()
     {

@@ -90,7 +90,9 @@ final class EE_Admin implements InterminableInterface
             add_action('network_admin_notices', [$this, 'display_admin_notices']);
             add_filter('pre_update_option', [$this, 'check_for_invalid_datetime_formats'], 100, 2);
             add_filter('plugin_action_links', [$this, 'filter_plugin_actions'], 10, 2);
-            add_filter('admin_footer_text', [$this, 'espresso_admin_footer']);
+            add_filter('admin_footer_text', [$this, 'beforeAdminFooterText'], -999);
+            add_filter('admin_footer_text', [$this, 'espresso_admin_footer'], 99);
+            add_filter('admin_footer_text', [$this, 'afterAdminFooterText'], 999);
             add_action('display_post_states', [$this, 'displayStateForCriticalPages'], 10, 2);
             add_filter('plugin_row_meta', [$this, 'addLinksToPluginRowMeta'], 10, 2);
         }
@@ -785,11 +787,22 @@ final class EE_Admin implements InterminableInterface
     /**
      * espresso_admin_footer
      *
-     * @return    string
+     * @param string|null $text
+     * @return string
      */
-    public function espresso_admin_footer()
+    public function espresso_admin_footer(?string $text = ''): string
     {
-        return EEH_Template::powered_by_event_espresso('aln-cntr', '', ['utm_content' => 'admin_footer']);
+        return "$text &nbsp " . EEH_Template::powered_by_event_espresso('', '', ['utm_content' => 'admin_footer']);
+    }
+
+    public function beforeAdminFooterText(?string $text = ''): string
+    {
+        return "<span class='ee-layout-row ee-layout-row--inline'>$text";
+    }
+
+    public function afterAdminFooterText(?string $text = ''): string
+    {
+        return "$text</span>";
     }
 
 

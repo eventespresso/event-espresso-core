@@ -20,10 +20,7 @@ class RegFormQuestionFactory
      */
     protected $addRequiredQuestion;
 
-    /**
-     * @var EEM_Answer
-     */
-    public $answer_model;
+    public EEM_Answer $answer_model;
 
 
     /**
@@ -33,7 +30,7 @@ class RegFormQuestionFactory
     public function __construct(callable $addRequiredQuestion, EEM_Answer $answer_model)
     {
         $this->addRequiredQuestion = $addRequiredQuestion;
-        $this->answer_model = $answer_model;
+        $this->answer_model        = $answer_model;
     }
 
 
@@ -47,10 +44,8 @@ class RegFormQuestionFactory
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function create(
-        EE_Registration $registration,
-        EE_Question $question
-    ): EE_Form_Input_Base {
+    public function create(EE_Registration $registration, EE_Question $question): EE_Form_Input_Base
+    {
         // if this question was for an attendee detail, then check for that answer
         $answer_value = $this->answer_model->get_attendee_property_answer_value(
             $registration,
@@ -105,10 +100,10 @@ class RegFormQuestionFactory
         EE_Question $question,
         $answer
     ): EE_Form_Input_Base {
-        $identifier                              = $question->is_system_question()
+        $identifier = $question->is_system_question()
             ? $question->system_ID()
             : $question->ID();
-        $callback = $this->addRequiredQuestion;
+        $callback   = $this->addRequiredQuestion;
         $callback($identifier, $question->required());
         $input_constructor_args                  = [
             'html_name'        => 'ee_reg_qstn[' . $registration->ID() . '][' . $identifier . ']',

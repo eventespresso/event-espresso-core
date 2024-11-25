@@ -41,7 +41,7 @@ class Other_Services_Admin_Page extends EE_Admin_Page
     {
         $this->_page_routes = array(
             'default' => array(
-                'func'       => '_other_services',
+                'func'       => [$this, '_other_services'],
                 'capability' => 'ee_read_ee',
             ),
         );

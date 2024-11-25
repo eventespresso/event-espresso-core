@@ -1,13 +1,13 @@
 <?php
 
 use EventEspresso\core\domain\entities\custom_post_types\EspressoPostType;
-use EventEspresso\core\domain\services\registration\form\v1\CountryOptions;
+use EventEspresso\core\domain\services\registration\form\utilities\CountryOptions;
+use EventEspresso\core\domain\services\registration\form\utilities\StateOptions;
 use EventEspresso\core\domain\services\registration\form\v1\RegForm;
 use EventEspresso\core\domain\services\registration\form\v1\RegFormDependencyHandler;
 use EventEspresso\core\domain\services\registration\form\v1\RegFormHandler;
 use EventEspresso\core\domain\services\registration\form\v1\RegFormQuestionFactory;
-use EventEspresso\core\domain\services\registration\form\v1\RegFormQuestionGroup;
-use EventEspresso\core\domain\services\registration\form\v1\StateOptions;
+use EventEspresso\core\domain\services\registration\form\v1\subsections\RegFormQuestions;
 use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -209,17 +209,17 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
 
 
     /**
-     * @param RegFormQuestionGroup $question_group_reg_form
-     * @param EE_Registration      $registration
-     * @param EE_Question_Group    $question_group
-     * @return mixed|void
+     * @param RegFormQuestions  $question_group_reg_form
+     * @param EE_Registration   $registration
+     * @param EE_Question_Group $question_group
+     * @return EE_Form_Section_Proper
      * @since   5.0.0.p
      */
     public function registrationQuestionGroupsRegForm(
-        RegFormQuestionGroup $question_group_reg_form,
+        RegFormQuestions $question_group_reg_form,
         EE_Registration $registration,
         EE_Question_Group $question_group
-    ) {
+    ): EE_Form_Section_Proper {
         return apply_filters(
             'FHEE__EE_SPCO_Reg_Step_Attendee_Information___question_group_reg_form__question_group_reg_form',
             $question_group_reg_form,
@@ -451,7 +451,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
     /**
      * looking for hooks?
      * this method has been replaced by:
-     * EventEspresso\core\domain\services\registration\form\v1\CopyAttendeeInfoForm
+     * EventEspresso\core\domain\services\registration\form\v1\subsections\CopyAttendeeInfoForm
      *
      * @deprecated   5.0.0.p
      */
@@ -463,7 +463,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
     /**
      * looking for hooks?
      * this method has been replaced by:
-     * EventEspresso\core\domain\services\registration\form\v1\AutoCopyAttendeeInfoForm
+     * EventEspresso\core\domain\services\registration\form\v1\subsections\AutoCopyAttendeeInfoForm
      *
      * @deprecated   5.0.0.p
      */
@@ -475,7 +475,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
     /**
      * looking for hooks?
      * this method has been replaced by:
-     * EventEspresso\core\domain\services\registration\form\v1\CopyAttendeeInfoForm
+     * EventEspresso\core\domain\services\registration\form\v1\subsections\CopyAttendeeInfoForm
      *
      * @deprecated   5.0.0.p
      */
@@ -531,7 +531,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
     /**
      * looking for hooks?
      * this method has been replaced by:
-     * EventEspresso\core\domain\services\registration\form\v1\CountryOptions::forLegacyFormInput()
+     * EventEspresso\core\domain\services\registration\form\utilities\CountryOptions::forLegacyFormInput()
      *
      * @param array|null           $countries_list
      * @param EE_Question|null     $question
@@ -557,7 +557,7 @@ class EE_SPCO_Reg_Step_Attendee_Information extends EE_SPCO_Reg_Step
     /**
      * looking for hooks?
      * this method has been replaced by:
-     * EventEspresso\core\domain\services\registration\form\v1\StateOptions::forLegacyFormInput()
+     * EventEspresso\core\domain\services\registration\form\utilities\StateOptions::forLegacyFormInput()
      *
      * @param array|null           $states_list
      * @param EE_Question|null     $question

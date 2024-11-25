@@ -37,6 +37,12 @@ class EEM_Question_Option extends EEM_Soft_Delete_Base
                     0,
                     'Question'
                 ),
+                'QSO_default' => new EE_Boolean_Field(
+                    'QSO_default',
+                    esc_html__('Flag indicating this is the default option', 'event_espresso'),
+                    false,
+                    false
+                ),
                 'QSO_deleted' => new EE_Trashed_Flag_Field(
                     'QSO_deleted',
                     esc_html__('Flag indicating Option was trashed', 'event_espresso'),

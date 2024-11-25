@@ -38,7 +38,7 @@ use EventEspresso\core\services\request\sanitizers\AttributesSanitizer;
                     <?php echo wp_kses($inline_styles["{$handle}_before"], AllowedTags::getWithFullTags()); ?>
                 </style>
             <?php endif; ?>
-            <link rel="stylesheet" type="text/css" id="<?php esc_attr_e($handle); ?>" href="<?php echo esc_url_raw($url); ?>">
+            <link rel="stylesheet" type="text/css" id="<?php esc_attr_e($handle); ?>-css" href="<?php echo esc_url_raw($url); ?>">
             <?php if (isset($inline_styles["{$handle}_after"])) :?>
                 <style>
                     <?php echo wp_kses($inline_styles["{$handle}_after"], AllowedTags::getWithFullTags()); ?>

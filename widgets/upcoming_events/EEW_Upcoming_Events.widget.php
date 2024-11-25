@@ -269,30 +269,19 @@ class EEW_Upcoming_Events extends EspressoWidget
      */
     public function update($new_instance, $old_instance)
     {
-        /** @var RequestInterface $request */
-        $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
-
-        if (! $request->isWordPressApi() || ! is_user_logged_in()) {
-            return $old_instance;
-        }
-
-        $instance                    = $old_instance;
-        $instance['title']           = ! empty($new_instance['title'])
-            ? strip_tags((string) $new_instance['title'])
-            : '';
-        $instance['category_name']   = sanitize_text_field($new_instance['category_name'] ?? '');
-        $instance['show_expired']    = absint($new_instance['show_expired'] ?? 0);
-        $instance['limit']           = absint($new_instance['limit'] ?? 10);
-        $instance['sort']            = isset($new_instance['sort']) && $new_instance['sort'] === 'DESC'
-            ? 'DESC'
-            : 'ASC';
-        $instance['image_size']      = sanitize_text_field($new_instance['image_size'] ?? 'medium');
-        $instance['show_desc']       = filter_var(($new_instance['show_desc'] ?? false), FILTER_VALIDATE_BOOLEAN);
-        $instance['show_dates']      = filter_var(($new_instance['show_dates'] ?? false), FILTER_VALIDATE_BOOLEAN);
-        $instance['show_everywhere'] = filter_var(($new_instance['show_everywhere'] ?? false), FILTER_VALIDATE_BOOLEAN);
-        $instance['date_limit']      = absint($new_instance['date_limit'] ?? 10);
-        $instance['date_range']      = filter_var(($new_instance['date_range'] ?? false), FILTER_VALIDATE_BOOLEAN);
-        return $instance;
+        return [
+            'title'           => ! empty($new_instance['title']) ? strip_tags((string) $new_instance['title']) : '',
+            'category_name'   => sanitize_text_field($new_instance['category_name'] ?? ''),
+            'show_expired'    => absint($new_instance['show_expired'] ?? 0),
+            'limit'           => absint($new_instance['limit'] ?? 10),
+            'sort'            => isset($new_instance['sort']) && $new_instance['sort'] === 'DESC' ? 'DESC' : 'ASC',
+            'image_size'      => sanitize_text_field($new_instance['image_size'] ?? 'medium'),
+            'show_desc'       => filter_var(($new_instance['show_desc'] ?? false), FILTER_VALIDATE_BOOLEAN),
+            'show_dates'      => filter_var(($new_instance['show_dates'] ?? false), FILTER_VALIDATE_BOOLEAN),
+            'show_everywhere' => filter_var(($new_instance['show_everywhere'] ?? false), FILTER_VALIDATE_BOOLEAN),
+            'date_limit'      => absint($new_instance['date_limit'] ?? 10),
+            'date_range'      => filter_var(($new_instance['date_range'] ?? false), FILTER_VALIDATE_BOOLEAN),
+        ];
     }
 
 
@@ -422,7 +411,9 @@ class EEW_Upcoming_Events extends EspressoWidget
 
     /**
      * @param array $instance
-     * @since   4.10.14.p
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since 4.10.14.p
      */
     private function imageSizeSelector(array $instance)
     {

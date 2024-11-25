@@ -49,7 +49,7 @@ class JqueryAssetManager extends AssetManager
             EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.min.js',
             array(JqueryAssetManager::JS_HANDLE_JQUERY),
             true,
-            '1.15.0'
+            '1.19.5'
         )->setEnqueueImmediately();
 
         $this->addJavascript(
@@ -57,7 +57,7 @@ class JqueryAssetManager extends AssetManager
             EE_GLOBAL_ASSETS_URL . 'scripts/jquery.validate.additional-methods.min.js',
             array(JqueryAssetManager::JS_HANDLE_JQUERY_VALIDATE),
             true,
-            '1.15.0'
+            '1.19.5'
         );
 
         $this->addJavascript(

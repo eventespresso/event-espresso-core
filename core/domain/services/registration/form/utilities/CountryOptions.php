@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspresso\core\domain\services\registration\form\v1;
+namespace EventEspresso\core\domain\services\registration\form\utilities;
 
 use EE_Answer;
 use EE_Country;
@@ -18,22 +18,16 @@ class CountryOptions
      *
      * @var string
      */
-    public $action = '';
+    public string $action = '';
+
+    public EEM_Answer $answer_model;
+
+    public EEM_Country $country_model;
 
     /**
-     * @var EEM_Answer
+     * @var string[][]
      */
-    public $answer_model;
-
-    /**
-     * @var EEM_Country
-     */
-    public $country_model;
-
-    /**
-     * @var [][]
-     */
-    private $country_options = [];
+    private array $country_options = [];
 
 
     /**

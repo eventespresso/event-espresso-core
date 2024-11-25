@@ -4,107 +4,73 @@
  *
  * Class EE_SPCO_JSON_Response
  *
- * Description
+ * This class is responsible for building and sending JSON responses for the Single Page Checkout (SPCO) module.
+ * It collects various types of response data such as errors, success messages, and other relevant information.
+ * The class provides methods to set these data, build the final response, and send it.
+ * It also supports adding validation rules and handling payment related data.
  *
- * @package               Event Espresso
- * @subpackage            core
- * @author                Brent Christensen
- *
- *
+ * @package     Event Espresso
+ * @subpackage  core
+ * @author      Brent Christensen
  */
 class EE_SPCO_JSON_Response
 {
-    /**
-     * @var string
-     */
-    protected $_errors = '';
+    protected string $_errors = '';
 
-    /**
-     * @var string
-     */
-    protected $_unexpected_errors = '';
+    protected string $_unexpected_errors = '';
 
-    /**
-     * @var string
-     */
-    protected $_attention = '';
+    protected string $_attention = '';
 
-    /**
-     * @var string
-     */
-    protected $_success = '';
+    protected string $_success = '';
 
-    /**
-     * @var string
-     */
-    protected $_plz_select_method_of_payment = '';
+    protected string $_plz_select_method_of_payment = '';
 
-    /**
-     * @var string
-     */
-    protected $_redirect_url = '';
+    protected string $_redirect_url = '';
 
-    /**
-     * @var string
-     */
-    protected $_registration_time_limit = '';
+    protected string $_registration_time_limit = '';
 
-    /**
-     * @var string
-     */
-    protected $_redirect_form = '';
+    protected string $_redirect_form = '';
 
-    /**
-     * @var string
-     */
-    protected $_reg_step_html = '';
+    protected string $_reg_step_html = '';
 
-    /**
-     * @var string
-     */
-    protected $_method_of_payment = '';
+    protected string $_method_of_payment = '';
 
-    /**
-     * @var float
-     */
-    protected $_payment_amount;
+    protected ?float $_payment_amount = 0.00;
 
-    /**
-     * @var array
-     */
-    protected $_return_data = array();
+    protected array $_return_data = [];
+
+    protected array $request_data = [];
+
+    protected array $_validation_rules = [];
 
 
-    /**
-     * @var array
-     */
-    protected $_validation_rules = array();
-
-
-    /**
-     *    class constructor
-     */
     public function __construct()
     {
     }
 
 
     /**
-     *    __toString
+     * allows you to simply echo or print an EE_SPCO_JSON_Response object to produce a  JSON encoded string
      *
-     *        allows you to simply echo or print an EE_SPCO_JSON_Response object to produce a  JSON encoded string
-     *
-     * @access    public
-     * @return    string
+     * @return string
      */
     public function __toString()
     {
-        $JSON_response = array();
+        return json_encode($this->buildResponse());
+    }
+
+
+    /**
+     * @return array
+     */
+    public function buildResponse(): array
+    {
+        $JSON_response = [];
         // grab notices
         $notices = EE_Error::get_notices(false);
-        $this->set_attention(isset($notices['attention']) ? $notices['attention'] : '');
-        $this->set_errors(isset($notices['errors']) ? $notices['errors'] : '');
-        $this->set_success(isset($notices['success']) ? $notices['success'] : '');
+        $this->set_attention($notices['attention'] ?? '');
+        $this->set_errors($notices['errors'] ?? '');
+        $this->set_success($notices['success'] ?? '');
         // add notices to JSON response, but only if they exist
         if ($this->attention()) {
             $JSON_response['attention'] = $this->attention();
@@ -162,115 +128,84 @@ class EE_SPCO_JSON_Response
         if (! empty($return_data)) {
             $JSON_response['return_data'] = $return_data;
         }
-        // filter final array
-        $JSON_response = apply_filters('FHEE__EE_SPCO_JSON_Response___toString__JSON_response', $JSON_response);
-        // return encoded array
-        return (string) wp_json_encode($JSON_response);
+        // filter & return final array
+        return apply_filters('FHEE__EE_SPCO_JSON_Response___toString__JSON_response', $JSON_response);
+    }
+
+    public function sendResponse()
+    {
+        wp_send_json($this->buildResponse());
     }
 
 
-    /**
-     * @param string $attention
-     */
-    public function set_attention($attention)
+    public function set_attention(string $attention)
     {
         $this->_attention = $attention;
     }
 
 
-    /**
-     * @return string
-     */
-    public function attention()
+    public function attention(): string
     {
         return $this->_attention;
     }
 
 
-    /**
-     * @param string $errors
-     */
-    public function set_errors($errors)
+    public function set_errors(string $errors)
     {
         $this->_errors = $errors;
     }
 
 
-    /**
-     * @return string
-     */
-    public function errors()
+    public function errors(): string
     {
         return $this->_errors;
     }
 
 
-    /**
-     * @return string
-     */
-    public function unexpected_errors()
+    public function unexpected_errors(): string
     {
         return $this->_unexpected_errors;
     }
 
 
-    /**
-     * @param string $unexpected_errors
-     */
-    public function set_unexpected_errors($unexpected_errors)
+    public function set_unexpected_errors(string $unexpected_errors)
     {
         $this->_unexpected_errors = $unexpected_errors;
     }
 
 
-    /**
-     * @param string $success
-     */
-    public function set_success($success)
+    public function set_success(string $success)
     {
         $this->_success = $success;
     }
 
 
-    /**
-     * @return string
-     */
-    public function success()
+    public function success(): string
     {
         return $this->_success;
     }
 
 
-    /**
-     * @param string $method_of_payment
-     */
-    public function set_method_of_payment($method_of_payment)
+    public function set_method_of_payment(string $method_of_payment)
     {
         $this->_method_of_payment = $method_of_payment;
     }
 
 
-    /**
-     * @return string
-     */
-    public function method_of_payment()
+    public function method_of_payment(): string
     {
         return $this->_method_of_payment;
     }
 
 
-    /**
-     * @return float
-     */
-    public function payment_amount()
+    public function payment_amount(): float
     {
         return $this->_payment_amount;
     }
 
 
     /**
-     * @param float $payment_amount
-     * @throws EE_Error
+     * @param float|int $payment_amount
      */
     public function set_payment_amount($payment_amount)
     {
@@ -278,118 +213,79 @@ class EE_SPCO_JSON_Response
     }
 
 
-    /**
-     * @param string $next_step_html
-     */
-    public function set_reg_step_html($next_step_html)
+    public function set_reg_step_html(string $next_step_html)
     {
         $this->_reg_step_html = $next_step_html;
     }
 
 
-    /**
-     * @return string
-     */
-    public function reg_step_html()
+    public function reg_step_html(): string
     {
         return $this->_reg_step_html;
     }
 
 
-    /**
-     * @param string $redirect_form
-     */
-    public function set_redirect_form($redirect_form)
+    public function set_redirect_form(string $redirect_form)
     {
         $this->_redirect_form = $redirect_form;
     }
 
 
-    /**
-     * @return string
-     */
     public function redirect_form()
     {
         return ! empty($this->_redirect_form) ? $this->_redirect_form : false;
     }
 
 
-    /**
-     * @param string $plz_select_method_of_payment
-     */
-    public function set_plz_select_method_of_payment($plz_select_method_of_payment)
+    public function set_plz_select_method_of_payment(string $plz_select_method_of_payment)
     {
         $this->_plz_select_method_of_payment = $plz_select_method_of_payment;
     }
 
 
-    /**
-     * @return string
-     */
-    public function plz_select_method_of_payment()
+    public function plz_select_method_of_payment(): string
     {
         return $this->_plz_select_method_of_payment;
     }
 
 
-    /**
-     * @param string $redirect_url
-     */
-    public function set_redirect_url($redirect_url)
+    public function set_redirect_url(string $redirect_url)
     {
         $this->_redirect_url = $redirect_url;
     }
 
 
-    /**
-     * @return string
-     */
-    public function redirect_url()
+    public function redirect_url(): string
     {
         return $this->_redirect_url;
     }
 
 
-    /**
-     * @return string
-     */
-    public function registration_time_limit()
+    public function registration_time_limit(): string
     {
         return $this->_registration_time_limit;
     }
 
 
-    /**
-     * @param string $registration_time_limit
-     */
-    public function set_registration_time_limit($registration_time_limit)
+    public function set_registration_time_limit(string $registration_time_limit)
     {
         $this->_registration_time_limit = $registration_time_limit;
     }
 
 
-    /**
-     * @param array $return_data
-     */
-    public function set_return_data($return_data)
+    public function set_return_data(array $return_data)
     {
         $this->_return_data = array_merge($this->_return_data, $return_data);
     }
 
 
-    /**
-     * @return array
-     */
-    public function return_data()
+    public function return_data(): array
     {
         return $this->_return_data;
     }
 
 
-    /**
-     * @param array $validation_rules
-     */
-    public function add_validation_rules(array $validation_rules = array())
+    public function add_validation_rules(array $validation_rules = [])
     {
         if (is_array($validation_rules) && ! empty($validation_rules)) {
             $this->_validation_rules = array_merge($this->_validation_rules, $validation_rules);
@@ -397,12 +293,9 @@ class EE_SPCO_JSON_Response
     }
 
 
-    /**
-     * @return array | bool
-     */
-    public function validation_rules()
+    public function validation_rules(): array
     {
-        return ! empty($this->_validation_rules) ? $this->_validation_rules : false;
+        return ! empty($this->_validation_rules) ? $this->_validation_rules : [];
     }
 
 

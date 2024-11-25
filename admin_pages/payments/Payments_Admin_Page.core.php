@@ -88,40 +88,40 @@ class Payments_Admin_Page extends EE_Admin_Page
          **/
         $this->_page_routes = [
             'default'                   => [
-                'func'       => '_payment_methods_list',
+                'func'       => [$this, '_payment_methods_list'],
                 'capability' => 'ee_edit_payment_methods',
             ],
             'payment_settings'          => [
-                'func'       => '_payment_settings',
+                'func'       => [$this, '_payment_settings'],
                 'capability' => 'ee_manage_gateways',
             ],
             'activate_payment_method'   => [
-                'func'       => '_activate_payment_method',
+                'func'       => [$this, '_activate_payment_method'],
                 'noheader'   => true,
                 'capability' => 'ee_edit_payment_methods',
             ],
             'deactivate_payment_method' => [
-                'func'       => '_deactivate_payment_method',
+                'func'       => [$this, '_deactivate_payment_method'],
                 'noheader'   => true,
                 'capability' => 'ee_delete_payment_methods',
             ],
             'update_payment_method'     => [
-                'func'               => '_update_payment_method',
+                'func'       => [$this, '_update_payment_method'],
                 'noheader'           => true,
                 'headers_sent_route' => 'default',
                 'capability'         => 'ee_edit_payment_methods',
             ],
             'update_payment_settings'   => [
-                'func'       => '_update_payment_settings',
+                'func'       => [$this, '_update_payment_settings'],
                 'noheader'   => true,
                 'capability' => 'ee_manage_gateways',
             ],
             'payment_log'               => [
-                'func'       => '_payment_log_overview_list_table',
+                'func'       => [$this, '_payment_log_overview_list_table'],
                 'capability' => 'ee_read_payment_methods',
             ],
             'payment_log_details'       => [
-                'func'       => '_payment_log_details',
+                'func'       => [$this, '_payment_log_details'],
                 'capability' => 'ee_read_payment_methods',
             ],
         ];

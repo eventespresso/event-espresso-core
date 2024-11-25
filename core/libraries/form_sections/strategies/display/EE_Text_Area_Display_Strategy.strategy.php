@@ -17,17 +17,25 @@ class EE_Text_Area_Display_Strategy extends EE_Display_Strategy_Base
             $rows = 4;
             $cols = 20;
         }
-        $html = '<textarea';
-        $html .= ' id="' . $input->html_id() . '"';
-        $html .= ' name="' . $input->html_name() . '"';
-        $html .= ' class="' . $input->html_class() . '"';
-        $html .= ' style="' . $input->html_style() . '"';
-        $html .= $input->other_html_attributes();
-        $html .= ' rows= "' . $rows . '" cols="' . $cols . '"';
-        $html .= $this->dataAttributesString($this->_input->dataAttributes());
-        $html .= '>';
-        $html .= esc_textarea($raw_value);
-        $html .= '</textarea>';
+
+        $labelledby = $input->hasLabel() ? ' aria-labelledby="' . $input->html_label_id() . '"' : '';
+        $other_attributes = $input->other_html_attributes();
+        $data_attributes  = $this->dataAttributesString($input->dataAttributes());
+
+        $text = esc_textarea($raw_value);
+
+        $html = "
+        <textarea id='{$input->html_id()}'
+                  name='{$input->html_name()}'
+                  class='{$input->html_class()}'
+                  style='{$input->html_style()}'
+                  $labelledby
+                  $other_attributes
+                  $data_attributes
+                  rows='$rows'
+                  cols='$cols'
+        >$text</textarea>";
+
         foreach ($this->_input->get_validation_strategies() as $validation_strategy) {
             if (
                 $validation_strategy instanceof EE_Simple_HTML_Validation_Strategy

@@ -661,20 +661,22 @@ class EEH_Line_Item
     /**
      * Gets the line item which contains the subtotal of all the items
      *
-     * @param EE_Line_Item $total_line_item of type EEM_Line_Item::type_total
+     * @param EE_Line_Item        $total_line_item of type EEM_Line_Item::type_total
+     * @param EE_Transaction|null $transaction
+     * @param bool                $create_event_subtotal
      * @return EE_Line_Item
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public static function get_pre_tax_subtotal(EE_Line_Item $total_line_item): EE_Line_Item
-    {
+    public static function get_pre_tax_subtotal(
+        EE_Line_Item $total_line_item,
+        ?EE_Transaction $transaction = null,
+        bool $create_event_subtotal = true
+    ): EE_Line_Item {
         $pre_tax_subtotal = $total_line_item->get_child_line_item('pre-tax-subtotal');
         return $pre_tax_subtotal instanceof EE_Line_Item
             ? $pre_tax_subtotal
-            : self::create_pre_tax_subtotal($total_line_item);
+            : self::create_pre_tax_subtotal($total_line_item, $transaction, $create_event_subtotal);
     }
 
 
@@ -758,16 +760,15 @@ class EEH_Line_Item
      *
      * @param EE_Line_Item        $total_line_item
      * @param EE_Transaction|null $transaction
+     * @param bool                $create_event_subtotal
      * @return EE_Line_Item
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     protected static function create_pre_tax_subtotal(
         EE_Line_Item $total_line_item,
-        ?EE_Transaction $transaction = null
+        ?EE_Transaction $transaction = null,
+        bool $create_event_subtotal = true
     ): EE_Line_Item {
         $pre_tax_line_item = EE_Line_Item::new_instance(
             [
@@ -782,7 +783,9 @@ class EEH_Line_Item
         );
         self::set_TXN_ID($pre_tax_line_item, $transaction);
         $total_line_item->add_child_line_item($pre_tax_line_item);
-        self::create_event_subtotal($pre_tax_line_item, $transaction);
+        if ($create_event_subtotal) {
+            self::create_event_subtotal($pre_tax_line_item, $transaction);
+        }
         return $pre_tax_line_item;
     }
 
@@ -982,46 +985,41 @@ class EEH_Line_Item
      * @param EE_Event|null $event
      * @return EE_Line_Item for the event subtotal which is a child of $grand_total
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public static function get_event_line_item(EE_Line_Item $total_line_item, ?EE_Event $event = null): ?EE_Line_Item
     {
         /** @type EE_Event $event */
         $event           = EEM_Event::instance()->ensure_is_obj($event, true);
-        $event_line_item = null;
         $event_line_items = EEH_Line_Item::get_event_subtotals($total_line_item);
+        $existing_event_line_item = null;
         foreach ($event_line_items as $event_line_item) {
             // default event subtotal, we should only ever find this the first time this method is called
             $OBJ_ID = $event_line_item->OBJ_ID();
             if ($OBJ_ID === $event->ID()) {
                 // found existing line item for this event in the cart, so break out of loop and use this one
+                $existing_event_line_item = $event_line_item;
                 break;
             }
             if (! $OBJ_ID) {
-                // let's use this! but first... set the event details
-                EEH_Line_Item::set_event_subtotal_details($event_line_item, $event);
+                // OK?!?! We have an event subtotal that is not actually associated with any event???
+                // let's just use this line item since it's already there, but first... set the event details
+                $existing_event_line_item = $event_line_item;
+                EEH_Line_Item::set_event_subtotal_details($existing_event_line_item, $event);
                 break;
             }
         }
-        if (! $event_line_item instanceof EE_Line_Item) {
-            // there is no event sub-total yet, so add it
-            $pre_tax_subtotal = EEH_Line_Item::get_pre_tax_subtotal($total_line_item);
-            // a new "event" subtotal SHOULD have been created
-            $event_subtotals = EEH_Line_Item::get_event_subtotals($total_line_item);
-            $event_line_item = reset($event_subtotals);
-            // but in ccase one wasn't created for some reason...
-            if (! $event_line_item instanceof EE_Line_Item) {
-                // create a new "event" subtotal
-                $txn = $total_line_item->transaction();
-                $event_line_item = EEH_Line_Item::create_event_subtotal($pre_tax_subtotal, $txn, $event);
-            }
-            // and set the event details
-            EEH_Line_Item::set_event_subtotal_details($event_line_item, $event);
+        unset($event_line_item);
+        if ($existing_event_line_item instanceof EE_Line_Item) {
+            return $existing_event_line_item;
         }
-        return $event_line_item;
+        // there is no event sub-total yet for this event, so create a new "event" subtotal
+        $transaction = $total_line_item->transaction();
+        $pre_tax_subtotal = self::get_pre_tax_subtotal($total_line_item, $transaction, false);
+        $new_event_line_item = EEH_Line_Item::create_event_subtotal($pre_tax_subtotal, $transaction, $event);
+        // and set the event details
+        EEH_Line_Item::set_event_subtotal_details($new_event_line_item, $event, $transaction);
+        return $new_event_line_item;
     }
 
 
@@ -1219,9 +1217,8 @@ class EEH_Line_Item
         if ($removals > 0) {
             $total_line_item->recalculate_taxes_and_tax_total();
             return $removals;
-        } else {
-            return false;
         }
+        return false;
     }
 
 
@@ -1701,9 +1698,9 @@ class EEH_Line_Item
         if (! defined('WP_DEBUG') || ! WP_DEBUG) {
             return;
         }
-        $testing  = defined('EE_TESTS_DIR');
-        $new_line = $testing ? "\n" : '<br />';
-        if ($top_level && ! $testing) {
+        $no_formatting  = defined('EE_TESTS_DIR') || (defined('DOING_AJAX') && DOING_AJAX);
+        $new_line = $no_formatting ? "\n" : '<br />';
+        if ($top_level && ! $no_formatting) {
             echo '<div style="position: relative; z-index: 9999; margin: 2rem;">';
             echo '<pre style="padding: 2rem 3rem; color: #00CCFF; background: #363636;">';
         }
@@ -1736,7 +1733,7 @@ class EEH_Line_Item
             }
         }
         if ($top_level) {
-            echo $testing ? $new_line : "$new_line</pre></div>$new_line";
+            echo $no_formatting ? $new_line : "$new_line</pre></div>$new_line";
         }
     }
 

@@ -31,12 +31,13 @@ class EE_Select_Multiple_Display_Strategy extends EE_Select_Display_Strategy
         $class = $this->_input->required()
             ? $this->_input->required_css_class() . ' ' . $this->_input->html_class()
             : $this->_input->html_class();
-        $html .= ' class="' . $class . '"';
+        $html .= $class ? ' class="' . $class . '"' : '';
+        if ($this->_input->hasLabel()) {
+            $html .= ' aria-labelledby="' . $this->_input->html_label_id() . '"';
+        }
         // add html5 required
-        $html .= $this->_input->required()
-            ? ' required'
-            : '';
-        $html .= ' style="' . $this->_input->html_style() . '"';
+        $html .= $this->_input->required() ? ' required' : '';
+        $html .= $this->_input->html_style() ? ' style="' . $this->_input->html_style() . '"' : '';
         $html .= $this->_input->other_html_attributes();
         $html .= $this->dataAttributesString($this->_input->dataAttributes());
         $html .= '>';

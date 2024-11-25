@@ -21,8 +21,8 @@ class EE_Int_Normalization extends EE_Normalization_Strategy_Base
 
     /**
      * @param string $value_to_normalize
-     * @return int|mixed|string
-     * @throws \EE_Validation_Error
+     * @return int|null
+     * @throws EE_Validation_Error
      */
     public function normalize($value_to_normalize)
     {
@@ -54,9 +54,7 @@ class EE_Int_Normalization extends EE_Normalization_Strategy_Base
             if (count($matches) === 3) {
                 // if first match is the negative sign,
                 // then the number needs to be multiplied by -1 to remain negative
-                return $matches[1] === '-'
-                    ? (int) $matches[2] * -1
-                    : (int) $matches[2];
+                return $matches[1] === '-' ? (int) $matches[2] * -1 : (int) $matches[2];
             }
         }
         // find if this input has a int validation strategy

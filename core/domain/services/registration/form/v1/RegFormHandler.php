@@ -17,40 +17,28 @@ use RuntimeException;
 
 class RegFormHandler
 {
-    /**
-     * @var EE_Checkout
-     */
-    public $checkout;
+    public EE_Checkout $checkout;
+
+    public RegFormInputHandler $input_handler;
+
+    private RegFormAttendeeFactory $attendee_factory;
+
+    private RegistrantData $registrant_data;
+
+    private EE_Registration_Processor $registration_processor;
 
     /**
-     * @var RegFormInputHandler
+     * reg form sections that do not contain inputs
+     *
+     * @var string[]
      */
-    public $input_handler;
+    private array $non_input_form_sections = [
+        'primary_registrant',
+        'additional_attendee_reg_info',
+        'spco_copy_attendee_chk',
+    ];
 
-    /**
-     * @var array
-     */
-    private $non_input_form_sections;
-
-    /**
-     * @var RegFormAttendeeFactory
-     */
-    private $attendee_factory;
-
-    /**
-     * @var RegistrantData
-     */
-    private $registrant_data;
-
-    /**
-     * @var EE_Registration_Processor
-     */
-    private $registration_processor;
-
-    /**
-     * @var bool
-     */
-    private $valid;
+    private bool $valid;
 
 
     /**
@@ -62,27 +50,21 @@ class RegFormHandler
         RegFormAttendeeFactory $attendee_factory,
         EE_Registration_Processor $registration_processor
     ) {
-        $this->checkout                = $checkout;
-        $this->registrant_data         = $registrant_data;
-        $this->attendee_factory        = $attendee_factory;
-        $this->registration_processor  = $registration_processor;
-        // reg form sections that do not contain inputs
-        $this->non_input_form_sections = [
-            'primary_registrant',
-            'additional_attendee_reg_info',
-            'spco_copy_attendee_chk',
-        ];
+        $this->checkout               = $checkout;
+        $this->registrant_data        = $registrant_data;
+        $this->attendee_factory       = $attendee_factory;
+        $this->registration_processor = $registration_processor;
         $this->initializeInputHandler();
     }
 
 
     private function initializeInputHandler()
     {
-        $reg_form = $this->checkout->current_step->reg_form;
-        $required_questions = $reg_form instanceof RegForm ? $reg_form->requiredQuestions() : [];
+        $reg_form            = $this->checkout->current_step->reg_form;
+        $required_questions  = $reg_form instanceof RegForm ? $reg_form->requiredQuestions() : [];
         $this->input_handler = LoaderFactory::getShared(
             RegFormInputHandler::class,
-            [ $this->checkout->reg_url_link, $required_questions ]
+            [$this->checkout->reg_url_link, $required_questions]
         );
     }
 
@@ -141,16 +123,13 @@ class RegFormHandler
             if (! $this->checkout->revisit) {
                 $registration->save();
             }
-            /**
-             * This allows plugins to trigger a fail on processing of a
-             * registration for any conditions they may have for it to pass.
-             *
-             * @var bool if true is returned by the plugin then the registration processing is halted.
-             */
+
             if (
+                // This allows plugins to trigger a fail on processing of a registration
+                // for any conditions they may have for it to pass.
                 apply_filters(
                     'FHEE__EventEspresso_core_domain_services_registration_form_v1_RegFormHandler__processRegistrations__bypass',
-                    false,
+                    false, // if true is returned by the plugin then the registration processing is halted.
                     $this->registrant_data->attendeeCount(),
                     $registration,
                     $registrations,
@@ -249,7 +228,7 @@ class RegFormHandler
                 )
             )
         );
-        // we can also consider the TXN to not have been failed, so temporarily upgrade it's status to
+        // we can also consider the TXN to not have been failed, so temporarily upgrade its status to
         // abandoned
         $this->checkout->transaction->toggle_failed_transaction_status();
         // if we've gotten this far, then let's save what we have
@@ -273,7 +252,7 @@ class RegFormHandler
         if (isset($reg_form_data[ $reg_url_link ])) {
             // do we need to copy basic info from primary attendee ?
             $copy_primary = isset($reg_form_data[ $reg_url_link ]['additional_attendee_reg_info'])
-                                  && absint($reg_form_data[ $reg_url_link ]['additional_attendee_reg_info']) === 0;
+                && absint($reg_form_data[ $reg_url_link ]['additional_attendee_reg_info']) === 0;
             $this->registrant_data->setCopyPrimary($copy_primary);
             // filter form input data for this registration
             $reg_form_data[ $reg_url_link ] = (array) apply_filters(
@@ -282,7 +261,7 @@ class RegFormHandler
                 $registration
             );
             if (isset($reg_form_data['primary_attendee'])) {
-                $primary_reg_url_link = $reg_form_data['primary_attendee'] ?? '';
+                $primary_reg_url_link = $reg_form_data['primary_attendee'] ?: '';
                 $this->registrant_data->addPrimaryRegistrantDataValue('reg_url_link', $primary_reg_url_link);
                 unset($reg_form_data['primary_attendee']);
             }

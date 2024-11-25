@@ -26,40 +26,24 @@ abstract class DomainBase implements DomainInterface
     private FilePath $plugin_file;
 
     /**
-     * String indicating version for plugin
+     * Value object indicating version for plugin
      *
      * @var Version
      */
     private Version $version;
 
-    /**
-     * @var string $plugin_basename
-     */
     private string $plugin_basename = '';
 
-    /**
-     * @var string $plugin_path
-     */
     private string $plugin_path = '';
 
-    /**
-     * @var string $plugin_url
-     */
     private string $plugin_url = '';
 
-    /**
-     * @var string $asset_namespace
-     */
     private string $asset_namespace = '';
 
-    /**
-     * @var string $assets_path
-     */
     private string $assets_path = '';
 
-    /**
-     * @var bool
-     */
+    private string $assets_url = '';
+
     protected bool $initialized = false;
 
 
@@ -94,6 +78,7 @@ abstract class DomainBase implements DomainInterface
             $this->plugin_url      = plugin_dir_url($this->pluginFile());
             $this->setAssetNamespace($asset_namespace);
             $this->setDistributionAssetsPath();
+            $this->setDistributionAssetsUrl();
             $this->initialized = true;
         }
     }
@@ -131,6 +116,18 @@ abstract class DomainBase implements DomainInterface
                 break;
             }
         }
+    }
+
+
+    /**
+     * @throws DomainException
+     * @since 5.0.0.p
+     */
+    private function setDistributionAssetsUrl()
+    {
+        // $this->assets_path will already include the assets folder,
+        // but plugin_dir_url() removes it, so we need to add it again
+        $this->assets_url = $this->assets_path ? plugin_dir_url($this->assets_path) . DomainBase::ASSETS_FOLDER : '';
     }
 
 
@@ -231,8 +228,8 @@ abstract class DomainBase implements DomainInterface
     public function distributionAssetsUrl(string $additional_path = ''): string
     {
         return is_string($additional_path) && $additional_path !== ''
-            ? $this->plugin_url . DomainBase::ASSETS_FOLDER . $additional_path
-            : $this->plugin_url . DomainBase::ASSETS_FOLDER;
+            ? $this->assets_url . $additional_path
+            : $this->assets_url;
     }
 
 
@@ -242,5 +239,14 @@ abstract class DomainBase implements DomainInterface
     public function assetNamespace(): string
     {
         return $this->asset_namespace;
+    }
+
+
+    /**
+     * @return string
+     */
+    public function assetVersion(): string
+    {
+        return wp_get_environment_type() === 'production' ? $this->version() : (string) time();
     }
 }

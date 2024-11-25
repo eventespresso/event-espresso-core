@@ -20,9 +20,10 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
  * @var string                        $ultimate_db_state
  * @var string                        $reset_db_page_link
  * @var string                        $migration_options_html
+ * @var int                           $real_level
  */
 
-$m_mode_active = MaintenanceStatus::isNotDisabled();
+$m_mode_active = MaintenanceStatus::isNotDisabled() || $real_level !== EE_Maintenance_Mode::STATUS_OFF;
 
 if ($show_backup_db_text) { ?>
     <h1><span class="dashicons dashicons-migrate"></span>

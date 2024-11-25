@@ -1064,7 +1064,8 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
             $qty,
             $source
         );
-        $this->add_extra_meta(EE_Ticket::META_KEY_TICKET_RESERVATIONS, "{$qty} from {$source}");
+        // comment out extra meta tracking
+        // $this->add_extra_meta(EE_Ticket::META_KEY_TICKET_RESERVATIONS, "{$qty} from {$source}");
         $success                         = false;
         $datetimes_adjusted_successfully = $this->increaseReservedForDatetimes($qty);
         if ($datetimes_adjusted_successfully) {
@@ -1076,7 +1077,7 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
             );
             if (! $success) {
                 // The datetimes were successfully bumped, but not the
-                // ticket. So we need to manually rollback the datetimes.
+                // ticket. So we need to manually roll back the datetimes.
                 $this->decreaseReservedForDatetimes($qty);
             }
         }
@@ -1148,7 +1149,8 @@ class EE_Ticket extends EE_Soft_Delete_Base_Class implements EEI_Line_Item_Objec
     public function decreaseReserved($qty = 1, $adjust_datetimes = true, $source = 'unknown')
     {
         $qty = absint($qty);
-        $this->add_extra_meta(EE_Ticket::META_KEY_TICKET_RESERVATIONS, "-{$qty} from {$source}");
+        // comment out extra meta tracking
+        // $this->add_extra_meta(EE_Ticket::META_KEY_TICKET_RESERVATIONS, "-{$qty} from {$source}");
         if ($adjust_datetimes) {
             $this->decreaseReservedForDatetimes($qty);
         }

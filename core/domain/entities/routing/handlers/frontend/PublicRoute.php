@@ -24,15 +24,10 @@ use EventEspresso\core\services\request\RequestInterface;
  */
 abstract class PublicRoute extends Route
 {
-    /**
-     * @var EE_Maintenance_Mode $maintenance_mode
-     */
-    protected $maintenance_mode;
+    protected EE_Maintenance_Mode $maintenance_mode;
 
 
     /**
-     * FrontendRequests constructor.
-     *
      * @param EE_Maintenance_Mode                   $maintenance_mode
      * @param EE_Dependency_Map                     $dependency_map
      * @param LoaderInterface                       $loader

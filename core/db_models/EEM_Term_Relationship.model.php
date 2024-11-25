@@ -204,14 +204,17 @@ class EEM_Term_Relationship extends EEM_Base
      * Overrides parent so that after running this, we also double-check
      * the term taxonomy counts are up-to-date
      *
-     * @param array   $query_params @see
-     *                              https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
-     * @param boolean $allow_blocking
-     * @return int @see EEM_Base::delete
+     * @param array   $query_params
+     * @param boolean $block_deletes
+     * @return int
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @see EEM_Base::delete()
+     * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      */
-    public function delete($query_params, $allow_blocking = true)
+    public function delete($query_params, $block_deletes = true)
     {
-        $count = parent::delete($query_params, $allow_blocking);
+        $count = parent::delete($query_params, $block_deletes);
         if ($count) {
             $this->update_term_taxonomy_counts();
         }

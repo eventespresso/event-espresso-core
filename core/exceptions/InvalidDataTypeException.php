@@ -18,21 +18,27 @@ class InvalidDataTypeException extends InvalidArgumentException
     /**
      * InvalidDataTypeException constructor
      *
-     * @param string    $var_name  name of the variable that was of the wrong type ie: "$my_var"
-     * @param mixed     $variable  the actual variable that was of the wrong data type, ie: $my_var
-     * @param string    $expected  data type we wanted ie: "integer", "string", "array", etc.
-     *                             or an entire rewrite of: "{something something} was expected."
-     * @param string    $message
-     * @param int       $code
-     * @param Exception $previous
+     * @param string         $var_name name of the variable that was of the wrong type ie: "$my_var"
+     * @param mixed          $variable the actual variable that was of the wrong data type, ie: $my_var
+     * @param string         $expected data type we wanted ie: "integer", "string", "array", etc.
+     *                                 or an entire rewrite of: "{something something} was expected."
+     * @param string         $message
+     * @param int            $code
+     * @param Exception|null $previous
      */
-    public function __construct($var_name, $variable, $expected, $message = '', $code = 0, Exception $previous = null)
-    {
+    public function __construct(
+        string $var_name,
+        $variable,
+        string $expected,
+        string $message = '',
+        int $code = 0,
+        ?Exception $previous = null
+    ) {
         if (empty($message)) {
             $expected = strpos(' was expected.', $expected) === false
                 ? $this->addIndefiniteArticle($expected) . ' was expected.'
                 : $expected;
-            $message = sprintf(
+            $message  = sprintf(
                 esc_html__(
                     'The supplied data for "%1$s" was %2$s, but %3$s',
                     'event_espresso'
@@ -47,10 +53,10 @@ class InvalidDataTypeException extends InvalidArgumentException
 
 
     /**
-     * @param $string
+     * @param string $string
      * @return string
      */
-    protected function addIndefiniteArticle($string)
+    protected function addIndefiniteArticle(string $string): string
     {
         if (strtolower($string) === 'null') {
             return $string;

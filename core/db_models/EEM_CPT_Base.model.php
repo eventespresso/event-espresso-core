@@ -163,7 +163,7 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base
      * @return string
      * @throws EE_Error
      */
-    public function deleted_field_name()
+    public function deleted_field_name(): string
     {
         throw new EE_Error(
             sprintf(
@@ -211,7 +211,7 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base
      * @return array @see
      *                            https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      */
-    protected function _alter_query_params_so_only_trashed_items_included($query_params)
+    protected function _alter_query_params_so_only_trashed_items_included(array $query_params): array
     {
         $post_status_field_name                     = $this->post_status_field_name();
         $query_params[0][ $post_status_field_name ] = self::post_status_trashed;
@@ -225,7 +225,7 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base
      * @param array $query_params
      * @return array
      */
-    protected function _alter_query_params_so_deleted_and_undeleted_items_included($query_params)
+    protected function _alter_query_params_so_deleted_and_undeleted_items_included(array $query_params): array
     {
         $query_params['default_where_conditions'] = 'minimum';
         return $query_params;
@@ -237,16 +237,16 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base
      *
      * @param boolean $delete true to indicate deletion, false to indicate restoration
      * @param array   $query_params
-     * @return boolean success
+     * @return int
      * @throws EE_Error
      * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      */
-    public function delete_or_restore($delete = true, $query_params = [])
+    public function delete_or_restore(bool $delete = true, array $query_params = []): int
     {
         $post_status_field_name = $this->post_status_field_name();
         $query_params           = $this->_alter_query_params_so_deleted_and_undeleted_items_included($query_params);
         $new_status             = $delete ? self::post_status_trashed : 'draft';
-        return (bool) $this->update([$post_status_field_name => $new_status], $query_params);
+        return (int) $this->update([$post_status_field_name => $new_status], $query_params);
     }
 
 
@@ -371,7 +371,7 @@ abstract class EEM_CPT_Base extends EEM_Soft_Delete_Base
      *
      * @param EE_CPT_Base $cpt_model_object_event
      * @param string      $category_name name of the event category (term)
-     * @return bool
+     * @return EE_Base_Class
      */
     public function remove_event_category(EE_CPT_Base $cpt_model_object_event, $category_name)
     {

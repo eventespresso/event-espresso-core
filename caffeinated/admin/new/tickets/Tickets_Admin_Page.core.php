@@ -46,41 +46,41 @@ class Tickets_Admin_Page extends EE_Admin_Page
 
         $this->_page_routes = array(
             'default'         => array(
-                'func'       => '_tickets_overview_list_table',
+                'func'       => [$this, '_tickets_overview_list_table'],
                 'capability' => 'ee_read_default_tickets',
             ),
             'trash_ticket'    => array(
-                'func'       => '_trash_or_restore_ticket',
+                'func'       => [$this, '_trash_or_restore_ticket'],
                 'noheader'   => true,
                 'args'       => array('trash' => true),
                 'capability' => 'ee_delete_default_ticket',
                 'obj_id'     => $tkt_id,
             ),
             'trash_tickets'   => array(
-                'func'       => '_trash_or_restore_ticket',
+                'func'       => [$this, '_trash_or_restore_ticket'],
                 'noheader'   => true,
                 'args'       => array('trash' => true),
                 'capability' => 'ee_delete_default_tickets',
             ),
             'restore_ticket'  => array(
-                'func'       => '_trash_or_restore_ticket',
+                'func'       => [$this, '_trash_or_restore_ticket'],
                 'noheader'   => true,
                 'capability' => 'ee_delete_default_ticket',
                 'obj_id'     => $tkt_id,
             ),
             'restore_tickets' => array(
-                'func'       => '_trash_or_restore_ticket',
+                'func'       => [$this, '_trash_or_restore_ticket'],
                 'noheader'   => true,
                 'capability' => 'ee_delete_default_tickets',
             ),
             'delete_ticket'   => array(
-                'func'       => '_delete_ticket',
+                'func'       => [$this, '_delete_ticket'],
                 'noheader'   => true,
                 'capability' => 'ee_delete_default_ticket',
                 'obj_id'     => $tkt_id,
             ),
             'delete_tickets'  => array(
-                'func'       => '_delete_ticket',
+                'func'       => [$this, '_delete_ticket'],
                 'noheader'   => true,
                 'capability' => 'ee_delete_default_tickets',
             ),

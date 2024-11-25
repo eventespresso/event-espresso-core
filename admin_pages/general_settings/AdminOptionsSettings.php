@@ -6,6 +6,7 @@ use EE_Admin_Two_Column_Layout;
 use EE_Error;
 use EE_Form_Section_HTML;
 use EE_Form_Section_Proper;
+use EE_Registry;
 use EE_Text_Input;
 use EE_Yes_No_Input;
 use EEH_HTML;
@@ -30,9 +31,9 @@ class AdminOptionsSettings extends FormHandler
     /**
      * Form constructor.
      *
-     * @param \EE_Registry $registry
+     * @param EE_Registry $registry
      */
-    public function __construct(\EE_Registry $registry)
+    public function __construct(EE_Registry $registry)
     {
         parent::__construct(
             esc_html__('Admin Options', 'event_espresso'),

@@ -22,7 +22,12 @@ class EE_Enum_Validation_Strategy extends EE_Validation_Strategy_Base
     {
         parent::validate($normalized_value);
         if (! $this->_input instanceof EE_Form_Input_With_Options_Base) {
-            throw new EE_Error(sprintf(esc_html__("Cannot use Enum Validation Strategy with an input that doesn't have options", "event_espresso")));
+            throw new EE_Error(
+                esc_html__(
+                    "Cannot use Enum Validation Strategy with an input that doesn't have options",
+                    "event_espresso"
+                )
+            );
         }
         $enum_options = $this->_input->flat_options();
         if ($normalized_value === true) {
@@ -35,9 +40,8 @@ class EE_Enum_Validation_Strategy extends EE_Validation_Strategy_Base
                 $this->get_validation_error_message(),
                 'invalid_enum_value'
             );
-        } else {
-            return true;
         }
+        return true;
     }
 
     /**

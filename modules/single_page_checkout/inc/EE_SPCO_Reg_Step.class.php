@@ -449,7 +449,7 @@ abstract class EE_SPCO_Reg_Step
         if ($this->checkout->admin_request) {
             return new EE_Form_Section_Proper(
                 [
-                    'layout_strategy' => new EE_Div_Per_Section_Layout(),
+                    'layout_strategy' => new EE_No_Layout(),
                     'html_id'         => 'ee-' . $this->slug() . '-hidden-inputs',
                     'subsections'     => [
                         'next_step' => new EE_Fixed_Hidden_Input(
@@ -468,7 +468,7 @@ abstract class EE_SPCO_Reg_Step
         // hidden inputs for frontend registrations
         return new EE_Form_Section_Proper(
             [
-                'layout_strategy' => new EE_Div_Per_Section_Layout(),
+                'layout_strategy' => new EE_No_Layout(),
                 'html_id'         => 'ee-' . $this->slug() . '-hidden-inputs',
                 'subsections'     => [
                     'action'         => new EE_Fixed_Hidden_Input(

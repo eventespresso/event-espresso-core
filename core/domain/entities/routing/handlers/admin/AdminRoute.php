@@ -29,10 +29,7 @@ class AdminRoute extends Route
 {
     protected EE_Admin_Config $admin_config;
 
-    /**
-     * @var array $default_dependencies
-     */
-    protected static $default_dependencies = [
+    protected static array $default_dependencies = [
         'EE_Admin_Config'                             => EE_Dependency_Map::load_from_cache,
         'EE_Dependency_Map'                           => EE_Dependency_Map::load_from_cache,
         'EventEspresso\core\services\loaders\Loader'  => EE_Dependency_Map::load_from_cache,

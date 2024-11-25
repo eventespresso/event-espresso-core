@@ -6,10 +6,7 @@ use EventEspresso\core\services\request\RequestInterface;
 
 class ThirdPartyPluginHandler
 {
-    /**
-     * @var RequestInterface $request
-     */
-    private $request;
+    private RequestInterface $request;
 
 
     /**

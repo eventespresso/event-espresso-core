@@ -92,9 +92,10 @@ class EE_Attendee_Shortcodes extends EE_Shortcodes
      */
     protected function _parser($shortcode)
     {
-        $this->_extra = ! empty($this->_extra_data) && $this->_extra_data['data'] instanceof EE_Messages_Addressee
-            ? $this->_extra_data['data']
-            : null;
+        $this->_extra = isset($this->_extra_data['data'])
+            && $this->_extra_data['data'] instanceof EE_Messages_Addressee
+                ? $this->_extra_data['data']
+                : null;
 
         $registration = $this->getRegistration();
         $attendee     = $this->getAttendee($registration);
@@ -154,7 +155,16 @@ class EE_Attendee_Shortcodes extends EE_Shortcodes
                 return $registration->pretty_paid();
         }
 
-        return '';
+        return apply_filters(
+            'FHEE__EE_Attendee_Shortcodes__parsed',
+            '',
+            $shortcode,
+            $registration,
+            $attendee,
+            $this->_data,
+            $this->_extra_data,
+            $this
+        );
     }
 
 
@@ -168,6 +178,14 @@ class EE_Attendee_Shortcodes extends EE_Shortcodes
         // incoming object should only be a registration object.
         if ($this->_data instanceof EE_Registration) {
             return $this->_data;
+        }
+        if ($this->_data instanceof EE_Messages_Addressee) {
+            if ($this->_data->primary_reg_obj instanceof EE_Registration) {
+                return $this->_data->primary_reg_obj;
+            }
+            if ($this->_data->reg_obj instanceof EE_Registration) {
+                return $this->_data->reg_obj;
+            }
         }
         // let's attempt to get the txn_id for the error message.
         $txn_id  = isset($this->_extra->txn) && $this->_extra->txn instanceof EE_Transaction
@@ -194,6 +212,10 @@ class EE_Attendee_Shortcodes extends EE_Shortcodes
      */
     private function getAttendee(EE_Registration $registration): EE_Attendee
     {
+        $attendee = $registration->attendee();
+        if ($attendee instanceof EE_Attendee) {
+            return $attendee;
+        }
         // attendee obj for this registration
         if (
             isset($this->_extra->registrations[ $registration->ID() ]['att_obj'])

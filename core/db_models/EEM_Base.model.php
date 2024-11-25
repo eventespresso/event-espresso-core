@@ -1192,7 +1192,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         if ($cached_value) {
             return $cached_value;
         }
-        // but if no cahced property AND no id is passed, just return null
+        // but if no cached property AND no id is passed, just return null
         if (empty($id)) {
             return null;
         }
@@ -1868,7 +1868,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * that matched the query params. Note that you should pass the name of the
      * model FIELD, not the database table's column name.
      *
-     * @param array  $query_params 
+     * @param array  $query_params
      * @param string $field_to_select
      * @return array just like $wpdb->get_col()
      * @throws EE_Error
@@ -1953,20 +1953,22 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * not just have a flag field on it switched
      * Wrapper for EEM_Base::delete_permanently()
      *
-     * @param mixed   $id
-     * @param boolean $allow_blocking
+     * @param mixed $id
+     * @param bool  $block_deletes whether to allow related model objects to block (prevent) this deletion
+     *                             ie: enforce referential integrity
+     *                             It's advisable to always leave this as TRUE, otherwise you could corrupt your DB
      * @return int the number of rows deleted
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function delete_permanently_by_ID($id, $allow_blocking = true)
+    public function delete_permanently_by_ID($id, $block_deletes = true): int
     {
         return $this->delete_permanently(
             [
                 [$this->get_primary_key_field()->get_name() => $id],
                 'limit' => 1,
             ],
-            $allow_blocking
+            $block_deletes
         );
     }
 
@@ -1975,20 +1977,22 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * Deletes a single row from the DB given the model object's primary key value. (eg, EE_Attendee->ID()'s value).
      * Wrapper for EEM_Base::delete()
      *
-     * @param mixed   $id
-     * @param boolean $allow_blocking
+     * @param mixed $id
+     * @param bool  $block_deletes whether to allow related model objects to block (prevent) this deletion
+     *                             ie: enforce referential integrity
+     *                             It's advisable to always leave this as TRUE, otherwise you could corrupt your DB
      * @return int the number of rows deleted
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function delete_by_ID($id, $allow_blocking = true)
+    public function delete_by_ID($id, $block_deletes = true)
     {
         return $this->delete(
             [
                 [$this->get_primary_key_field()->get_name() => $id],
                 'limit' => 1,
             ],
-            $allow_blocking
+            $block_deletes
         );
     }
 
@@ -1999,15 +2003,17 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * "soft deleted", we will just set that instead of actually deleting the rows.
      *
      * @param array   $query_params
-     * @param boolean $allow_blocking
+     * @param boolean $block_deletes whether to allow related model objects to block (prevent) this deletion
+     *                               ie: enforce referential integrity
+     *                               It's advisable to always leave this as TRUE, otherwise you could corrupt your DB
      * @return int how many rows got deleted
      * @throws EE_Error
      * @throws ReflectionException
      * @see EEM_Base::delete_permanently
      */
-    public function delete($query_params, $allow_blocking = true)
+    public function delete($query_params, $block_deletes = true)
     {
-        return $this->delete_permanently($query_params, $allow_blocking);
+        return $this->delete_permanently($query_params, $block_deletes);
     }
 
 
@@ -2016,54 +2022,51 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * in EEM_Soft_Delete_Base so that soft-deleted model objects are instead only flagged
      * as archived, not actually deleted
      *
-     * @param array   $query_params   @see
-     *                                https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
-     * @param boolean $allow_blocking if TRUE, matched objects will only be deleted if there is no related model info
-     *                                that blocks it (ie, there' sno other data that depends on this data); if false,
-     *                                deletes regardless of other objects which may depend on it. Its generally
-     *                                advisable to always leave this as TRUE, otherwise you could easily corrupt your
-     *                                DB
+     * @param array   $query_params
+     * @param boolean $block_deletes  whether to allow related model objects to block (prevent) this deletion
+     *                                ie: enforce referential integrity
+     *                                It's advisable to always leave this as TRUE, otherwise you could corrupt your DB
      * @return int how many rows got deleted
      * @throws EE_Error
      * @throws ReflectionException
+     * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
      */
-    public function delete_permanently($query_params, $allow_blocking = true)
+    public function delete_permanently($query_params, $block_deletes = true): int
     {
         /**
          * Action called just before performing a real deletion query. You can use the
          * model and its $query_params to find exactly which items will be deleted
          *
          * @param EEM_Base $model
-         * @param array    $query_params   @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
-         * @param boolean  $allow_blocking whether or not to allow related model objects
-         *                                 to block (prevent) this deletion
+         * @param array    $query_params  The incoming array of query parameters influencing what gets deleted.
+         * @param bool     $block_deletes @see param description in method phpdoc block.
          */
-        do_action('AHEE__EEM_Base__delete__begin', $this, $query_params, $allow_blocking);
+        do_action('AHEE__EEM_Base__delete__begin', $this, $query_params, $block_deletes);
         // some MySQL databases may be running safe mode, which may restrict
         // deletion if there is no KEY column used in the WHERE statement of a deletion.
         // to get around this, we first do a SELECT, get all the IDs, and then run another query
         // to delete them
         $items_for_deletion           = $this->_get_all_wpdb_results($query_params);
-        $columns_and_ids_for_deleting = $this->_get_ids_for_delete($items_for_deletion, $allow_blocking);
+        $columns_and_ids_for_deleting = $this->_get_ids_for_delete($items_for_deletion, $block_deletes);
         $deletion_where_query_part    = $this->_build_query_part_for_deleting_from_columns_and_values(
             $columns_and_ids_for_deleting
         );
         /**
          * Allows client code to act on the items being deleted before the query is actually executed.
+         * see php doc blocks for more details
          *
-         * @param EEM_Base $this                            The model instance being acted on.
-         * @param array    $query_params                    The incoming array of query parameters influencing what gets deleted.
-         * @param bool     $allow_blocking                  @see param description in method phpdoc block.
-         * @param array    $columns_and_ids_for_deleting    An array indicating what entities will get removed as
-         *                                                  derived from the incoming query parameters.
-         * @see details on the structure of this array in the phpdocs
-         *                                                  for the `_get_ids_for_delete_method`
+         * @param EEM_Base $this                         The model instance being acted on.
+         * @param array    $query_params                 The incoming array of query parameters influencing what gets deleted.
+         * @param bool     $block_deletes                @see param description in method phpdoc block.
+         * @param array    $columns_and_ids_for_deleting An array indicating what entities will get removed as
+         *                                               derived from the incoming query parameters.
+         * @see details on the structure of this array in the phpdocs for the `_get_ids_for_delete_method`
          */
         do_action(
             'AHEE__EEM_Base__delete__before_query',
             $this,
             $query_params,
-            $allow_blocking,
+            $block_deletes,
             $columns_and_ids_for_deleting
         );
         $rows_deleted = 0;
@@ -2124,8 +2127,9 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
          * items should have been deleted
          *
          * @param EEM_Base $model
-         * @param array    $query_params @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
-         * @param int      $rows_deleted
+         * @param array $query_params
+         * @param int   $rows_deleted
+         * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
          */
         do_action('AHEE__EEM_Base__delete__end', $this, $query_params, $rows_deleted, $columns_and_ids_for_deleting);
         return (int) $rows_deleted;// how many supposedly got deleted
@@ -2190,27 +2194,32 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * Builds the columns and values for items to delete from the incoming $row_results_for_deleting array.
      *
      * @param array $row_results_for_deleting
-     * @param bool  $allow_blocking
-     * @return array   The shape of this array depends on whether the model `has_primary_key_field` or not.  If the
-     *                              model DOES have a primary_key_field, then the array will be a simple single
-     *                              dimension array where the key is the fully qualified primary key column and the
-     *                              value is an array of ids that will be deleted. Example: array('Event.EVT_ID' =>
-     *                              array( 1,2,3)) If the model DOES NOT have a primary_key_field, then the array will
-     *                              be a two dimensional array where each element is a group of columns and values that
-     *                              get deleted. Example: array(
-     *                              0 => array(
-     *                              'Term_Relationship.object_id' => 1
-     *                              'Term_Relationship.term_taxonomy_id' => 5
-     *                              ),
-     *                              1 => array(
-     *                              'Term_Relationship.object_id' => 1
-     *                              'Term_Relationship.term_taxonomy_id' => 6
-     *                              )
-     *                              )
+     * @param bool  $block_deletes whether to allow related model objects to block (prevent) this deletion
+     *                             ie: enforce referential integrity
+     *                             It's advisable to always leave this as TRUE, otherwise you could corrupt your DB
+     * @return array               The shape of this array depends on whether the model `has_primary_key_field` or not.
+     *                             If the model DOES have a primary_key_field, then the array will be a simple single
+     *                             dimension array where the key is the fully qualified primary key column and
+     *                             the value is an array of ids that will be deleted.
+     *                             Example:
+     *                              [ 'Event.EVT_ID' => [ 1,2,3 ]]
+     *                             If the model DOES NOT have a primary_key_field, then the array will be a
+     *                             two-dimensional array where each element is a group of columns and values that get deleted.
+     *                             Example:
+     *                              [
+     *                                  0 => [
+     *                                      'Term_Relationship.object_id' => 1
+     *                                      'Term_Relationship.term_taxonomy_id' => 5
+     *                                  ],
+     *                                  1 => [
+     *                                      'Term_Relationship.object_id' => 1
+     *                                      'Term_Relationship.term_taxonomy_id' => 6
+     *                                  ]
+     *                              ]
      * @throws EE_Error
      * @throws ReflectionException
      */
-    protected function _get_ids_for_delete(array $row_results_for_deleting, $allow_blocking = true)
+    protected function _get_ids_for_delete(array $row_results_for_deleting, $block_deletes = true)
     {
         $ids_to_delete_indexed_by_column = [];
         if ($this->has_primary_key_field()) {
@@ -2225,7 +2234,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                 // before we mark this item for deletion,
                 // make sure there's no related entities blocking its deletion (if we're checking)
                 if (
-                    $allow_blocking
+                    $block_deletes
                     && $this->delete_is_blocked_by_related_models(
                         $item_to_delete[ $primary_table->get_fully_qualified_pk_column() ]
                     )
@@ -2269,7 +2278,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
 
     /**
      * This receives an array of columns and values set to be deleted (as prepared by _get_ids_for_delete) and prepares
-     * the corresponding query_part for the query performing the delete.
+     * the corresponding query_part for the query performing the deletion.
      *
      * @param array $ids_to_delete_indexed_by_column @see _get_ids_for_delete for how this array might be shaped.
      * @return string
@@ -2344,7 +2353,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function count($query_params = [], $field_to_count = null, $distinct = false)
+    public function count($query_params = [], $field_to_count = '', $distinct = false)
     {
         $model_query_info = $this->_create_model_query_info_carrier($query_params);
         if ($field_to_count) {
@@ -4527,6 +4536,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             if (! $operator) {
                 $php_array_like_string = [];
                 foreach ($op_and_value as $key => $value) {
+                    $value = is_array($value) ? '[' . implode(",", $value) . ']' : $value;
                     $php_array_like_string[] = "$key=>$value";
                 }
                 throw new EE_Error(

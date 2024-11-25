@@ -13,8 +13,6 @@
  * @package        Event Espresso
  * @subpackage     libraries/shortcodes/EE_Recipient_Details_Shortcodes.lib.php
  * @author         Darren Ethier
- *
- * ------------------------------------------------------------------------
  */
 class EE_Recipient_Details_Shortcodes extends EE_Shortcodes
 {
@@ -88,6 +86,14 @@ class EE_Recipient_Details_Shortcodes extends EE_Shortcodes
                 'If a single registration related to the recipient is available, that is used to retrieve the total amount that has been paid for this recipient.  Otherwise the value of 0 is printed.',
                 'event_espresso'
             ),
+            '[RECIPIENT_CANCELLATION_LINK]' => esc_html__(
+                'Generates a link that the recipient can use to cancel their registration.',
+                'event_espresso'
+            ),
+            '[RECIPIENT_CANCEL_CONFIRMATION_CODE]' => esc_html__(
+                'Generates the confirmation code that the recipient will need to cancel their registration.',
+                'event_espresso'
+            ),
         );
     }
 
@@ -109,8 +115,7 @@ class EE_Recipient_Details_Shortcodes extends EE_Shortcodes
                             && isset($this->_data['data'])
                             && $this->_data['data'] instanceof EE_Messages_Addressee
             ? $this->_data['data']
-            :
-            $this->_recipient;
+            : $this->_recipient;
         $this->_recipient = ! $this->_recipient instanceof EE_Messages_Addressee
                             && ! empty($this->_extra_data['data'])
                             && $this->_extra_data['data'] instanceof EE_Messages_Addressee
@@ -185,6 +190,19 @@ class EE_Recipient_Details_Shortcodes extends EE_Shortcodes
                 return $this->_recipient->reg_obj instanceof EE_Registration
                     ? $this->_recipient->reg_obj->pretty_paid()
                     : 0;
+
+            case '[RECIPIENT_CANCELLATION_LINK]':
+                return $this->_recipient->reg_obj instanceof EE_Registration
+                    ? add_query_arg(
+                        [ 'e_reg_url_link' => $this->_recipient->reg_obj->reg_url_link() ],
+                        EE_Registry::instance()->CFG->core->cancel_page_url()
+                    )
+                    : '';
+
+            case '[RECIPIENT_CANCEL_CONFIRMATION_CODE]':
+                return $this->_recipient->reg_obj instanceof EE_Registration
+                    ? $this->_recipient->reg_obj->cancelRegistrationConfirmationCode()
+                    : '';
         }
 
         if (strpos($shortcode, '[RECIPIENT_ANSWER_*') !== false) {

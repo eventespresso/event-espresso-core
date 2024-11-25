@@ -615,7 +615,7 @@ class EE_Export
                     }
                     if (isset($answer_row['Question.QST_type']) && $answer_row['Question.QST_type'] == EEM_Question::QST_type_state) {
                         $reg_csv_array[ $question_label ] = EEM_State::instance()->get_state_name_by_ID(
-                            $answer_row['Answer.ANS_value']
+                            (int) $answer_row['Answer.ANS_value']
                         );
                     } else {
                         $reg_csv_array[ $question_label ] = $this->_prepare_value_from_db_for_display(

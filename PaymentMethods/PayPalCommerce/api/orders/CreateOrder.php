@@ -182,7 +182,8 @@ class CreateOrder extends OrdersApi
             )
             && ! empty($scopes) && in_array('partnerfee', $scopes)
         ) {
-            $payment_fees = LoaderFactory::getShared(PartnerPaymentFees::class);
+            /** @var PartnerPaymentFees $payment_fees */
+            $payment_fees                                           = LoaderFactory::getShared(PartnerPaymentFees::class);
             $parameters['purchase_units'][0]['payment_instruction'] = [
                 'platform_fees' => [
                     [

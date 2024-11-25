@@ -6,6 +6,7 @@
  * @package     Event Espresso
  * @subpackage  includes/models/
  * @author      Michael Nelson
+ * @method EE_Question_Group[] get_all($query_params = [])
  */
 class EEM_Question_Group extends EEM_Soft_Delete_Base
 {

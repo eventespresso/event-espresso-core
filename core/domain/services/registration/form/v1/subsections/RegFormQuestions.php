@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspresso\core\domain\services\registration\form\v1;
+namespace EventEspresso\core\domain\services\registration\form\v1\subsections;
 
 use EE_Admin_Two_Column_Layout;
 use EE_Div_Per_Section_Layout;
@@ -12,19 +12,14 @@ use EE_Question_Group;
 use EE_Registration;
 use EE_SPCO_Reg_Step_Attendee_Information;
 use EEH_HTML;
+use EventEspresso\core\domain\services\registration\form\v1\RegFormQuestionFactory;
 use ReflectionException;
 
-class RegFormQuestionGroup extends EE_Form_Section_Proper
+class RegFormQuestions extends EE_Form_Section_Proper
 {
-    /**
-     * @var EE_SPCO_Reg_Step_Attendee_Information
-     */
-    public $reg_step;
+    public EE_SPCO_Reg_Step_Attendee_Information $reg_step;
 
-    /**
-     * @var RegFormQuestionFactory
-     */
-    public $reg_form_question_factory;
+    public RegFormQuestionFactory $reg_form_question_factory;
 
 
     /**
@@ -45,7 +40,21 @@ class RegFormQuestionGroup extends EE_Form_Section_Proper
     ) {
         $this->reg_step = $reg_step;
         $this->reg_form_question_factory = $reg_form_question_factory;
-        parent::__construct($this->generateFormArgs($registration, $question_group));
+        parent::__construct(
+            [
+                'html_id'         => 'ee-reg-form-qstn-grp-' . $question_group->identifier() . '-' . $registration->ID(),
+                'html_class'      => $this->reg_step->checkout->admin_request
+                    ? 'form-table ee-reg-form-qstn-grp-dv'
+                    : 'ee-reg-form-qstn-grp-dv',
+                'html_label_id'   => 'ee-reg-form-qstn-grp-' . $question_group->identifier() . '-'
+                    . $registration->ID() . '-lbl',
+                'layout_strategy' => $this->reg_step->checkout->admin_request
+                    ? new EE_Admin_Two_Column_Layout()
+                    : new EE_Div_Per_Section_Layout(),
+                'subsections'     => $this->generateSubsections($registration, $question_group),
+            ]
+
+        );
     }
 
 
@@ -56,27 +65,16 @@ class RegFormQuestionGroup extends EE_Form_Section_Proper
      * @throws EE_Error
      * @throws ReflectionException
      */
-    private function generateFormArgs(
+    private function generateSubsections(
         EE_Registration $registration,
         EE_Question_Group $question_group
     ): array {
         // array of params to pass to parent constructor
-        $form_args = [
-            'html_id'         => 'ee-reg-form-qstn-grp-' . $question_group->identifier() . '-' . $registration->ID(),
-            'html_class'      => $this->reg_step->checkout->admin_request
-                ? 'form-table ee-reg-form-qstn-grp-dv'
-                : 'ee-reg-form-qstn-grp-dv',
-            'html_label_id'   => 'ee-reg-form-qstn-grp-' . $question_group->identifier() . '-'
-                                 . $registration->ID() . '-lbl',
-            'subsections'     => [
-                'reg_form_qstn_grp_hdr' => $this->questionGroupHeader(
-                    $question_group,
-                    $this->reg_step->checkout->admin_request
-                ),
-            ],
-            'layout_strategy' => $this->reg_step->checkout->admin_request
-                ? new EE_Admin_Two_Column_Layout()
-                : new EE_Div_Per_Section_Layout(),
+        $subsections = [
+            'reg_form_qstn_grp_hdr' => $this->questionGroupHeader(
+                $question_group,
+                $this->reg_step->checkout->admin_request
+            ),
         ];
         // where params
         $query_params = ['QST_deleted' => 0];
@@ -100,7 +98,7 @@ class RegFormQuestionGroup extends EE_Form_Section_Proper
             )
         );
         // filter for additional content before questions
-        $form_args['subsections']['reg_form_questions_before'] = new EE_Form_Section_HTML(
+        $subsections['reg_form_questions_before'] = new EE_Form_Section_HTML(
             apply_filters(
                 'FHEE__EventEspresso_core_domain_services_registration_form_v1_RegFormQuestionGroup__generateFormArgs__before_question_group_questions',
                 '',
@@ -115,22 +113,21 @@ class RegFormQuestionGroup extends EE_Form_Section_Proper
                 $identifier = $question->is_system_question()
                     ? $question->system_ID()
                     : $question->ID();
-
-                $form_args['subsections'][ $identifier ] = $this->reg_form_question_factory->create(
+                $subsections[ $identifier ] = $this->reg_form_question_factory->create(
                     $registration,
                     $question
                 );
             }
         }
-        $form_args['subsections'] = apply_filters(
+        $subsections = apply_filters(
             'FHEE__EventEspresso_core_domain_services_registration_form_v1_RegFormQuestionGroup__generateFormArgs__subsections_array',
-            $form_args['subsections'],
+            $subsections,
             $registration,
             $question_group,
             $this
         );
         // filter for additional content after questions
-        $form_args['subsections']['reg_form_questions_after'] = new EE_Form_Section_HTML(
+        $subsections['reg_form_questions_after'] = new EE_Form_Section_HTML(
             apply_filters(
                 'FHEE__EventEspresso_core_domain_services_registration_form_v1_RegFormQuestionGroup__generateFormArgs__after_question_group_questions',
                 '',
@@ -140,7 +137,7 @@ class RegFormQuestionGroup extends EE_Form_Section_Proper
             )
         );
 
-        return $form_args;
+        return $subsections;
     }
 
 

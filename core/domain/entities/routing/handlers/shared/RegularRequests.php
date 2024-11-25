@@ -15,6 +15,7 @@ use EventEspresso\core\domain\entities\routing\handlers\admin\WordPressPluginsPa
 use EventEspresso\core\domain\entities\routing\handlers\admin\WordPressPostsPage;
 use EventEspresso\core\domain\entities\routing\handlers\admin\WordPressProfilePage;
 use EventEspresso\core\domain\entities\routing\handlers\frontend\FrontendRequests;
+use EventEspresso\core\domain\entities\routing\handlers\frontend\RegistrationCheckoutRequests;
 use EventEspresso\core\domain\entities\routing\handlers\frontend\ShortcodeRequests;
 use EventEspresso\core\services\assets\AssetManifestFactory;
 use EventEspresso\core\services\assets\BaristaFactory;
@@ -140,12 +141,12 @@ class RegularRequests extends PrimaryRoute
 
         $default_routes = [
             // default dependencies
-            ShortcodeRequests::class    => Route::getDefaultDependencies(),
-            RestApiRequests::class      => Route::getDefaultDependencies(),
-            SessionRequests::class      => Route::getDefaultDependencies(),
-            WordPressHeartbeat::class   => Route::getDefaultDependencies(),
-            AssetRequests::class        => $default_with_barista,
-            GQLRequests::class          => $default_with_manifest,
+            ShortcodeRequests::class            => Route::getDefaultDependencies(),
+            RestApiRequests::class              => Route::getDefaultDependencies(),
+            SessionRequests::class              => Route::getDefaultDependencies(),
+            WordPressHeartbeat::class           => Route::getDefaultDependencies(),
+            AssetRequests::class                => $default_with_barista,
+            GQLRequests::class                  => $default_with_manifest,
             // admin dependencies
             AdminRoute::class           => AdminRoute::getDefaultDependencies(),
             EspressoBatchJob::class     => AdminRoute::getDefaultDependencies(),
@@ -158,8 +159,9 @@ class RegularRequests extends PrimaryRoute
             WordPressPostsPage::class   => AdminRoute::getDefaultDependencies(),
             WordPressProfilePage::class => AdminRoute::getDefaultDependencies(),
             // public dependencies
-            PersonalDataRequests::class => $public,
-            FrontendRequests::class     => $public,
+            PersonalDataRequests::class         => $public,
+            FrontendRequests::class             => $public,
+            RegistrationCheckoutRequests::class => $public,
         ];
         foreach ($default_routes as $route => $dependencies) {
             $this->dependency_map->registerDependencies($route, $dependencies);

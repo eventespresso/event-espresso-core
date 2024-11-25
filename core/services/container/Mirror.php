@@ -49,14 +49,8 @@ class Mirror
      */
     private array $methods = [];
 
-    /**
-     * @var array
-     */
     private array $default_properties = [];
 
-    /**
-     * @var array
-     */
     private array $static_properties = [];
 
 
@@ -97,6 +91,15 @@ class Mirror
     public function getConstructorFromReflection(ReflectionClass $reflection_class): ?ReflectionMethod
     {
         return $this->getConstructor($reflection_class->getName());
+    }
+
+
+    /**
+     * @throws ReflectionException
+     */
+    public function getClassShortName(string $class_name): string
+    {
+        return $this->getReflectionClass($class_name)->getShortName();
     }
 
 

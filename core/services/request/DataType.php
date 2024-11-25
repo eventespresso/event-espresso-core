@@ -74,4 +74,36 @@ class DataType
         }
         return $param;
     }
+
+
+    public static function convertModelFieldSchemaType($schema_type): ?string
+    {
+        if (is_array($schema_type)) {
+            foreach ($schema_type as $type) {
+                $data_type = self::convertModelFieldSchemaType($type);
+                if ($data_type) {
+                    return $data_type;
+                }
+            }
+            $schema_type = reset($schema_type);
+        }
+        switch ($schema_type) {
+            case 'array':
+                return DataType::ARRAY;
+            case 'boolean':
+                return DataType::BOOL;
+            case 'integer':
+                return DataType::INT;
+            case 'null':
+                return DataType::NULL;
+            case 'number':
+                return DataType::FLOAT;
+            case 'object':
+                return DataType::OBJECT;
+            case 'string':
+                return DataType::STRING;
+            default:
+                return null;
+        }
+    }
 }

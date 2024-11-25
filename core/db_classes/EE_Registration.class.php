@@ -20,42 +20,25 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
 class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registration, EEI_Admin_Links
 {
     /**
-     * Used to reference when a registration has never been checked in.
-     *
-     * @deprecated use \EE_Checkin::status_checked_never instead
-     * @type int
-     */
-    const checkin_status_never = 2;
-
-    /**
-     * Used to reference when a registration has been checked in.
-     *
-     * @deprecated use \EE_Checkin::status_checked_in instead
-     * @type int
-     */
-    const checkin_status_in = 1;
-
-    /**
-     * Used to reference when a registration has been checked out.
-     *
-     * @deprecated use \EE_Checkin::status_checked_out instead
-     * @type int
-     */
-    const checkin_status_out = 0;
-
-    /**
      * extra meta key for tracking reg status os trashed registrations
      *
      * @type string
      */
-    const PRE_TRASH_REG_STATUS_KEY = 'pre_trash_registration_status';
+    public const PRE_TRASH_REG_STATUS_KEY = 'pre_trash_registration_status';
 
     /**
      * extra meta key for tracking if registration has reserved ticket
      *
      * @type string
      */
-    const HAS_RESERVED_TICKET_KEY = 'has_reserved_ticket';
+    public const HAS_RESERVED_TICKET_KEY = 'has_reserved_ticket';
+
+    /**
+     * extra meta key for tracking registration cancellations
+     *
+     * @type string
+     */
+    public const META_KEY_REG_STATUS_CHANGE = 'registration_status_change';
 
 
     /**
@@ -530,7 +513,8 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
             if ($reserved && $update_ticket) {
                 $ticket = $this->ticket();
                 $ticket->increaseReserved(1, "REG: {$this->ID()} (ln:" . __LINE__ . ')');
-                $this->update_extra_meta('reserve_ticket', "{$this->ticket_ID()} from {$source}");
+                // comment out extra meta tracking
+                // $this->update_extra_meta('reserve_ticket', "{$this->ticket_ID()} from {$source}");
                 $ticket->save();
             }
         }
@@ -554,11 +538,12 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     {
         // only release ticket if space is currently reserved
         if ((bool) $this->get_extra_meta(EE_Registration::HAS_RESERVED_TICKET_KEY, true) === true) {
-            $reserved = $this->update_extra_meta(EE_Registration::HAS_RESERVED_TICKET_KEY, false);
-            if ($reserved && $update_ticket) {
+            $released = $this->delete_extra_meta(EE_Registration::HAS_RESERVED_TICKET_KEY, true);
+            if ($released && $update_ticket) {
                 $ticket = $this->ticket();
                 $ticket->decreaseReserved(1, true, "REG: {$this->ID()} (ln:" . __LINE__ . ')');
-                $this->update_extra_meta('release_reserved_ticket', "{$this->ticket_ID()} from {$source}");
+                // comment out extra meta tracking
+                // $this->update_extra_meta('release_reserved_ticket', "{$this->ticket_ID()} from {$source}");
             }
         }
     }
@@ -2077,7 +2062,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @throws ReflectionException
      * @since 4.5.0
      */
-    public function get_all_other_registrations_in_group()
+    public function get_all_other_registrations_in_group(bool $with_same_ticket = true): array
     {
         if ($this->group_size() < 2) {
             return [];
@@ -2086,8 +2071,11 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
         $query[0] = [
             'TXN_ID' => $this->transaction_ID(),
             'REG_ID' => ['!=', $this->ID()],
-            'TKT_ID' => $this->ticket_ID(),
         ];
+
+        if ($with_same_ticket) {
+            $query[0]['TKT_ID'] = $this->ticket_ID();
+        }
         /** @var EE_Registration[] $registrations */
         $registrations = $this->get_model()->get_all($query);
         return $registrations;
@@ -2257,8 +2245,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     /**
      * Soft Deletes this model object.
      *
-     * @param string $source function name that called this method
-     * @return boolean | int
+     * @return int
      * @throws DomainException
      * @throws EE_Error
      * @throws EntityNotFoundException
@@ -2288,8 +2275,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
     /**
      * Restores whatever the previous status was on a registration before it was trashed (if possible)
      *
-     * @param string $source function name that called this method
-     * @return bool|int
+     * @return int
      * @throws DomainException
      * @throws EE_Error
      * @throws EntityNotFoundException
@@ -2300,7 +2286,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @throws RuntimeException
      * @throws UnexpectedEntityException
      */
-    public function restore()
+    public function restore(): int
     {
         $previous_status = $this->get_extra_meta(
             EE_Registration::PRE_TRASH_REG_STATUS_KEY,
@@ -2610,5 +2596,24 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
         return RegStatus::isValidStatus($default_reg_status, false)
             ? $default_reg_status
             : $default_event_reg_status;
+    }
+
+
+    /**
+     * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since $VID:$
+     */
+    public function cancelRegistrationConfirmationCode(): string
+    {
+        // concatenate all the fields that make up the source string
+        // ex: 944-1084-720-379-7-2024-10-11 18:21:00-626-379-7-2ff6
+        $source_string = $this->ID() . $this->event_ID() . $this->attendee_ID() . $this->ticket_ID();
+        $source_string .= $this->count() . $this->reg_date() . $this->reg_code();
+        // create a hash of the source string, ex: a9c0d28f79b5602a428e386821015420
+        $source_string = md5($source_string);
+        // return the first 4 characters of the hash in uppercase, ex: A9C0
+        return strtoupper(substr($source_string, 0, 4));
     }
 }

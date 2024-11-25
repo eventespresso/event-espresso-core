@@ -29,23 +29,23 @@ class Extend_About_Admin_Page extends About_Admin_Page
     {
         $this->_page_routes = [
             'default'  => [
-                'func'       => '_whats_new',
+                'func'       => [$this, '_whats_new'],
                 'capability' => 'manage_options',
             ],
             'overview' => [
-                'func'       => '_overview',
+                'func'       => [$this, '_overview'],
                 'capability' => 'manage_options',
             ],
             'credits'  => [
-                'func'       => '_credits',
+                'func'       => [$this, '_credits'],
                 'capability' => 'manage_options',
             ],
             /*'decafvpro' => array(
-                'func' => '_decafvpro',
+                'func'       => [$this, '_decafvpro'],
                 'capability' => 'manage_options'
                 ),*/
             'reviews'  => [
-                'func'       => '_reviews',
+                'func'       => [$this, '_reviews'],
                 'capability' => 'manage_options',
             ],
 

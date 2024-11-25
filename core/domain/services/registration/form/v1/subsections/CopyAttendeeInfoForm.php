@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspresso\core\domain\services\registration\form\v1;
+namespace EventEspresso\core\domain\services\registration\form\v1\subsections;
 
 use EE_Checkbox_Multi_Input;
 use EE_Error;

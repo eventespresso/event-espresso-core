@@ -334,7 +334,7 @@ class TicketSelectorRowStandard extends TicketSelectorRow
         $id    = "$class-$this->EVT_ID-$this->row";
         $checked = $this->total_tickets === 1 ? ' checked' : '';
 
-        return ".
+        return "
         <label class='ee-a11y-screen-reader-text' for='$id' >$label</label>
         <input type='radio'$checked name='$name' id='$id' class='$class' value='$TKT-1' />";
     }

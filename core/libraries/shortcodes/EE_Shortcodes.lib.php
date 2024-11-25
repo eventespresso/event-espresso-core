@@ -201,13 +201,14 @@ abstract class EE_Shortcodes extends EE_Base
      */
     public function get_shortcodes(): array
     {
-        $this->_shortcodes =
-            (array) apply_filters('FHEE__' . get_class($this) . '__shortcodes', $this->_shortcodes, $this);
+        $this->_shortcodes = (array) apply_filters(
+            'FHEE__' . get_class($this) . '__shortcodes',
+            $this->_shortcodes,
+            $this
+        );
 
         // note the below filter applies to ALL shortcode parsers... be careful!
-        $this->_shortcodes = (array) apply_filters('FHEE__EE_Shortcodes__shortcodes', $this->_shortcodes, $this);
-
-        return $this->_shortcodes;
+        return (array) apply_filters('FHEE__EE_Shortcodes__shortcodes', $this->_shortcodes, $this);
     }
 
 

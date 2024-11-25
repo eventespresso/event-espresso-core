@@ -11,6 +11,7 @@ use EventEspresso\core\services\json\JsonDataNodeHandler;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\request\RequestInterface;
 use Exception;
+use Throwable;
 
 /**
  * Class RouteHandler
@@ -21,40 +22,19 @@ use Exception;
  */
 class RouteHandler
 {
-    /**
-     * @var CapabilitiesCheckerInterface $capabilities_checker
-     */
-    private $capabilities_checker;
+    private CapabilitiesCheckerInterface $capabilities_checker;
 
-    /**
-     * @var JsonDataNodeHandler $data_node_handler
-     */
-    private $data_node_handler;
+    private JsonDataNodeHandler $data_node_handler;
 
-    /**
-     * @var LoaderInterface $loader
-     */
-    private $loader;
+    private LoaderInterface $loader;
 
-    /**
-     * @var RequestInterface $request
-     */
-    protected $request;
+    protected RequestInterface $request;
 
-    /**
-     * @var RouteCollection $routes
-     */
-    private $routes;
+    private RouteCollection $routes;
 
-    /**
-     * @var boolean $print_data_nodes
-     */
-    private $print_data_nodes = true;
+    private bool $print_data_nodes = true;
 
-    /**
-     * @var string $route_request_type
-     */
-    protected $route_request_type = '';
+    protected string $route_request_type = '';
 
 
     /**
@@ -84,7 +64,7 @@ class RouteHandler
     /**
      * @param string $fqcn   Fully Qualified Class Name for Route
      * @param bool   $handle if true [default] will immediately call RouteInterface::handleRequest() after adding
-     * @throws Exception
+     * @throws Exception|Throwable
      */
     public function addRoute(string $fqcn, bool $handle = true)
     {

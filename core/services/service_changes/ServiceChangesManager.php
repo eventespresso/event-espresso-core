@@ -2,10 +2,12 @@
 
 namespace EventEspresso\core\services\service_changes;
 
-use DateTime;
 use EE_Dependency_Map;
+use EE_Error;
+use EventEspresso\core\domain\services\database\DbStatus;
 use EventEspresso\core\domain\services\service_changes\PaymentMethodDeprecations2025;
 use EventEspresso\core\services\loaders\LoaderInterface;
+use ReflectionException;
 
 /**
  * ServiceChangeNotificationsManager
@@ -25,13 +27,17 @@ class ServiceChangesManager
     /**
      * @param EE_Dependency_Map $dependency_map
      * @param LoaderInterface   $loader
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function __construct(EE_Dependency_Map $dependency_map, LoaderInterface $loader)
     {
         $this->dependency_map = $dependency_map;
         $this->loader         = $loader;
-        $this->registerDependencies();
-        $this->loadServiceChangeNotifications();
+        if (DbStatus::isOnline()) {
+            $this->registerDependencies();
+            $this->loadServiceChangeNotifications();
+        }
     }
 
 
@@ -49,10 +55,21 @@ class ServiceChangesManager
     }
 
 
+    /**
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
     public function loadServiceChangeNotifications()
     {
-        /** @var PaymentMethodDeprecations2025 $pm_deps */
-        $pm_deps = $this->loader->getShared(PaymentMethodDeprecations2025::class);
-        $pm_deps->setHooks();
+        if (
+            apply_filters(
+                'FHEE__EventEspresso_core_services_service_changes_ServiceChangesManager__loadServiceChangeNotifications__loadPaymentMethodDeprecations2025',
+                true
+            )
+        ) {
+            /** @var PaymentMethodDeprecations2025 $pm_deps */
+            $pm_deps = $this->loader->getShared(PaymentMethodDeprecations2025::class);
+            $pm_deps->setHooks();
+        }
     }
 }

@@ -266,6 +266,32 @@ class EE_Line_Item extends EE_Base_Class
 
 
     /**
+     * @param int $quantity
+     * @return void
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since $VID:$
+     */
+    public function incrementQuantity(int $quantity = 1)
+    {
+        $this->adjustNumericFieldsInDb(['LIN_quantity' => $quantity]);
+    }
+
+
+    /**
+     * @param int $quantity
+     * @return void
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since $VID:$
+     */
+    public function decrementQuantity(int $quantity = 1)
+    {
+        $this->adjustNumericFieldsInDb(['LIN_quantity' => $quantity * -1]);
+    }
+
+
+    /**
      * Gets item_id
      *
      * @return int
@@ -1061,21 +1087,43 @@ class EE_Line_Item extends EE_Base_Class
 
 
     /**
+     * @return int
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function delete()
+    {
+        $parent = $this->parent();
+        if (! $parent instanceof EE_Line_Item) {
+            // in case this is called on the grand total line item which has no parent, just delete it
+            return parent::delete();
+        }
+        // first remove this line item from the parent's cache
+        $parent->removeChildLineItemFromCache($this->code());
+        // then delete this line item
+        $deleted = parent::delete();
+        // THEN check if the parent is a subtotal and has no children, if so, delete it
+        $parent->delete_if_childless_subtotal();
+        return $deleted;
+    }
+
+
+    /**
      * Returns how many items are deleted (or, if this item has not been saved ot the DB yet, just how many it HAD
      * cached on it)
      *
      * @return int
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function delete_children_line_items(): int
     {
-        $count = count($this->_children);
+        $count = 0;
+        foreach ($this->_children as $child_line_item) {
+            $count += $child_line_item->delete();
+        }
         $this->resetChildren();
-        return $this->ID() ? (int) $this->get_model()->delete([['LIN_parent' => $this->ID()]]) : $count;
+        return $count;
     }
 
 
@@ -1103,7 +1151,7 @@ class EE_Line_Item extends EE_Base_Class
             $items_deleted = 0;
             if ($this->code() === $code) {
                 $items_deleted += EEH_Line_Item::delete_all_child_items($this);
-                $items_deleted += (int) $this->delete();
+                $items_deleted += $this->delete();
                 if ($stop_search_once_found) {
                     return $items_deleted;
                 }
@@ -1131,8 +1179,15 @@ class EE_Line_Item extends EE_Base_Class
      */
     public function delete_if_childless_subtotal(): bool
     {
-        if ($this->ID() && $this->type() === EEM_Line_Item::type_sub_total && ! $this->children()) {
-            return $this->delete();
+        if (
+            $this->type() === EEM_Line_Item::type_sub_total
+            && $this->code() !== 'pre-tax-subtotal'
+            && empty($this->_children)
+        ) {
+            if ($this->ID()) {
+                return (bool) $this->delete();
+            }
+            return (bool) $this->parent()->removeChildLineItemFromCache($this->code());
         }
         return false;
     }

@@ -684,3 +684,7 @@ table.spco-ticket-details tbody td:first-child {
     padding: .5rem 1rem;
     text-align: center;
 }
+
+.ui-datepicker.ui-widget {
+    z-index: 9999 !important;
+}

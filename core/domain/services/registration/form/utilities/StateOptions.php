@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspresso\core\domain\services\registration\form\v1;
+namespace EventEspresso\core\domain\services\registration\form\utilities;
 
 use EE_Answer;
 use EE_Error;
@@ -17,17 +17,14 @@ class StateOptions
      *
      * @var string
      */
-    public $action = '';
+    public string $action = '';
+
+    public EEM_State $state_model;
 
     /**
-     * @var EEM_State
+     * @var string[][]
      */
-    public $state_model;
-
-    /**
-     * @var [][]
-     */
-    private $state_options = [];
+    private array $state_options = [];
 
 
     /**

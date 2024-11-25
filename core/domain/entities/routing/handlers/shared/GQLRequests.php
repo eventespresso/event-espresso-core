@@ -19,10 +19,7 @@ use EventEspresso\core\services\routing\Route;
  */
 class GQLRequests extends Route
 {
-    /**
-     * @var AssetManifestFactory
-     */
-    private $manifest_factory;
+    private AssetManifestFactory $manifest_factory;
 
 
     /**

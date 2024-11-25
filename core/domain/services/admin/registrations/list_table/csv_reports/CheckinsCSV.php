@@ -37,7 +37,7 @@ class CheckinsCSV
 
         /* translators: %s: datetime ID */
         return sprintf(
-            esc_html__('ID: %1$s', 'event_espresso'),
+            esc_html__('CHK-IN DTT-ID: %1$s', 'event_espresso'),
             esc_html($datetime->get('DTT_ID'))
         );
     }

@@ -5,13 +5,17 @@ use EventEspresso\core\services\loaders\LoaderFactory;
 /**
  * EE_Question class
  *
- * @package               Event Espresso
- * @subpackage            includes/classes/EE_Answer.class.php
- * @author                Mike Nelson
- * ------------------------------------------------------------------------
+ * @package     Event Espresso
+ * @subpackage  includes/classes/EE_Answer.class.php
+ * @author      Mike Nelson
+ * @method EEM_Question get_model()
+ * @method EE_Answer[]|EE_Question_Group[]|EE_Question_Option[] get_many_related($relation, $query_params = [])
  */
 class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
 {
+    private ?string $type = null;
+
+
     /**
      * @param array  $props_n_values          incoming values
      * @param string $timezone                incoming timezone (if not set the timezone set for the website will be
@@ -19,11 +23,13 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
      * @param array  $date_formats            incoming date_formats in an array where the first value is the
      *                                        date_format and the second value is the time format
      * @return EE_Question
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public static function new_instance($props_n_values = [], $timezone = '', $date_formats = [])
+    public static function new_instance($props_n_values = [], $timezone = '', $date_formats = []): EE_Question
     {
         $has_object = parent::_check_for_object($props_n_values, __CLASS__, $timezone, $date_formats);
-        return $has_object ? $has_object : new self($props_n_values, false, $timezone, $date_formats);
+        return $has_object ?: new self($props_n_values, false, $timezone, $date_formats);
     }
 
 
@@ -32,183 +38,197 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
      * @param string $timezone        incoming timezone as set by the model.  If not set the timezone for
      *                                the website will be used.
      * @return EE_Question
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public static function new_instance_from_db($props_n_values = [], $timezone = '')
+    public static function new_instance_from_db($props_n_values = [], $timezone = ''): EE_Question
     {
         return new self($props_n_values, true, $timezone);
     }
 
 
     /**
-     *        Set    Question display text
-     *
-     * @access        public
-     * @param string $QST_display_text
+     * @return EEM_Question
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since $VID:$
      */
-    public function set_display_text($QST_display_text = '')
+    private function getModel(): EEM_Question
+    {
+        return $this->get_model();
+    }
+
+
+    /**
+     * @param string $QST_display_text
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function set_display_text(string $QST_display_text = '')
     {
         $this->set('QST_display_text', $QST_display_text);
     }
 
 
     /**
-     *        Set    Question admin text
-     *
-     * @access        public
      * @param string $QST_admin_label
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function set_admin_label($QST_admin_label = '')
+    public function set_admin_label(string $QST_admin_label = '')
     {
         $this->set('QST_admin_label', $QST_admin_label);
     }
 
 
     /**
-     *        Set    system name
-     *
-     * @access        public
      * @param mixed $QST_system
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function set_system_ID($QST_system = '')
+    public function set_system_ID(string $QST_system = '')
     {
         $this->set('QST_system', $QST_system);
     }
 
 
     /**
-     *        Set    question's type
-     *
-     * @access        public
      * @param string $QST_type
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function set_question_type($QST_type = '')
+    public function set_question_type(string $QST_type = '')
     {
         $this->set('QST_type', $QST_type);
     }
 
 
     /**
-     *        Sets whether this question must be answered when presented in a form
+     * Sets whether this question must be answered when presented in a form
      *
-     * @access        public
      * @param bool $QST_required
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function set_required($QST_required = false)
+    public function set_required(bool $QST_required = false)
     {
         $this->set('QST_required', $QST_required);
     }
 
 
     /**
-     *        Set    Question display text
-     *
-     * @access        public
      * @param string $QST_required_text
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function set_required_text($QST_required_text = '')
+    public function set_required_text(string $QST_required_text = '')
     {
         $this->set('QST_required_text', $QST_required_text);
     }
 
 
     /**
-     *        Sets the order of this question when placed in a sequence of questions
+     * Sets the order of this question when placed in a sequence of questions
      *
-     * @access        public
      * @param int $QST_order
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function set_order($QST_order = 0)
+    public function set_order(int $QST_order = 0)
     {
         $this->set('QST_order', $QST_order);
     }
 
 
     /**
-     *        Sets whether the question is admin-only
-     *
-     * @access        public
      * @param bool $QST_admin_only
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function set_admin_only($QST_admin_only = false)
+    public function set_admin_only(bool $QST_admin_only = false)
     {
         $this->set('QST_admin_only', $QST_admin_only);
     }
 
 
     /**
-     *        Sets the wordpress user ID on the question
+     * Sets the WordPress user ID on the question
      *
-     * @access        public
      * @param int $QST_wp_user
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function set_wp_user($QST_wp_user = 1)
+    public function set_wp_user(int $QST_wp_user = 1)
     {
         $this->set('QST_wp_user', $QST_wp_user);
     }
 
 
     /**
-     *        Sets whether the question has been deleted
-     *        (we use this boolean instead of actually
-     *        deleting it because when users delete this question
-     *        they really want to remove the question from future
-     *        forms, BUT keep their old answers which depend
-     *        on this record actually existing.
+     * Sets whether the question has been deleted
+     * we use this boolean instead of actually deleting it
+     * because when users delete this question they really want to remove the question from future forms,
+     * BUT keep their old answers which depend on this record actually existing.
      *
-     * @access        public
      * @param bool $QST_deleted
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function set_deleted($QST_deleted = false)
+    public function set_deleted(bool $QST_deleted = false)
     {
         $this->set('QST_deleted', $QST_deleted);
     }
 
 
     /**
-     * returns the text for displaying the question to users
+     *  used for the input label text displayed to users on the frontend
      *
-     * @access public
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function display_text()
+    public function display_text(): string
     {
-        return $this->get('QST_display_text');
+        return (string) $this->get('QST_display_text');
     }
 
 
     /**
-     * returns the text for the administrative label
+     * input label used in the admin
      *
-     * @access public
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function admin_label()
+    public function admin_label(): string
     {
-        return $this->get('QST_admin_label');
+        return (string) $this->get('QST_admin_label');
     }
 
 
     /**
      * returns the attendee column name for this question
      *
-     * @access public
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function system_ID()
+    public function system_ID(): string
     {
-        return $this->get('QST_system');
+        return (string) $this->get('QST_system');
     }
 
 
     /**
      * if question is required or not (boolean)
      *
-     * @access public
-     * @return boolean
+     * @return bool
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function required()
+    public function required(): bool
     {
-        return $this->get('QST_required');
+        return (bool) $this->get('QST_required');
     }
 
 
@@ -216,74 +236,81 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
      * returns the text which should be displayed when a user
      * doesn't answer this question in a form
      *
-     * @access public
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function required_text()
+    public function required_text(): string
     {
-        return $this->get('QST_required_text');
+        return (string) $this->get('QST_required_text');
     }
 
 
     /**
-     * returns the type of this question
+     * returns the type of this question: one of the QST_type_* constants on the EEM_Question model
      *
-     * @access public
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function type()
+    public function type(): string
     {
-        return $this->get('QST_type');
+        if ($this->type === null) {
+            $this->type = (string) $this->get('QST_type');
+        }
+        return $this->type;
     }
 
 
     /**
-     * returns an integer showing where this question should
-     * be placed in a sequence of questions
+     * returns an integer showing where this question should be placed in a sequence of questions
      *
-     * @access public
      * @return int
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function order()
+    public function order(): int
     {
-        return $this->get('QST_order');
+        return (int) $this->get('QST_order');
     }
 
 
     /**
-     * returns whether this question should only appears to admins,
-     * or to everyone
+     * returns whether this question should only appear to admins, or to everyone
      *
-     * @access public
-     * @return boolean
+     * @return bool
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function admin_only()
+    public function admin_only(): bool
     {
-        return $this->get('QST_admin_only');
+        return (bool) $this->get('QST_admin_only');
     }
 
 
     /**
-     * returns the id the wordpress user who created this question
+     * returns the id the WordPress user who created this question
      *
-     * @access public
      * @return int
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function wp_user()
+    public function wp_user(): int
     {
-        return $this->get('QST_wp_user');
+        return (int) $this->get('QST_wp_user');
     }
 
 
     /**
      * returns whether this question has been marked as 'deleted'
      *
-     * @access public
-     * @return boolean
+     * @return bool
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function deleted()
+    public function deleted(): bool
     {
-        return $this->get('QST_deleted');
+        return (bool) $this->get('QST_deleted');
     }
 
 
@@ -291,8 +318,10 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
      * Gets an array of related EE_Answer  to this EE_Question
      *
      * @return EE_Answer[]
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function answers()
+    public function answers(): array
     {
         return $this->get_many_related('Answer');
     }
@@ -301,11 +330,13 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
     /**
      * Boolean check for if there are answers on this question in th db
      *
-     * @return boolean true = has answers, false = no answers.
+     * @return bool true = has answers, false = no answers.
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function has_answers()
+    public function has_answers(): bool
     {
-        return $this->count_related('Answer') > 0 ? true : false;
+        return (bool) $this->count_related('Answer') > 0;
     }
 
 
@@ -313,8 +344,10 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
      * gets an array of EE_Question_Group which relate to this question
      *
      * @return EE_Question_Group[]
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function question_groups()
+    public function question_groups(): array
     {
         return $this->get_many_related('Question_Group');
     }
@@ -323,16 +356,17 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
     /**
      * Returns all the options for this question. By default, it returns only the not-yet-deleted ones.
      *
-     * @param boolean      $notDeletedOptionsOnly            1
-     *                                                       whether to return ALL options, or only the ones which have
-     *                                                       not yet been deleleted
-     * @param string|array $selected_value_to_always_include , when retrieving options to an ANSWERED question,
-     *                                                       we want to usually only show non-deleted options AND the
-     *                                                       value that was selected for the answer, whether it was
-     *                                                       trashed or not.
+     * @param bool $notDeletedOptionsOnly                         whether to return ALL options,
+     *                                                            or only the ones which have not yet been deleted
+     * @param string|array|null $selected_value_to_always_include when retrieving options to an ANSWERED question,
+     *                                                            we want to usually only show non-deleted options
+     *                                                            AND the value that was selected for the answer,
+     *                                                            whether it was trashed or not.
      * @return EE_Question_Option[]
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function options($notDeletedOptionsOnly = true, $selected_value_to_always_include = null)
+    public function options(bool $notDeletedOptionsOnly = true, $selected_value_to_always_include = null): array
     {
         if (! $this->ID()) {
             return [];
@@ -357,9 +391,9 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
     /**
      * returns an array of EE_Question_Options which relate to this question
      *
-     * @return \EE_Question_Option[]
+     * @return EE_Question_Option[]
      */
-    public function temp_options()
+    public function temp_options(): array
     {
         return $this->_model_relations['Question_Option'];
     }
@@ -370,9 +404,11 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
      * Question, that relationship will be overwritten.
      *
      * @param EE_Question_Option $option
-     * @return boolean success
+     * @return EE_Base_Class
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function add_option(EE_Question_Option $option)
+    public function add_option(EE_Question_Option $option): EE_Base_Class
     {
         return $this->_add_relation_to($option, 'Question_Option');
     }
@@ -382,9 +418,9 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
      * Adds an option directly to this question without saving to the db
      *
      * @param EE_Question_Option $option
-     * @return boolean success
+     * @return bool success
      */
-    public function add_temp_option(EE_Question_Option $option)
+    public function add_temp_option(EE_Question_Option $option): bool
     {
         $this->_model_relations['Question_Option'][] = $option;
         return true;
@@ -395,33 +431,38 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
      * Marks the option as deleted.
      *
      * @param EE_Question_Option $option
-     * @return boolean success
+     * @return bool success
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function remove_option(EE_Question_Option $option)
+    public function remove_option(EE_Question_Option $option): bool
     {
-        return $this->_remove_relation_to($option, 'Question_Option');
+        return (bool) $this->_remove_relation_to($option, 'Question_Option');
     }
 
 
     /**
      * @return bool
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function is_system_question()
+    public function is_system_question(): bool
     {
         $system_ID = $this->get('QST_system');
-        return ! empty($system_ID) ? true : false;
+        return ! empty($system_ID);
     }
 
 
     /**
      * The purpose of this method is set the question order this question order to be the max out of all questions
      *
-     * @access public
      * @return void
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_order_to_latest()
     {
-        $latest_order = $this->get_model()->get_latest_question_order();
+        $latest_order = $this->getModel()->get_latest_question_order();
         $latest_order++;
         $this->set('QST_order', $latest_order);
     }
@@ -431,32 +472,35 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
      * Retrieves the list of allowed question types from the model.
      *
      * @return string[]
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    private function _allowed_question_types()
+    private function _allowed_question_types(): array
     {
-        $questionModel = $this->get_model();
-        /* @var $questionModel EEM_Question */
-        return $questionModel->allowed_question_types();
+        return $this->getModel()->allowed_question_types();
     }
 
 
     /**
      * Duplicates this question and its question options
      *
-     * @return \EE_Question
+     * @param array $options
+     * @return EE_Question|null
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function duplicate($options = [])
+    public function duplicate($options = []): ?EE_Question
     {
         $new_question = clone $this;
-        $new_question->set('QST_ID', null);
+        $new_question->set('QST_ID', 0);
         $new_question->set_display_text(
             sprintf(esc_html__('%s **Duplicate**', 'event_espresso'), $this->display_text())
         );
         $new_question->set_admin_label(sprintf(esc_html__('%s **Duplicate**', 'event_espresso'), $this->admin_label()));
-        $new_question->set_system_ID(null);
+        $new_question->set_system_ID('');
         $new_question->set_wp_user(get_current_user_id());
         // if we're duplicating a trashed question, assume we don't want the new one to be trashed
-        $new_question->set_deleted(false);
+        $new_question->set_deleted();
         $success = $new_question->save();
         if ($success) {
             // we don't totally want to duplicate the question options, because we want them to be for the NEW question
@@ -464,9 +508,8 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
                 $question_option->duplicate(['QST_ID' => $new_question->ID()]);
             }
             return $new_question;
-        } else {
-            return null;
         }
+        return null;
     }
 
 
@@ -474,6 +517,8 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
      * Returns the question's maximum allowed response size
      *
      * @return int|float
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function max()
     {
@@ -486,6 +531,8 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
      *
      * @param int|float $new_max
      * @return void
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function set_max($new_max)
     {
@@ -496,18 +543,21 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
     /**
      * Creates a form input from this question which can be used in HTML forms
      *
-     * @param EE_Registration $registration
-     * @param EE_Answer       $answer
-     * @param array           $input_constructor_args
+     * @param EE_Registration|null $registration
+     * @param EE_Answer|null       $answer
+     * @param array                $input_constructor_args
      * @return EE_Form_Input_Base
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function generate_form_input($registration = null, $answer = null, $input_constructor_args = [])
-    {
-        $identifier = $this->is_system_question() ? $this->system_ID() : $this->ID();
-
+    public function generate_form_input(
+        ?EE_Registration $registration = null,
+        ?EE_Answer $answer = null,
+        array $input_constructor_args = []
+    ): EE_Form_Input_Base {
         $input_constructor_args = array_merge(
             [
-                'required'                          => $this->required() ? true : false,
+                'required'                          => $this->required(),
                 'html_label_text'                   => $this->display_text(),
                 'required_validation_error_message' => $this->required_text(),
             ],
@@ -516,6 +566,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
         if (! $answer instanceof EE_Answer && $registration instanceof EE_Registration) {
             $answer = EEM_Answer::instance()->get_registration_question_answer_object($registration, $this->ID());
         }
+        $enum_options = $this->isEnumType() ? $this->options() : [];
         // has this question been answered ?
         if (
             $answer instanceof EE_Answer
@@ -531,6 +582,16 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
                 $default_value = htmlspecialchars_decode($values_with_html_special_chars);
             }
             $input_constructor_args['default'] = $default_value;
+        } else {
+            foreach ($enum_options as $enum_option) {
+                if (! $enum_option instanceof EE_Question_Option) {
+                    continue;
+                }
+                if ($enum_option->isDefault()) {
+                    $input_constructor_args['default'] = $enum_option->value();
+                    break;
+                }
+            }
         }
         $max_max_for_question = EEM_Question::instance()->absolute_max_for_system_question($this->system_ID());
         if (
@@ -553,7 +614,6 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
             $answer
         );
 
-        $result = null;
         switch ($this->type()) {
             // Text
             case EEM_Question::QST_type_text:
@@ -565,11 +625,11 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
                 break;
             // Radio Buttons
             case EEM_Question::QST_type_radio:
-                $result = new EE_Radio_Button_Input($this->options(), $input_constructor_args);
+                $result = new EE_Radio_Button_Input($enum_options, $input_constructor_args);
                 break;
             // Dropdown
             case EEM_Question::QST_type_dropdown:
-                $result = new EE_Select_Input($this->options(), $input_constructor_args);
+                $result = new EE_Select_Input($enum_options, $input_constructor_args);
                 break;
             // State Dropdown
             case EEM_Question::QST_type_state:
@@ -595,7 +655,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
                 break;
             // Checkboxes
             case EEM_Question::QST_type_checkbox:
-                $result = new EE_Checkbox_Multi_Input($this->options(), $input_constructor_args);
+                $result = new EE_Checkbox_Multi_Input($enum_options, $input_constructor_args);
                 break;
             // Date
             case EEM_Question::QST_type_date:
@@ -646,7 +706,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
                 );
                 break;
             case EEM_Question::QST_type_multi_select:
-                $result = new EE_Select_Multiple_Input($this->options(), $input_constructor_args);
+                $result = new EE_Select_Multiple_Input($enum_options, $input_constructor_args);
                 break;
             // fallback
             default:
@@ -667,16 +727,36 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
 
 
     /**
-     * Returns whether or not this question type should have question option entries
+     * Returns whether this question type should have question option entries
      *
      * @return bool
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function should_have_question_options()
+    public function should_have_question_options(): bool
     {
         return in_array(
             $this->type(),
-            $this->_model->question_types_with_options(),
+            $this->getModel()->question_types_with_options(),
             true
         );
+    }
+
+
+    /**
+     * @return bool
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since $VID:$
+     */
+    public function isEnumType(): bool
+    {
+        return $this->type() === EEM_Question::QST_type_checkbox
+            || $this->type() === EEM_Question::QST_type_dropdown
+            || $this->type() === EEM_Question::QST_type_multi_select
+            || $this->type() === EEM_Question::QST_type_radio
+            || $this->type() === EEM_Question::QST_type_country
+            || $this->type() === EEM_Question::QST_type_state
+            || $this->type() === EEM_Question::QST_type_year;
     }
 }

@@ -53,12 +53,16 @@ class EE_Radio_Button_Display_Strategy extends EE_Compound_Input_Display_Strateg
                 'type' => 'radio',
                 'value' => $value,
                 0 => $input->other_html_attributes(),
-                'data-question_label' => $input->html_label_id()
+                'data-question_label' => "$html_id-lbl"
             );
             if ($input->raw_value() === $value) {
                 $attributes['checked'] = 'checked';
             }
             $html .= $this->_attributes_string($attributes);
+
+            if ($input->hasLabel()) {
+                $html .= ' aria-labelledby="' . $html_id . '-lbl"';
+            }
 
             $html .= '>&nbsp;';
             $html .= $display_text;

@@ -6,6 +6,7 @@ use EE_Dependency_Map;
 use EventEspresso\core\domain\services\assets\EspressoLegacyAdminAssetManager;
 use EventEspresso\core\domain\services\assets\JqueryAssetManager;
 use EventEspresso\core\domain\services\assets\LegacyAccountingAssetManager;
+use EventEspresso\core\services\assets\AssetManagerInterface;
 use EventEspresso\core\services\service_changes\ServiceChangesManager;
 
 /**
@@ -19,9 +20,9 @@ use EventEspresso\core\services\service_changes\ServiceChangesManager;
 class EspressoLegacyAdmin extends AdminRoute
 {
     /**
-     * @var LegacyAccountingAssetManager $asset_manager
+     * @var LegacyAccountingAssetManager|null $asset_manager
      */
-    protected $asset_manager;
+    protected ?AssetManagerInterface $asset_manager = null;
 
 
     /**

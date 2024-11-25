@@ -451,7 +451,6 @@ ul.ee-upcoming-events-widget-ul li .ee-event-datetimes-li-date-desc p {
 	text-decoration: none !important;
 	text-align: center;
 	line-height: 1em;
-/*	line-height: 1;*/
 	-moz-border-radius: 0;
 	-webkit-border-radius: 0;
 	border-radius: 0;
@@ -670,6 +669,10 @@ input.ee-register-button {
 .ee-status.event-active-status-DTU {
     background-color: var(--ee-status-color-blue);
 }
+.ee-status-bg--info {
+    background-color: var(--ee-status-color-pale-blue);
+    color: var(--ee-status-color-grey);
+}
 
 .ee-status-bg--DTS,
 .ee-status.event-active-status-DTS {
@@ -781,14 +784,16 @@ input.ee-register-button {
 }
 #espresso-notices,
 #espresso-ajax-notices {
-	position: absolute;
-	min-width: 240px;
-	width: 800px;
-	max-width: 90%;
-	text-align: center;
-	left: 50%;
+    left: 50vw;
+    margin: 0;
+    max-width: 90%;
+    min-width: 240px;
+    position: fixed;
+    text-align: center;
+    top: 25vh;
     transform: translateX(-50%);
-	z-index: 999;
+    width: 800px;
+    z-index: 999;
 }
 
 .espresso-notices,
@@ -1031,22 +1036,30 @@ input.ee-register-button {
 	font-weight: bold;
 	color: var(--ee-status-color-orange);
 }
+
+.ee-success,
 .ee-attention {
 	width:100%;
 	padding: .75em 2.5%;
 	margin: 0 auto 1em;
-	background: hsla(50, 95%, 45%, .05);
-	border: 4px solid var(--ee-status-color-yellow);
 	font-size: 1em;
 	line-height: 1.6em;
 	text-align: center;
-	-webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
-	-moz-box-sizing: border-box;    /* Firefox, other Gecko */
 	box-sizing: border-box;
 }
+.ee-attention {
+	background: hsla(50, 95%, 45%, .05);
+	border: 4px solid var(--ee-status-color-yellow);
+}
+.ee-success {
+	background: hsla(140, 90%, 40%, .05);
+	border: 4px solid var(--ee-status-color-green);
+}
+
 .highlight-bg {
-	padding:1em 1.5em;
-	background:#FEFBDC;
+    background:hsla(55deg 95% 93% / 75%);
+    color: var(--ee-status-color-dark-grey);
+    padding:1em 1.5em;
 }
 
 .extra-padding {
@@ -1423,6 +1436,121 @@ a[href*="message_type=receipt"]:visited {
 
 .powered-by-event-espresso-credit a:hover {
 	color: var(--ee-status-color-green);
+}
+
+#registration-cancellations-frm {
+
+    --ee-rcf-input-bg: hsl(210 2% 97.5%);
+    --ee-rcf-border-color: hsl(210 5% 65%);
+    --ee-rcf-accent-color: hsl(210 100% 50%);
+    --ee-rcf-accent-color-hover: hsl(210 100% 45%);
+    --ee-rcf-input-disabled: hsl(210 15% 50%);
+    --ee-rcf-text-color: hsl(210 10% 20%);
+    --ee-rcf-button-text-color: hsl(210 2% 97.5%);
+
+    @media (prefers-color-scheme: dark) {
+        --ee-rcf-input-bg: hsl(210 2.5% 17.5%);
+        --ee-rcf-border-color: hsl(210 5% 35%);
+        --ee-rcf-accent-color: hsl(210 100% 40%);
+        --ee-rcf-accent-color-hover: hsl(210 100% 45%);
+        --ee-rcf-input-disabled: hsl(210 15% 50%);
+        --ee-rcf-text-color: hsl(210 2% 85%);
+        --ee-rcf-button-text-color: hsl(210 2% 85%);
+    }
+
+    h5 {
+        font-size: 1.25em;
+        margin-block-end: 1rem;
+    }
+
+    .ee-checkbox-label-after {
+        align-items: center;
+        display: flex;
+        justify-content: flex-start;
+        margin-block: .5rem;
+        padding-block: .5rem;
+        width: 100%;
+    }
+    .description {
+        display: block;
+        font-size: .9em;
+        margin-block: .5rem;
+
+    }
+    .ee-status-bg--info {
+        background-color: hsla(203, 30%, 80%, 25%);
+        font-size: .9em;
+        padding: .25em 1em .25em .75em;
+    }
+
+    #registration-cancellation-confirmation-code-lbl {
+        display: block;
+        margin-block-start: 1rem;
+    }
+
+    .ee-form-submit {
+        margin-block: 1rem;
+    }
+
+    input[type="checkbox"] {
+        appearance: none;
+        border-radius: 0.25em;
+        border: 0.125em solid var(--ee-rcf-border-color);
+        color: var(--ee-rcf-text-color);
+        display: grid;
+        font: inherit;
+        height: 1.25em;
+        margin: 0;
+        margin-inline-end: .5rem;
+        place-content: center;
+        width: 1.25em;
+    }
+
+    input[type="checkbox"]::before {
+        box-shadow: inset 1em 1em var(--ee-rcf-button-text-color);
+        clip-path: polygon(14% 44%, 0 65%, 50% 100%, 100% 16%, 80% 0%, 43% 62%);
+        content: "";
+        height: 0.875em;
+        transform-origin: bottom left;
+        transform: scale(0);
+        transition: 120ms transform ease-in-out;
+        width: 0.875em;
+    }
+
+    input[type="checkbox"]:checked {
+        background-color: var(--ee-rcf-accent-color);
+        border-color: var(--ee-rcf-accent-color);
+    }
+
+    input[type="checkbox"]:checked::before {
+        transform: scale(1);
+    }
+
+    textarea,
+    input[type="text"] {
+        border-radius: 0.25em;
+        border: 0.1em solid var(--ee-rcf-border-color);
+        font: inherit;
+        font-size: 1.5em;
+        height: 1.875em;
+        margin: .125em auto;
+        min-width: clamp(4rem, 12.5%, 8rem);
+        max-width: clamp(8rem, 25%, 16rem);
+    }
+
+    textarea {
+        max-width: unset;
+        min-width: unset;
+        width: 100%;
+    }
+
+    textarea:focus,
+    input[type="text"]:focus,
+    input[type="submit"]:focus,
+    input[type="checkbox"]:focus {
+        outline: max(1px, 0.125em) solid var(--ee-rcf-accent-color);
+        outline-offset: max(1px, 0.125em);
+    }
 }
 
 /*******************************************************/

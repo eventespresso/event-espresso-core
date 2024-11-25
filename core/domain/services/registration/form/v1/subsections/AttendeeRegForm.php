@@ -1,6 +1,6 @@
 <?php
 
-namespace EventEspresso\core\domain\services\registration\form\v1;
+namespace EventEspresso\core\domain\services\registration\form\v1\subsections;
 
 use EE_Error;
 use EE_Event;
@@ -15,32 +15,25 @@ use EEM_Event_Question_Group;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use ReflectionException;
 
-class RegistrantForm extends EE_Form_Section_Proper
+class AttendeeRegForm extends EE_Form_Section_Proper
 {
-    /**
-     * @var EE_SPCO_Reg_Step_Attendee_Information
-     */
-    public $reg_step;
+    public EE_SPCO_Reg_Step_Attendee_Information $reg_step;
 
-    /**
-     * @var EEM_Event_Question_Group
-     */
-    public $event_question_group_model;
+    public EEM_Event_Question_Group $event_question_group_model;
 
-    /**
-     * @var bool
-     */
-    private $has_questions = false;
+    private bool $has_questions = false;
+
+    private static int $attendee_nmbr = 1;
 
 
     /**
      * RegistrantForm constructor.
      *
-     * @param EE_Registration          $registration
-     * @param bool                     $copy_attendee_info
-     * @param callable                 $enablePrintCopyInfo
+     * @param EE_Registration                       $registration
+     * @param bool                                  $copy_attendee_info
+     * @param callable                              $enablePrintCopyInfo
      * @param EE_SPCO_Reg_Step_Attendee_Information $reg_step
-     * @param EEM_Event_Question_Group $event_question_group_model
+     * @param EEM_Event_Question_Group              $event_question_group_model
      * @throws EE_Error
      * @throws ReflectionException
      */
@@ -51,11 +44,28 @@ class RegistrantForm extends EE_Form_Section_Proper
         EE_SPCO_Reg_Step_Attendee_Information $reg_step,
         EEM_Event_Question_Group $event_question_group_model
     ) {
-        $this->reg_step = $reg_step;
+        $this->reg_step                   = $reg_step;
         $this->event_question_group_model = $event_question_group_model;
         parent::__construct(
-            $this->generateFormArgs($registration, $copy_attendee_info, $enablePrintCopyInfo)
+            [
+                'html_id'         => 'ee-registration-' . $registration->reg_url_link(),
+                'html_class'      => 'ee-reg-form-attendee-dv',
+                'html_style'      => $this->reg_step->checkout->admin_request
+                    ? 'padding:0em 2em 1em; margin:3em 0 0; border:1px solid #ddd;'
+                    : '',
+                'layout_strategy' => new EE_Fieldset_Section_Layout(
+                    [
+                        'legend_class' => 'spco-attendee-lgnd',
+                        'legend_text'  => sprintf(
+                            esc_html_x('Attendee %d', 'Attendee ID', 'event_espresso'),
+                            AttendeeRegForm::$attendee_nmbr
+                        ),
+                    ]
+                ),
+                'subsections'     => $this->generateSubsections($registration, $copy_attendee_info, $enablePrintCopyInfo),
+            ]
         );
+        AttendeeRegForm::$attendee_nmbr++;
     }
 
 
@@ -76,18 +86,17 @@ class RegistrantForm extends EE_Form_Section_Proper
      * @throws EE_Error
      * @throws ReflectionException
      */
-    private function generateFormArgs(
+    private function generateSubsections(
         EE_Registration $registration,
         bool $copy_attendee_info,
         callable $enablePrintCopyInfo
     ): array {
-        static $attendee_nmbr = 1;
-        $form_args = [];
+        $subsections = [];
         // verify that registration has valid event
         if ($registration->event() instanceof EE_Event) {
             $field_name      = 'Event_Question_Group.' . $this->event_question_group_model->fieldNameForContext(
-                $registration->is_primary_registrant()
-            );
+                    $registration->is_primary_registrant()
+                );
             $question_groups = $registration->event()->question_groups(
                 apply_filters(
                     'FHEE__EventEspresso_core_domain_services_registration_form_v1_RegistrantForm__generateFormArgs__question_groups_query_parameters',
@@ -104,35 +113,14 @@ class RegistrantForm extends EE_Form_Section_Proper
                 )
             );
             if ($question_groups) {
-                // array of params to pass to parent constructor
-                $form_args = [
-                    'html_id'         => 'ee-registration-' . $registration->reg_url_link(),
-                    'html_class'      => 'ee-reg-form-attendee-dv',
-                    'html_style'      => $this->reg_step->checkout->admin_request
-                        ? 'padding:0em 2em 1em; margin:3em 0 0; border:1px solid #ddd;'
-                        : '',
-                    'subsections'     => [],
-                    'layout_strategy' => new EE_Fieldset_Section_Layout(
-                        [
-                            'legend_class' => 'spco-attendee-lgnd',
-                            'legend_text'  => sprintf(
-                                esc_html_x(
-                                    'Attendee %d',
-                                    'Attendee 123',
-                                    'event_espresso'
-                                ),
-                                $attendee_nmbr
-                            ),
-                        ]
-                    ),
-                ];
                 foreach ($question_groups as $question_group) {
                     if ($question_group instanceof EE_Question_Group) {
                         $question_group_reg_form = LoaderFactory::getNew(
-                            RegFormQuestionGroup::class,
+                            RegFormQuestions::class,
                             [$registration, $question_group, $this->reg_step]
                         );
-                        $form_args['subsections'][ $question_group->identifier() ] = apply_filters(
+
+                        $subsections[ $question_group->identifier() ] = apply_filters(
                             'FHEE__EventEspresso_core_domain_services_registration_form_v1_RegistrantForm__generateFormArgs__question_group_reg_form',
                             $question_group_reg_form,
                             $registration,
@@ -142,15 +130,15 @@ class RegistrantForm extends EE_Form_Section_Proper
                     }
                 }
                 // add hidden input
-                $form_args['subsections']['additional_attendee_reg_info'] = $this->additionalAttendeeRegInfoInput(
+                $subsections['additional_attendee_reg_info'] = $this->additionalAttendeeRegInfoInput(
                     $registration
                 );
 
                 // If we have question groups for additional attendees, then display the copy options
                 $printCopyInfo = apply_filters(
                     'FHEE__EventEspresso_core_domain_services_registration_form_v1_RegistrantForm__generateFormArgs__printCopyInfo',
-                    $attendee_nmbr > 1 && $copy_attendee_info,
-                    $attendee_nmbr,
+                    AttendeeRegForm::$attendee_nmbr > 1 && $copy_attendee_info,
+                    AttendeeRegForm::$attendee_nmbr,
                     $registration,
                     $this
                 );
@@ -161,20 +149,19 @@ class RegistrantForm extends EE_Form_Section_Proper
 
                 if ($registration->is_primary_registrant()) {
                     // generate hidden input
-                    $form_args['subsections']['primary_registrant'] = $this->additionalPrimaryRegistrantInputs(
+                    $subsections['primary_registrant'] = $this->additionalPrimaryRegistrantInputs(
                         $registration
                     );
                 }
             }
         }
-        $attendee_nmbr++;
 
         // Increment the reg forms number if form is valid.
-        if (! empty($form_args)) {
+        if (! empty($subsections)) {
             $this->has_questions = true;
         }
 
-        return $form_args;
+        return $subsections;
     }
 
 
@@ -182,6 +169,7 @@ class RegistrantForm extends EE_Form_Section_Proper
      * @param EE_Registration $registration
      * @return EE_Form_Input_Base
      * @throws EE_Error
+     * @throws ReflectionException
      */
     private function additionalAttendeeRegInfoInput(EE_Registration $registration)
     {
@@ -199,6 +187,7 @@ class RegistrantForm extends EE_Form_Section_Proper
      * @param EE_Registration $registration
      * @return    EE_Form_Input_Base
      * @throws EE_Error
+     * @throws ReflectionException
      */
     private function additionalPrimaryRegistrantInputs(EE_Registration $registration)
     {

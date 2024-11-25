@@ -7,6 +7,7 @@ use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\modules\LegacyModulesManager;
 use EventEspresso\core\services\widgets\LegacyWidgetsManager;
 use Exception;
+use Throwable;
 
 /**
  * Class Router - a class for initializing "Plinko" routing
@@ -56,7 +57,7 @@ class Router
 
 
     /**
-     * @throws Exception
+     * @throws Exception|Throwable
      */
     public function loadPrimaryRoutes()
     {
@@ -86,7 +87,7 @@ class Router
 
 
     /**
-     * @throws Exception
+     * @throws Exception|Throwable
      */
     public function registerShortcodesModulesAndWidgets()
     {
@@ -121,7 +122,7 @@ class Router
 
 
     /**
-     * @throws Exception
+     * @throws Exception|Throwable
      */
     public function brewEspresso()
     {
@@ -151,7 +152,7 @@ class Router
 
 
     /**
-     * @throws Exception
+     * @throws Exception|Throwable
      */
     public function loadControllers()
     {
@@ -176,6 +177,9 @@ class Router
             case PrimaryRoute::ROUTE_REQUEST_TYPE_REGULAR:
                 $this->route_handler->addRoute(
                     'EventEspresso\core\domain\entities\routing\handlers\frontend\FrontendRequests'
+                );
+                $this->route_handler->addRoute(
+                    'EventEspresso\core\domain\entities\routing\handlers\frontend\RegistrationCheckoutRequests'
                 );
                 $this->route_handler->addRoute(
                     'EventEspresso\core\domain\entities\routing\handlers\admin\EspressoLegacyAdmin'
@@ -214,7 +218,7 @@ class Router
 
 
     /**
-     * @throws Exception
+     * @throws Exception|Throwable
      */
     public function coreLoadedAndReady()
     {
@@ -244,7 +248,7 @@ class Router
 
 
     /**
-     * @throws Exception
+     * @throws Exception|Throwable
      */
     public function initializeLast()
     {

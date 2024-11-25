@@ -14,20 +14,11 @@ use InvalidArgumentException;
  */
 class Loader implements LoaderInterface
 {
-    /**
-     * @var LoaderDecoratorInterface $new_loader
-     */
-    private $new_loader;
+    private LoaderDecoratorInterface $new_loader;
 
-    /**
-     * @var LoaderDecoratorInterface $shared_loader
-     */
-    private $shared_loader;
+    private LoaderDecoratorInterface $shared_loader;
 
-    /**
-     * @var ClassInterfaceCache $class_cache
-     */
-    private $class_cache;
+    private ClassInterfaceCache $class_cache;
 
     /**
      * Loader constructor.

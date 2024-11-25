@@ -3,9 +3,9 @@
 /**
  * State Model
  *
- * @package             Event Espresso
- * @subpackage          includes/models/
- * @author              Brent Christensen
+ * @package     Event Espresso
+ * @subpackage  includes/models/
+ * @author      Brent Christensen
  */
 class EEM_State extends EEM_Base
 {
@@ -73,12 +73,6 @@ class EEM_State extends EEM_Base
     }
 
 
-    /**
-     *   reset_cached_states
-     *
-     * @access     private
-     * @return         void
-     */
     public function reset_cached_states()
     {
         EEM_State::$_active_states = [];
@@ -87,14 +81,13 @@ class EEM_State extends EEM_Base
 
 
     /**
-     *       _get_states
-     *
-     * @access     private
-     * @return         array
+     * @return array
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function get_all_states()
+    public function get_all_states(): array
     {
-        if (! self::$_all_states) {
+        if (self::$_all_states === null) {
             self::$_all_states = $this->get_all(['order_by' => ['STA_name' => 'ASC'], 'limit' => [0, 99999]]);
         }
         return self::$_all_states;
@@ -102,20 +95,18 @@ class EEM_State extends EEM_Base
 
 
     /**
-     *        _get_states
-     *
-     * @access        public
      * @param array $countries
      * @param bool  $flush_cache
-     * @return        array
+     * @return array
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function get_all_active_states($countries = [], $flush_cache = false)
+    public function get_all_active_states(array $countries = [], bool $flush_cache = false): array
     {
-        if (! self::$_active_states || $flush_cache) {
+        if (self::$_active_states === null || $flush_cache || ! empty($countries)) {
             $countries            = is_array($countries) && ! empty($countries)
                 ? $countries
-                : EEM_Country::instance()
-                             ->get_all_active_countries();
+                : EEM_Country::instance()->get_all_active_countries();
             self::$_active_states = $this->get_all(
                 [
                     ['STA_active' => true, 'CNT_ISO' => ['IN', array_keys($countries)]],
@@ -133,8 +124,10 @@ class EEM_State extends EEM_Base
      *  get_all_states_of_active_countries
      *
      * @return array
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function get_all_states_of_active_countries()
+    public function get_all_states_of_active_countries(): array
     {
         if (
             $states = $this->get_all(
@@ -146,77 +139,75 @@ class EEM_State extends EEM_Base
         ) {
             return $states;
         }
-        return false;
+        return [];
     }
 
 
     /**
      *  get_all_states_of_active_countries
      *
+     * @param array $countries
      * @return array
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function get_all_active_states_for_these_countries($countries)
+    public function get_all_active_states_for_these_countries(array $countries): array
     {
         if (! $countries) {
-            return false;
+            return [];
         }
-        if (
-            $states = $this->get_all(
-                [
-                    ['Country.CNT_ISO' => ['IN', array_keys($countries)], 'STA_active' => true],
-                    'order_by' => ['Country.CNT_name' => 'ASC', 'STA_name' => 'ASC'],
-                ]
-            )
-        ) {
-            return $states;
-        }
-        return false;
+        return $this->get_all(
+            [
+                ['Country.CNT_ISO' => ['IN', array_keys($countries)], 'STA_active' => true],
+                'order_by' => ['Country.CNT_name' => 'ASC', 'STA_name' => 'ASC'],
+            ]
+        );
     }
 
 
     /**
      *  get_all_states_of_active_countries
      *
+     * @param array $countries
      * @return array
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function get_all_states_for_these_countries($countries)
+    public function get_all_states_for_these_countries(array $countries): array
     {
         if (! $countries) {
-            return false;
+            return [];
         }
-        if (
-            $states = $this->get_all(
-                [
-                    ['Country.CNT_ISO' => ['IN', array_keys($countries)]],
-                    'order_by' => ['Country.CNT_name' => 'ASC', 'STA_name' => 'ASC'],
-                ]
-            )
-        ) {
-            return $states;
-        }
-        return false;
+        return $this->get_all(
+            [
+                ['Country.CNT_ISO' => ['IN', array_keys($countries)]],
+                'order_by' => ['Country.CNT_name' => 'ASC', 'STA_name' => 'ASC'],
+            ]
+        );
     }
 
 
     /**
      * Gets the state's name by its ID
      *
-     * @param string $state_ID
+     * @param int $state_ID
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function get_state_name_by_ID($state_ID)
+    public function get_state_name_by_ID(int $state_ID): string
     {
         if (
-            isset(self::$_all_states[ $state_ID ]) &&
-            self::$_all_states[ $state_ID ] instanceof EE_State
+            self::$_all_states
+            && isset(self::$_all_states[ $state_ID ])
+            && self::$_all_states[ $state_ID ] instanceof EE_State
         ) {
             return self::$_all_states[ $state_ID ]->name();
         }
         $names = $this->get_col([['STA_ID' => $state_ID], 'limit' => 1], 'STA_name');
         if (is_array($names) && ! empty($names)) {
             return reset($names);
-        } else {
-            return '';
         }
+        return '';
     }
 }

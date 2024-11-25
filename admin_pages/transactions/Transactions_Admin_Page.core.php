@@ -103,18 +103,18 @@ class Transactions_Admin_Page extends EE_Admin_Page
         $this->_page_routes = [
 
             'default' => [
-                'func'       => '_transactions_overview_list_table',
+                'func'       => [$this, '_transactions_overview_list_table'],
                 'capability' => 'ee_read_transactions',
             ],
 
             'view_transaction' => [
-                'func'       => '_transaction_details',
+                'func'       => [$this, '_transaction_details'],
                 'capability' => 'ee_read_transaction',
                 'obj_id'     => $TXN_ID,
             ],
 
             'send_payment_reminder' => [
-                'func'       => '_send_payment_reminder',
+                'func'       => [$this, '_send_payment_reminder'],
                 'noheader'   => true,
                 'capability' => 'ee_send_message',
             ],
@@ -138,7 +138,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
             ],
 
             'espresso_recalculate_line_items' => [
-                'func'       => 'recalculateLineItems',
+                'func'       => [$this, 'recalculateLineItems'],
                 'noheader'   => true,
                 'capability' => 'ee_edit_payments',
             ],

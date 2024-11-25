@@ -43,24 +43,24 @@ class About_Admin_Page extends EE_Admin_Page
     {
         $this->_page_routes = array(
             'default' => array(
-                'func'       => '_overview',
+                'func'       => [$this, '_overview'],
                 'capability' => 'manage_options',
             ),
             // 'overview' => '_overview',
-            // 'func' => '_overview',
+            // 'func'       => [$this, '_overview'],
             // 'capability' => 'ee_read_ee'
             // ),
             'credits' => array(
-                'func'       => '_credits',
+                'func'       => [$this, '_credits'],
                 'capability' => 'manage_options',
             ),
 
             'decafvpro' => array(
-                'func'       => '_decafvpro',
+                'func'       => [$this, '_decafvpro'],
                 'capability' => 'manage_options',
             ),
             'reviews'   => array(
-                'func'       => '_reviews',
+                'func'       => [$this, '_reviews'],
                 'capability' => 'manage_options',
             ),
         );

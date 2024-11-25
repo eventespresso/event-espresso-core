@@ -95,15 +95,19 @@ class EE_Primary_Registration_Details_Shortcodes extends EE_Shortcodes
     {
         // make sure we end up with a copy of the EE_Messages_Addressee object
         $primary_registration = $this->_data instanceof EE_Messages_Addressee ? $this->_data : null;
-        $primary_registration = ! $primary_registration instanceof EE_Messages_Addressee
-        && is_array($this->_data)
-        && isset($this->_data['data'])
-        && $this->_data['data'] instanceof EE_Messages_Addressee
+        $primary_registration = (
+            ! $primary_registration instanceof EE_Messages_Addressee
+            && is_array($this->_data)
+            && isset($this->_data['data'])
+            && $this->_data['data'] instanceof EE_Messages_Addressee
+        )
             ? $this->_data['data']
             : $primary_registration;
-        $primary_registration = ! $primary_registration instanceof EE_Messages_Addressee
-        && ! empty($this->_extra_data['data'])
-        && $this->_extra_data['data'] instanceof EE_Messages_Addressee
+        $primary_registration = (
+            ! $primary_registration instanceof EE_Messages_Addressee
+            && ! empty($this->_extra_data['data'])
+            && $this->_extra_data['data'] instanceof EE_Messages_Addressee
+        )
             ? $this->_extra_data['data']
             : $primary_registration;
 
@@ -208,6 +212,15 @@ class EE_Primary_Registration_Details_Shortcodes extends EE_Shortcodes
             }
         }
 
-        return '';
+        return apply_filters(
+            'FHEE__EE_Primary_Registration_Details_Shortcodes__parsed',
+            '',
+            $shortcode,
+            $primary_reg,
+            $attendee,
+            $this->_data,
+            $this->_extra_data,
+            $this
+        );
     }
 }

@@ -2,50 +2,37 @@
 
 namespace EventEspresso\core\services\addon\api\v1;
 
+use EventEspresso\core\Psr4Autoloader;
 use EventEspresso\core\services\addon\api\AddonApiVersion;
+use EventEspresso\core\services\addon\api\AddonRoutes;
+use EventEspresso\core\services\addon\api\DependencyHandlers;
 
 class AddonApi extends AddonApiVersion
 {
-    /**
-     * @var DataMigrationApi
-     */
-    private $data_migration_api;
+    private DataMigrationApi $data_migration_api;
 
-    /**
-     * @var LegacyModelApi
-     */
-    private $legacy_model_api;
+    private LegacyModelApi $legacy_model_api;
 
 
     /**
      * Bootstrap constructor.
      *
-     * @param string $slug
-     * @param string $name
-     * @param string $namespace
-     * @param string $version
-     * @param string $min_core_version
-     * @param string $main_file
+     * @param AddonRoutes        $addon_routes
+     * @param DependencyHandlers $dependency_handlers
+     * @param Psr4Autoloader     $psr4_loader
+     * @param DataMigrationApi $data_migration_api
+     * @param LegacyModelApi $legacy_model_api
      */
     public function __construct(
-        string $slug,
-        string $name,
-        string $namespace,
-        string $version,
-        string $min_core_version,
-        string $main_file
+        AddonRoutes $addon_routes,
+        DependencyHandlers $dependency_handlers,
+        Psr4Autoloader $psr4_loader,
+        DataMigrationApi $data_migration_api,
+        LegacyModelApi $legacy_model_api
     ) {
-        parent::__construct(
-            $slug,
-            $name,
-            $namespace,
-            $version,
-            $min_core_version,
-            $main_file,
-            AddonApiVersion::V1
-        );
-        $this->legacy_model_api = new LegacyModelApi();
-        $this->data_migration_api = new DataMigrationApi();
+        $this->data_migration_api = $data_migration_api;
+        $this->legacy_model_api   = $legacy_model_api;
+        parent::__construct($addon_routes, $dependency_handlers, $psr4_loader, AddonApiVersion::V1);
     }
 
 

@@ -7,6 +7,10 @@ use EventEspresso\core\domain\DomainFactory;
 use EventEspresso\core\domain\DomainInterface;
 use EventEspresso\core\domain\values\FilePath;
 use EventEspresso\core\domain\values\Version;
+use EventEspresso\core\Psr4Autoloader;
+use EventEspresso\core\services\loaders\LoaderFactory;
+use Exception;
+use Throwable;
 
 /**
  * Class AddonApiVersion
@@ -22,78 +26,64 @@ abstract class AddonApiVersion
     const V1 = 1;
 
     /**
-     * @var int one of the API_VERSION_* constants from above
+     * @var int one of the V# API version constants from above
      */
-    private $api_version;
+    private int $api_version;
+
+    private DomainInterface $domain;
 
     /**
-     * @var DomainInterface
+     * @var Version|null minimum version of EE core that the add-on will work with
      */
-    private $domain;
+    private ?Version $min_core_version = null;
 
     /**
-     * @var Version minimum version of EE core that the add-on will work with
+     * @var Version|null minimum version of WP core that the add-on will work with
      */
-    private $min_core_version;
+    private ?Version $min_wp_version = null;
 
-    /**
-     * @var Version minimum version of WP core that the add-on will work with
-     */
-    private $min_wp_version;
+    private int $id;
 
     /**
      * @var string  PascalCase identifier for the add-on.
      *              IMPORTANT! there must be a class of the same name in the root of the add-ons /src/domain/ folder
      */
-    private $name;
+    private string $name;
 
-    /**
-     * @var string
-     */
-    private $addon_namespace;
+    private string $display_name;
 
-    /**
-     * @var FilePath
-     */
-    private $main_file;
+    private string $addon_namespace;
 
-    /**
-     * @var string
-     */
-    private $slug;
+    private FilePath $main_file;
+
+    private string $slug;
 
     /**
      * @var Version the current add-on version
      */
-    private $version;
+    private Version $version;
+
+    private AddonRoutes $addon_routes;
+
+    private DependencyHandlers $dependency_handlers;
+
+    private Psr4Autoloader $psr4_loader;
+
+    private bool $dependencies_registered = false;
 
 
     /**
      * Bootstrap constructor.
      *
-     * @param string $slug
-     * @param string $name
-     * @param string $namespace
-     * @param string $version
-     * @param string $min_core_version
-     * @param string $main_file
-     * @param int    $api_version
+     * @param AddonRoutes $addon_routes
+     * @param DependencyHandlers $dependency_handlers
+     * @param Psr4Autoloader $psr4_loader
+     * @param int            $api_version
      */
-    protected function __construct(
-        string $slug,
-        string $name,
-        string $namespace,
-        string $version,
-        string $min_core_version,
-        string $main_file,
-        int $api_version
-    ) {
-        $this->setSlug($slug);
-        $this->setName($name);
-        $this->setNamespace($namespace);
-        $this->setMinCoreVersion($min_core_version);
-        $this->setMainFile($main_file);
-        $this->setVersion($version);
+    protected function __construct(AddonRoutes $addon_routes, DependencyHandlers $dependency_handlers, Psr4Autoloader $psr4_loader, int $api_version) {
+        $this->addon_routes = LoaderFactory::getShared(AddonRoutes::class);
+        $this->dependency_handlers = LoaderFactory::getShared(DependencyHandlers::class);
+        $this->psr4_loader = LoaderFactory::getShared(Psr4Autoloader::class);
         $this->setApiVersion($api_version);
     }
 
@@ -104,7 +94,7 @@ abstract class AddonApiVersion
     public function initialize(): void
     {
         $this->domain = DomainFactory::create(
-            "{$this->addon_namespace}\\domain\\Domain",
+            "$this->addon_namespace\\domain\\Domain",
             $this->main_file,
             $this->version
         );
@@ -139,6 +129,19 @@ abstract class AddonApiVersion
     }
 
 
+    public function setDisplayName(string $display_name): void
+    {
+        $this->display_name = $display_name;
+    }
+
+
+    public function setID(int $id = 0): void
+    {
+        $this->id = $id;
+    }
+
+
+
     /**
      * @param string $main_file
      */
@@ -151,9 +154,18 @@ abstract class AddonApiVersion
     /**
      * @param string $min_core_version
      */
-    private function setMinCoreVersion(string $min_core_version): void
+    public function setMinCoreVersion(string $min_core_version): void
     {
         $this->min_core_version = Version::fromString($min_core_version);
+    }
+
+
+    /**
+     * @param string $min_wp_version
+     */
+    public function setMinWpVersion(string $min_wp_version = EE_MIN_WP_VER_REQUIRED): void
+    {
+        $this->min_wp_version = Version::fromString($min_wp_version);
     }
 
 
@@ -169,16 +181,18 @@ abstract class AddonApiVersion
     /**
      * @param string $namespace
      */
-    private function setNamespace(string $namespace): void
+    public function setNamespace(string $namespace): void
     {
         $this->addon_namespace = $namespace;
+        // register addon namespace immediately so that FQCNs resolve correctly
+        $this->psr4_loader->addNamespace($namespace, dirname($this->main_file) . '/src/');
     }
 
 
     /**
      * @param string $slug
      */
-    private function setSlug(string $slug): void
+    public function setSlug(string $slug): void
     {
         $valid_slug = sanitize_key($slug);
         if ($slug !== $valid_slug) {
@@ -211,6 +225,12 @@ abstract class AddonApiVersion
     }
 
 
+    public function displayName(): string
+    {
+        return $this->display_name;
+    }
+
+
     /**
      * @return DomainInterface
      */
@@ -218,6 +238,13 @@ abstract class AddonApiVersion
     {
         return $this->domain;
     }
+
+
+    public function ID(): int
+    {
+        return $this->id;
+    }
+
 
 
     /**
@@ -239,15 +266,6 @@ abstract class AddonApiVersion
 
 
     /**
-     * @param string $min_wp_version
-     */
-    public function setMinWpVersion(string $min_wp_version = EE_MIN_WP_VER_REQUIRED): void
-    {
-        $this->min_wp_version = Version::fromString($min_wp_version);
-    }
-
-
-    /**
      * @return string
      */
     public function name(): string
@@ -263,7 +281,7 @@ abstract class AddonApiVersion
      */
     public function fqcn(): string
     {
-        return "{$this->addon_namespace}\\domain\\{$this->name}";
+        return "$this->addon_namespace\\domain\\$this->name";
     }
 
 
@@ -300,5 +318,49 @@ abstract class AddonApiVersion
     public function version(): Version
     {
         return $this->version;
+    }
+
+
+    /**
+     * @throws Exception
+     */
+    public function addRoute(string $route_fqcn, string $hook_name = 'AHEE__EE_System__core_loaded_and_ready'): void
+    {
+        $this->addon_routes->addRouteFor($route_fqcn, $this->slug());
+        add_action($hook_name, [$this, 'loadRoutes']);
+    }
+
+
+    /**
+     * @throws Exception|Throwable
+     */
+    public function loadRoutes()
+    {
+        $this->addon_routes->loadRoutesFor($this->slug());
+    }
+
+
+    /**
+     * @param string $dependency_handler_fqcn FQCN of a DependencyHandler class
+     * @return void
+     * @since $VID:$
+     */
+    public function addDependencyHandler(string $dependency_handler_fqcn): void
+    {
+        $this->dependency_handlers->addDependencyHandlerFor($dependency_handler_fqcn, $this->slug());
+        if (! $this->dependencies_registered) {
+            add_action('AHEE__EE_System__load_espresso_addons__complete', [$this, 'registerDependencies'], 999);
+            $this->dependencies_registered = true;
+        }
+    }
+
+
+    /**
+     * @return void
+     * @since $VID:$
+     */
+    public function registerDependencies()
+    {
+        $this->dependency_handlers->registerDependenciesFor($this->slug());
     }
 }
