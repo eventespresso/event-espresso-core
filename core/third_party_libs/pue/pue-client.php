@@ -1717,12 +1717,10 @@ if (! class_exists('PluginUpdateEngineChecker')):
          */
         private function getInstalledVersion()
         {
-            if (function_exists('get_plugin_data')) {
-                $plugin_data = get_plugin_data(WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . $this->pluginFile);
-            } else {
+            if (! function_exists('get_plugin_data')) {
                 require_once(ABSPATH . 'wp-admin/includes/plugin.php');
-                $plugin_data = get_plugin_data(WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . $this->pluginFile);
             }
+            $plugin_data = get_plugin_data(WP_PLUGIN_DIR . DIRECTORY_SEPARATOR . $this->pluginFile, true, false);
             if (! empty($plugin_data)) {
                 $this->pluginName  = $plugin_data['Name'];
                 $this->lang_domain = empty($this->lang_domain)

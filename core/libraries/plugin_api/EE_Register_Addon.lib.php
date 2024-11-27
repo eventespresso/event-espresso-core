@@ -52,6 +52,7 @@ class EE_Register_Addon implements EEI_Plugin_API
     protected static $_incompatible_addons = [
         'Multi_Event_Registration' => '2.0.11.rc.002',
         'Promotions'               => '1.0.0.rc.084',
+        'EE_WPUsers'               => '2.1.3.p',
     ];
 
     /**

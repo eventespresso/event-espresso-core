@@ -1,6 +1,8 @@
 <?php
 /**
  * @var string[][] $states
+ * @var string     $add_new_state_nonce
+ * @var string     $delete_state_nonce
  */
 ?>
 
@@ -34,6 +36,7 @@
                 >
                     <span class="dashicons dashicons-post-trash"></span>
                 </a>
+                <input type="hidden" id="delete_state_nonce" name="espresso_delete_state" value="<?php echo esc_attr($delete_state_nonce); ?>">
             </td>
         </tr>
             <?php
@@ -85,6 +88,7 @@
                        title=""
                        value=""
                 />
+                <input type="hidden" id="add_new_state_nonce" name="espresso_add_new_state_nonce" value="<?php echo esc_attr($add_new_state_nonce); ?>">
             </td>
         </tr>
         <tr>

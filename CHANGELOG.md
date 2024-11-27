@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Releases
 
+### [5.0.31]
+
+#### Fixed
+ - [Add Nonce for Add New State AJAX Requests (#1630)](https://github.com/eventespresso/cafe/pull/1630)
+ - [PUE Fix - Dont translate plugin data when checking version numbers (#1632)](https://github.com/eventespresso/cafe/pull/1632)
+
+#### Changed
+ - [BuildMachine 5.0.30 changes (#1629)](https://github.com/eventespresso/cafe/pull/1629)
+ - [Set the min required WP User integration version number to be 2.1.3 (#1633)](https://github.com/eventespresso/cafe/pull/1633)
+
 ### [5.0.30]
 
 #### Added
@@ -31,6 +41,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - [Dont Load Payment Method Deprecation 2025 Notices on Event Smart (#1603)](https://github.com/eventespresso/cafe/pull/1603)
  - [Update jQuery Validate to v1.19.5 (#1592)](https://github.com/eventespresso/cafe/pull/1592)
  - [Improve Loco Translate bundle to include both translation filenames (#1626)](https://github.com/eventespresso/cafe/pull/1626)
+
+
+
+
 
 
 ### [5.0.29]

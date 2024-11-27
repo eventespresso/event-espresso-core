@@ -299,9 +299,9 @@ class Extend_Registrations_Admin_Page extends Registrations_Admin_Page
             wp_die(esc_html__('You do not have the required privileges to perform this action', 'event_espresso'));
         }
         // do a nonce check because we're not coming in from a normal route here.
-        $nonce     = isset($this->_req_data['get_newsletter_form_content_nonce']) ? sanitize_text_field(
-            $this->_req_data['get_newsletter_form_content_nonce']
-        ) : '';
+        $nonce     = isset($this->_req_data['get_newsletter_form_content_nonce'])
+            ? sanitize_text_field($this->_req_data['get_newsletter_form_content_nonce'])
+            : '';
         $nonce_ref = 'get_newsletter_form_content_nonce';
         $this->_verify_nonce($nonce, $nonce_ref);
         // let's get the mtp for the incoming MTP_ ID

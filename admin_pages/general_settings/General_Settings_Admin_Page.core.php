@@ -107,9 +107,10 @@ class General_Settings_Admin_Page extends EE_Admin_Page
             ],
 
             'update_country_settings' => [
-                'func'       => [$this, '_update_country_settings'],
-                'capability' => 'manage_options',
-                'noheader'   => true,
+                'func'          => [$this, '_update_country_settings'],
+                'capability'    => 'manage_options',
+                'noheader'      => true,
+                'require_nonce' => true,
             ],
 
             'display_country_settings' => [
@@ -119,18 +120,20 @@ class General_Settings_Admin_Page extends EE_Admin_Page
             ],
 
             'add_new_state' => [
-                'func'       => [$this, 'add_new_state'],
-                'capability' => 'manage_options',
-                'noheader'   => true,
+                'func'          => [$this, 'add_new_state'],
+                'capability'    => 'manage_options',
+                'noheader'      => true,
+                'require_nonce' => true,
             ],
 
-            'delete_state'            => [
-                'func'       => [$this, 'delete_state'],
-                'capability' => 'manage_options',
-                'noheader'   => true,
+            'delete_state' => [
+                'func'          => [$this, 'delete_state'],
+                'capability'    => 'manage_options',
+                'noheader'      => true,
+                'require_nonce' => true,
             ],
 
-            'privacy_settings'        => [
+            'privacy_settings' => [
                 'func'       => [$this, 'privacySettings'],
                 'capability' => 'manage_options',
             ],
@@ -921,62 +924,56 @@ class General_Settings_Admin_Page extends EE_Admin_Page
                 }
             }
         }
-        if (is_array($states)) {
-            foreach ($states as $STA_ID => $state) {
-                if ($state instanceof EE_State) {
-                    $inputs = EE_Question_Form_Input::generate_question_form_inputs_for_object(
-                        $state,
-                        [
-                            'STA_abbrev' => [
-                                'type'             => 'TEXT',
-                                'label'            => esc_html__('Code', 'event_espresso'),
-                                'input_name'       => "states[$STA_ID]",
-                                'class'            => 'ee-input-width--tiny',
-                                'add_mobile_label' => true,
-                            ],
-                            'STA_name'   => [
-                                'type'             => 'TEXT',
-                                'label'            => esc_html__('Name', 'event_espresso'),
-                                'input_name'       => "states[$STA_ID]",
-                                'class'            => 'ee-input-width--big',
-                                'add_mobile_label' => true,
-                            ],
-                            'STA_active' => [
-                                'type'             => 'RADIO_BTN',
-                                'label'            => esc_html__(
-                                    'State Appears in Dropdown Select Lists',
-                                    'event_espresso'
-                                ),
-                                'input_name'       => "states[$STA_ID]",
-                                'options'          => $this->_yes_no_values,
-                                'use_desc_4_label' => true,
-                                'add_mobile_label' => true,
-                            ],
-                        ]
-                    );
-
-                    $delete_state_url = EE_Admin_Page::add_query_args_and_nonce(
-                        [
-                            'action'     => 'delete_state',
-                            'STA_ID'     => $STA_ID,
-                            'CNT_ISO'    => $CNT_ISO,
-                            'STA_abbrev' => $state->abbrev(),
+        foreach ($states as $STA_ID => $state) {
+            if ($state instanceof EE_State) {
+                $inputs = EE_Question_Form_Input::generate_question_form_inputs_for_object(
+                    $state,
+                    [
+                        'STA_abbrev' => [
+                            'type'             => 'TEXT',
+                            'label'            => esc_html__('Code', 'event_espresso'),
+                            'input_name'       => "states[$STA_ID]",
+                            'class'            => 'ee-input-width--tiny',
+                            'add_mobile_label' => true,
                         ],
-                        GEN_SET_ADMIN_URL
-                    );
+                        'STA_name'   => [
+                            'type'             => 'TEXT',
+                            'label'            => esc_html__('Name', 'event_espresso'),
+                            'input_name'       => "states[$STA_ID]",
+                            'class'            => 'ee-input-width--big',
+                            'add_mobile_label' => true,
+                        ],
+                        'STA_active' => [
+                            'type'             => 'RADIO_BTN',
+                            'label'            => esc_html__(
+                                'State Appears in Dropdown Select Lists',
+                                'event_espresso'
+                            ),
+                            'input_name'       => "states[$STA_ID]",
+                            'options'          => $this->_yes_no_values,
+                            'use_desc_4_label' => true,
+                            'add_mobile_label' => true,
+                        ],
+                    ]
+                );
 
-                    $this->_template_args['states'][ $STA_ID ]['inputs']           = $inputs;
-                    $this->_template_args['states'][ $STA_ID ]['delete_state_url'] = $delete_state_url;
-                }
+                $delete_state_url = EE_Admin_Page::add_query_args_and_nonce(
+                    [
+                        'action'     => 'delete_state',
+                        'STA_ID'     => $STA_ID,
+                        'CNT_ISO'    => $CNT_ISO,
+                        'STA_abbrev' => $state->abbrev(),
+                    ],
+                    GEN_SET_ADMIN_URL
+                );
+
+                $this->_template_args['states'][ $STA_ID ]['inputs']           = $inputs;
+                $this->_template_args['states'][ $STA_ID ]['delete_state_url'] = $delete_state_url;
             }
-        } else {
-            $this->_template_args['states'] = false;
         }
 
-        $this->_template_args['add_new_state_url'] = EE_Admin_Page::add_query_args_and_nonce(
-            ['action' => 'add_new_state'],
-            GEN_SET_ADMIN_URL
-        );
+        $this->_template_args['add_new_state_nonce'] = wp_create_nonce('espresso_add_new_state');
+        $this->_template_args['delete_state_nonce'] = wp_create_nonce('espresso_delete_state');
 
         $state_details_settings = EEH_Template::display_template(
             GEN_SET_TEMPLATE_PATH . 'state_details_settings.template.php',
@@ -1009,6 +1006,8 @@ class General_Settings_Admin_Page extends EE_Admin_Page
      */
     public function add_new_state()
     {
+        $this->_verify_nonce();
+        // add_new_state_nonce
         if (! $this->capabilities->current_user_can('manage_options', __FUNCTION__)) {
             wp_die(esc_html__('You do not have the required privileges to perform this action', 'event_espresso'));
         }
@@ -1080,6 +1079,7 @@ class General_Settings_Admin_Page extends EE_Admin_Page
      */
     public function delete_state()
     {
+        $this->_verify_nonce();
         if (! $this->capabilities->current_user_can('manage_options', __FUNCTION__)) {
             wp_die(esc_html__('You do not have the required privileges to perform this action', 'event_espresso'));
         }

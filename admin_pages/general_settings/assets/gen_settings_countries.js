@@ -215,12 +215,13 @@ jQuery(document).ready(function($) {
 		 */
 		add_new_state : function () {
 			// post data to be sent
-			var formData = {
+			const formData = {
                 page: 'espresso_general_settings',
 				action: 'espresso_add_new_state',
 				CNT_ISO: $('#country').val(),
 				STA_abbrev: $('#STA_abbrev-XXX').val(),
 				STA_name: $('#STA_name-XXX').val(),
+                espresso_add_new_state_nonce: $('#add_new_state_nonce').val(),
 				ee_admin_ajax: true,
 				noheader : 'true'
 			};
@@ -237,7 +238,11 @@ jQuery(document).ready(function($) {
 					//console.log(response);
 					if ( typeof response.errors !== 'undefined' && response.errors !== '' ) {
 						show_admin_page_ajax_msg( response );
-					} else if ( typeof(response.return_data) !== 'undefined' && response.return_data !== false && response.return_data !== null ) {
+					} else if (
+                        typeof(response.return_data) !== 'undefined'
+                        && response.return_data !== false
+                        && response.return_data !== null
+                    ) {
 						EE_CNT_STA.get_country_states( response.return_data );
 						show_admin_page_ajax_msg( response );
 					} else {
@@ -279,6 +284,7 @@ jQuery(document).ready(function($) {
 				CNT_ISO: CNT_ISO,
 				STA_ID: STA_ID,
 				STA_abbrev: STA_abbrev,
+                espresso_delete_state_nonce: $('#delete_state_nonce').val(),
 				ee_admin_ajax : true,
 				noheader : 'true'
 			};

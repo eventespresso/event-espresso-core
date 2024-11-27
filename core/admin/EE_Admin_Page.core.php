@@ -1042,8 +1042,10 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    protected function _verify_nonce(string $nonce, string $nonce_ref)
+    protected function _verify_nonce(string $nonce = '', string $nonce_ref = '')
     {
+        $nonce = $nonce ?: $this->request->getRequestParam($this->_req_nonce, '');
+        $nonce_ref = $nonce_ref ?: $this->_req_action;
         // verify nonce against expected value
         if (! wp_verify_nonce($nonce, $nonce_ref)) {
             // these are not the droids you are looking for !!!
