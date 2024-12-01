@@ -216,20 +216,20 @@
         },
         {
             "name": "jaybizzle/crawler-detect",
-            "version": "v1.2.119",
+            "version": "v1.3.0",
             "source": {
                 "type": "git",
                 "url": "https://github.com/JayBizzle/Crawler-Detect.git",
-                "reference": "275002e22b0333c15a7c6792fdae5d5deefc9ef0"
+                "reference": "be155e11613fa618aa18aee438955588d1092a47"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/JayBizzle/Crawler-Detect/zipball/275002e22b0333c15a7c6792fdae5d5deefc9ef0",
-                "reference": "275002e22b0333c15a7c6792fdae5d5deefc9ef0",
+                "url": "https://api.github.com/repos/JayBizzle/Crawler-Detect/zipball/be155e11613fa618aa18aee438955588d1092a47",
+                "reference": "be155e11613fa618aa18aee438955588d1092a47",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.0"
+                "php": ">=7.1.0"
             },
             "require-dev": {
                 "phpunit/phpunit": "^4.8|^5.5|^6.5|^9.4"
@@ -262,9 +262,9 @@
             ],
             "support": {
                 "issues": "https://github.com/JayBizzle/Crawler-Detect/issues",
-                "source": "https://github.com/JayBizzle/Crawler-Detect/tree/v1.2.119"
+                "source": "https://github.com/JayBizzle/Crawler-Detect/tree/v1.3.0"
             },
-            "time": "2024-06-07T07:58:43+00:00"
+            "time": "2024-11-25T19:38:36+00:00"
         },
         {
             "name": "masterminds/html5",
