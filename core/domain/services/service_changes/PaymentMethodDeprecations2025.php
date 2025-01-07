@@ -26,11 +26,15 @@ use ReflectionException;
  */
 class PaymentMethodDeprecations2025
 {
-    public const  PM_DEPRECATION_DATE       = '2025-01-15';
+    public const  PM_DEPRECATION_DATE       = '2025-04-15';
 
-    private const NOTIFICATION_DATE_WARNING = '2024-12-01';
+    private const NOTIFICATION_DATE_WARNING = '2025-01-15';
 
-    private const NOTIFICATION_DATE_URGENT  = '2025-01-01';
+    private const NOTIFICATION_DATE_URGENT  = '2025-03-15';
+
+    private const NOTIFICATION_NAME_PREFIX  = 'pm-deprecations-2025-';
+
+    private const OPTION_NAME               = 'ee_pm_deprecations_2025';
 
     private const TYPE_INITIAL              = 'initial';
 
@@ -45,6 +49,8 @@ class PaymentMethodDeprecations2025
     private const URL_STRIPE                = 'https://eventespresso.com/product/eea-stripe-gateway/';
 
     private const URL_SQUARE                = 'https://eventespresso.com/product/eea-square-gateway/';
+
+    private const URL_SUPPORT_DOCS          = 'https://support.eventespresso.com/article/612-deprecated-payment-methods-2025';
 
 
 
@@ -78,11 +84,11 @@ class PaymentMethodDeprecations2025
         $this->now                  = new Datetime('now');
         // TODO: remove the following comments before release
         // uncomment next line to trigger warning notice
-        // $this->now = new Datetime('2024-12-10'); // Dec 10, 2024
+        // $this->now = new Datetime('2025-02-20'); // Feb 20, 2025
         // uncomment next line to trigger urgent notice
-        // $this->now = new Datetime('2025-01-10'); // Jan 10, 2025
+        // $this->now = new Datetime('2025-03-20'); // Mar 20, 2025
         // uncomment next line to trigger final notice & PM deactivation
-        // $this->now = new Datetime('2025-02-10'); // Feb 10, 2025
+        // $this->now = new Datetime('2025-04-20'); // Apr 20, 2025
         // uncomment the following block of code to "unhide" PMs
         // add_filter(
         //     'FHEE__EventEspresso_PaymentMethods_Manager__hidePaymentMethods__pms_can_hide',
@@ -103,6 +109,10 @@ class PaymentMethodDeprecations2025
      */
     public function setHooks()
     {
+        // giving customers more time to migrate,
+        if ($this->now < new Datetime(self::NOTIFICATION_DATE_WARNING)) {
+            $this->deleteNotifications();
+        }
         $this->deactivateDeprecatedPaymentMethods();
         // don't bother if we're 6 months past the deprecation date
         if ($this->now > $this->deprecation_date->modify('+6 months')) {
@@ -140,9 +150,9 @@ class PaymentMethodDeprecations2025
     {
         if (! $this->activeDeprecatedPaymentMethods()) {
             $notices = [
-                'pm-deprecations-2025-initial',
-                'pm-deprecations-2025-warning',
-                'pm-deprecations-2025-urgent',
+                self::NOTIFICATION_NAME_PREFIX . self::TYPE_INITIAL,
+                self::NOTIFICATION_NAME_PREFIX . self::TYPE_WARNING,
+                self::NOTIFICATION_NAME_PREFIX . self::TYPE_URGENT,
             ];
             foreach ($notices as $notice) {
                 PersistentAdminNoticeManager::dismissPersistentAdminNotice($notice);
@@ -268,6 +278,36 @@ class PaymentMethodDeprecations2025
 
 
     /**
+     * @return void
+     */
+    private function deleteNotifications()
+    {
+        $pm_deprecations = get_option(self::OPTION_NAME, []);
+        // initialize the option if it doesn't exist
+        if (empty($pm_deprecations)) {
+            add_option(self::OPTION_NAME, [], '', 'no');
+        }
+        if (! empty($pm_deprecations['jan-6-update'])) {
+            return;
+        }
+        PersistentAdminNoticeManager::deletePersistentAdminNotice(
+            self::NOTIFICATION_NAME_PREFIX . self::TYPE_WARNING
+        );
+        PersistentAdminNoticeManager::deletePersistentAdminNotice(
+            self::NOTIFICATION_NAME_PREFIX . self::TYPE_URGENT
+        );
+        PersistentAdminNoticeManager::deletePersistentAdminNotice(
+            self::NOTIFICATION_NAME_PREFIX . self::TYPE_FINAL
+        );
+        PersistentAdminNoticeManager::deletePersistentAdminNotice(
+            self::NOTIFICATION_NAME_PREFIX . self::TYPE_INITIAL
+        );
+        $pm_deprecations['jan-6-update'] = true;
+        update_option(self::OPTION_NAME, $pm_deprecations);
+    }
+
+
+    /**
      * @param string $type
      * @return void
      */
@@ -275,20 +315,20 @@ class PaymentMethodDeprecations2025
     {
         switch ($type) {
             case self::TYPE_WARNING:
-                $name        = 'pm-deprecations-2025-warning';
+                $name        = self::NOTIFICATION_NAME_PREFIX . self::TYPE_WARNING;
                 $notice_type = 'attention';
                 break;
             case self::TYPE_URGENT:
-                $name        = 'pm-deprecations-2025-urgent';
+                $name        = self::NOTIFICATION_NAME_PREFIX . self::TYPE_URGENT;
                 $notice_type = 'warning';
                 break;
             case self::TYPE_FINAL:
-                $name        = 'pm-deprecations-2025-final';
+                $name        = self::NOTIFICATION_NAME_PREFIX . self::TYPE_FINAL;
                 $notice_type = 'error';
                 break;
             case self::TYPE_INITIAL:
             default:
-                $name        = 'pm-deprecations-2025-initial';
+                $name        = self::NOTIFICATION_NAME_PREFIX . self::TYPE_INITIAL;
                 $notice_type = 'info';
         }
 
@@ -428,9 +468,9 @@ class PaymentMethodDeprecations2025
                     '<p>',
                     '</p>',
                     '<a href="' . esc_url_raw($paypal_url) . '">',
-                    '<a href="' . esc_url_raw(self::URL_STRIPE) . '">',
-                    '<a href="' . esc_url_raw(self::URL_SQUARE) . '">',
-                    '<a href="' . esc_url_raw(self::URL_ACCEPT) . '">',
+                    '<a href="' . esc_url_raw(self::URL_STRIPE) . '" target="_blank">',
+                    '<a href="' . esc_url_raw(self::URL_SQUARE) . '" target="_blank">',
+                    '<a href="' . esc_url_raw(self::URL_ACCEPT) . '" target="_blank">',
                     '</a>',
                 );
             case self::TYPE_URGENT:
@@ -445,9 +485,9 @@ class PaymentMethodDeprecations2025
                     '<p>',
                     '</p>',
                     '<a href="' . esc_url_raw($paypal_url) . '">',
-                    '<a href="' . esc_url_raw(self::URL_STRIPE) . '">',
-                    '<a href="' . esc_url_raw(self::URL_SQUARE) . '">',
-                    '<a href="' . esc_url_raw(self::URL_ACCEPT) . '">',
+                    '<a href="' . esc_url_raw(self::URL_STRIPE) . '" target="_blank">',
+                    '<a href="' . esc_url_raw(self::URL_SQUARE) . '" target="_blank">',
+                    '<a href="' . esc_url_raw(self::URL_ACCEPT) . '" target="_blank">',
                     '</a>',
                 );
             case self::TYPE_INITIAL:
@@ -462,9 +502,9 @@ class PaymentMethodDeprecations2025
                     '<p>',
                     '</p>',
                     '<a href="' . esc_url_raw($paypal_url) . '">',
-                    '<a href="' . esc_url_raw(self::URL_STRIPE) . '">',
-                    '<a href="' . esc_url_raw(self::URL_SQUARE) . '">',
-                    '<a href="' . esc_url_raw(self::URL_ACCEPT) . '">',
+                    '<a href="' . esc_url_raw(self::URL_STRIPE) . '" target="_blank">',
+                    '<a href="' . esc_url_raw(self::URL_SQUARE) . '" target="_blank">',
+                    '<a href="' . esc_url_raw(self::URL_ACCEPT) . '" target="_blank">',
                     '</a>',
                 );
         }
@@ -490,7 +530,7 @@ class PaymentMethodDeprecations2025
     {
         return sprintf(
             esc_html__(
-                '%1$sSupport%2$s%3$sOur support team is available to assist you with the transition process and answer any questions you may have. Contact us at %5$s for help. This message will disappear once you deactivate any of the affected gateways.%4$s
+                '%1$sSupport%2$s%3$sOur support team is available to assist you with the transition process and answer any questions you may have. Contact us at %5$s for help, or click the following link to %9$slearn more %10$s. This message will disappear once you deactivate any of the affected gateways.%4$s
 %3$sWe appreciate your understanding and cooperation as we replace legacy integrations with new integrations.%4$s
 %3$s%6$sThe team at Event Espresso %8$s%7$s%4$s',
                 'event_espresso'
@@ -502,7 +542,9 @@ class PaymentMethodDeprecations2025
             '<a href="mailto:support@eventespresso.com">support@eventespresso.com</a>',
             '<h5>',
             '</h5>',
-            '<span class="ee-icon ee-icon-ee-cup-thick"></span>'
+            '<span class="ee-icon ee-icon-ee-cup-thick"></span>',
+            '<a href="' . esc_url_raw(self::URL_SUPPORT_DOCS) . '" target="_blank">',
+            '</a>'
         );
     }
 }

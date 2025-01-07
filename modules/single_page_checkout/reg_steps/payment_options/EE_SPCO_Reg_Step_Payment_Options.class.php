@@ -898,10 +898,9 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
 
 
     /**
-     *    _apply_registration_payments_to_amount_owing
-     *
      * @param array $registrations
      * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _apply_registration_payments_to_amount_owing(array $registrations)
     {

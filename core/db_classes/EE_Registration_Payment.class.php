@@ -8,7 +8,7 @@
  * @subpackage  core
  * @author      Brent Christensen
  * @since       4.7.0
- * @method EE_Payment|EE_Registration|null get_first_related(string string $relation_name, array array $query_params = [])
+ * @method EE_Payment|EE_Registration|null get_first_related(string $relation_name, array $query_params = [])
  */
 class EE_Registration_Payment extends EE_Base_Class
 {

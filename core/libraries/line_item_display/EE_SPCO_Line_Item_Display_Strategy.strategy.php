@@ -100,7 +100,7 @@ class EE_SPCO_Line_Item_Display_Strategy implements EEI_Line_Item_Display
             'odd'       => false,
         ];
 
-        $this->debugLog('', 2);
+        $this->debugLog('', 0);
         $this->debugLog(__FUNCTION__);
         $this->debugLog($line_item->name() . ': ' . $line_item->code() . ' (' . $line_item->type() . ')');
         if ($line_item->type() === EEM_Line_Item::type_total) {

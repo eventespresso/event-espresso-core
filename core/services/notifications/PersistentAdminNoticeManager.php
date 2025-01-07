@@ -354,13 +354,13 @@ class PersistentAdminNoticeManager
     public function saveNotices()
     {
         $this->notice_collection = $this->getPersistentAdminNoticeCollection();
+        $new_notices_array = [];
         if ($this->notice_collection->hasObjects()) {
             $persistent_admin_notices = get_option(PersistentAdminNoticeManager::WP_OPTION_KEY, []);
             // maybe initialize persistent_admin_notices
             if (empty($persistent_admin_notices)) {
                 add_option(PersistentAdminNoticeManager::WP_OPTION_KEY, [], '', 'no');
             }
-            $new_notices_array = [];
             foreach ($this->notice_collection as $persistent_admin_notice) {
                 // remove this notice ?
                 if ($persistent_admin_notice->getPurge()) {
@@ -377,8 +377,8 @@ class PersistentAdminNoticeManager
                     'extra_css'    => $persistent_admin_notice->extraCss(),
                 ];
             }
-            update_option(PersistentAdminNoticeManager::WP_OPTION_KEY, $new_notices_array);
         }
+        update_option(PersistentAdminNoticeManager::WP_OPTION_KEY, $new_notices_array);
     }
 
 

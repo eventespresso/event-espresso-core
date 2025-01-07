@@ -6,7 +6,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Releases
 
+### [5.0.32]
+
+#### Fixed
+ - [Fix Registration Refunds (#1638)](https://github.com/eventespresso/cafe/pull/1638)
+
+#### Changed
+ - [Move PM Deprecation Dates (#1676)](https://github.com/eventespresso/cafe/pull/1676)
+
+
+
+
+
 ### [5.0.31]
+
 
 #### Fixed
  - [Add Nonce for Add New State AJAX Requests (#1630)](https://github.com/eventespresso/cafe/pull/1630)
@@ -15,6 +28,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 #### Changed
  - [BuildMachine 5.0.30 changes (#1629)](https://github.com/eventespresso/cafe/pull/1629)
  - [Set the min required WP User integration version number to be 2.1.3 (#1633)](https://github.com/eventespresso/cafe/pull/1633)
+
+
+
+
 
 ### [5.0.30]
 

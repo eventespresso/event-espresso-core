@@ -2575,7 +2575,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
         // make it stick
         $this->save();
         // convert payment amount back to a negative value for storage in the db
-        return (float) $payment_amount;
+        return (float) $payment_amount * -1;
     }
 
 
