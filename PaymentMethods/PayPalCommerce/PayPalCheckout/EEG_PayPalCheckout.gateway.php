@@ -71,7 +71,7 @@ class EEG_PayPalCheckout extends EE_Onsite_Gateway
         if (! $order_id) {
             return EEG_PayPalCheckout::updatePaymentStatus(
                 $payment,
-                EEM_Payment::status_id_failed,
+                EEM_Payment::status_id_declined,
                 $post_parameters,
                 esc_html__('Can\'t charge the Order. The Order ID is missing.', 'event_espresso')
             );
@@ -83,7 +83,7 @@ class EEG_PayPalCheckout extends EE_Onsite_Gateway
         if (! $order_status['completed']) {
             return EEG_PayPalCheckout::updatePaymentStatus(
                 $payment,
-                EEM_Payment::status_id_failed,
+                EEM_Payment::status_id_declined,
                 $order_status,
                 $order_status['message'] ?? ''
             );
@@ -148,31 +148,6 @@ class EEG_PayPalCheckout extends EE_Onsite_Gateway
             $conclusion['message']   = esc_html__('Order Valid.', 'event_espresso');
         }
         return $conclusion;
-    }
-
-
-    /**
-     * Create an EE Payment.
-     *
-     * @param EE_Transaction    $transaction
-     * @param EE_Payment_Method $payment_method
-     * @return EE_Payment
-     * @throws EE_Error
-     * @throws ReflectionException
-     */
-    public static function createPayment(EE_Transaction $transaction, EE_Payment_Method $payment_method): EE_Payment
-    {
-        // No payment for this transaction was created at this point.
-        $payment = EE_Payment::new_instance([
-            'PAY_timestamp'     => time(),
-            'TXN_ID'            => $transaction->ID(),
-            'PMD_ID'            => $payment_method->ID(),
-            'PAY_po_number'     => null,
-            'PAY_extra_accntng' => null,
-            'PAY_details'       => null,
-        ]);
-        $payment->save();
-        return $payment;
     }
 
 

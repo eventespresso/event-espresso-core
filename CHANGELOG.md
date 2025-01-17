@@ -6,13 +6,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Releases
 
-### [5.0.32]
+### [5.0.33]
 
 #### Fixed
- - [Fix Registration Refunds (#1638)](https://github.com/eventespresso/cafe/pull/1638)
 
-#### Changed
+ - [Fix Registration Refunds (#1638)](https://github.com/eventespresso/cafe/pull/1638)
+ - [PPC. Fix amount rounding issue (#1622)](https://github.com/eventespresso/cafe/pull/1622)
+ - [PPC. Fix double payments created (#1667)](https://github.com/eventespresso/cafe/pull/1667)
+
+
+
+
+
+
+### [5.0.32]
+
+#### Added
+
  - [Move PM Deprecation Dates (#1676)](https://github.com/eventespresso/cafe/pull/1676)
+
 
 
 
@@ -28,6 +40,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 #### Changed
  - [BuildMachine 5.0.30 changes (#1629)](https://github.com/eventespresso/cafe/pull/1629)
  - [Set the min required WP User integration version number to be 2.1.3 (#1633)](https://github.com/eventespresso/cafe/pull/1633)
+
 
 
 

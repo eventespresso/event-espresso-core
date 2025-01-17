@@ -50,20 +50,6 @@ class CurrencyManager
 
 
     /**
-     * Converts an amount into the currency's subunits.
-     * Some currencies have no subunits, so leave them in the currency's main units.
-     *
-     * @param float $amount
-     * @return float in the currency's smallest unit (e.g., pennies)
-     */
-    public static function convertToSubunits(float $amount): float
-    {
-        $decimals = self::getDecimalPlaces();
-        return round($amount * pow(10, $decimals), $decimals);
-    }
-
-
-    /**
      * Make sure the value is an absolute number with only two decimal places.
      *
      * @param float $amount
@@ -71,8 +57,12 @@ class CurrencyManager
      */
     public static function normalizeValue(float $amount): float
     {
-        $decimals = self::getDecimalPlaces();
-        return abs(number_format($amount, $decimals, '.', ''));
+        // Make sure we get a positive value.
+        // Don't use abs() because of the possible issues with rounding if 'serialize_precision' is not set to -1.
+        if ($amount < 0) {
+            $amount = $amount * -1;
+        }
+        return number_format($amount, self::getDecimalPlaces(), '.', '');
     }
 
 

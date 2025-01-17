@@ -145,10 +145,22 @@ class EED_PayPalCommerce extends EED_Module
                 'message' => esc_html__('The Create Order API request fault.', 'event_espresso'),
             ];
         }
-        $payment = EEG_PayPalCheckout::createPayment($transaction, $paypal_pm);
-        $order   = $create_order_api->create();
+        // Make sure we have a payment method saved.
+        $payment_method = EED_PayPalCommerce::getPaymentMethod();
+        if ($payment_method->ID()) {
+            $transaction->set_payment_method_ID($payment_method->ID());
+        }
+        $order = $create_order_api->create();
         if (isset($order['error'])) {
-            EEG_PayPalCheckout::updatePaymentStatus($payment, EEM_Payment::status_id_failed, $order, $order['error']);
+            $last_payment = $transaction->last_payment();
+            if ($last_payment instanceof EE_Payment) {
+                EEG_PayPalCheckout::updatePaymentStatus(
+                    $last_payment,
+                    EEM_Payment::status_id_failed,
+                    $order,
+                    $order['error']
+                );
+            }
             return [
                 'error'   => 'CREATE_ORDER_API_RESPONSE_ERROR',
                 'message' => $order['message'],

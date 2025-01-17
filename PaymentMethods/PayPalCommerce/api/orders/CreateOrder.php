@@ -101,7 +101,7 @@ class CreateOrder extends OrdersApi
      */
     public function sanitizeRequestParameters(array $billing_info): void
     {
-        $sanitizer       = new RequestSanitizer(new Basic());
+        $sanitizer = new RequestSanitizer(new Basic());
         foreach ($billing_info as $item => $value) {
             $this->billing_info[ $item ] = $sanitizer->clean($value);
         }
@@ -149,7 +149,7 @@ class CreateOrder extends OrdersApi
                     'description' => substr(wp_strip_all_tags($description), 0, 125),
                     'items'       => $this->getLineItems(),
                     'amount'      => [
-                        'value'         => $this->transaction->remaining(),
+                        'value'         => (string) CurrencyManager::normalizeValue($this->transaction->remaining()),
                         'currency_code' => $this->currency_code,
                         'breakdown'     => $this->getBreakdown(),
                     ],
@@ -183,7 +183,7 @@ class CreateOrder extends OrdersApi
             && ! empty($scopes) && in_array('partnerfee', $scopes)
         ) {
             /** @var PartnerPaymentFees $payment_fees */
-            $payment_fees                                           = LoaderFactory::getShared(PartnerPaymentFees::class);
+            $payment_fees = LoaderFactory::getShared(PartnerPaymentFees::class);
             $parameters['purchase_units'][0]['payment_instruction'] = [
                 'platform_fees' => [
                     [
@@ -217,7 +217,7 @@ class CreateOrder extends OrdersApi
                 && $line_item->OBJ_type() !== 'Promotion'
                 && $line_item->quantity() > 0
             ) {
-                $item_money     = $line_item->unit_price();
+                $item_money     = CurrencyManager::normalizeValue($line_item->unit_price());
                 $li_description = $line_item->desc() ?? esc_html__('Event Ticket', 'event_espresso');
                 $line_items []  = [
                     'name'        => substr(wp_strip_all_tags($line_item->name()), 0, 126),
@@ -225,7 +225,7 @@ class CreateOrder extends OrdersApi
                     'description' => substr(wp_strip_all_tags($li_description), 0, 125),
                     'unit_amount' => [
                         'currency_code' => $this->currency_code,
-                        'value'         => $item_money,
+                        'value'         => (string) $item_money,
                     ],
                     'category'    => 'DIGITAL_GOODS',
                 ];
@@ -275,15 +275,15 @@ class CreateOrder extends OrdersApi
     {
         $breakdown['item_total'] = [
             'currency_code' => $this->currency_code,
-            'value'         => $this->items_total,
+            'value'         => (string) $this->items_total,
         ];
         $breakdown['tax_total']  = [
             'currency_code' => $this->currency_code,
-            'value'         => $this->tax_total,
+            'value'         => (string) $this->tax_total,
         ];
         $breakdown['discount']   = [
             'currency_code' => $this->currency_code,
-            'value'         => abs($this->promos_total),
+            'value'         => (string) abs($this->promos_total),
         ];
         return $breakdown;
     }
