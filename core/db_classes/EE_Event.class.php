@@ -208,7 +208,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
 
     /**
      * Gets all the datetimes for this event, ordered by the DTT_order on the datetime.
-     * @darren, we should probably UNSET timezone on the EEM_Datetime model
+     * @todo We should probably UNSET timezone on the EEM_Datetime model
      * after running our query, so that this timezone isn't set for EVERY query
      * on EEM_Datetime for the rest of the request, no?
      *
@@ -547,7 +547,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
      */
     public function wp_user(): int
     {
-        return $this->get('EVT_wp_user');
+        return (int) $this->get('EVT_wp_user');
     }
 
 
@@ -1244,7 +1244,7 @@ class EE_Event extends EE_CPT_Base implements EEI_Line_Item_Object, EEI_Admin_Li
     {
         $active_status = $this->get_active_status();
         $status        = "
-        <span class='ee-status ee-status-bg--$active_status event-active-status-$active_status'>
+        <span class='event-active-status event-active-status-$active_status ee-status ee-status-bg--$active_status'>
             " . EEH_Template::pretty_status($active_status, false, 'sentence') . "
         </span >";
         if ($echo) {
