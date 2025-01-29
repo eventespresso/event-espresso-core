@@ -78,10 +78,10 @@ class EEH_HTML
         string $other_attributes = '',
         bool $force_close = false
     ): string {
-        $attributes = ! empty($id) ? ' id="' . EEH_HTML::sanitize_id($id) . '"' : '';
-        $attributes .= ! empty($class) ? ' class="' . $class . '"' : '';
-        $attributes .= ! empty($style) ? ' style="' . $style . '"' : '';
-        $attributes .= ! empty($other_attributes) ? ' ' . $other_attributes : '';
+        $attributes = ! empty($id) ? ' id="' . trim(EEH_HTML::sanitize_id($id)) . '"' : '';
+        $attributes .= ! empty($class) ? ' class="' . trim($class) . '"' : '';
+        $attributes .= ! empty($style) ? ' style="' . trim($style) . '"' : '';
+        $attributes .= ! empty($other_attributes) ? ' ' . trim($other_attributes) : '';
         $html       = EEH_HTML::nl(0, $tag) . '<' . $tag . $attributes . '>';
         $html       .= trim($content) !== '' ? EEH_HTML::nl(1, $tag) . $content : '';
         $indent     = ! empty($content) || $force_close;

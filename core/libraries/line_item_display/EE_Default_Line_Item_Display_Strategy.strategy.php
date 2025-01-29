@@ -153,7 +153,13 @@ class EE_Default_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         $has_sub_taxes = ! empty($sub_taxes);
         $is_taxable = $line_item->is_taxable();
 
-        $row_class = $options['odd'] ? 'item odd' : 'item';
+        $extra_css_row  = $options['extra_css']['row'] ?? '';
+        $extra_css_name  = $options['extra_css']['name'] ?? '';
+        $extra_css_qty   = $options['extra_css']['qty'] ?? '';
+        $extra_css_price = $options['extra_css']['price'] ?? '';
+        $extra_css_total = $options['extra_css']['total'] ?? '';
+
+        $row_class = $options['odd'] ? "$extra_css_row item odd" : "$extra_css_row item";
         $html = EEH_HTML::tr('', '', $row_class);
         // name && desc
         $name_and_desc = apply_filters(
@@ -175,9 +181,9 @@ class EE_Default_Line_Item_Display_Strategy implements EEI_Line_Item_Display
         }
 
         // name td
-        $html .= EEH_HTML::td($name_and_desc, '', 'item_l');
+        $html .= EEH_HTML::td($name_and_desc, '', "$extra_css_name item_l");
         // quantity td
-        $html .= EEH_HTML::td($line_item->quantity(), '', 'item_l jst-rght');
+        $html .= EEH_HTML::td($line_item->quantity(), '', "$extra_css_qty item_l jst-rght");
         $tax_rate = 1;
         if ($this->prices_include_taxes) {
             if ($has_sub_taxes) {
@@ -200,7 +206,7 @@ class EE_Default_Line_Item_Display_Strategy implements EEI_Line_Item_Display
             $line_item,
             $tax_rate
         );
-        $html .= EEH_HTML::td($unit_price, '', 'item_c jst-rght');
+        $html .= EEH_HTML::td($unit_price, '', "$extra_css_price item_c jst-rght");
         // total td
         $total = apply_filters(
             'FHEE__EE_Default_Line_Item_Display_Strategy___item_row__total',
@@ -208,7 +214,7 @@ class EE_Default_Line_Item_Display_Strategy implements EEI_Line_Item_Display
             $line_item,
             $tax_rate
         );
-        $html .= EEH_HTML::td($total, '', 'item_r jst-rght');
+        $html .= EEH_HTML::td($total, '', "$extra_css_total item_r jst-rght");
         // end of row
         $html .= EEH_HTML::trx();
 

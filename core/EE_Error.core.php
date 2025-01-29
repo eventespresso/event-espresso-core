@@ -762,10 +762,11 @@ class EE_Error extends Exception
     /**
      * compile all error or success messages into one string
      *
-     * @param boolean $format_output            whether or not to format the messages for display in the WP admin
-     * @param boolean $save_to_transient        whether or not to save notices to the db for retrieval on next request
+     * @param boolean $format_output        whether to format the messages for display in the WP admin
+     * @param boolean $save_to_transient    whether to save notices to the db for retrieval on next request
      *                                          - ONLY do this just before redirecting
-     * @param bool $remove_empty             whether or not to unset empty messages
+     * @param bool $remove_empty             whether to unset empty messages
+     * @param bool $add_preface              whether to add notice before messages like "An error has occurred:"
      * @return array|string
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -775,7 +776,8 @@ class EE_Error extends Exception
     public static function get_notices(
         bool $format_output = true,
         bool $save_to_transient = false,
-        bool $remove_empty = true
+        bool $remove_empty = true,
+        bool $add_preface = true
     ) {
         $success_messages   = '';
         $attention_messages = '';
@@ -806,9 +808,11 @@ class EE_Error extends Exception
         }
         // check for error messages
         if (! empty(self::$_espresso_notices['errors'])) {
-            $error_messages .= count(self::$_espresso_notices['errors']) > 1
-                ? esc_html__('The following errors have occurred:', 'event_espresso')
-                : esc_html__('An error has occurred:', 'event_espresso');
+            if ($add_preface) {
+                $error_messages .= count(self::$_espresso_notices['errors']) > 1
+                    ? esc_html__('The following errors have occurred:', 'event_espresso')
+                    : esc_html__('An error has occurred:', 'event_espresso');
+            }
             // combine messages
             $error_messages .= '<br />' . implode('<br />', self::$_espresso_notices['errors']);
             $print_scripts  = true;

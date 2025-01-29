@@ -598,7 +598,7 @@ class EED_PayPalOnboard extends EED_Module
         $pp_meta_data = PayPalExtraMetaManager::getAllData($payment_method);
         return
             (
-                // onborded with a third party integration ?
+                // onboarded with a third party integration ?
                 ! empty($pp_meta_data[ Domain::META_KEY_SELLER_MERCHANT_ID ])
                 && ! empty($pp_meta_data[ Domain::META_KEY_ACCESS_TOKEN ])
             ) || (
@@ -703,7 +703,7 @@ class EED_PayPalOnboard extends EED_Module
     public static function adminNotice()
     {
         // Show the notice if PayPal Commerce PM is active but merchant is not onboard.
-        $pp_commerce = EEM_Payment_Method::instance()->get_one_by_slug('paypalcheckout');
+        $pp_commerce = EEM_Payment_Method::instance()->get_one_by_slug(Domain::PM_SLUG);
         if (
             $pp_commerce instanceof EE_Payment_Method
             && $pp_commerce->active()
@@ -724,7 +724,7 @@ class EED_PayPalOnboard extends EED_Module
     public static function notOnboardNotice()
     {
         $open_anchor = $close_anchor = '';
-        $pp_commerce = EEM_Payment_Method::instance()->get_one_by_slug('paypalcheckout');
+        $pp_commerce = EEM_Payment_Method::instance()->get_one_by_slug(Domain::PM_SLUG);
         if ($pp_commerce instanceof EE_Payment_Method) {
             $pm_page      = add_query_arg(
                 [

@@ -394,6 +394,9 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
                         // the admin label is blank, use a slug version of the question text
                         $QST_text                    = $this->request->getRequestParam('QST_display_text', '', DataType::STRING);
                         $column_values[ $fieldName ] = sanitize_title(wp_trim_words($QST_text, 10));
+                    } else {
+                        // admin label set, use it
+                        $column_values[ $fieldName ] = $this->request->getRequestParam('QST_admin_label', '', DataType::STRING);
                     }
                     break;
 

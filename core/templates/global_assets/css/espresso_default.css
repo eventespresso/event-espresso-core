@@ -1224,7 +1224,7 @@ article .espresso_venues {
 	margin-bottom: 48px;
 }
 
-.espresso_events .ee-event-datetimes-ul {
+.espresso_events .event-datetimes > .ee-event-datetimes-ul {
     display: flex;
     flex-flow: row wrap;
     justify-content: space-around;
@@ -1237,28 +1237,28 @@ article .espresso_venues {
     width: 100%;
 }
 
-.espresso_events .ee-event-datetimes-ul .ee-event-datetimes-li {
+.espresso_events .event-datetimes > .ee-event-datetimes-ul .ee-event-datetimes-li {
     margin: 0;
     margin-block-end: 1rem;
     margin-inline-start: 1rem;
 	width: 30%;
 }
 
-.espresso_events .ee-event-datetimes-ul--small .ee-event-datetimes-li {
+.espresso_events .event-datetimes > .ee-event-datetimes-ul--small .ee-event-datetimes-li {
     width: 45%;
 }
 
-.espresso_events .ee-event-datetimes-ul .ee-event-datetimes-li span {
+.espresso_events .event-datetimes > .ee-event-datetimes-ul .ee-event-datetimes-li span {
     display: inline-block;
     margin-block: .25rem;
 }
 
-.espresso_events .ee-event-datetimes-ul .ee-event-datetimes-li .dashicons {
+.espresso_events .event-datetimes > .ee-event-datetimes-ul .ee-event-datetimes-li .dashicons {
     position: relative;
     top: -1px;
 }
 
-.espresso_events .ee-event-datetimes-ul .ee-event-datetimes-li .ee-event-datetimes-li-timerange {
+.espresso_events .event-datetimes > .ee-event-datetimes-ul .ee-event-datetimes-li .ee-event-datetimes-li-timerange {
     margin-inline-end: .5rem;
 }
 

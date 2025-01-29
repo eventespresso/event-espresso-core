@@ -6,7 +6,6 @@ use DomainException;
 use EE_Error;
 use EE_Form_Section_HTML;
 use EE_Form_Section_Proper;
-use EE_Line_Item;
 use EE_Line_Item_Display;
 use EE_No_Layout;
 use EE_Registration;
@@ -17,7 +16,6 @@ use EEH_HTML;
 use EventEspresso\core\domain\services\registration\form\utilities\CountryOptions;
 use EventEspresso\core\domain\services\registration\form\utilities\StateOptions;
 use EventEspresso\core\domain\services\registration\form\v1\subsections\AttendeeInformationNotice;
-use EventEspresso\core\domain\services\registration\form\v1\subsections\AttendeePanelForm;
 use EventEspresso\core\domain\services\registration\form\v1\subsections\AutoCopyAttendeeInfoForm;
 use EventEspresso\core\domain\services\registration\form\v1\subsections\CopyAttendeeInfoForm;
 use EventEspresso\core\domain\services\registration\form\v1\subsections\EventHeader;
@@ -148,6 +146,12 @@ class RegForm extends EE_Form_Section_Proper
         $this->configureLineItemDisplay();
         $this->addAttendeeInformationNotice();
 
+        $this->subsections["ticket-details"] = new TicketDetailsTable(
+            $this->reg_step->checkout->cart->get_grand_total(),
+            $this->line_item_display,
+            $this->reg_step->checkout->revisit
+        );
+
         // grab the saved registrations from the transaction
         $registrations = $this->reg_step->checkout->transaction->registrations(
             $this->reg_step->checkout->reg_cache_where_params
@@ -157,6 +161,7 @@ class RegForm extends EE_Form_Section_Proper
                 if (! $registration instanceof EE_Registration) {
                     continue;
                 }
+                $this->subsections["ticket-details"]->addTicket($registration->ticket());
                 $this->addAttendeeRegForm($registration);
             }
             $this->addCopyAttendeeInfoForm($registrations);
@@ -241,12 +246,6 @@ class RegForm extends EE_Form_Section_Proper
             )
         );
         $this->subsections["event-header-$reg_url_link"]    = new EventHeader($registration->event());
-        $this->subsections["ticket-details-$reg_url_link"]  = new TicketDetailsTable(
-            $this->reg_step->checkout->cart->get_grand_total(),
-            $this->line_item_display,
-            $registration->ticket(),
-            $this->reg_step->checkout->revisit
-        );
         $this->subsections[ $reg_url_link ]                 = $registrant_form;
         $this->subsections["panel-div-close-$reg_url_link"] = new EE_Form_Section_HTML(
             EEH_HTML::divx("spco-attendee-panel-dv-$reg_url_link")

@@ -676,6 +676,14 @@ table.spco-ticket-details tbody td:first-child {
     font-size: clamp(1.25rem, 125%, 1.5rem);
 }
 
+table.spco-ticket-details .ee-ticket-details-qty {
+    max-width: 4rem;
+}
+table.spco-ticket-details .ee-ticket-details-price,
+table.spco-ticket-details .ee-ticket-details-total {
+    max-width: 10rem;
+}
+
 
 .ee-payment-processing-fee {
     background: hsla(61 72% 66% / 50%);

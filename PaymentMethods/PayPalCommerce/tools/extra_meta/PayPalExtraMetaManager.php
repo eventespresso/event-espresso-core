@@ -37,7 +37,10 @@ class PayPalExtraMetaManager
      */
     public static function extraMeta(EE_Payment_Method $paypal_pm): PayPalExtraMeta
     {
-        if (! PayPalExtraMetaManager::$pay_pal_extra_meta instanceof PayPalExtraMeta) {
+        if (
+            ! PayPalExtraMetaManager::$pay_pal_extra_meta instanceof PayPalExtraMeta
+            || PayPalExtraMetaManager::$pay_pal_extra_meta->pm->slug() !== $paypal_pm->slug()
+        ) {
             PayPalExtraMetaManager::$pay_pal_extra_meta = new PayPalExtraMeta($paypal_pm);
         }
         return PayPalExtraMetaManager::$pay_pal_extra_meta;

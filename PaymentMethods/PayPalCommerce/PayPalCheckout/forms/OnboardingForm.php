@@ -10,6 +10,7 @@ use EE_Form_Section_Proper;
 use EE_Payment_Method;
 use EE_PMT_Base;
 use EE_Simple_HTML_Validation_Strategy;
+use EventEspresso\PaymentMethods\PayPalCommerce\domain\Domain;
 use ReflectionException;
 
 /**
@@ -116,15 +117,23 @@ class OnboardingForm extends EE_Form_Section_Proper
     public function enqueue_js()
     {
         // Also tell the script about each instance of this PM.
-        $pm_versions            = [];
+        $pm_versions = $pm_dialogs = [];
         $active_payment_methods = EEM_Payment_Method::instance()->get_all_active(
             EEM_Payment_Method::scope_cart,
-            [['PMD_slug' => ['LIKE', '%paypalcheckout%']]]
+            [['PMD_slug' => ['LIKE', '%' . Domain::PM_SLUG . '%']]]
         );
         foreach ($active_payment_methods as $payment_method) {
-            $pm_versions[ $payment_method->slug() ] = [
-                'pm_slug' => $payment_method->slug(),
+            if (! $payment_method instanceof EE_Payment_Method) {
+                continue;
+            }
+            $pm_slug = $payment_method->slug();
+            $pm_versions[ $pm_slug ] = [
+                'pm_slug' => $pm_slug,
             ];
+            $form_html = new OnboardingFormHtml($this->payment_method, $payment_method);
+            $pm_dialogs[ $pm_slug ]['connect_dialog'] = $form_html->connectDialog()->get_html();
+            $pm_dialogs[ $pm_slug ]['disconnect_dialog'] = $form_html->disconnectDialog()->get_html();
+            $pm_dialogs[ $pm_slug ]['processing_mask'] = $form_html->processingMask()->get_html();
         }
         $countries_iso = ["US", "AU", "AT", "BE", "BG", "HR", "CY", "CZ", "DK", "EE", "FI", "FR", "DE", "GR", "HU",
                           "IE", "IT", "LV", "LT", "LU", "MT", "NL", "PL", "PT", "RO", "SK", "SI", "ES", "SE"];
@@ -135,9 +144,7 @@ class OnboardingForm extends EE_Form_Section_Proper
             'pm_versions'          => $pm_versions,
             'onboarding_url'       => $this->onboarding_url,
             'supported_countries'  => $countries_iso,
-            'connect_dialog'       => $this->form_html->connectDialog()->get_html(),
-            'disconnect_dialog'    => $this->form_html->disconnectDialog()->get_html(),
-            'processing_mask'      => $this->form_html->processingMask()->get_html(),
+            'pm_dialogs'           => $pm_dialogs,
             'ee_default_styles'    => EE_ADMIN_URL . 'assets/ee-admin-page.css',
             'wp_stylesheet'        => includes_url('css/dashicons.min.css'),
             'can_disable_input'    => method_exists('EE_Form_Input_Base', 'isDisabled'),

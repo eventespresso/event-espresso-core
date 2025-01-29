@@ -46,9 +46,7 @@ jQuery(document).ready(function ($) {
      * 	debug_is_on_notice: string,
      *  debug_is_off_notice: boolean,
      *  refresh_alert: string,
-     *  connect_dialog: string,
-     *  disconnect_dialog: string,
-     *  processing_mask: string,
+     *  pm_dialogs: array,
      *  supported_countries: array,
      * }}
      */
@@ -156,7 +154,7 @@ jQuery(document).ready(function ($) {
         this.preOnboardingForm = function () {
             position_overlay(true);
             position_dialog(2, false);
-            dialogHelper.addContent(eeaPPOnboardParameters.connect_dialog);
+            dialogHelper.addContent(eeaPPOnboardParameters.pm_dialogs[ this.slug ].connect_dialog);
             // Pre onboarding form setup.
             this.preOnboardingFormSetup();
             // Onboarding form listeners.
@@ -395,7 +393,7 @@ jQuery(document).ready(function ($) {
             const this_pm = this;
             position_overlay(false);
             position_dialog(3, false);
-            dialogHelper.addContent(eeaPPOnboardParameters.disconnect_dialog);
+            dialogHelper.addContent(eeaPPOnboardParameters.pm_dialogs[ this_pm.slug ].disconnect_dialog);
             $(this_pm.disconnect_ok_id).on('click', function() {
                 this_pm.hideDialog();
                 const btn_container = $(this).closest('tr');
