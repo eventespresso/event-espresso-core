@@ -8,31 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [5.0.34]
 
-#### Added
- - NEW
-
 #### Fixed
  - [PPC. Fix Payment Methods Pro support for PayPal Commerce (#1696)](https://github.com/eventespresso/cafe/pull/1696)
  - [Fix Conflict With REM Styles (#1697)](https://github.com/eventespresso/cafe/pull/1697)
  - [Fix registration question admin label field not saving (#1647)](https://github.com/eventespresso/cafe/pull/1647)
- - FIX
-
-#### Changed
- - MOD
-
-#### Deprecated
- - DEP
-
-#### Removed
- - RMV
-
-#### Security
- - SEC
-
-
-
-### [..]
-
 
 #### Fixed
  - [Fix SaaS Signup Form (#1660)](https://github.com/eventespresso/cafe/pull/1660)
