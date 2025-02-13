@@ -6,15 +6,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Releases
 
+### [5.0.35]
+
+#### Fixed
+ - [Fix Conditional Question Trigger ID Sanitization (#1677)](https://github.com/eventespresso/cafe/pull/1677)
+ - [Allow HTML within Question Text and Question options (#1711)](https://github.com/eventespresso/cafe/pull/1711)
+ - [Continue to check uploads directory for templates (#1705)](https://github.com/eventespresso/cafe/pull/1705)
+
+#### Changed
+ - [BuildMachine 5.0.34.p changes (#1700)](https://github.com/eventespresso/cafe/pull/1700)
+
+
+
+
+
+
 ### [5.0.34]
+
 
 #### Fixed
  - [PPC. Fix Payment Methods Pro support for PayPal Commerce (#1696)](https://github.com/eventespresso/cafe/pull/1696)
  - [Fix Conflict With REM Styles (#1697)](https://github.com/eventespresso/cafe/pull/1697)
  - [Fix registration question admin label field not saving (#1647)](https://github.com/eventespresso/cafe/pull/1647)
-
-#### Fixed
- - [Fix SaaS Signup Form (#1660)](https://github.com/eventespresso/cafe/pull/1660)
  - [Fix SPCO Attendee Info Ticket Display (#1636)](https://github.com/eventespresso/cafe/pull/1636)
 
 #### Changed

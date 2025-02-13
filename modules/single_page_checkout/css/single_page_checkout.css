@@ -142,7 +142,7 @@
 
 
 /*** REG STEPS ***/
-input.ee-reg-qstn,
+input.ee-reg-qstn:not(input[type=checkbox]):not(input[type=radio]),
 select.ee-reg-qstn,
 textarea.ee-reg-qstn {
     min-height: 2rem;

@@ -389,6 +389,10 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
                     }
                     break;
 
+                case 'QST_display_text':
+                        $column_values[ $fieldName ] = $this->request->getRequestParam('QST_display_text', '', DataType::HTML);
+                    break;
+
                 case 'QST_admin_label':
                     if (! $this->request->getRequestParam('QST_admin_label', '', DataType::STRING)) {
                         // the admin label is blank, use a slug version of the question text
@@ -574,7 +578,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
             // trash removed options, save old ones
             // get list of all options
             $options          = $question->options();
-            $question_options = $this->request->getRequestParam('question_options', [], DataType::ARRAY);
+            $question_options = $this->request->getRequestParam('question_options', [], DataType::HTML, true);
             $QSO_default      = $this->request->getRequestParam('QSO_default', null, DataType::INT);
             if (! empty($options)) {
                 foreach ($options as $option_ID => $option) {

@@ -254,7 +254,10 @@ class EEH_Template
             // currently active EE template theme
             $current_theme = EE_Config::get_current_theme();
             // array of paths to folders that may contain templates
-            $template_folder_paths = [];
+            $template_folder_paths = [      
+                // root of the /wp-content/uploads/espresso/templates/ folder
+                EVENT_ESPRESSO_TEMPLATE_DIR
+            ];
 
             // add core plugin folders for checking only if we're not $check_if_custom
             if (! $check_if_custom) {

@@ -5,34 +5,51 @@
 **Tags:** Events, Tickets, Event Registration, Ticket Sales, Calendar
 **Requires at least:** WordPress 4.5  
 **Requires PHP:** 7.4  
-**Tested up to:** WordPress 6.6.1  
-**Stable tag:** 5.0.22.decaf  
+**Tested up to:** WordPress 6.7.2  
+**Stable tag:** 5.0.31.decaf  
 **License:** GPL2  
 
-The best event registration and ticket sales plugin with: registration forms, PayPal payments, automated confirmation emails and more!
+The best events plugin with event registration, free and paid ticket sales, event registration forms, PayPal payments, automatic emails, and more!
 
 == Description ==
-Power your online event registration and ticket sales with more caffeine. Easily create events, event registrations forms, RSVP with free tickets, sell tickets and process payments with cards and PayPal accounts, manage attendees, automatically send confirmation emails, download attendee lists, and optimize your events—all from your WordPress dashboard all with our free events plugin. Specially designed for in-person and/or virtual events your event registration and ticket sales can be better backed by the team of experts that have been doing this longer than any else on WordPress. ☕️
+Power your online event registration and ticket sales with [Event Espresso](https://eventespresso.com), the most complete WordPress events plugin. Within just minutes you can be ready to post your events, sell tickets and registrations and collect payments from attendees.
 
-## Transform Your WordPress Site into a Powerful Event Management Platform
+WordPress event ticketing has never been easier and faster.
+
+## 🤓 Schedule a Personalized Demo & Free Installation! 🎉
+
+We offer a free one-time installation of Event Espresso premium, along with a personalized demo that includes setup, event creation, and connecting to PayPal so you're ready for your first event. Ask questions, get expert support, and experience Event Espresso on your own website for free! 👉 [Schedule your free install and demo today!](https://calendar.google.com/calendar/u/0/appointments/schedules/AcZssZ1ppM4aQPxLXtwoBfXzti-8yfwolmP9CPBx1s3THT_xzyiCBXDGch10gDRdo8gWvAz_hZGl3IUp) 👈
+
+## Online Event Ticketing, Registration and Management for WordPress
 
 [youtube http://www.youtube.com/watch?v=K_yVwWnTjL8]
 
----
+## ✨ Powerful Event Registration & Ticket Sales Features
 
-## Most Advanced Events Plugin for WordPress
+With our free events plugin for WordPress, you can easily and quickly:
 
-### Automate Ticket Sales and Customer Communication
+✓ Create events on your own WordPress website
+✓ Create multiple types of tickets and registrations
+✓ Sell paid event tickets and event registrations
+✓ Offer RSVP with free tickets (or no tickets)
+✓ Automatically open and close sales based on date and/or ticket sold
+✓ Create event registrations forms
+✓ Collect payments with cards and PayPal accounts
+✓ Collect money straight into your own PayPal
+✓ Automatically send confirmation emails to attendees and your team
+✓ Download lists of attendees
+✓ Manage attendees (approve, cancel, etc.)
+✓ Create reusable venue profiles
+✓ Organize events by categories
+✓ Display events by category on your website.
+✓ Mobile optimized.
+✓ Compatible with most themes
+✓ Search engine optimized to improve the SEO of your events.
+✓ All from your WordPress dashboard
 
-- Automatically open and close registrations or ticket sales based on dates or when ticket sales reach certain levels.
-- Automatically send attendees confirmation emails based on situations such as successful registration, successful payments, payment incomplete, pending payments, etc.
-- Collect information for each ticket sold.
+Specially designed for WordPress, your event registration and ticket sales can be better backed by the team of experts that have been doing this longer than any else on WordPress. ☕️
 
-### Maximize Your Reach and Revenue:
 
-- Use the built-in tools to boost your event visibility and ticket sales.
-- Easily manage ticket inventory, attendee lists, and event check-ins.
-- Seamlessly integrate with PayPal to collect payments (more payment platforms supported in the premium verison).
 
 ### Streamline Your Event Management:
 
@@ -40,7 +57,6 @@ Power your online event registration and ticket sales with more caffeine. Easily
 - Provide your attendees with a smooth, 24/7 registration experience.
 - Go green by offering paperless event registration.
 
-## Key Features
 
 ### Everything You Need to Manage Events Efficiently:
 
@@ -93,18 +109,6 @@ Tue Brems Olesen [OnAdventure](http://onadventure.dk/)
 
 Jenifer - [Jenifer Design](http://jeniferdesign.com/)
 
-> Event Espresso saves us money, saves our secretary 16-24 hours and looks so professionally done that people ask us how we do it; which we happily tell them, "Event Espresso, and be sure to get the ticketing add-on."
-
-David - [House of Prayer](http://hop.org/)
-
-> I have been using Event Espresso to run my festival and have been very happy with how it has worked out. They have provided tremendous support and their iPhone app is amazing and easy to use. I suggest using it for your event.
-
-Alex Grant - [Byron Spirit Festival](http://www.spiritfestival.com.au/)
-
-> Love the plugin, we only use it once a year for a race we have in February. This saved us tons of time in data entry. In addition, we had more runners register than any other year. We attribute that to the ease of registering online. Thanks for your work.
-
-Ed - [Friends of Oscar Scherer Park](http://www.friendsofoscarscherer.com/)
-
 > My hope with this whole integration is to be able to show other school districts an affordable and easy solution to these registrations. I cannot believe how much money they are charged for less by other companies. This has the potential to save schools tens of thousands, which is huge right now.
 
 Kelly - [College Station Independent School District](http://csisd.org/)
@@ -112,10 +116,6 @@ Kelly - [College Station Independent School District](http://csisd.org/)
 > I chose EE because, a few years ago, I was using it on a personal website and loved it. So, when I discovered that our current event management system that is deployed in other areas of campus was completely deficient for this initiative's needs, I didn't even hesitate to use EE.
 
 Rob Domaschuk
-
-> The best event plugin system we have used! We just closed registration for a girls/ladies conference at our church next month. This year we have over 400 registrants and only a few were mail-ins. Everyone else registered on our website, which is running Event Espresso. We had to close registration early because we are at capacity! We also received a lot of compliments on the “new system”. Registrants stated that it was much easier to use than in previous years.  
-
-Amanda Leigh
 
 Read more [testimonials](https://eventespresso.com/testimonials/?utm_source=wordpress_org&utm_medium=link&utm_campaign=ee4_decaf_plugin_testimonials_tab) from our satisfied customers.
 
@@ -318,11 +318,11 @@ We have a plugin available that will check your server for the [minimum requirem
 
 = Do you support WordPress multisite? =
 
-WordPress multisite brings some complexity that can lead to some challenges. As such we cannot support multisite, but we'll offer recommendations wherever we can. Multisite compatibility is much better with EE4 than EE3. If you're unsure about using multisite, then please read [this article](http://halfelf.org/2011/dont-use-wordpress-multisite/).
+WordPress multisite brings some complexity that can lead to some challenges. As such we do offer customized support for multisite. Contact us for details. If you're unsure about using multisite, then please read [this article](http://halfelf.org/2011/dont-use-wordpress-multisite/).
 
 = Which web browsers work with Event Espresso? =
 
-Event Espresso has been tested with the most current versions Internet Explorer (Windows only), Firefox, Safari, Chrome on the Windows PC and Mac OSX platforms. Event Espresso may function just as well in older or other, less modern browsers, but we only support those listed previously. For more information, please see our [supported web browsers](https://eventespresso.com/faqs/supported-web-browsers/) page.
+Event Espresso has been tested with the most current versions of Edge, Firefox, Safari, Chrome on the Windows PC and Mac OSX platforms. Event Espresso may function just as well in older or other, less modern browsers, but we only support those listed previously. For more information, please see our [supported web browsers](https://eventespresso.com/faqs/supported-web-browsers/) page.
 
 = Do you monitor the WordPress.org support forums? =
 
@@ -339,6 +339,8 @@ Yes, you can get access to the core files via the [Event Espresso 4 Github page]
 ## Support and Resources
 
 ### Need Help?
+
+Our full documentation is available [here](https://support.eventespresso.com).
 
 This version is self-supported only or ask the community for help in the community forums. For faster support, consider purchasing a [Premium Support License](https://eventespresso.com/pricing/?ee_ver=ee4&utm_source=wordpress_org&utm_medium=link&utm_content=Buy+a+Premium+Support+License&utm_campaign=ee4_decaf_plugin_support_tab) and access our dedicated support forum.
 
