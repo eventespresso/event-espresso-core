@@ -22,10 +22,10 @@ POST `/ee/v4.8.33/registrations/{REG_ID}/toggle_checkin_for_datetime/{DTT_ID}`
 
 where `{REG_ID}` is the registration's ID, and `{DTT_ID}` is the datetime's ID.
 
-Eg if your site is `http://mysite.com`, and the WP API's prefix is `wp-json`, and you want to checking registration with ID 123 into datetime with ID 456, you would send a POST request to 
+Eg if your site is `https://mysite.com`, and the WP API's prefix is `wp-json`, and you want to checking registration with ID 123 into datetime with ID 456, you would send a POST request to 
 
 ```
-http://mysite.com/wp-json/ee/v4.8.33/registrations/123/toggle_checkin_for_datetime/456
+https://mysite.com/wp-json/ee/v4.8.33/registrations/123/toggle_checkin_for_datetime/456
 ```
 
 ### Parameters
@@ -44,35 +44,35 @@ On success, returns the checkin resource created. Eg
     "_links": {
         "self": [
             {
-                "href": "http://src.wordpress-develop.dev/wp-json/ee/v4.8.33/checkins/37"
+                "href": "https://src.wordpress-develop.dev/wp-json/ee/v4.8.33/checkins/37"
             }
         ],
         "collection": [
             {
-                "href": "http://src.wordpress-develop.dev/wp-json/ee/v4.8.33/checkins"
+                "href": "https://src.wordpress-develop.dev/wp-json/ee/v4.8.33/checkins"
             }
         ],
         "https://api.eventespresso.com/registration": [
             {
-                "href": "http://src.wordpress-develop.dev/wp-json/ee/v4.8.33/checkins/37/registration",
+                "href": "https://src.wordpress-develop.dev/wp-json/ee/v4.8.33/checkins/37/registration",
                 "single": true
             }
         ],
         "https://api.eventespresso.com/datetime": [
             {
-                "href": "http://src.wordpress-develop.dev/wp-json/ee/v4.8.33/checkins/37/datetime",
+                "href": "https://src.wordpress-develop.dev/wp-json/ee/v4.8.33/checkins/37/datetime",
                 "single": true
             }
         ],
         "https://api.eventespresso.com/extra_metas": [
             {
-                "href": "http://src.wordpress-develop.dev/wp-json/ee/v4.8.33/checkins/37/extra_metas",
+                "href": "https://src.wordpress-develop.dev/wp-json/ee/v4.8.33/checkins/37/extra_metas",
                 "single": false
             }
         ],
         "https://api.eventespresso.com/change_logs": [
             {
-                "href": "http://src.wordpress-develop.dev/wp-json/ee/v4.8.33/checkins/37/change_logs",
+                "href": "https://src.wordpress-develop.dev/wp-json/ee/v4.8.33/checkins/37/change_logs",
                 "single": false
             }
         ]
