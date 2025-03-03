@@ -64,7 +64,7 @@ class EE_WP_Post_Status_Field extends EE_Enum_Text_Field
                         isset($status_args['show_in_admin_status_list'])
                         && is_bool($status_args['show_in_admin_status_list'])
                     ) || $status_args['show_in_admin_status_list'],
-                'label_count'               => $status_args['label_count'] ?? '',
+                'label_count'               => $status_args['label_count'] ?? false,
             ];
             register_post_status($status_key, $args);
         }

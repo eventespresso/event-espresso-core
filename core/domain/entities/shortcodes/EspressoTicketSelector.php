@@ -5,6 +5,7 @@ namespace EventEspresso\core\domain\entities\shortcodes;
 use EE_Error;
 use EE_Event;
 use EEM_Event;
+use EEH_Event_View;
 use EventEspresso\core\exceptions\ExceptionStackTraceDisplay;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -77,7 +78,9 @@ class EspressoTicketSelector extends EspressoShortcode
     {
         extract((array) $attributes);
         $event_id = $event_id ?? 0;
-        $event = EEM_Event::instance()->get_one_by_ID($event_id);
+        $event = $event_id ?
+            EEM_Event::instance()->get_one_by_ID($event_id) :
+            EEH_Event_View::get_event();
         if (! $event instanceof EE_Event) {
             return $this->processInvalidEvent($event_id);
         }

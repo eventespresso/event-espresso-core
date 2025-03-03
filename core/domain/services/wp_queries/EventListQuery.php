@@ -69,7 +69,7 @@ class EventListQuery extends WP_Query
                 // set the property value
                 switch ($type) {
                     case 'integer':
-                        $this->{$property} = absint($value);
+                        $this->{$property} = (int) $value;
                         break;
                     case 'boolean':
                         $this->{$property} = filter_var($value, FILTER_VALIDATE_BOOLEAN);
