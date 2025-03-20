@@ -7,6 +7,7 @@ use EE_Error;
 use EventEspresso\core\domain\services\database\DbStatus;
 use EventEspresso\core\domain\services\service_changes\PaymentMethodDeprecations2025;
 use EventEspresso\core\services\loaders\LoaderInterface;
+use EventEspresso\core\services\request\RequestInterface;
 use ReflectionException;
 
 /**
@@ -35,8 +36,12 @@ class ServiceChangesManager
         $this->dependency_map = $dependency_map;
         $this->loader         = $loader;
         if (DbStatus::isOnline()) {
-            $this->registerDependencies();
-            $this->loadServiceChangeNotifications();
+            /** @var RequestInterface $request */
+            $request = $this->loader->getShared(RequestInterface::class);
+            if ($request->isAdmin() && ! $request->isActivation()) {
+                $this->registerDependencies();
+                $this->loadServiceChangeNotifications();
+            }
         }
     }
 

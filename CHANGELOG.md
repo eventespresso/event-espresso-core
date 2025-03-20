@@ -6,7 +6,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Releases
 
+### [5.0.37]
+
+
+#### Fixed
+ - [Hide Final PM Deprecation Notice If Nothing Deactivated (#1761)](https://github.com/eventespresso/cafe/pull/1761)
+ - [Fix Version Parsing in PHP 7.4 (#1762)](https://github.com/eventespresso/cafe/pull/1762)
+
+#### Changed
+ - [Build Machine 5.0.36.p changes (#1747)](https://github.com/eventespresso/cafe/pull/1747)
+
+
+
+
+
+
 ### [5.0.36]
+
 
 #### Fixed
  - [Use correct label_count default for a custom post status (#1738)](https://github.com/eventespresso/cafe/pull/1738)

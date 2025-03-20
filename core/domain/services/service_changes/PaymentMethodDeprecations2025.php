@@ -26,6 +26,8 @@ use ReflectionException;
  */
 class PaymentMethodDeprecations2025
 {
+    public const  DEACTIVATED_PM_OPTION_NAME = 'espresso-pm-deactivations-2025';
+
     public const  PM_DEPRECATION_DATE       = '2025-04-15';
 
     private const NOTIFICATION_DATE_WARNING = '2025-01-15';
@@ -58,6 +60,8 @@ class PaymentMethodDeprecations2025
 
     private ?array $active_deprecated_payment_methods = null;
 
+    private array $deactivated_pms;
+
     private array $deprecated_payment_methods = [
         'aim'                  => 'aim',
         'authorizenet_sim'     => 'authorizenet_sim',
@@ -82,6 +86,7 @@ class PaymentMethodDeprecations2025
         $this->payment_method_model = $payment_method_model;
         $this->deprecation_date     = new DateTime(self::PM_DEPRECATION_DATE);
         $this->now                  = new Datetime('now');
+        $this->deactivated_pms      = get_option(self::DEACTIVATED_PM_OPTION_NAME, []);
         // TODO: remove the following comments before release
         // uncomment next line to trigger warning notice
         // $this->now = new Datetime('2025-02-20'); // Feb 20, 2025
@@ -194,6 +199,8 @@ class PaymentMethodDeprecations2025
                 if ($active_deprecated_pm instanceof EE_Payment_Method) {
                     $active_deprecated_pm->deactivate();
                     unset($this->active_deprecated_payment_methods[ $active_deprecated_pm->slug() ]);
+                    $this->deactivated_pms[ $active_deprecated_pm->slug() ] = $active_deprecated_pm->name();
+                    $active_deprecated_pm->save();
                 }
             }
             $this->maybeDismissNotifications();
@@ -202,6 +209,7 @@ class PaymentMethodDeprecations2025
                 'FHEE__EventEspresso_PaymentMethods_Manager__hidePaymentMethods__pms_can_hide',
                 [$this, 'hideDeprecatedPaymentMethods']
             );
+            update_option(self::DEACTIVATED_PM_OPTION_NAME, $this->deactivated_pms);
         }
     }
 
@@ -271,7 +279,7 @@ class PaymentMethodDeprecations2025
                 return;
             }
         }
-        if ($this->now > new DateTime(self::PM_DEPRECATION_DATE)) {
+        if (! empty($this->deactivated_pms) && $this->now > new DateTime(self::PM_DEPRECATION_DATE)) {
             $this->displayNotification(self::TYPE_FINAL);
         }
     }

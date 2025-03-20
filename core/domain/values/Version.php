@@ -67,6 +67,7 @@ class Version
      */
     public static function fromString(string $version_string): Version
     {
+        $version_string = trim($version_string);
         // compare incoming version string against the lowest possible valid version
         if (version_compare($version_string, '0.0.1.dev.001', '<')) {
             throw new InvalidArgumentException(
@@ -103,15 +104,16 @@ class Version
             ? Version::RELEASE_TYPE_PROD
             : $release;
         // add defaults for missing pieces
-        $version_parts += [0, 0, 0, $release, 0];
+        $version_parts += ['0', '0', '0', "$release", '000'];
         ksort($version_parts, SORT_NUMERIC);
+        $version_parts = array_map('trim', $version_parts);
         // reassign to individual variables
         [$major, $minor, $patch, $release, $build] = $version_parts;
         return new Version(
             (int) $major,
             (int) $minor,
             (int) $patch,
-            $release,
+            (string) $release,
             (int) $build
         );
     }
