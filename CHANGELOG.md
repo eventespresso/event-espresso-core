@@ -6,8 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Releases
 
-### [5.0.37]
+### [5.0.38]
 
+#### Added
+ - [Add support for Stripe partner fees (#1769)](https://github.com/eventespresso/cafe/pull/1769)
+
+
+
+
+
+### [5.0.37]
 
 #### Fixed
  - [Hide Final PM Deprecation Notice If Nothing Deactivated (#1761)](https://github.com/eventespresso/cafe/pull/1761)
@@ -15,7 +23,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Changed
  - [Build Machine 5.0.36.p changes (#1747)](https://github.com/eventespresso/cafe/pull/1747)
-
 
 
 

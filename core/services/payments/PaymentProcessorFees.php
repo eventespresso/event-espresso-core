@@ -50,12 +50,12 @@ class PaymentProcessorFees
         LicenseData::LICENSE_EXPIRED => [
             PaymentProcessorFees::GATEWAY_PAYPAL => 3.00,
             PaymentProcessorFees::GATEWAY_SQUARE => 2.50,
-            PaymentProcessorFees::GATEWAY_STRIPE => 2.50,
+            PaymentProcessorFees::GATEWAY_STRIPE => 3.00,
         ],
         LicenseData::LICENSE_DECAF   => [
             PaymentProcessorFees::GATEWAY_PAYPAL => 3.00,
             PaymentProcessorFees::GATEWAY_SQUARE => 2.50,
-            PaymentProcessorFees::GATEWAY_STRIPE => 2.50,
+            PaymentProcessorFees::GATEWAY_STRIPE => 3.00,
         ],
     ];
 
