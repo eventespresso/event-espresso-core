@@ -67,6 +67,10 @@ class EE_Select_Display_Strategy extends EE_Display_Strategy_Base
         $html = '';
         EEH_HTML::indent(1, 'option');
         foreach ($options as $value => $display_text) {
+            if (! $value && ! $display_text) {
+                $html = "<option></option>";
+                continue;
+            }
             // even if this input uses EE_Text_Normalization if one of the array keys is a numeric string, like "123",
             // PHP will have converted it to a PHP integer (eg 123). So we need to make sure it's a string
             $value    = $this->_input->get_normalization_strategy()->unnormalize_one($value);

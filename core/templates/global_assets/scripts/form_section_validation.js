@@ -1,4 +1,4 @@
-var EEFV;
+let EEFV;
 jQuery(document).ready(function($){
 
 	/**
@@ -152,11 +152,11 @@ jQuery(document).ready(function($){
 					//for each select_reveal input...
 					$.each( form_data.other_data.select_reveal_inputs , function( select_reveal_input_id, select_option_to_section_to_reveal_id ) {
 						//define a callback for revealing/hiding the sections related to this select_reveal input
-						var reveal_now = function( event ) {
-							var current_selection = $('#' + event.currentTarget.id ).val();
+                        const reveal_now = function( event ) {
+                            const current_selection = $('#' + event.currentTarget.id ).val();
 							//show the selected section, hide others
-							for( var value in select_option_to_section_to_reveal_id ) {
-								var section_to_show_or_hide_selector = '#' +  select_option_to_section_to_reveal_id[ value ];
+							for( const value in select_option_to_section_to_reveal_id ) {
+                                const section_to_show_or_hide_selector = '#' +  select_option_to_section_to_reveal_id[ value ];
 								if( value === current_selection ) {
 									$( section_to_show_or_hide_selector ).show();
 								} else {
@@ -194,16 +194,15 @@ jQuery(document).ready(function($){
 			//EEFV.console_log( 'EEFV.setup_validation_rules > form_sections_to_validate', form_sections_to_validate, true );
 			// loop through all form sections
 			$.each( form_sections_to_validate, function( index, form_data ){
-				//EEFV.console_log( 'EEFV.setup_validation_rules > form_sections_to_validate > index', index, true );
-				//EEFV.console_log( 'EEFV.setup_validation_rules > form_sections_to_validate > form_data', form_data, false );
+				// EEFV.console_log( 'EEFV.setup_validation_rules > form_sections_to_validate > index', index, true );
+				// EEFV.console_log( 'EEFV.setup_validation_rules > form_sections_to_validate > form_data', form_data, false );
 				if ( typeof form_data.form_section_id !== 'undefined' && typeof form_data.validation_rules !== 'undefined' ) {
-
 					// grab the actual html form from the DOM
-					var html_form = $( form_data.form_section_id ).closest('form');
+                    const html_form = $( form_data.form_section_id ).closest('form');
 					// IF one exists, that is ...
 					if ( html_form.length ) {
 						//make sure the form tag has an id
-						var form_id = html_form.attr('id');
+                        let form_id = html_form.attr('id');
 						if ( typeof form_id === 'undefined' || form_id === '' ) {
 							form_id = EEFV.generate_random_string(15);
 							html_form.attr( 'id', form_id );
@@ -216,7 +215,7 @@ jQuery(document).ready(function($){
                         // remove the non-js-generated server-side validation errors
                         // because we will allow jquery validate to populate them
                         // need to call validate() before doing anything else, i know, seems counter intuitive...
-                        // but let SPCO set it's own defaults
+                        // but let SPCO set its own defaults
                         EEFV.form_validators[form_id] = html_form.validate();
 						// now add form section's validation rules
 						EEFV.add_rules( form_data.form_section_id, form_data.validation_rules );
@@ -241,13 +240,15 @@ jQuery(document).ready(function($){
 			//console.log( form_data );
 			//now apply those validation rules to each html form, and show the server-side errors properly
 			$.each( form_data, function( input_id, validation_rules ){
-				var form_input = $( input_id );
+                const $form_input = $( input_id );
 				//EEFV.console_log( 'EEFV.apply_rules > input_id', input_id, false );
 				//EEFV.console_log( 'EEFV.apply_rules > validation_rules', validation_rules, false );
 				//alert( 'form_input ID = ' + form_input.attr('id') );
-				if ( typeof form_input !== 'undefined' && form_input.length ) {
-					form_input.rules( 'add', validation_rules );
-				}
+				if ( typeof $form_input !== 'undefined' && $form_input.length ) {
+                    $form_input.rules( 'add', validation_rules );
+				} else {
+                    throw new Error(`The validation target input "${input_id}" does not exist`);
+                }
 			});
 		},
 
@@ -280,7 +281,7 @@ jQuery(document).ready(function($){
 			//console.log( form_data );
 			//now apply those validation rules to each html form, and show the server-side errors properly
 			$.each( form_data, function( input_id ){
-				var form_input = $( input_id );
+                const form_input = $( input_id );
 				if ( typeof form_input !== 'undefined' && form_input.length ) {
 					//alert( 'remove_rules input_id = ' + input_id + '\n' + 'form_input ID = ' + form_input.attr('id') );
 					form_input.rules( 'remove' );
@@ -300,7 +301,7 @@ jQuery(document).ready(function($){
 					if ( this.optional( element )){
 						return true;
 					} else {
-						var RegExp = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
+                        const RegExp = /(ftp|http|https):\/\/(\w+:{0,1}\w*@)?(\S+)(:[0-9]+)?(\/|\/([\w#!:.?+=&%@!\-\/]))?/;
 						return RegExp.test(value);
 					}
 				},
@@ -310,17 +311,17 @@ jQuery(document).ready(function($){
 				"regex",
 				function(value, element, regexp) {
 					//remove the delimiter PHP needed
-//					var reMeta = /(^|[^\\])\/(\w+$){0,1}/;
+//					const reMeta = /(^|[^\\])\/(\w+$){0,1}/;
 //					regexp = new RegExp( regexp.replace(reMeta,'$1') );
 					// after replace it looks like: "hello\/slash\/"
-					var re = new RegExp(regexp);
+                    const re = new RegExp(regexp);
 					return this.optional(element) || re.test(value);
 				},
 				ee_form_section_vars.localized_error_messages.regex
 			);
 
 			if ( typeof EEFV.email_validation_level !== 'undefined' && EEFV.email_validation_level !== '' ) {
-				var regex = /[^\s@]+@[^\s@]+\.[^\s@]+/;
+                let regex = /[^\s@]+@[^\s@]+\.[^\s@]+/;
 				// use international email validation regex ?
 				if ( EEFV.email_validation_level === 'wp_default' ) {
 					// override internal email validator
@@ -339,7 +340,7 @@ jQuery(document).ready(function($){
 			}
 		},
 		/**
-		 * We can't use jquery validate's native resetForm() because jquery-form
+		 * We can't use jQuery validate's native resetForm() because jquery-form
 		 * also defines it and they conflict (ie, we want to call jquery validate's resetForm,
 		 * but we instead get jquery-form's resetForm, which is a totally different method),
 		 * so we're best off just avoiding using resetForm() entirely.
@@ -352,7 +353,7 @@ jQuery(document).ready(function($){
 			form.submitted = {};
 			form.prepareForm();
 			form.hideErrors();
-			var b = form.elements().removeData("previousValue").removeAttr("aria-invalid");
+            const b = form.elements().removeData("previousValue").removeAttr("aria-invalid");
 			form.resetElements(b)
 		},
 
@@ -381,8 +382,8 @@ jQuery(document).ready(function($){
 			}
 
 			// Split out the local and domain parts
-			var parts = $email.split( '@', 2 );
-			var $local = parts[ 0 ], $domain = parts[ 1 ];
+            const parts = $email.split( '@', 2 );
+            const $local = parts[ 0 ], $domain = parts[ 1 ];
 
 			// LOCAL PART
 			// Test for invalid characters
@@ -402,13 +403,13 @@ jQuery(document).ready(function($){
 			}
 
 			// Split the domain into subs
-			var subs = $domain.split( '.' );
+            const subs = $domain.split( '.' );
 
 			// Assume the domain will have at least two subs
 			if ( 2 > subs.length ) {
 				return false;
 			}
-			var i;
+			let i;
 			// Loop through each sub
 			for ( i in subs ) {
 				if ( subs.hasOwnProperty( i ) ) {
@@ -440,7 +441,7 @@ jQuery(document).ready(function($){
 			if ( typeof stringToTrim !== 'string' || typeof regex !== 'string' ) {
 				return '';
 			}
-			var chr = regex.replace( /[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|\:\!\,\=]/g, "\\$&" );
+            const chr = regex.replace( /[\-\[\]\/\{\}\(\)\*\+\?\.\\\^\$\|\:\!\,\=]/g, "\\$&" );
 			return stringToTrim.replace( new RegExp( '/^[' + chr + ']*/' ), '' ).replace(
 				new RegExp( '/[' + chr + ']*$/' ),
 				''
@@ -459,9 +460,9 @@ jQuery(document).ready(function($){
 			if( ! n ) {
 				n = 5;
 			}
-			var text = '';
-			var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-			for( var i=0; i < n; i++ ) {
+			let text = '';
+            const possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+			for( let i=0; i < n; i++ ) {
 				text += possible.charAt(Math.floor(Math.random() * possible.length));
 			}
 			return text;
@@ -503,8 +504,8 @@ jQuery(document).ready(function($){
 		console_log_object: function ( obj_name, obj, depth ) {
 			if ( eei18n.wp_debug ) {
 				depth = typeof depth !== 'undefined' ? depth : 0;
-				var spacer = '';
-				for ( var i = 0; i < depth; i++ ) {
+				let spacer = '';
+				for ( let i = 0; i < depth; i++ ) {
 					spacer = spacer + '. ';
 				}
 				if ( typeof obj === 'object' ) {
@@ -536,6 +537,10 @@ jQuery(document).ready(function($){
 
 	};
 	// end of EEFV object
+
+    // Attach EEFV to the global window object
+    window.EEFV = EEFV;
+
     //always setup default validation stuff
     EEFV.set_validation_defaults();
     //conditionally initialize the form (other code may want to control this though)

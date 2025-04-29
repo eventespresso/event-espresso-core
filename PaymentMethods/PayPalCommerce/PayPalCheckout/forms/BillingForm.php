@@ -595,10 +595,17 @@ class BillingForm extends EE_Billing_Attendee_Info_Form
             'general_pp_error'       => esc_html__('PayPal form threw an error.', 'event_espresso'),
             'hf_render_error'        => esc_html__('Hosted fields could not be rendered!', 'event_espresso'),
             'pm_capture_error'       => esc_html__('Payment could not be captured!', 'event_espresso'),
+            'contact_support_msg'    => sprintf(
+                /* translators: %1$s: organization email, %2$s: the transaction ID */
+                esc_html__('Please contact support (%1$s) for more details on this transaction #%2$s.', 'event_espresso'),
+                EE_Registry::instance()->CFG->organization->get_pretty('email'),
+                $transaction_id
+            ),
             'not_acdc_eligible'      => esc_html__(
                 'This merchant is not eligible for Advanced Card Fields checkout type.',
                 'event_espresso'
             ),
+            'processor_response'     => esc_html__('Processor response: ', 'event_espresso'),
         ];
     }
 }

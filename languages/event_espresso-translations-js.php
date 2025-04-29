@@ -167,8 +167,8 @@ $generated_i18n_strings = array(
 	__( 'Background Color', 'event_espresso' ),
 
 	// Reference: domains/core/admin/blocks/src/event/controls/index.tsx:41
-	// Reference: packages/form-builder/src/FormElement/Tabs/FormElementTabs.tsx:22
-	// Reference: packages/form-builder/src/FormSection/Tabs/FormSectionTabs.tsx:21
+	// Reference: packages/form-builder/src/FormElement/Tabs/FormElementTabs.tsx:23
+	// Reference: packages/form-builder/src/FormSection/Tabs/FormSectionTabs.tsx:22
 	__( 'Settings', 'event_espresso' ),
 
 	// Reference: domains/core/admin/blocks/src/event/controls/index.tsx:45
@@ -552,7 +552,7 @@ $generated_i18n_strings = array(
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:35
 	// Reference: packages/dates/src/components/DateRangePicker/DateRangePickerLegend.tsx:9
-	// Reference: packages/dates/src/components/DateRangePicker/index.tsx:61
+	// Reference: packages/dates/src/components/DateRangePicker/index.tsx:60
 	__( 'start date', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:36
@@ -1222,7 +1222,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	__( 'day in range', 'event_espresso' ),
 
 	// Reference: packages/dates/src/components/DateRangePicker/DateRangePickerLegend.tsx:17
-	// Reference: packages/dates/src/components/DateRangePicker/index.tsx:79
+	// Reference: packages/dates/src/components/DateRangePicker/index.tsx:78
 	__( 'end date', 'event_espresso' ),
 
 	// Reference: packages/dates/src/components/DateTimePicker.tsx:17
@@ -1290,13 +1290,13 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/ee-components/src/bulkEdit/ActionCheckbox.tsx:41
 	__( 'select all entities', 'event_espresso' ),
 
-	// Reference: packages/ee-components/src/bulkEdit/details/BulkEditDetails.tsx:20
+	// Reference: packages/ee-components/src/bulkEdit/details/BulkEditDetails.tsx:21
 	__( 'Note: ', 'event_espresso' ),
 
-	// Reference: packages/ee-components/src/bulkEdit/details/BulkEditDetails.tsx:20
+	// Reference: packages/ee-components/src/bulkEdit/details/BulkEditDetails.tsx:21
 	__( 'any changes will be applied to ALL of the selected entities.', 'event_espresso' ),
 
-	// Reference: packages/ee-components/src/bulkEdit/details/BulkEditDetails.tsx:27
+	// Reference: packages/ee-components/src/bulkEdit/details/BulkEditDetails.tsx:28
 	__( 'Bulk edit details', 'event_espresso' ),
 
 	// Reference: packages/ee-components/src/bulkEdit/details/Submit.tsx:17
@@ -1314,16 +1314,16 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/ee-components/src/filterBar/SortByControl/index.tsx:29
 	__( 'Set Custom Tickets Order - this is how tickets are ordered on the frontend', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormElement/FormElementToolbar.tsx:32
+	// Reference: packages/form-builder/src/FormElement/FormElementToolbar.tsx:33
 	__( 'delete form element', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormElement/FormElementToolbar.tsx:49
+	// Reference: packages/form-builder/src/FormElement/FormElementToolbar.tsx:50
 	__( 'form element settings', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormElement/FormElementToolbar.tsx:59
+	// Reference: packages/form-builder/src/FormElement/FormElementToolbar.tsx:60
 	__( 'copy form element', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormElement/FormElementToolbar.tsx:69
+	// Reference: packages/form-builder/src/FormElement/FormElementToolbar.tsx:70
 	__( 'click, hold, and drag to reorder form element', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/FormElement/Tabs/FieldOption.tsx:20
@@ -1347,11 +1347,11 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/form-builder/src/FormElement/Tabs/FieldOptions.tsx:96
 	__( 'add new option', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormElement/Tabs/FormElementTabs.tsx:26
-	// Reference: packages/form-builder/src/FormSection/Tabs/FormSectionTabs.tsx:25
+	// Reference: packages/form-builder/src/FormElement/Tabs/FormElementTabs.tsx:27
+	// Reference: packages/form-builder/src/FormSection/Tabs/FormSectionTabs.tsx:26
 	__( 'Styles', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormElement/Tabs/FormElementTabs.tsx:30
+	// Reference: packages/form-builder/src/FormElement/Tabs/FormElementTabs.tsx:31
 	__( 'Validation', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/FormElement/Tabs/InputType.tsx:18
@@ -1460,19 +1460,19 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/form-builder/src/FormSection/AddFormElementPopover.tsx:92
 	__( 'load existing form section', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormSection/FormSectionToolbar.tsx:32
+	// Reference: packages/form-builder/src/FormSection/FormSectionToolbar.tsx:33
 	__( 'delete form section', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormSection/FormSectionToolbar.tsx:47
+	// Reference: packages/form-builder/src/FormSection/FormSectionToolbar.tsx:48
 	__( 'form section settings', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormSection/FormSectionToolbar.tsx:57
+	// Reference: packages/form-builder/src/FormSection/FormSectionToolbar.tsx:58
 	__( 'copy form section', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormSection/FormSectionToolbar.tsx:74
+	// Reference: packages/form-builder/src/FormSection/FormSectionToolbar.tsx:75
 	__( 'click, hold, and drag to reorder form section', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormSection/FormSections.tsx:26
+	// Reference: packages/form-builder/src/FormSection/FormSections.tsx:27
 	__( 'Add Form Section', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/FormSection/SaveSection.tsx:47
@@ -1484,13 +1484,13 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/form-builder/src/FormSection/SaveSection.tsx:55
 	__( 'default', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormSection/SaveSection.tsx:58
+	// Reference: packages/form-builder/src/FormSection/SaveSection.tsx:60
 	__( ' a copy of this form section will be automatically added to ALL new events', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormSection/SaveSection.tsx:61
+	// Reference: packages/form-builder/src/FormSection/SaveSection.tsx:64
 	__( 'shared', 'event_espresso' ),
 
-	// Reference: packages/form-builder/src/FormSection/SaveSection.tsx:64
+	// Reference: packages/form-builder/src/FormSection/SaveSection.tsx:67
 	__( 'a copy of this form section will be saved for use in other events but not loaded by default', 'event_espresso' ),
 
 	// Reference: packages/form-builder/src/FormSection/Tabs/Settings.tsx:27
@@ -1789,7 +1789,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/helpers/src/tickets/getStatusTextLabel.ts:23
 	__( 'on sale', 'event_espresso' ),
 
-	// Reference: packages/helpers/src/tickets/ticketVisibilityOptions.ts:6
+	// Reference: packages/helpers/src/tickets/ticketVisibilityOptions.ts:7
 	__( 'Where the ticket can be viewed throughout the UI. ', 'event_espresso' ),
 
 	// Reference: packages/predicates/src/registration/statusOptions.ts:16

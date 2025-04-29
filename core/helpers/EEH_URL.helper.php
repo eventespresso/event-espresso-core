@@ -94,8 +94,8 @@ class EEH_URL
             )
         );
         return ! $results instanceof WP_Error
-               && isset($results['response']['code'])
-               && $results['response']['code'] == '200';
+            && isset($results['response']['code'])
+            && $results['response']['code'] == '200';
     }
 
 
@@ -118,16 +118,16 @@ class EEH_URL
         // HTTP or HTTPS ?
         $scheme = isset($url_bits['scheme']) ? $url_bits['scheme'] . '://' : 'https://';
         // domain
-        $host = isset($url_bits['host']) ? $url_bits['host'] : '';
+        $host = $url_bits['host'] ?? '';
         // if only the base URL is requested, then return that now
         if ($base_url_only) {
             return $scheme . $host;
         }
         $port = isset($url_bits['port']) ? ':' . $url_bits['port'] : '';
-        $user = isset($url_bits['user']) ? $url_bits['user'] : '';
+        $user = $url_bits['user'] ?? '';
         $pass = isset($url_bits['pass']) ? ':' . $url_bits['pass'] : '';
         $pass = ($user || $pass) ? $pass . '@' : '';
-        $path = isset($url_bits['path']) ? $url_bits['path'] : '';
+        $path = $url_bits['path'] ?? '';
         // if the query string is not required, then return what we have so far
         if ($remove_query) {
             return $scheme . $user . $pass . $host . $port . $path;
@@ -152,7 +152,7 @@ class EEH_URL
         // decode, then break apart incoming URL
         $url_bits = parse_url(html_entity_decode($url));
         // grab query string from URL
-        $query = isset($url_bits['query']) ? $url_bits['query'] : '';
+        $query = $url_bits['query'] ?? '';
         // if we don't want the query string formatted into an array of key => value pairs, then just return it as is
         if (! $as_array) {
             return $query;
@@ -169,8 +169,10 @@ class EEH_URL
         foreach ($query as $query_args) {
             // break apart the key value pairs
             $query_args = explode('=', $query_args);
-            // and add to our results array
-            $query_params[ $query_args[0] ] = $query_args[1];
+            if ($query_args) {
+                // and add to our results array
+                $query_params[ $query_args[0] ] = $query_args[1];
+            }
         }
         return $query_params;
     }
@@ -301,11 +303,11 @@ class EEH_URL
      * @return RequestInterface
      * @since   4.10.14.p
      */
-    protected static function getRequest()
+    protected static function getRequest(): RequestInterface
     {
         static $request;
         if (! $request instanceof RequestInterface) {
-            $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
+            $request = LoaderFactory::getShared(RequestInterface::class);
         }
         return $request;
     }

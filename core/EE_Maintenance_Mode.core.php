@@ -368,10 +368,10 @@ class EE_Maintenance_Mode implements ResettableInterface
      * @param string $the_content
      * @return string
      */
-    public function the_content(string $the_content): string
+    public function the_content(?string $the_content): ?string
     {
         // check if M-mode is engaged and for EE shortcode
-        if ($this->admin_status && strpos($the_content, '[ESPRESSO_') !== false) {
+        if ($this->admin_status && strpos((string)$the_content, '[ESPRESSO_') !== false) {
             // this can eventually be moved to a template, or edited via admin. But for now...
             $the_content = sprintf(
                 esc_html__(

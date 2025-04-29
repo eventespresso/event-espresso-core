@@ -179,12 +179,22 @@ class EE_Attendee_Shortcodes extends EE_Shortcodes
         if ($this->_data instanceof EE_Registration) {
             return $this->_data;
         }
+        // look for registration in _data
         if ($this->_data instanceof EE_Messages_Addressee) {
+            if ($this->_data->reg_obj instanceof EE_Registration) {
+                return $this->_data->reg_obj;
+            }
             if ($this->_data->primary_reg_obj instanceof EE_Registration) {
                 return $this->_data->primary_reg_obj;
             }
-            if ($this->_data->reg_obj instanceof EE_Registration) {
-                return $this->_data->reg_obj;
+        }
+        // look for registration in _extra
+        if ($this->_extra instanceof EE_Messages_Addressee) {
+            if ($this->_extra->reg_obj instanceof EE_Registration) {
+                return $this->_extra->reg_obj;
+            }
+            if ($this->_extra->primary_reg_obj instanceof EE_Registration) {
+                return $this->_extra->primary_reg_obj;
             }
         }
         // let's attempt to get the txn_id for the error message.

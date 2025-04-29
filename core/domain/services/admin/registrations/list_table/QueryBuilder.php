@@ -347,6 +347,7 @@ class QueryBuilder
                 'Attendee.ATT_address'                    => ['LIKE', $search_string],
                 'Attendee.ATT_address2'                   => ['LIKE', $search_string],
                 'Attendee.ATT_city'                       => ['LIKE', $search_string],
+                'REG_ID'                                  => ['LIKE', $search_string],
                 'REG_final_price'                         => ['LIKE', $search_string],
                 'REG_code'                                => ['LIKE', $search_string],
                 'REG_count'                               => ['LIKE', $search_string],

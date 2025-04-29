@@ -58,7 +58,7 @@ class PayPalLogger
      * @param string                 $error_message
      * @param array                  $data
      * @param EE_Payment_Method|null $paypal_pm
-     * @param mixed             $object_logged
+     * @param mixed                  $object_logged
      * @param bool                   $popup_log
      * @return bool
      */
@@ -81,7 +81,7 @@ class PayPalLogger
             }
             $paypal_gateway = $paypal_pm->type_obj()->get_gateway();
             if ($paypal_gateway instanceof EE_Gateway) {
-                $paypal_gateway->log([$default_msg => $data], $object_logged);
+                $paypal_gateway->log([$default_msg, $data], $object_logged);
             }
             if ($popup_log) {
                 PayPalLogger::logInWindow(json_encode($data));

@@ -6,6 +6,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Releases
 
+### [5.0.39]
+
+#### Added
+ - [Add REG_ID Field to Reg Admin List Table Search Conditions (#1635)](https://github.com/eventespresso/cafe/pull/1635)
+
+#### Fixed
+ - [Prevent fatal when other plugins set the_content to null (#1778)](https://github.com/eventespresso/cafe/pull/1778)
+ - [Fix State Select Validation (#1770)](https://github.com/eventespresso/cafe/pull/1770)
+ - [Fix Empty Option in Select Inputs (#1786)](https://github.com/eventespresso/cafe/pull/1786)
+ - [Attach JS Objects to Global Window (#1791)](https://github.com/eventespresso/cafe/pull/1791)
+ - [Check for Query Params Before Access (#1720)](https://github.com/eventespresso/cafe/pull/1720)
+ - [Use a simple PPC order if a mistmatch error occurs  (#1797)](https://github.com/eventespresso/cafe/pull/1797)
+ - [Fix Admin Only option not saving when adding/editing questions (#1812)](https://github.com/eventespresso/cafe/pull/1812)
+ - [Fix EE_Attende_Shortcodes parser property (#1819)](https://github.com/eventespresso/cafe/pull/1819)
+
+#### Changed
+ - [BulidMachine 5.0.38.p changes](https://github.com/eventespresso/cafe/pull/1773)
+ - [Mod/Add or Update readme Files (#1748)](https://github.com/eventespresso/cafe/pull/1748)
+ - [PPC. Better error messages (#1777)](https://github.com/eventespresso/cafe/pull/1777)
+ - [Fixed Backspace in Date Input Crashes Calendar (Barista#1367) #1792](https://github.com/eventespresso/cafe/pull/1792)
+
+
 ### [5.0.38]
 
 #### Added
@@ -15,7 +37,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
+
 ### [5.0.37]
+
 
 #### Fixed
  - [Hide Final PM Deprecation Notice If Nothing Deactivated (#1761)](https://github.com/eventespresso/cafe/pull/1761)
@@ -23,6 +47,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Changed
  - [Build Machine 5.0.36.p changes (#1747)](https://github.com/eventespresso/cafe/pull/1747)
+
 
 
 

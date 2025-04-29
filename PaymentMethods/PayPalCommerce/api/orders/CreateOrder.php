@@ -120,6 +120,15 @@ class CreateOrder extends OrdersApi
         $order_parameters = $this->getParameters();
         // Create Order request.
         $create_response = $this->api->sendRequest($order_parameters, $this->request_url);
+        // Check for MISMATCH errors.
+        if ($this->isMismatchError($create_response)) {
+            // Mismatch, fix items.
+            $order_parameters['purchase_units'][0]['items'] = $this->getSimplifiedItems();
+            // Add simplified breakdown.
+            $order_parameters['purchase_units'][0]['amount']['breakdown'] = $this->getSimplifiedAmountBreakdown();
+            // Retry Order request.
+            $create_response = $this->api->sendRequest($order_parameters, $this->request_url);
+        }
         return $this->validateOrder($create_response, $order_parameters);
     }
 
@@ -322,10 +331,100 @@ class CreateOrder extends OrdersApi
                 error_log("PayPalLogger Error: $message: " . json_encode($response));
             }
             return [
-                'error'   => $response['error'] ?? 'missing_order',
-                'message' => $response['message'] ?? $message,
+                'error'    => $response['error'] ?? 'missing_order',
+                'message'  => $response['message'] ?? $message,
+                'response' => $response,
             ];
         }
         return $response;
+    }
+
+
+    /**
+     * Check if PayPals response contains 'MISMATCH' errors.
+     *
+     * @return bool
+     */
+    public function isMismatchError($response): bool
+    {
+        if (! isset($response['details']) || ! is_array($response['details'])) {
+            return false;
+        }
+
+        foreach($response['details'] as $detail) {
+            if (! empty($detail['issue'])) {
+                if (
+                    strtoupper($detail['issue']) === 'ITEM_TOTAL_MISMATCH'
+                    || strtoupper($detail['issue']) === 'AMOUNT_MISMATCH'
+            ) {
+                    PayPalLogger::errorLog(
+                        esc_html__('Mistmatch Error:', 'event_espresso'),
+                        [$this->request_url, $response],
+                        $this->transaction->payment_method(),
+                        false,
+                        $this->transaction
+                    );
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+
+    /**
+     * Itemize the simplified payment breakdown list.
+     *
+     * @return array
+     */
+    protected function getSimplifiedAmountBreakdown(): array
+    {
+        $tax_total = $this->transaction->tax_total();
+        $breakdown['item_total'] = [
+            'currency_code' => $this->currency_code,
+            'value'         => (string) CurrencyManager::normalizeValue($this->transaction->remaining() - $tax_total)
+        ];
+        if ($tax_total > 0) {
+            $breakdown['tax_total'] = [
+                'currency_code' => $this->currency_code,
+                'value'         => (string) CurrencyManager::normalizeValue($tax_total)
+            ];
+        }
+        return $breakdown;
+    }
+
+
+    /**
+     * Generate single line item for full order.
+     *
+     * @return array
+     */
+    protected function getSimplifiedItems(): array
+    {
+        // Simplified single line item.
+        $line_items         = [];
+        $primary_registrant = $this->transaction->primary_registration();
+        $event_obj          = $primary_registrant->event_obj();
+        $name               = sprintf(
+            esc_html__('Event Registrations from %1$s', "event_espresso"),
+            wp_specialchars_decode(get_bloginfo(), ENT_QUOTES),
+        );
+        $description        = sprintf(
+            esc_html__('Event Registrations from %1$s for %2$s', "event_espresso"),
+            wp_specialchars_decode(get_bloginfo(), ENT_QUOTES),
+            $event_obj instanceof EE_Event ? $event_obj->name() : esc_html__('Event', 'event_espresso')
+        );
+
+        $line_items[]   = [
+            'name'        => substr(wp_strip_all_tags($name), 0, 126),
+            'quantity'    => 1,
+            'description' => substr(wp_strip_all_tags($description), 0, 2047),
+            'unit_amount' => [
+                'currency_code' => $this->currency_code,
+                'value'         => (string) CurrencyManager::normalizeValue($this->transaction->remaining() - $this->transaction->tax_total()),
+            ],
+            'category'    => 'DIGITAL_GOODS',
+        ];
+        return $line_items;
     }
 }

@@ -91,8 +91,9 @@ class OrderDetails extends OrdersApi
                 error_log("PayPalLogger Error: $message: " . json_encode($response));
             }
             return [
-                'error'   => $response['error'] ?? 'missing_order_info',
-                'message' => $response['message'] ?? $message,
+                'error'    => $response['error'] ?? 'missing_order_info',
+                'message'  => $response['message'] ?? $message,
+                'response' => $response,
             ];
         }
         return $response;

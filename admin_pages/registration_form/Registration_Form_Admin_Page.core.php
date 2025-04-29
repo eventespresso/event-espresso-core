@@ -405,9 +405,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
                     break;
 
                 case 'QST_admin_only':
-                    if (! $QST_admin_only) {
-                        $column_values[ $fieldName ] = false;
-                    }
+                    $column_values[ $fieldName ] = $QST_admin_only;
                     break;
 
                 case 'QST_max':

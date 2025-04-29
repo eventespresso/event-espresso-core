@@ -79,17 +79,18 @@ class EEG_PayPalCheckout extends EE_Onsite_Gateway
         // Capture the order.
         $capture_status = EED_PayPalCommerce::captureOrder($transaction, $payment_method, $order_id);
         // Check the order status.
-        $order_status   = $this->isOrderCompleted($order_id, $transaction, $payment_method);
+        $order_details  = EED_PayPalCommerce::getOrderDetails($order_id, $transaction, $payment_method);
+        $order_status   = $this->isOrderCompleted($order_details);
         if (! $order_status['completed']) {
             return EEG_PayPalCheckout::updatePaymentStatus(
                 $payment,
                 EEM_Payment::status_id_declined,
-                $order_status,
+                $order_details,
                 $order_status['message'] ?? ''
             );
         }
         // Looks like all is good. Mark payment as a success.
-        $this->saveBillingDetails($payment, $transaction, $order_status['details'], $billing_info);
+        $this->saveBillingDetails($payment, $transaction, $order_details, $billing_info);
         return EEG_PayPalCheckout::updatePaymentStatus($payment, EEM_Payment::status_id_approved, $capture_status);
     }
 
@@ -97,20 +98,11 @@ class EEG_PayPalCheckout extends EE_Onsite_Gateway
     /**
      * Validate the Order.
      *
-     * @param string            $order_id
-     * @param EE_Transaction    $transaction
-     * @param EE_Payment_Method $payment_method
+     * @param array|null $order_details
      * @return array ['completed' => {boolean}, 'message' => {string}]
-     * @throws EE_Error
-     * @throws ReflectionException
      */
-    public static function isOrderCompleted(
-        string $order_id,
-        EE_Transaction $transaction,
-        EE_Payment_Method $payment_method
-    ): array
+    public static function isOrderCompleted(?array $order_details): array
     {
-        $order_details = EED_PayPalCommerce::getOrderDetails($order_id, $transaction, $payment_method);
         $conclusion = [
             'completed' => false,
             'details'   => $order_details,
@@ -127,19 +119,14 @@ class EEG_PayPalCheckout extends EE_Onsite_Gateway
                 'There was an error with this payment. The status of the Order could not be determined.',
                 'event_espresso'
             );
+        } elseif ($order_details['purchase_units'][0]['payments']['captures'][0]['status'] !== 'COMPLETED') {
+            $conclusion['message'] = esc_html__(
+                'This payment was declined or failed validation. Please check the payment and billing information you provided.',
+                'event_espresso'
+            );
         } elseif ($order_details['status'] !== 'COMPLETED') {
             $conclusion['message'] = esc_html__(
                 'There was an error with this payment. Order was not approved.',
-                'event_espresso'
-            );
-        } elseif (empty($order_details['purchase_units'][0]['payments']['captures'][0]['status'])) {
-            $conclusion['message'] = esc_html__(
-                'There was an error with this payment. The status of the Payment could not be determined.',
-                'event_espresso'
-            );
-        } elseif ($order_details['purchase_units'][0]['payments']['captures'][0]['status'] !== 'COMPLETED') {
-            $conclusion['message'] = esc_html__(
-                'This payment was declined or failed validation. Please check the billing information you provided.',
                 'event_espresso'
             );
         } else {
@@ -184,20 +171,88 @@ class EEG_PayPalCheckout extends EE_Onsite_Gateway
         } else {
             $default_message = sprintf(
                 esc_html__(
-                    'Your payment could not be processed successfully due to a technical issue.%1$sPlease try again or contact%2$s for assistance.',
+                    'Your payment could not be processed successfully due to an error.%1$sPlease try again or contact %2$s for assistance.',
                     'event_espresso'
                 ),
                 '<br/>',
                 EE_Registry::instance()->CFG->organization->get_pretty('email')
             );
         }
-        $log_message = $update_message ?: $default_message;
-        PayPalLogger::errorLog($log_message, $response_data, $paypal_pm, false, $payment->transaction());
+        // Try getting a better error message from the response.
+        $response_message = EEG_PayPalCheckout::getResponseMessage($response_data, $update_message ?: $default_message);
+        PayPalLogger::errorLog($response_message, $response_data, $paypal_pm, false, $payment->transaction());
         $payment->set_status($status);
-        $payment->set_details($log_message);
-        $payment->set_gateway_response($log_message);
+        $payment->set_details($response_message);
+        $payment->set_gateway_response($response_message);
         $payment->save();
         return $payment;
+    }
+
+
+    /**
+     * Validate the payment.
+     *
+     * @param array|string $response_data
+     * @param string|null  $message
+     * @return string
+     */
+    public static function getResponseMessage($response_data, ?string $message): string
+    {
+        $new_message = $message;
+        if (is_string($response_data)) {
+            // Try to decode.
+            $decoded_response = json_decode($response_data, true);
+            if ($decoded_response && is_array($decoded_response)) {
+                $response_data = $decoded_response;
+            }
+        }
+        if (is_array($response_data)) {
+            // Do we have a capture status ?
+            if (! empty($response_data['purchase_units']['0']['payments']['captures'][0]['status'])) {
+                $new_message .= sprintf(
+                    /* translators: 1: <br/><br/>, 2: payment capture status */
+                    esc_html__('%1$sPayment capture status: %2$s', 'event_espresso'),
+                    '<br/><br/>',
+                    $response_data['purchase_units']['0']['payments']['captures'][0]['status']
+                );
+            }
+            if (
+                ! empty($response_data['purchase_units']['0']['payments']['captures'][0]['processor_response'])
+                && is_array($response_data['purchase_units']['0']['payments']['captures'][0]['processor_response'])
+            ) {
+                $new_message .= sprintf(
+                    /* translators: 1: <br/><br/> */
+                    esc_html__('%1$sProcessor responded: ', 'event_espresso'),
+                    '<br/><br/>'
+                );
+                $processor_response = $response_data['purchase_units']['0']['payments']['captures'][0]['processor_response'];
+                $iteration = 1;
+                $foreach_count = count($processor_response);
+                foreach ($processor_response as $key => $value) {
+                    $new_message .= " $key: $value";
+                    $new_message .= $iteration < $foreach_count ? ', ' : '.';
+                    $iteration++;
+                }
+            }
+            if (
+                ! empty($response_data['details'][0]['description'])
+                && ! empty($response_data['details'][0]['issue'])
+            ) {
+                $iteration = 1;
+                $new_message .= sprintf(
+                    /* translators: 1: <br/><br/> */
+                    esc_html__('%1$sError details: ', 'event_espresso'),
+                    '<br/><br/>'
+                );
+                $foreach_count = count($response_data['details'][0]);
+                foreach ($response_data['details'][0] as $key => $value) {
+                    $new_message .= "$key: $value";
+                    $new_message .= $iteration < $foreach_count ? ', ' : '';
+                    $iteration++;
+                }
+            }
+        }
+        return $new_message;
     }
 
 

@@ -46,6 +46,8 @@ jQuery(document).ready(function ($) {
      * 	hf_render_error: string,
      * 	pm_capture_error: string,
      * 	not_acdc_eligible: string,
+     * 	contact_support_msg: string,
+     * 	processor_response: string,
      * }}
      */
     function EeaPayPalCheckout(pm_slug) {
@@ -103,7 +105,7 @@ jQuery(document).ready(function ($) {
          * @return boolean
          */
         this.initializeObjects = function () {
-            this.pp_order_id = this.pp_order_status = '';
+            this.pp_order_id = this.pp_order_status = this.thrown_messages = '';
             this.pp_order_nonce = eeaPPCommerceParameters.pp_order_nonce;
             this.button_container_id = '#eep-' + pm_slug + '-payment-buttons';
             this.payment_method_selector = $('#ee-available-payment-method-inputs');
@@ -512,7 +514,7 @@ jQuery(document).ready(function ($) {
                     this_pm.disableSubmitButtons();
                 }
             });
-            return response_data
+            return response_data;
         };
 
 
@@ -548,17 +550,28 @@ jQuery(document).ready(function ($) {
          */
         this.throwError = function (message, details, pm_slug, log_error, display_error) {
             let error_message = eeaPPCommerceParameters.error_response;
+            const this_pm = this;
             if (message) {
                 error_message = error_message + ': ' + message;
             }
+            if (typeof details.message !== 'undefined') {
+                error_message = error_message + ' ' + eeaPPCommerceParameters.processor_response + details.message;
+            }
+            // Also account for already thrown messages in this instance, in case there are more that are thrown.
+            error_message = error_message + '<br/><br/>' + this_pm.thrown_messages;
+            this_pm.thrown_messages = error_message;
+            // But clear them after 15 seconds.
+            setTimeout(function() {
+                this_pm.thrown_messages = '';
+            }, 15000);
             console.error(error_message, details);
             // front-end message
             if (display_error !== false) {
-                this.displayError(error_message);
+                this.displayError(error_message + ' ' + eeaPPCommerceParameters.contact_support_msg);
             }
             // add to PM logs
             if (typeof log_error === 'undefined' || log_error === true) {
-                if (!details) {
+                if (! details) {
                     details = error_message;
                 }
                 this.logError(details, pm_slug);

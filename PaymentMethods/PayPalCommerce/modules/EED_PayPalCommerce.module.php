@@ -162,8 +162,9 @@ class EED_PayPalCommerce extends EED_Module
                 );
             }
             return [
-                'error'   => 'CREATE_ORDER_API_RESPONSE_ERROR',
-                'message' => $order['message'],
+                'error'    => 'CREATE_ORDER_API_RESPONSE_ERROR',
+                'message'  => EEG_PayPalCheckout::getResponseMessage($order['response'], $order['message']),
+                'response' => $order['message'],
             ];
         }
         return [

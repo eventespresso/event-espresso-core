@@ -110,9 +110,10 @@ class CaptureOrder extends OrdersApi
                 error_log("PayPalLogger Error: $message: " . json_encode($response));
             }
             return [
-                'error'   => $response['error'] ?? 'missing_order',
-                'message' => $response['message'] ?? $message,
-                'name'    => $response['name'] ?? 'UNKNOWN_ERROR',
+                'error'    => $response['error'] ?? 'missing_order',
+                'message'  => $response['message'] ?? $message,
+                'name'     => $response['name'] ?? 'UNKNOWN_ERROR',
+                'response' => $response,
             ];
         }
         return $response;

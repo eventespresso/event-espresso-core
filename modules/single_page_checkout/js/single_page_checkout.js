@@ -1,4 +1,4 @@
-var SPCO;
+let SPCO;
 jQuery(document).ready( function($) {
 
 	/**
@@ -132,7 +132,7 @@ jQuery(document).ready( function($) {
 		allow_submit_reg_form : true,
 		// override SPCO messages
 		override_messages : false,
-		// whether or not to proceed to the next step
+		// whether to proceed to the next step
 		get_next_step : true,
 		// whether form has been validated successfully
 		form_is_valid : false,
@@ -147,10 +147,10 @@ jQuery(document).ready( function($) {
 		notice_fadeout_attention : 18000,
 		notice_fadeout_errors : 12000,
 		notice_fadeout_min : 4000,
-        // array of inputs representing the primary registrant questions
-        primary_reg_questions :  [],
-        // tracking whether the  primary registrant questions have been validated or not
-        primary_registrant_questions_validated :  false,
+		// array of inputs representing the primary registrant questions
+		primary_reg_questions :  [],
+		// tracking whether the  primary registrant questions have been validated or not
+		primary_registrant_questions_validated :  false,
 
 
 
@@ -181,7 +181,6 @@ jQuery(document).ready( function($) {
 				SPCO.auto_submit_gateway_form();
 				SPCO.start_registration_time_limit_countdown();
 			}
-			console.log('%c eei18n', 'color: Cyan;', eei18n);
 		},
 
 
@@ -203,22 +202,22 @@ jQuery(document).ready( function($) {
 		 */
 		set_validation_defaults : function() {
 
-            // jQuery validation object
+			// jQuery validation object
 			$.validator.setDefaults({
 
-                debug: false,
+				debug: false,
 				ignore: '.ee-do-not-validate',
 				validClass: '',
 				errorClass: 'ee-required-text',
 
 				errorPlacement: function( error, element ) {
-                    error.appendTo(element.closest('div'));
+					error.appendTo(element.closest('div'));
 					SPCO.invalid_input_errors.push( error.text() );
 					SPCO.track_validation_error( element.attr('id') );
 				},
 
 				highlight: function( element ) {
-                    if ( ! $(element ).hasClass('spco-next-step-btn') ) {
+					if ( ! $(element ).hasClass('spco-next-step-btn') ) {
 						$( element ).addClass( 'ee-needs-value' ).removeClass( 'ee-has-value' );
 					}
 				},
@@ -257,19 +256,19 @@ jQuery(document).ready( function($) {
 		 * @param {string} invalid_input_id
 		 */
 		track_validation_error : function( invalid_input_id ) {
-            // convert to jQuery object
-			var $invalid_input = $( '#' + invalid_input_id );
-			var is_multi = $invalid_input.is( ':radio' )
+			// convert to jQuery object
+			const $invalid_input = $( '#' + invalid_input_id );
+			const is_multi = $invalid_input.is( ':radio' )
 				|| $invalid_input.is(':checkbox' );
-			var invalid_input_label_id = is_multi
+			const invalid_input_label_id = is_multi
 				? $invalid_input.data('question_label')
 				: invalid_input_id + '-lbl';
-			var $invalid_input_label = $( '#' + invalid_input_label_id );
+			const $invalid_input_label = $( '#' + invalid_input_label_id );
 			SPCO.invalid_input_to_scroll_to = SPCO.invalid_input_to_scroll_to === null
-                ? $invalid_input
-                : SPCO.invalid_input_to_scroll_to;
-            // grab input label && remove "required" asterisk
-			var input_label_text = $invalid_input_label.text().replace( '*', '' );
+				? $invalid_input
+				: SPCO.invalid_input_to_scroll_to;
+			// grab input label && remove "required" asterisk
+			const input_label_text = $invalid_input_label.text().replace( '*', '' ).trim();
 			// add to invalid input array
 			SPCO.require_values.push( input_label_text );
 			// add to list of validation errors
@@ -288,12 +287,12 @@ jQuery(document).ready( function($) {
 		 *	@function
 		 */
 		display_validation_errors : function() {
-            //remove duplicates
+			//remove duplicates
 			SPCO.require_values = _.unique( SPCO.require_values );
 			// no empty or invalid fields that need values ?
 			if ( SPCO.require_values.length > 0 ) {
 				// array to hold our final processed error messages
-				var error_msgs = [];
+				const error_msgs = [];
 				// add required questions call to action
 				error_msgs.push( eei18n.answer_required_questions );
 				//remove duplicates
@@ -310,12 +309,12 @@ jQuery(document).ready( function($) {
 					}
 				});
 				// concatenate and tag error messages
-				var error_msg = SPCO.tag_message_for_debugging( 'display_validation_errors', error_msgs.join( '<br/>' ));
+				const error_msg = SPCO.tag_message_for_debugging( 'display_validation_errors', error_msgs.join( '<br/>' ));
 				// scroll to top of form or to the first invalid input?
 				SPCO.invalid_input_to_scroll_to = SPCO.invalid_input_to_scroll_to === null
-                    ? SPCO.main_container
-                    : SPCO.invalid_input_to_scroll_to;
-                // display error_msg
+					? SPCO.main_container
+					: SPCO.invalid_input_to_scroll_to;
+				// display error_msg
 				SPCO.scroll_to_top_and_display_messages( SPCO.invalid_input_to_scroll_to, SPCO.generate_message_object( '', error_msg, '' ), true );
 			}
 		},
@@ -355,7 +354,7 @@ jQuery(document).ready( function($) {
 		*	if the Copy All option is checked off, trigger click event on all checkboxes
 		*/
 		set_listener_for_copy_all_attendee_info_checkbox : function() {
-			var spco_copy_all_attendee_chk = $('#spco-copy-all-attendee-chk');
+			const spco_copy_all_attendee_chk = $('#spco-copy-all-attendee-chk');
 			$( spco_copy_all_attendee_chk ).on( 'click', function() {
 				if ( $(this).prop('checked')) {
 					SPCO.reset_validation_vars();
@@ -373,8 +372,8 @@ jQuery(document).ready( function($) {
 						});
 						SPCO.display_messages( SPCO.generate_message_object( eei18n.attendee_info_copied, '', '' ), true );
 					}
-                    SPCO.primary_registrant_questions_validated = false;
-                }
+					SPCO.primary_registrant_questions_validated = false;
+				}
 			});
 		},
 
@@ -384,9 +383,9 @@ jQuery(document).ready( function($) {
 		 * @function
 		 */
 		validate_primary_registrant_questions : function() {
-		    if (SPCO.primary_registrant_questions_validated){
-		        return SPCO.primary_reg_questions;
-            }
+			if (SPCO.primary_registrant_questions_validated){
+				return SPCO.primary_reg_questions;
+			}
 			// get all form inputs for the primary attendee
 			SPCO.primary_reg_questions = SPCO.get_primary_reg_questions();
 			$(SPCO.primary_reg_questions).each( function() {
@@ -394,7 +393,7 @@ jQuery(document).ready( function($) {
 					SPCO.track_validation_error( $(this ).attr('id') );
 				}
 			});
-            SPCO.primary_registrant_questions_validated = true;
+			SPCO.primary_registrant_questions_validated = true;
 			return SPCO.primary_reg_questions;
 		},
 
@@ -406,7 +405,7 @@ jQuery(document).ready( function($) {
 		 */
 		set_listener_for_individual_copy_attendee_checkboxes : function() {
 			$('#spco-copy-attendee-dv').on( 'click', '.spco-copy-attendee-chk', function() {
-                var primary_reg_questions = SPCO.validate_primary_registrant_questions();
+				const primary_reg_questions = SPCO.validate_primary_registrant_questions();
 				SPCO.copy_primary_registrant_information( $(this), primary_reg_questions );
 			});
 		},
@@ -419,24 +418,16 @@ jQuery(document).ready( function($) {
 		 */
 		set_listener_for_process_next_reg_step_button : function() {
 			SPCO.main_container.on( 'click', '.spco-next-step-btn', function( e ) {
-                // console_log('**', 'SPCO spco-next-step-btn  >CLICK <  **', true);
+				// console_log('**', 'SPCO spco-next-step-btn  >CLICK <  **', true);
 				SPCO.current_form_to_validate = $(this).parents('form:first');
 				SPCO.form_is_valid = SPCO.current_form_to_validate.valid();
 				SPCO.main_container.trigger( 'process_next_step_button_click', [ $( this ) ] );
 				if ( ! SPCO.form_is_valid ){
-                    console.log(
-                        "%cFORM IS INVALID ",
-                        "color: Red; font-size: 14px;",
-                        SPCO.require_values,
-                    );
+					console.log( "%cINVALID FORM", "color: Red; font-size: 14px;", SPCO.require_values );
 					SPCO.display_validation_errors();
-                    SPCO.invalid_input_to_scroll_to = null;
-                } else if ( eei18n.ajax_submit ) {
-                    console.log(
-                        "%cFORM IS VALID ",
-                        "color: Lime; font-size: 14px;",
-                        SPCO.require_values,
-                    );
+					SPCO.invalid_input_to_scroll_to = null;
+				} else if ( eei18n.ajax_submit ) {
+					console.log( "%cVALID FORM", "color: Lime; font-size: 14px;", SPCO.require_values );
 					SPCO.process_next_step( this );
 				}
 				if ( eei18n.ajax_submit ) {
@@ -469,16 +460,16 @@ jQuery(document).ready( function($) {
 		 */
 		set_listener_for_input_validation_value_change : function() {
 			SPCO.form_inputs.focusout( function() {
-		        var input = $(this);
-		        if ( this.type !== 'file' && this.type !== 'select-multiple' ) {
-                    input.val( $.trim( input.val() ) );
-		        }
-	        // Datepicker validation would get triggered before it's auto-filled by JS, which erroneously reports an
-				// error, so don't trigger its validation on focusout.
-		        if( ! input.hasClass('datepicker')){
+				const input = $(this);
+				if ( this.type !== 'file' && this.type !== 'select-multiple' ) {
+					input.val( $.trim( input.val() ) );
+				}
+				// Datepicker validation would get triggered before it's autofilled by JS,
+				// which erroneously reports an error, so don't trigger its validation on focusout.
+				if( ! input.hasClass('datepicker')){
 					input.valid();
 				}
-            });
+			});
 		},
 
 
@@ -488,8 +479,8 @@ jQuery(document).ready( function($) {
 		 */
 		set_listener_for_datepicker_change : function() {
 			$('.datepicker').on('change', function () {
-                $(this).valid();
-            });
+				$(this).valid();
+			});
 		},
 
 
@@ -505,34 +496,34 @@ jQuery(document).ready( function($) {
 		},
 
 
-        /**
-         * @function
-         */
-        set_listener_for_payment_amount_change: function () {
-            SPCO.main_container.on('spco_payment_amount', function (event, payment_amount) {
-                if (parseInt(payment_amount) === 0) {
-                    SPCO.remove_billing_forms();
-                }
-            });
-        },
+		/**
+		 * @function
+		 */
+		set_listener_for_payment_amount_change: function () {
+			SPCO.main_container.on('spco_payment_amount', function (event, payment_amount) {
+				if (parseInt(payment_amount) === 0) {
+					SPCO.remove_billing_forms();
+				}
+			});
+		},
 
 
-        /**
-         * @function
-         */
-        set_listener_for_copy_email_confirm: function () {
-            $('.ee-reg-qstn-email_confirm').bind('copy paste', function (e) {
-                e.preventDefault();
-                alert(eei18n.no_copy_paste_email_confirm);
-            });
-        },
+		/**
+		 * @function
+		 */
+		set_listener_for_copy_email_confirm: function () {
+			$('.ee-reg-qstn-email_confirm').bind('copy paste', function (e) {
+				e.preventDefault();
+				alert(eei18n.no_copy_paste_email_confirm);
+			});
+		},
 
 
-        /**
+		/**
 		 * @function
 		 */
 		auto_submit_gateway_form : function() {
-			var gateway_form = $( 'form[name="gateway_form"]' );
+			const gateway_form = $( 'form[name="gateway_form"]' );
 			if ( gateway_form.length > 0 ) {
 				$( '#espresso-ajax-loading' ).show();
 				gateway_form.submit();
@@ -546,36 +537,36 @@ jQuery(document).ready( function($) {
 		 */
 		start_registration_time_limit_countdown : function() {
 			if (
-                SPCO.registration_time_limit.length > 0
-                && parseInt( eei18n.empty_cart ) !== 1
-                && parseInt( eei18n.revisit ) !== 1
-                && parseInt( eei18n.use_session_countdown ) === 1
-            ) {
+				SPCO.registration_time_limit.length > 0
+				&& parseInt( eei18n.empty_cart ) !== 1
+				&& parseInt( eei18n.revisit ) !== 1
+				&& parseInt( eei18n.use_session_countdown ) === 1
+			) {
 				$( '#spco-registration-time-limit-pg' ).show();
-                // Set the date we're counting down to
-                const countDownDate = new Date(SPCO.registration_session_expiration).getTime();
-                const x = setInterval(function() {
-                    const now = new Date().getTime();
-                    const difference = countDownDate - now;
-                    // Time calculations for days, hours, minutes and seconds
-                    const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                    const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
-                    const mins = String(minutes).padStart(2, '0');
-                    const seconds = Math.floor((difference % (1000 * 60)) / 1000);
-                    const secs = String(seconds).padStart(2, '0');
+				// Set the date we're counting down to
+				const countDownDate = new Date(SPCO.registration_session_expiration).getTime();
+				const x = setInterval(function() {
+					const now = new Date().getTime();
+					const difference = countDownDate - now;
+					// Time calculations for days, hours, minutes and seconds
+					const hours = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+					const minutes = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+					const mins = String(minutes).padStart(2, '0');
+					const seconds = Math.floor((difference % (1000 * 60)) / 1000);
+					const secs = String(seconds).padStart(2, '0');
 
-                    document.getElementById("spco-registration-time-limit-spn").innerHTML = hours > 0
-                        ? hours + ":" + mins + ":" + secs
-                        : mins + ":" + secs;
+					document.getElementById("spco-registration-time-limit-spn").innerHTML = hours > 0
+						? hours + ":" + mins + ":" + secs
+						: mins + ":" + secs;
 
-                    if (difference < 0) {
-                        clearInterval(x);
-                        SPCO.main_container.slideUp( function() {
-                            SPCO.main_container.html( eei18n.registration_expiration_notice ).slideDown();
-                            document.getElementById("spco-registration-time-limit-pg").innerHTML = "EXPIRED";
-                        } );
-                    }
-                }, 1000);
+					if (difference < 0) {
+						clearInterval(x);
+						SPCO.main_container.slideUp( function() {
+							SPCO.main_container.html( eei18n.registration_expiration_notice ).slideDown();
+							document.getElementById("spco-registration-time-limit-pg").innerHTML = "EXPIRED";
+						} );
+					}
+				}, 1000);
 			}
 		},
 
@@ -613,18 +604,18 @@ jQuery(document).ready( function($) {
 		 * @param {object} primary_reg_questions
 		 */
 		copy_primary_registrant_information : function( clicked_checkbox, primary_reg_questions ) {
-			var success = true;
+			let success = true;
 			// is the checkbox that was clicked actually "checked"
 			if ( clicked_checkbox.prop('checked')) {
 				// the targeted attendee question group
-				var targeted_attendee = clicked_checkbox.val();
+				const targeted_attendee = clicked_checkbox.val();
 				// for each question in the targeted attendee question group
 				$( primary_reg_questions ).each( function() {
-					var new_input_id = SPCO.calculate_target_attendee_input_id( $(this), targeted_attendee );
-					var input_exists = $( new_input_id ).length;
-					if ( input_exists ){
-						SPCO.copy_form_input_value_from_this( $(new_input_id), $(this) );
-						$(new_input_id).trigger('change');
+					const new_input_id = SPCO.calculate_target_attendee_input_id( $(this), targeted_attendee );
+					const $new_input = $( new_input_id );
+					if ( $new_input.length ){
+						SPCO.copy_form_input_value_from_this( $new_input, $(this) );
+						$new_input.trigger('change');
 					} else {
 						success = false;
 					}
@@ -637,13 +628,13 @@ jQuery(document).ready( function($) {
 
 		/**
 		 * @function
-		 *	returns a jQuery object consisting of all of the form inputs assigned to the primary attendee
+		 *	returns a jQuery object consisting of all the form inputs assigned to the primary attendee
 		 */
 		get_primary_reg_questions : function () {
 			// the primary attendee question group
-			var primary_reg_qstn_grp = $('#primary_registrant').val();
+			const primary_reg_qstn_grp = $('#primary_registrant').val();
 			//SPCO.console_log( 'get_primary_reg_questions : primary_reg_qstn_grp = ', primary_reg_qstn_grp );
-			// find all of the primary attendee's questions for this event
+			// find all the primary attendee's questions for this event
 			return $( '#ee-registration-' + primary_reg_qstn_grp ).children( '.ee-reg-form-qstn-grp-dv' ).find(':input');
 		},
 
@@ -655,21 +646,21 @@ jQuery(document).ready( function($) {
 		 * @param {string} targeted_attendee
 		 */
 		calculate_target_attendee_input_id : function ( primary_reg_input, targeted_attendee) {
-			var new_input_id = '';
+			let new_input_id = '';
 			// here we go again...
-			var input_id = $(primary_reg_input).attr('id');
+			const input_id = $(primary_reg_input).attr('id');
 			//SPCO.console_log( 'calculate_target_attendee_input_id : input_id', input_id, true );
 
 			if ( typeof input_id !== 'undefined' ) {
 				// split the above var
-				var input_id_array =  input_id.split('-');
+				const input_id_array =  input_id.split('-');
 				//SPCO.console_log( 'calculate_target_attendee_input_id : input_id_array', input_id_array, false );
 				// grab the current input's details
-				var qstn_base = input_id_array[0];
-				//var reg_id = input_id_array[1];
-				var input_name = input_id_array[2];
-				var answer_id = input_id_array[3];
-				// var input_value = $(this).eeInputValue();
+				const qstn_base = input_id_array[0];
+				// const reg_id = input_id_array[1];
+				const input_name = input_id_array[2];
+				const answer_id = input_id_array[3];
+				// const input_value = $(this).eeInputValue();
 				//SPCO.console_log( 'calculate_target_attendee_input_id : input_name', input_name, false );
 
 				new_input_id = '#' + qstn_base + '-' + targeted_attendee + '-' +  input_name;
@@ -718,14 +709,14 @@ jQuery(document).ready( function($) {
 
 		/**
 		 * @function
-		 *  opens the the SPCO step specified by step_to_show
+		 *  opens the SPCO step specified by step_to_show
 		 * shows msg as a notification
 		 * @param {string} step_to_show
 		 * @param {object} response
 		 **/
 		display_step : function( step_to_show, response ){
 			SPCO.hide_steps();
-			var step_to_show_div = $('#spco-' + step_to_show + '-dv' );
+			const step_to_show_div = $('#spco-' + step_to_show + '-dv' );
 			if ( typeof response.return_data.reg_step_html !== 'undefined' ) {
 				$( step_to_show_div ).html( response.return_data.reg_step_html );
 			}
@@ -787,7 +778,7 @@ jQuery(document).ready( function($) {
 		 *  @param {object} next_step_btn
 		 */
 		process_next_step : function( next_step_btn ) {
-			var step = $(next_step_btn).attr('rel');
+			const step = $(next_step_btn).attr('rel');
 			// add trigger point so other JS can join the party
 			SPCO.main_container.trigger( 'process_next_step', [ step ] );
 			if ( typeof step !== 'undefined' && step !== '' && ! $(next_step_btn).hasClass('disabled') ) {
@@ -797,9 +788,9 @@ jQuery(document).ready( function($) {
 						SPCO.registration_session_expiration.getTime() + ( parseInt( eei18n.session_extension ) * 1000 )
 					);
 				}
-				var next_step = SPCO.get_next_step_slug( step );
+				const next_step = SPCO.get_next_step_slug( step );
 				// which form is being processed ?
-				var form_to_check = '#ee-spco-'+step+'-reg-step-form';
+				const form_to_check = '#ee-spco-'+step+'-reg-step-form';
 				// not disabled? you are NOW!!!
 				SPCO.disable_submit_buttons();
 				SPCO.submit_reg_form ( step, next_step, form_to_check );
@@ -815,7 +806,7 @@ jQuery(document).ready( function($) {
 		 * @param {string} step
 		 */
 		get_next_step_slug : function( step ) {
-			var step_index = _.indexOf( eei18n.reg_steps, step );
+			let step_index = _.indexOf( eei18n.reg_steps, step );
 			step_index = step_index + 1;
 			return typeof eei18n.reg_steps[ step_index ] !== 'undefined' ? eei18n.reg_steps[ step_index ] : null;
 		},
@@ -834,7 +825,7 @@ jQuery(document).ready( function($) {
 				return;
 			}
 
-			var form_data = $( form_to_check ).serialize();
+			let form_data = $( form_to_check ).serialize();
 			form_data += '&process_form_submission=1';
 			form_data += '&ee_front_ajax=1';
 			form_data += '&noheader=true';
@@ -845,10 +836,10 @@ jQuery(document).ready( function($) {
 			form_data += '&e_reg_url_link=' + eei18n.e_reg_url_link;
 			form_data += SPCO.additional_post_data;
 
-			console.log('%c submit_reg_form ', 'color: Yellow; font-size: 14px;');
-			console.log('%c form_data', 'color: DodgerBlue;', form_data, form_data.split('&'));
+			// console.log('%c submit_reg_form ', 'color: Yellow; font-size: 14px;');
+			// console.log('%c form_data', 'color: DodgerBlue;', form_data, form_data.split('&'));
 
-		    // alert( 'ajax_url = ' + eei18n.ajax_url + '\n' + 'step = ' + step + '\n' + 'next_step = ' + next_step + '\n' + 'form_data = ' + form_data );
+			// alert( 'ajax_url = ' + eei18n.ajax_url + '\n' + 'step = ' + step + '\n' + 'next_step = ' + next_step + '\n' + 'form_data = ' + form_data );
 			// send form via AJAX POST
 			$.ajax({
 
@@ -866,11 +857,11 @@ jQuery(document).ready( function($) {
 				},
 
 				success: function( response ){
-                    "use strict";
-                    if (typeof response !== "object") {
-                        console.error("invalid AJAX response", response);
-                        return SPCO.ajax_request_server_error();
-                    }
+					"use strict";
+					if (typeof response !== "object") {
+						console.error("invalid AJAX response", response);
+						return SPCO.ajax_request_server_error();
+					}
 					SPCO.process_response( next_step, response );
 				},
 
@@ -892,7 +883,7 @@ jQuery(document).ready( function($) {
 			if ( ! SPCO.get_next_step ) {
 				return;
 			}
-			var form_data = 'action=display_spco_reg_step';
+			let form_data = 'action=display_spco_reg_step';
 			form_data += '&step=' + next_step;
 			form_data += '&process_form_submission=0';
 			form_data += '&noheader=1';
@@ -903,8 +894,8 @@ jQuery(document).ready( function($) {
 			form_data += '&e_reg_url_link=' + eei18n.e_reg_url_link;
 			form_data += SPCO.additional_post_data;
 
-			console.log('%c get_next_reg_step ', 'color: Yellow; font-size: 14px;');
-			console.log('%c form_data', 'color: DodgerBlue;', form_data, form_data.split('&'));
+			// console.log('%c get_next_reg_step ', 'color: Yellow; font-size: 14px;');
+			// console.log('%c form_data', 'color: DodgerBlue;', form_data, form_data.split('&'));
 
 			$.ajax({
 				type: "POST",
@@ -915,17 +906,17 @@ jQuery(document).ready( function($) {
 					SPCO.do_before_sending_ajax();
 				},
 				success: function( response ){
-                    "use strict";
-                    if (typeof response !== 'object') {
-                        console.error( "invalid AJAX response", response );
-                        return SPCO.ajax_request_server_error();
-                    }
-                    if ( typeof prev_response.success !== 'undefined' ) {
-                        if ( typeof response.return_data === 'undefined' ) {
-                            response.return_data = {};
-                        }
-                        response.return_data['success'] = prev_response.success;
-                    }
+					"use strict";
+					if (typeof response !== 'object') {
+						console.error( "invalid AJAX response", response );
+						return SPCO.ajax_request_server_error();
+					}
+					if ( typeof prev_response.success !== 'undefined' ) {
+						if ( typeof response.return_data === 'undefined' ) {
+							response.return_data = {};
+						}
+						response.return_data['success'] = prev_response.success;
+					}
 					SPCO.process_response( next_step, response );
 				},
 
@@ -948,11 +939,11 @@ jQuery(document).ready( function($) {
 				SPCO.methods_of_payment = $( '#methods-of-payment' );
 			}
 			if ( payment_method === '' ) {
-				var msg = SPCO.generate_message_object( '', SPCO.tag_message_for_debugging( 'display_payment_method', eei18n.invalid_payment_method ), '' );
+				const msg = SPCO.generate_message_object( '', SPCO.tag_message_for_debugging( 'display_payment_method', eei18n.invalid_payment_method ), '' );
 				SPCO.scroll_to_top_and_display_messages( SPCO.methods_of_payment, msg, true  );
 				return;
 			}
-			var form_data = 'step=payment_options';
+			let form_data = 'step=payment_options';
 			form_data += '&action=switch_spco_billing_form';
 			form_data += '&selected_method_of_payment=' + payment_method;
 			form_data += '&reset_payment_method=1';
@@ -965,8 +956,8 @@ jQuery(document).ready( function($) {
 			form_data += '&e_reg_url_link=' + eei18n.e_reg_url_link;
 			form_data += SPCO.additional_post_data;
 
-			console.log('%c display_payment_method ', 'color: Yellow; font-size: 14px;');
-			console.log('%c form_data', 'color: DodgerBlue;', form_data, form_data.split('&'));
+			// console.log('%c display_payment_method ', 'color: Yellow; font-size: 14px;');
+			// console.log('%c form_data', 'color: DodgerBlue;', form_data, form_data.split('&'));
 
 			$.ajax({
 
@@ -987,7 +978,7 @@ jQuery(document).ready( function($) {
 						response.return_data.payment_method = payment_method;
 						SPCO.process_response( 'payment_options', response );
 					} else {
-						var msg = SPCO.generate_message_object( '', SPCO.tag_message_for_debugging( 'display_payment_method', eei18n.invalid_payment_method ), '' );
+						const msg = SPCO.generate_message_object( '', SPCO.tag_message_for_debugging( 'display_payment_method', eei18n.invalid_payment_method ), '' );
 						SPCO.scroll_to_top_and_display_messages( SPCO.main_container, msg, true  );
 					}
 				},
@@ -1008,8 +999,8 @@ jQuery(document).ready( function($) {
 		 * @param  {object} response
 		 */
 		process_response: function (next_step, response) {
-			console.log('%c process_response ', 'color: Lime; font-size: 14px;');
-			console.log('%c params', 'color: HotPink;', next_step, response);
+			// console.log('%c process_response ', 'color: Lime; font-size: 14px;');
+			// console.log('%c params', 'color: HotPink;', next_step, response);
 			SPCO.allow_enable_submit_buttons = true;
 			//clear additional_post_data
 			SPCO.additional_post_data = '';
@@ -1025,51 +1016,51 @@ jQuery(document).ready( function($) {
 				}
 				// process response
 				if ( typeof response.errors !== 'undefined' ) {
-                   // no response...
-                    SPCO.scroll_to_top_and_display_messages( SPCO.main_container, response, true  );
-                } else if ( typeof response.redirect_url !== 'undefined' && response.redirect_url !== '' ) {
+				   // no response...
+					SPCO.scroll_to_top_and_display_messages( SPCO.main_container, response, true  );
+				} else if ( typeof response.redirect_url !== 'undefined' && response.redirect_url !== '' ) {
 					$( '#espresso-ajax-loading' ).show();
 					// redirect browser
-                    window.location.replace( response.redirect_url );
-                } else if ( typeof response.attention !== 'undefined' ) {
-                    // Achtung Baby!!!
-                    SPCO.scroll_to_top_and_display_messages( SPCO.main_container, response, true  );
-                } else if ( typeof response.return_data !== 'undefined' ) {
-                    let response_handled = false;
+					window.location.replace( response.redirect_url );
+				} else if ( typeof response.attention !== 'undefined' ) {
+					// Achtung Baby!!!
+					SPCO.scroll_to_top_and_display_messages( SPCO.main_container, response, true  );
+				} else if ( typeof response.return_data !== 'undefined' ) {
+					let response_handled = false;
 					// if any new validation rules were sent...
 					if ( typeof response.return_data.validation_rules !== 'undefined' ) {
 						// remove any previously applied validation rules for each html form, before it gets removed
 						SPCO.remove_previous_validation_rules();
-                        response_handled = true;
+						response_handled = true;
 					}
 					// process valid response data
 					if ( typeof response.return_data.reg_step_html !== 'undefined' ) {
 						// get html for next reg step
 						SPCO.display_step( next_step, response );
-                        response_handled = true;
+						response_handled = true;
 					} else if ( typeof response.return_data.payment_method_info !== 'undefined' ) {
 						// switch_payment_methods
 						SPCO.switch_payment_methods( response );
-                        response_handled = true;
+						response_handled = true;
 					} else if ( typeof response.return_data.redirect_form !== 'undefined' ) {
 						// display_payment_method_redirect_form
 						SPCO.display_payment_method_redirect_form( response.return_data.redirect_form );
-                        response_handled = true;
+						response_handled = true;
 					} else if ( typeof response.return_data.plz_select_method_of_payment !== 'undefined' ) {
 						// plz_select_method_of_payment_prompt
 						SPCO.plz_select_method_of_payment_prompt( response );
-                        response_handled = true;
+						response_handled = true;
 					}
 					// once again, if any new validation rules were sent...
 					if ( typeof response.return_data.validation_rules !== 'undefined' ) {
 						// add new form's js validation rules to the mix, now that the new inputs exist
 						SPCO.set_new_validation_rules( next_step, response.return_data.validation_rules );
-                        response_handled = true;
+						response_handled = true;
 					}
 
-                    if (! response_handled) {
-                        SPCO.get_next_reg_step( next_step, response );
-                    }
+					if (! response_handled) {
+						SPCO.get_next_reg_step( next_step, response );
+					}
 
 				} else if ( typeof response.success !== 'undefined' ) {
 					// yay
@@ -1079,12 +1070,12 @@ jQuery(document).ready( function($) {
 					SPCO.submit_reg_form_server_error();
 				}
 
-            } else {
-                const msg = SPCO.generate_message_object(
-                    '',
-                    SPCO.tag_message_for_debugging('process_response', eei18n.invalid_json_response),
-                    ''
-                );
+			} else {
+				const msg = SPCO.generate_message_object(
+					'',
+					SPCO.tag_message_for_debugging('process_response', eei18n.invalid_json_response),
+					''
+				);
 				SPCO.scroll_to_top_and_display_messages( SPCO.main_container, msg, true  );
 			}
 			$( '.hide-if-no-js' ).removeClass( 'hide-if-no-js' );
@@ -1104,7 +1095,7 @@ jQuery(document).ready( function($) {
 			if ( typeof EEFV === 'undefined' ) {
 				// if WP_DEBUG is on, then display an error
 				if ( eei18n.wp_debug ) {
-					var msg = SPCO.generate_message_object( '', SPCO.tag_message_for_debugging( source, eei18n.validation_error ), '' );
+					const msg = SPCO.generate_message_object( '', SPCO.tag_message_for_debugging( source, eei18n.validation_error ), '' );
 					SPCO.scroll_to_top_and_display_messages( SPCO.main_container, msg, true  );
 				}
 				return false;
@@ -1136,7 +1127,7 @@ jQuery(document).ready( function($) {
 				// pass new rules for setup
 				EEFV.initialize( validation_rules.form_data );
 				// the form id for the current step
-				var form_id = 'ee-spco-' + next_step + '-reg-step-form';
+				const form_id = 'ee-spco-' + next_step + '-reg-step-form';
 				if ( typeof EEFV.form_validators[ form_id ] !== 'undefined' ) {
 					SPCO.current_form_to_validate = EEFV.form_validators[ form_id ];
 				}
@@ -1150,9 +1141,9 @@ jQuery(document).ready( function($) {
 		 * @param  {object} response
 		 */
 		switch_payment_methods : function( response ) {
-            SPCO.remove_billing_forms();
+			SPCO.remove_billing_forms();
 			if ( typeof response.return_data.payment_method !== 'undefined' ) {
-				var payment_method_info = $('#spco-payment-method-info-' + response.return_data.payment_method );
+				const payment_method_info = $('#spco-payment-method-info-' + response.return_data.payment_method );
 				if ( typeof response.return_data.payment_method_info !== 'undefined' ) {
 					payment_method_info.append( response.return_data.payment_method_info );
 				}
@@ -1164,7 +1155,7 @@ jQuery(document).ready( function($) {
 					SPCO.main_container.trigger( 'spco_switch_payment_methods', [ response.return_data.payment_method ] );
 				});
 			} else {
-				var msg = SPCO.generate_message_object( '', SPCO.tag_message_for_debugging( 'switch_payment_methods', eei18n.invalid_payment_method ), '' );
+				const msg = SPCO.generate_message_object( '', SPCO.tag_message_for_debugging( 'switch_payment_methods', eei18n.invalid_payment_method ), '' );
 				SPCO.scroll_to_top_and_display_messages( SPCO.main_container, msg, true  );
 			}
 			SPCO.end_ajax();
@@ -1176,12 +1167,12 @@ jQuery(document).ready( function($) {
 		 * @function
 		 */
 		remove_billing_forms : function() {
-            var payment_method_info_dv = $('.spco-payment-method-info-dv');
-            $(payment_method_info_dv).each(function () {
-                $(this).hide();
-                $(this).find('.sandbox-panel').remove();
-                $(this).find('.ee-billing-form').remove();
-            });
+			const payment_method_info_dv = $('.spco-payment-method-info-dv');
+			$(payment_method_info_dv).each(function () {
+				$(this).hide();
+				$(this).find('.sandbox-panel').remove();
+				$(this).find('.ee-billing-form').remove();
+			});
 		},
 
 
@@ -1194,7 +1185,7 @@ jQuery(document).ready( function($) {
 			SPCO.hide_notices();
 			SPCO.end_ajax();
 			$( SPCO.main_container ).html( '<br /><div id="spco-payment-method-redirect-form" class="ee-attention"><h5>' + eei18n.forwarding_to_offsite + '</h5></div>' );
-			var payment_method_redirect_form = $( '#spco-payment-method-redirect-form' );
+			const payment_method_redirect_form = $( '#spco-payment-method-redirect-form' );
 			$( payment_method_redirect_form ).append( redirect_form );
 			$('form[name="gateway_form"]').submit();
 		},
@@ -1241,7 +1232,7 @@ jQuery(document).ready( function($) {
 			if ( typeof $item !== 'undefined' && typeof $item.offset() !== 'undefined' ) {
 				if ( $item.offset().top + SPCO.offset_from_top_modifier !== SPCO.offset_from_top ) {
 					SPCO.set_offset_from_top($item, SPCO.offset_from_top_modifier );
-					var messages_displayed = false;
+					let messages_displayed = false;
 					$('body, html').animate({ scrollTop: SPCO.offset_from_top }, 'normal', function() {
 						if ( ! messages_displayed ) {
 							SPCO.display_messages( msg, end_ajax );
@@ -1251,7 +1242,7 @@ jQuery(document).ready( function($) {
 				} else {
 					SPCO.display_messages( msg, end_ajax );
 				}
-            }
+			}
 		},
 
 
@@ -1263,14 +1254,14 @@ jQuery(document).ready( function($) {
 		 */
 		display_messages : function( msg, end_ajax ){
 //			SPCO.console_log_object( 'display_messages : msg' + ' = ', msg );
-            if ( typeof msg.return_data !== 'undefined' && typeof msg.return_data.success !== 'undefined' && msg.return_data.success ) {
-                msg.success = typeof msg.success !== 'undefined' && msg.success ? msg.return_data.success + '<br />' + msg.success : msg.return_data.success;
-            }
+			if ( typeof msg.return_data !== 'undefined' && typeof msg.return_data.success !== 'undefined' && msg.return_data.success ) {
+				msg.success = typeof msg.success !== 'undefined' && msg.success ? msg.return_data.success + '<br />' + msg.success : msg.return_data.success;
+			}
 			if ( typeof msg.attention !== 'undefined' && msg.attention ) {
 				SPCO.show_event_queue_ajax_msg( 'attention', msg.attention, SPCO.notice_fadeout_attention, end_ajax );
 			} else if ( typeof msg.errors !== 'undefined' && msg.errors ) {
-                SPCO.show_event_queue_ajax_msg( 'error', msg.errors, SPCO.notice_fadeout_errors, end_ajax );
-            } else if ( typeof msg.success !== 'undefined' && msg.success ) {
+				SPCO.show_event_queue_ajax_msg( 'error', msg.errors, SPCO.notice_fadeout_errors, end_ajax );
+			} else if ( typeof msg.success !== 'undefined' && msg.success ) {
 				SPCO.show_event_queue_ajax_msg( 'success', msg.success, SPCO.notice_fadeout_success, end_ajax );
 			}
 		},
@@ -1288,11 +1279,11 @@ jQuery(document).ready( function($) {
 			// does an actual message exist ?
 			if ( typeof msg !== 'undefined' && msg !== '' ) {
 				// ensure message type is set
-				var msg_type = typeof type !== 'undefined' && type !== '' ? type : 'error';
+				let msg_type = typeof type !== 'undefined' && type !== '' ? type : 'error';
 				// make sure fade out time is not too short
 				fadeOut = typeof fadeOut === 'undefined' || fadeOut < SPCO.notice_fadeout_min ? SPCO.notice_fadeout_min : fadeOut;
 				// target parent container
-				var espresso_ajax_msg = $('#espresso-ajax-notices-' + msg_type);
+				const espresso_ajax_msg = $('#espresso-ajax-notices-' + msg_type);
 				//  actual message container
 				espresso_ajax_msg.children('.espresso-notices-msg').html( msg );
 				// bye bye spinner
@@ -1348,7 +1339,7 @@ jQuery(document).ready( function($) {
 		 * @function
 		 */
 		submit_reg_form_server_error : function() {
-            console.error("reg form server error", eei18n.reg_step_error);
+			console.error("reg form server error", eei18n.reg_step_error);
 			return SPCO.server_error( 'submit_reg_form_server_error', eei18n.reg_step_error );
 		},
 
@@ -1358,7 +1349,7 @@ jQuery(document).ready( function($) {
 		 * @function
 		 */
 		ajax_request_server_error : function() {
-            console.error("request server error", eei18n.server_error);
+			console.error("request server error", eei18n.server_error);
 			return SPCO.server_error( 'ajax_request_server_error', eei18n.server_error );
 		},
 
@@ -1371,7 +1362,7 @@ jQuery(document).ready( function($) {
 		 */
 		server_error : function( error_source, error_msg ) {
 			SPCO.hide_notices();
-			var msg = SPCO.generate_message_object( '', SPCO.tag_message_for_debugging( error_source, error_msg ), '' );
+			const msg = SPCO.generate_message_object( '', SPCO.tag_message_for_debugging( error_source, error_msg ), '' );
 			SPCO.scroll_to_top_and_display_messages( SPCO.main_container, msg );
 			return false;
 		},
@@ -1383,7 +1374,7 @@ jQuery(document).ready( function($) {
 		 * like do_before_sending_ajax() but for the finalize_registration step
 		 */
 		display_processing_registration_notification : function() {
-			var msg = SPCO.generate_message_object( '', '', SPCO.tag_message_for_debugging( 'display_processing_registration_notification', eei18n.process_registration ));
+			const msg = SPCO.generate_message_object( '', '', SPCO.tag_message_for_debugging( 'display_processing_registration_notification', eei18n.process_registration ));
 			SPCO.scroll_to_top_and_display_messages( SPCO.main_container, msg, false );
 
 			//SPCO.set_offset_from_top( SPCO.main_container, SPCO.offset_from_top_modifier );
@@ -1412,7 +1403,7 @@ jQuery(document).ready( function($) {
 		 * @param  {string} attention_msg
 		 */
 		generate_message_object : function( success_msg, error_msg, attention_msg ) {
-			var msg = {};
+			const msg = {};
 			msg.success = typeof success_msg !== 'undefined' && success_msg !== '' ? success_msg : false;
 			msg.errors = typeof error_msg !== 'undefined' && error_msg !== '' ? error_msg : false;
 			msg.attention = typeof attention_msg !== 'undefined' && attention_msg !== '' ? attention_msg : false;
@@ -1455,8 +1446,8 @@ jQuery(document).ready( function($) {
 		console_log_object: function ( obj_name, obj, depth ) {
 			if ( SPCO.display_debug === '1' ) {
 				depth = typeof depth !== 'undefined' ? depth : 0;
-				var spacer = '';
-				for ( var i = 0; i < depth; i++ ) {
+				let spacer = '';
+				for ( let i = 0; i < depth; i++ ) {
 					spacer = spacer + '  ';
 				}
 				if ( typeof obj === 'object' ) {
@@ -1483,6 +1474,7 @@ jQuery(document).ready( function($) {
 			}
 		},
 
+
 		/**
 		 * @function
 		 * @param  {string} tag
@@ -1496,6 +1488,9 @@ jQuery(document).ready( function($) {
 
 	};
 	// end of SPCO object
+
+    // Attach SPCO to the global window object
+    window.SPCO = SPCO;
 
 	/**
 	 *	run SPCO
