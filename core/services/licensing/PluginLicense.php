@@ -322,7 +322,7 @@ class PluginLicense
      * using the license data previously saved in the database
      *
      * @return void
-     * @since $VID:$
+     * @since 5.0.40.p
      */
     public function refreshPluginLicenseData()
     {

@@ -8,7 +8,7 @@ namespace EventEspresso\core\domain\services\licensing;
  * @package     Event Espresso
  * @subpackage  EventEspresso\core\domain\services\licensing
  * @author      Brent Christensen
- * @since       $VID:$
+ * @since       5.0.40.p
  */
 class LicenseStatus
 {

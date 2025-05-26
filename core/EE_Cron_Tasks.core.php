@@ -101,7 +101,7 @@ class EE_Cron_Tasks extends EE_Base
 
     /**
      * @return void
-     * @deprecated $VID:$
+     * @deprecated 5.0.40.p
      */
     public static function log_scheduled_ee_crons(): void
     {

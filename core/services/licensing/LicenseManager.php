@@ -136,7 +136,7 @@ class LicenseManager
      * @param string   $license_status
      * @param bool     $force_update    true for license activation requests
      * @return stdClass
-     * @since $VID:$
+     * @since 5.0.40.p
      */
     private function updateLicenseData(
         string $plugin_slug,

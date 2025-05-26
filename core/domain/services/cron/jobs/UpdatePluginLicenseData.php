@@ -16,7 +16,7 @@ use EventEspresso\core\services\licensing\PluginLicenseCollection;
  * @package     Event Espresso
  * @subpackage  EventEspresso\core\domain\services\cron\jobs
  * @author      Brent Christensen
- * @since       $VID:$
+ * @since       5.0.40.p
  */
 class UpdatePluginLicenseData extends CronJob
 {

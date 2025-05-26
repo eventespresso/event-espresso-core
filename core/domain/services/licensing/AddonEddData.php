@@ -8,7 +8,7 @@ namespace EventEspresso\core\domain\services\licensing;
  * @package     Event Espresso
  * @subpackage  EventEspresso\core\services\licensing
  * @author      Brent Christensen   Tony Warwick
- * @since       $VID:$
+ * @since       5.0.40.p
  */
 class AddonEddData
 {

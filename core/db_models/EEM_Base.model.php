@@ -495,32 +495,32 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     protected static $_db_verification_level = EEM_Base::db_verified_none;
 
     /**
-     * @deprecatd $VID:$
+     * @deprecatd 5.0.40.p
      */
     const default_where_conditions_all = EE_Default_Where_Conditions::ALL;
 
     /**
-     * @deprecatd $VID:$
+     * @deprecatd 5.0.40.p
      */
     const default_where_conditions_this_only = EE_Default_Where_Conditions::THIS_MODEL_ONLY;
 
     /**
-     * @deprecatd $VID:$
+     * @deprecatd 5.0.40.p
      */
     const default_where_conditions_others_only = EE_Default_Where_Conditions::OTHER_MODELS_ONLY;
 
     /**
-     * @deprecatd $VID:$
+     * @deprecatd 5.0.40.p
      */
     const default_where_conditions_minimum_all = EE_Default_Where_Conditions::MINIMUM_ALL;
 
     /**
-     * @deprecatd $VID:$
+     * @deprecatd 5.0.40.p
      */
     const default_where_conditions_minimum_others = EE_Default_Where_Conditions::MINIMUM_OTHERS;
 
     /**
-     * @deprecatd $VID:$
+     * @deprecatd 5.0.40.p
      */
     const default_where_conditions_none = EE_Default_Where_Conditions::NONE;
 
