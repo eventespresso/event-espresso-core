@@ -3,6 +3,7 @@
 namespace EventEspresso\core\domain\services\admin\events\editor;
 
 use EE_Datetime;
+use EE_Default_Where_Conditions;
 use EE_Error;
 use EE_Event;
 use EE_Form_Section;
@@ -29,15 +30,9 @@ use ReflectionException;
  */
 class NewEventDefaultEntities extends EventEditorData
 {
-    /**
-     * @var DefaultDatetimes
-     */
-    protected $default_datetimes;
+    protected DefaultDatetimes $default_datetimes;
 
-    /**
-     * @var   DefaultFormSections
-     */
-    protected $default_form_sections;
+    protected DefaultFormSections $default_form_sections;
 
 
     /**
@@ -125,7 +120,7 @@ class NewEventDefaultEntities extends EventEditorData
                     'EVT_ID'      => $event->ID(),
                     'DTT_deleted' => ['IN', [true, false]],
                 ],
-                'default_where_conditions' => EEM_Base::default_where_conditions_none,
+                'default_where_conditions' => EE_Default_Where_Conditions::NONE,
             ],
             'EVT_ID'
         );

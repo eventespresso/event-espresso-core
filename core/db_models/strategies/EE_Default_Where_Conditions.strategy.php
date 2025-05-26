@@ -6,43 +6,95 @@ const EE_QUERY_PLACEHOLDER_USER_FIELD_NAME = EE_Default_Where_Conditions::user_f
 /**
  * Class EE_Default_Where_Conditions
  * Strategy to be used for getting default where conditions for EEM_Base
- * children. Should be initialized and set on construction of model
+ * children. Should be initialized and set on model construction
  *
- * @package             Event Espresso
- * @subpackage          core/db_models
- * @author              Mike Nelson
- * @since               4.6.0
+ * @package     Event Espresso
+ * @subpackage  core/db_models
+ * @author      Mike Nelson
+ * @since       4.6.0
  */
 class EE_Default_Where_Conditions
 {
+
     /**
-     * This const can be used in EE_Default_Where_Conditions values, and at the
-     * time of querying it will be replaced with the current user's ID (because
-     * we don't want to use the current user's ID at time of initializing the
-     * models because it's too early)
+     * Constant for 'default_where_conditions' to apply default where conditions to ALL queried models
+     * ex: if retrieving registrations ordered by their datetimes,
+     * this will only return non-trashed registrations for non-trashed tickets for non-trashed datetimes
      */
-    const current_user_placeholder = '%$current_user_placeholder_should_be_replaced_automatically$%';
+    public const ALL = 'all';
+
+    /**
+     * Constant for 'default_where_conditions' to apply default where conditions to THIS model only,
+     * but no other models which are joined to (ex: if retrieving registrations ordered by their datetimes,
+     * this will return non-trashed registrations, regardless of the related datetimes and tickets' statuses).
+     * It is preferred to use EE_Default_Where_Conditions::MINIMUM_OTHERS because, when joining to
+     * models which share tables with other models, this can return data for the wrong model.
+     */
+    public const THIS_MODEL_ONLY = 'this_model_only';
+
+    /**
+     * Constant for 'default_where_conditions' to apply default where conditions to other models queried,
+     * but not the current model (ex: if retrieving registrations ordered by their datetimes,
+     * this will return all registrations related to non-trashed tickets and non-trashed datetimes)
+     */
+    public const OTHER_MODELS_ONLY = 'other_models_only';
+
+    /**
+     * Constant for 'default_where_conditions' to apply minimum where conditions to all models queried.
+     * For most models this is the same as EE_Default_Where_Conditions::NONE,
+     * except for models which share their table with other models, like the Event and Venue models.
+     * For example, when querying for events ordered by their venues' name,
+     * this will be sure to only return real events with associated real venues
+     * (regardless of whether those events and venues are trashed).
+     * In contrast, using EE_Default_Where_Conditions::NONE could return WP posts other than EE events.
+     */
+    public const MINIMUM_ALL = 'minimum';
+
+    /**
+     * Constant for 'default_where_conditions' to apply where conditions to other models,
+     * and full default where conditions for the queried model
+     * (ex: when querying events ordered by venues' names,
+     * this will return non-trashed events for any venues,
+     * regardless of whether those associated venues are trashed or not)
+     */
+    public const MINIMUM_OTHERS = 'full_this_minimum_others';
+
+    /**
+     * Constant for 'default_where_conditions' to NOT apply any where conditions at all.
+     * This should very rarely be used, because when querying from a model which shares its table with another model
+     * (ex: Events and Venues) it's possible it will return table entries for other models.
+     * You should use EE_Default_Where_Conditions::MINIMUM_ALL instead.
+     */
+    public const NONE = 'none';
+
+    /**
+     * This const can be used in EE_Default_Where_Conditions values.
+     * At the time of querying it will be replaced with the current user's ID
+     * (because we don't want to use the current user's ID at time of initializing the
+     * models because it's too early).
+     */
+    public const current_user_placeholder = '%$current_user_placeholder_should_be_replaced_automatically$%';
 
     /**
      * This const can be used in EE_Default_Where_Conditions where parameters
      * as the name of the user field. When we are actually generating the where
-     * conditions it will be replaced with the model's wp user field name
+     * conditions, it will be replaced with the model's wp user field name
      */
-    const user_field_name_placeholder = '%$user_field_name_placeholder$%';
+    public const user_field_name_placeholder = '%$user_field_name_placeholder$%';
 
     /**
      * Model for which this strategy find default where conditions
      *
      * @var EEM_Base
      */
-    protected $_model;
+    protected EEM_Base $_model;
 
     /**
      * Where conditions specified on construction
      *
      * @var array
      */
-    protected $_where_conditions_provided = [];
+    protected array $_where_conditions_provided = [];
 
 
     /**
@@ -86,7 +138,7 @@ class EE_Default_Where_Conditions
      * @param string $model_relation_chain
      * @return array
      * @throws EE_Error
-     * @throws EE_Error
+     * @throws ReflectionException
      * @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md#0-where-conditions
      */
     public function get_default_where_conditions(
@@ -118,12 +170,13 @@ class EE_Default_Where_Conditions
     /**
      * Takes the default query parameters, and traverses them, adding the model
      * relation chain onto them (intelligently doesn't do that to logic query
-     * params like NOT, OR, and AND)
+     * params like 'NOT', 'OR', and 'AND')
      *
      * @param array  $where_conditions
      * @param string $model_relation_chain
      * @return array
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function prepare_where_conditions_for_querying(
         array $where_conditions = [],
@@ -158,9 +211,9 @@ class EE_Default_Where_Conditions
     private function isOrHasQueryOperator(string $query_string): bool
     {
         return in_array($query_string, ['OR', 'AND', 'NOT'])
-               || strpos($query_string, 'OR*') !== false
-               || strpos($query_string, 'AND*') !== false
-               || strpos($query_string, 'NOT*') !== false;
+            || strpos($query_string, 'OR*') !== false
+            || strpos($query_string, 'AND*') !== false
+            || strpos($query_string, 'NOT*') !== false;
     }
 
 
@@ -171,9 +224,10 @@ class EE_Default_Where_Conditions
      * @param array  $qualified_where_conditions
      * @param string $model_relation_chain
      * @param string $key
-     * @param mixed $value
+     * @param mixed  $value
      * @return array
      * @throws EE_Error
+     * @throws ReflectionException
      */
     private function prepare_where_condition(
         array $qualified_where_conditions,
@@ -184,7 +238,7 @@ class EE_Default_Where_Conditions
         $model_relation_chain = $model_relation_chain !== ''
             ? rtrim($model_relation_chain, '.') . '.'
             : $model_relation_chain;
-        // check for the current user id place holder, and if present change it
+        // check for the current user id placeholder, and if present, change it
         if ($value === self::current_user_placeholder) {
             $value = get_current_user_id();
         }

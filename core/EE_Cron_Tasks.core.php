@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\services\cron\CronUtilities;
 use EventEspresso\core\domain\services\database\DbStatus;
 use EventEspresso\core\domain\services\registration\RegStatus;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
@@ -44,7 +45,6 @@ class EE_Cron_Tasks extends EE_Base
      */
     private function __construct()
     {
-        do_action('AHEE_log', __CLASS__, __FUNCTION__);
         // verify that WP Cron is enabled
         if (
             defined('DISABLE_WP_CRON')
@@ -71,60 +71,41 @@ class EE_Cron_Tasks extends EE_Base
         // UPDATE TRANSACTION WITH PAYMENT
         add_action(
             'AHEE__EE_Cron_Tasks__update_transaction_with_payment_2',
-            array('EE_Cron_Tasks', 'setup_update_for_transaction_with_payment'),
+            ['EE_Cron_Tasks', 'setup_update_for_transaction_with_payment'],
             10,
             2
         );
         // ABANDONED / EXPIRED TRANSACTION CHECK
         add_action(
             'AHEE__EE_Cron_Tasks__expired_transaction_check',
-            array('EE_Cron_Tasks', 'expired_transaction_check')
+            ['EE_Cron_Tasks', 'expired_transaction_check']
         );
         // CLEAN OUT JUNK TRANSACTIONS AND RELATED DATA
         add_action(
             'AHEE__EE_Cron_Tasks__clean_up_junk_transactions',
-            array('EE_Cron_Tasks', 'clean_out_junk_transactions')
+            ['EE_Cron_Tasks', 'clean_out_junk_transactions']
         );
         // logging
         add_action(
             'AHEE__EE_System__load_core_configuration__complete',
-            array('EE_Cron_Tasks', 'log_scheduled_ee_crons')
+            [CronUtilities::class, 'logScheduledEspressoCrons']
         );
         EE_Registry::instance()->load_lib('Messages_Scheduler');
         // clean out old gateway logs
         add_action(
             'AHEE_EE_Cron_Tasks__clean_out_old_gateway_logs',
-            array('EE_Cron_Tasks', 'clean_out_old_gateway_logs')
+            ['EE_Cron_Tasks', 'clean_out_old_gateway_logs']
         );
     }
 
+
+    /**
+     * @return void
+     * @deprecated $VID:$
+     */
     public static function log_scheduled_ee_crons(): void
     {
-        $ee_crons = array(
-            'AHEE__EE_Cron_Tasks__update_transaction_with_payment',
-            'AHEE__EE_Cron_Tasks__finalize_abandoned_transactions',
-            'AHEE__EE_Cron_Tasks__clean_up_junk_transactions',
-        );
-        $crons = (array) get_option('cron');
-        foreach ($crons as $cron) {
-            /** @var array[] $cron */
-            foreach ($ee_crons as $ee_cron) {
-                if (isset($cron[ $ee_cron ]) && is_array($cron[ $ee_cron ])) {
-                    do_action('AHEE_log', __CLASS__, __FUNCTION__, $ee_cron, 'scheduled EE cron');
-                    foreach ($cron[ $ee_cron ] as $ee_cron_details) {
-                        if (! empty($ee_cron_details['args'])) {
-                            do_action(
-                                'AHEE_log',
-                                __CLASS__,
-                                __FUNCTION__,
-                                print_r($ee_cron_details['args'], true),
-                                "$ee_cron args"
-                            );
-                        }
-                    }
-                }
-            }
-        }
+        CronUtilities::logScheduledEspressoCrons();
     }
 
 
@@ -151,15 +132,15 @@ class EE_Cron_Tasks extends EE_Base
         if (DbStatus::isOffline()) {
             foreach ($TXN_IDs as $TXN_ID => $additional_vars) {
                 // ensure $additional_vars is an array
-                $additional_vars = is_array($additional_vars) ? $additional_vars : array($additional_vars);
+                $additional_vars = is_array($additional_vars) ? $additional_vars : [$additional_vars];
                 // reset cron job for the TXN
                 call_user_func_array(
-                    array('EE_Cron_Tasks', $cron_task),
+                    ['EE_Cron_Tasks', $cron_task],
                     array_merge(
-                        array(
+                        [
                             time() + (10 * MINUTE_IN_SECONDS),
                             $TXN_ID,
-                        ),
+                        ],
                         $additional_vars
                     )
                 );
@@ -180,7 +161,7 @@ class EE_Cron_Tasks extends EE_Base
      *
      * @var array
      */
-    protected static array $_update_transactions_with_payment = array();
+    protected static array $_update_transactions_with_payment = [];
 
 
     /**
@@ -197,15 +178,14 @@ class EE_Cron_Tasks extends EE_Base
         int $TXN_ID,
         int $PAY_ID
     ): void {
-        do_action('AHEE_log', __CLASS__, __FUNCTION__);
         // validate $TXN_ID and $timestamp
-        $TXN_ID = absint($TXN_ID);
+        $TXN_ID    = absint($TXN_ID);
         $timestamp = absint($timestamp);
         if ($TXN_ID && $timestamp) {
             wp_schedule_single_event(
                 $timestamp,
                 'AHEE__EE_Cron_Tasks__update_transaction_with_payment_2',
-                array($TXN_ID, $PAY_ID)
+                [$TXN_ID, $PAY_ID]
             );
         }
     }
@@ -232,7 +212,7 @@ class EE_Cron_Tasks extends EE_Base
             self::$_update_transactions_with_payment[ $TXN_ID ] = $PAY_ID;
             add_action(
                 'shutdown',
-                array('EE_Cron_Tasks', 'update_transaction_with_payment'),
+                ['EE_Cron_Tasks', 'update_transaction_with_payment'],
                 5
             );
         }
@@ -256,7 +236,6 @@ class EE_Cron_Tasks extends EE_Base
      */
     public static function update_transaction_with_payment(): void
     {
-        do_action('AHEE_log', __CLASS__, __FUNCTION__);
         if (
 // are there any TXNs that need cleaning up ?
             empty(self::$_update_transactions_with_payment)
@@ -288,7 +267,7 @@ class EE_Cron_Tasks extends EE_Base
                 continue;
             }
             $transaction = EEM_Transaction::instance()->get_one_by_ID($TXN_ID);
-            $payment = EEM_Payment::instance()->get_one_by_ID($PAY_ID);
+            $payment     = EEM_Payment::instance()->get_one_by_ID($PAY_ID);
             // verify transaction && try to update the TXN with any payments
             if ($transaction instanceof EE_Transaction && $payment instanceof EE_Payment) {
                 /** @var PaymentProcessor $payment_processor */
@@ -312,7 +291,7 @@ class EE_Cron_Tasks extends EE_Base
      *
      * @var array
      */
-    protected static array $_expired_transactions = array();
+    protected static array $_expired_transactions = [];
 
 
     /**
@@ -327,13 +306,13 @@ class EE_Cron_Tasks extends EE_Base
         int $TXN_ID
     ): void {
         // validate $TXN_ID and $timestamp
-        $TXN_ID = absint($TXN_ID);
+        $TXN_ID    = absint($TXN_ID);
         $timestamp = absint($timestamp);
         if ($TXN_ID && $timestamp) {
             wp_schedule_single_event(
                 $timestamp,
                 'AHEE__EE_Cron_Tasks__expired_transaction_check',
-                array($TXN_ID)
+                [$TXN_ID]
             );
         }
     }
@@ -359,7 +338,7 @@ class EE_Cron_Tasks extends EE_Base
             self::$_expired_transactions[ $TXN_ID ] = $TXN_ID;
             add_action(
                 'shutdown',
-                array('EE_Cron_Tasks', 'process_expired_transactions'),
+                ['EE_Cron_Tasks', 'process_expired_transactions'],
                 5
             );
         }
@@ -531,7 +510,7 @@ class EE_Cron_Tasks extends EE_Base
     public static function clean_out_old_gateway_logs(): void
     {
         if (DbStatus::isOnline()) {
-            $reg_config = LoaderFactory::getLoader()->load('EE_Registration_Config');
+            $reg_config               = LoaderFactory::getLoader()->load('EE_Registration_Config');
             $time_diff_for_comparison = apply_filters(
                 'FHEE__EE_Cron_Tasks__clean_out_old_gateway_logs__time_diff_for_comparison',
                 '-' . $reg_config->gateway_log_lifespan
@@ -547,13 +526,13 @@ class EE_Cron_Tasks extends EE_Base
     /**
      * @var array
      */
-    protected static array $_abandoned_transactions = array();
+    protected static array $_abandoned_transactions = [];
 
 
     /**
      * @param int $timestamp
      * @param int $TXN_ID
-     *@deprecated
+     * @deprecated
      */
     public static function schedule_finalize_abandoned_transactions_check(int $timestamp, int $TXN_ID): void
     {
@@ -563,7 +542,7 @@ class EE_Cron_Tasks extends EE_Base
 
     /**
      * @param int $TXN_ID
-     *@deprecated
+     * @deprecated
      */
     public static function check_for_abandoned_transactions(int $TXN_ID = 0): void
     {
@@ -572,7 +551,6 @@ class EE_Cron_Tasks extends EE_Base
 
 
     /**
-     * @deprecated
      * @throws EE_Error
      * @throws DomainException
      * @throws InvalidDataTypeException
@@ -580,12 +558,12 @@ class EE_Cron_Tasks extends EE_Base
      * @throws InvalidArgumentException
      * @throws ReflectionException
      * @throws RuntimeException
+     * @deprecated
      */
     public static function finalize_abandoned_transactions(): void
     {
-        do_action('AHEE_log', __CLASS__, __FUNCTION__);
         if (
-// are there any TXNs that need cleaning up ?
+            // are there any TXNs that need cleaning up ?
             empty(self::$_abandoned_transactions)
             // reschedule the cron if we can't hit the db right now
             || EE_Cron_Tasks::reschedule_cron_for_transactions_if_maintenance_mode(

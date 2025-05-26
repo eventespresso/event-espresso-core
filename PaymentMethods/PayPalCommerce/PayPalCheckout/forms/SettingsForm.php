@@ -114,11 +114,15 @@ class SettingsForm extends EE_Payment_Method_Form
      * @param array             $subsections
      * @param EE_Payment_Method $payment_method
      * @return array
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public static function addFeesNotice(array $subsections, EE_Payment_Method $payment_method): array
     {
-        if (defined('EE_PPC_USE_PAYMENT_FEES') && ! EE_PPC_USE_PAYMENT_FEES) {
-            // We want to be able to disable fees.
+        // We want to be able to disable fees. Also check if this is PayPal PM.
+        if ((defined('EE_PPC_USE_PAYMENT_FEES') && ! EE_PPC_USE_PAYMENT_FEES)
+            || $payment_method->slug() !== 'paypalcheckout'
+        ) {
             return $subsections;
         }
         return EEH_Array::insert_into_array(

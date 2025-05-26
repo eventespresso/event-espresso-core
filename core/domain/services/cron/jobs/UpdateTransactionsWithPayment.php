@@ -19,11 +19,6 @@ use RuntimeException;
 
 class UpdateTransactionsWithPayment extends CronJob
 {
-    /**
-     * WordPress doesn't allow duplicate crons within 10 minutes of the original,
-     * so we'll set our retry time for just over 10 minutes to avoid that
-     */
-    public const RESCHEDULE_TIMEOUT = 605;
 
 
     /**
@@ -135,7 +130,7 @@ class UpdateTransactionsWithPayment extends CronJob
             if (DbStatus::isOffline()) {
                 // reset cron job for updating the TXN
                 UpdateTransactionsWithPayment::scheduleUpdateTransactionWithPayment(
-                    time() + UpdateTransactionsWithPayment::RESCHEDULE_TIMEOUT,
+                    time() + CronJob::RESCHEDULE_TIMEOUT,
                     $TXN_ID,
                     $PAY_ID
                 );

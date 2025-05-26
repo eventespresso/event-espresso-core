@@ -8,6 +8,7 @@ use EE_Error;
 use EE_Maintenance_Mode;
 use EE_System;
 use EventEspresso\core\domain\services\capabilities\CapabilitiesChecker;
+use EventEspresso\core\domain\services\cron\CronManager;
 use EventEspresso\core\exceptions\InvalidClassException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -67,7 +68,11 @@ class RequestStackCoreApp implements RequestDecoratorInterface, RequestStackCore
         LoaderFactory::getShared(PersistentAdminNoticeManager::class, [$capabilities_checker, $request]);
         // needed
         LoaderFactory::getShared(EE_Maintenance_Mode::class);
+        // load legacy Cron Tasks and new Cron Manager
         LoaderFactory::getShared(EE_Cron_Tasks::class);
+        /** @var CronManager $cron_manager */
+        $cron_manager = LoaderFactory::getShared(CronManager::class, [LoaderFactory::getLoader()]);
+        $cron_manager->initialize();
         LoaderFactory::getShared(EE_System::class);
         return $this->response;
     }

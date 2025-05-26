@@ -32,16 +32,26 @@
     display: flex;
 }
 
-.ee-status-outline.ee-status-outline--info.ee-status-bg--info {
+#support-license-notice-dv {
     color: var(--ee-status-color-blue) !important;
-    font-size: 1.1rem;
+    font-size: var(--ee-font-size-big);
     font-weight: 600;
-}
-.ee-status-outline.ee-status-outline--info.ee-status-bg--info .dashicons-sos {
-    color: var(--ee-status-color-blue) !important;
-    font-size: 3rem;
-    height: 3rem;
-    margin-inline-end: var(--ee-margin-small);
-    width: 3rem;
+
+    .dashicons-sos {
+        color: var(--ee-status-color-blue) !important;
+        font-size: var(--ee-font-size-3xl);
+        height: var(--ee-font-size-3xl);
+        margin-inline: var(--ee-margin-small);
+        width: var(--ee-font-size-3xl);
+
+        &:before {
+            font-size: var(--ee-font-size-3xl);
+            height: var(--ee-font-size-3xl);
+            width: var(--ee-font-size-3xl);
+        }
+    }
 }
 
+.license_keys .ee-status--warning {
+    font-size: var(--ee-font-size-big);
+}

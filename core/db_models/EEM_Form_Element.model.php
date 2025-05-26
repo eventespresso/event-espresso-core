@@ -190,8 +190,8 @@ class EEM_Form_Element extends EEM_Base
         // might need to add a way to identify GQL requests for admin domains
         $admin_request                            = $this->request->isAdmin() || $this->request->isAdminAjax();
         $query_params['default_where_conditions'] = $admin_request
-            ? EEM_Base::default_where_conditions_none
-            : EEM_Base::default_where_conditions_all;
+            ? EE_Default_Where_Conditions::NONE
+            : EE_Default_Where_Conditions::ALL;
         return $query_params;
     }
 

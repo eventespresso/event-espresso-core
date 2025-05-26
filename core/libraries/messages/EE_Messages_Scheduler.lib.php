@@ -30,6 +30,12 @@ class EE_Messages_Scheduler extends EE_Base
      */
     public function __construct()
     {
+        $this->setHooks();
+    }
+
+
+    public function setHooks(): void
+    {
         // register tasks (and make sure only registered once).
         if (! has_action('FHEE__EEH_Activation__get_cron_tasks', [$this, 'register_scheduled_tasks'])) {
             add_action('FHEE__EEH_Activation__get_cron_tasks', [$this, 'register_scheduled_tasks']);

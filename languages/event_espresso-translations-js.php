@@ -448,15 +448,15 @@ $generated_i18n_strings = array(
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/TicketDetailsPanel.tsx:26
 	__( 'reg list', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/Details.tsx:43
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/Details.tsx:35
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/Details.tsx:44
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/Details.tsx:38
 	__( 'add description…', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/Details.tsx:44
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/Details.tsx:45
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/Details.tsx:36
 	__( 'Edit description', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/Details.tsx:45
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/Details.tsx:46
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/Details.tsx:37
 	__( 'click to edit description…', 'event_espresso' ),
 
@@ -1907,6 +1907,15 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/rich-text-editor/src/components/WithEditMode/WithEditMode.tsx:66
 	// Reference: packages/rich-text-editor/src/rte-old/components/RTEWithEditMode/RTEWithEditMode.tsx:39
 	__( 'HTML editor', 'event_espresso' ),
+
+	// Reference: packages/rich-text-editor/src/rte-old/components/RichTextEditor/RichTextEditor.tsx:51
+	__( 'Mode', 'event_espresso' ),
+
+	// Reference: packages/rich-text-editor/src/rte-old/components/RichTextEditor/RichTextEditor.tsx:55
+	__( 'Text Mode - click to switch to html mode', 'event_espresso' ),
+
+	// Reference: packages/rich-text-editor/src/rte-old/components/RichTextEditor/RichTextEditor.tsx:56
+	__( 'Html Mode - click to switch to plaintext mode', 'event_espresso' ),
 
 	// Reference: packages/rich-text-editor/src/rte-old/components/toolbarButtons/WPMedia.tsx:68
 	__( 'Add Media', 'event_espresso' ),

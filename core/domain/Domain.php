@@ -22,6 +22,8 @@ class Domain extends DomainBase implements CaffeinatedInterface
 
     public const ASSET_NAMESPACE = 'eventespresso';
 
+    public const LICENSE_PLUGIN_ID = '268';
+
     public const LICENSE_PLUGIN_NAME = 'Event Espresso Core';
 
     public const LICENSE_PLUGIN_SLUG = 'event_espresso_core';

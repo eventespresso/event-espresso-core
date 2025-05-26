@@ -135,11 +135,11 @@ abstract class FormHandler implements FormHandlerInterface
 
     /**
      * @param bool $for_display
-     * @return EE_Form_Section_Proper
+     * @return EE_Form_Section_Proper|null
      * @throws EE_Error
      * @throws LogicException
      */
-    public function form($for_display = false)
+    public function form(bool $for_display = false): ?EE_Form_Section_Proper
     {
         if (! $this->formIsValid()) {
             return null;
@@ -619,11 +619,12 @@ abstract class FormHandler implements FormHandlerInterface
      */
     public function process($submitted_form_data = [])
     {
-        if (! $this->form()->was_submitted($submitted_form_data)) {
+        $submitted_form = $this->form();
+        if (! $submitted_form->was_submitted($submitted_form_data)) {
             throw new InvalidFormSubmissionException($this->form_name);
         }
-        $this->form(true)->receive_form_submission($submitted_form_data);
-        if (! $this->form()->is_valid()) {
+        $submitted_form->receive_form_submission($submitted_form_data);
+        if (! $submitted_form->is_valid()) {
             throw new InvalidFormSubmissionException(
                 $this->form_name,
                 sprintf(
@@ -633,13 +634,13 @@ abstract class FormHandler implements FormHandlerInterface
                     ),
                     $this->form_name,
                     '<br />',
-                    implode('<br />', $this->form()->get_validation_errors_accumulated())
+                    implode('<br />', $submitted_form->get_validation_errors_accumulated())
                 )
             );
         }
         return (array) apply_filters(
             'FHEE__EventEspresso_core_libraries_form_sections_form_handlers_FormHandler__process__valid_data',
-            $this->form()->valid_data(),
+            $submitted_form->valid_data(),
             $this
         );
     }

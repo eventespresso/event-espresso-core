@@ -38,7 +38,7 @@ class EEM_Currency_Payment_Method extends EEM_Base
                 ),
                 'PMD_ID'   => new EE_Foreign_Key_Int_Field(
                     'PMD_ID',
-                    esc_html__('Paymetn Method ID', 'event_espresso'),
+                    esc_html__('Payment Method ID', 'event_espresso'),
                     false,
                     0,
                     'Payment_Method'

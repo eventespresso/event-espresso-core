@@ -2525,7 +2525,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
                 $_where,
                 'order_by'                 => [$orderby => $sort],
                 'limit'                    => $limit,
-                'default_where_conditions' => EEM_Base::default_where_conditions_this_only,
+                'default_where_conditions' => EE_Default_Where_Conditions::THIS_MODEL_ONLY,
             ],
             $this->request->requestParams(),
             $view,

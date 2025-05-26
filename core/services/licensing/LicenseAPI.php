@@ -18,7 +18,7 @@ class LicenseAPI
 
     public const ACTION_RESET               = 'reset_license';
 
-    public const API_USES_ITEM_ID_OR_NAME   = 'item_name';
+    public const API_USES_ITEM_ID_OR_NAME   = 'item_id';
 
     public const AUTHOR                     = 'Event Espresso';
 
@@ -40,7 +40,7 @@ class LicenseAPI
 
 
     /**
-     * successfull license key API response example:
+     * successful license key API response example:
      *  {
      *      "success": true,
      *      "license": "valid",

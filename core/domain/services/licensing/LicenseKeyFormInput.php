@@ -16,16 +16,19 @@ class LicenseKeyFormInput extends EE_Text_Input
         $item_name      = $plugin_license->itemName();
         $license_key    = $plugin_license->licenseKey();
         $plugin_version = $plugin_license->version();
+        $license_status = $plugin_license->status();
         $license_data   = $licence_manager->checkLicense(
             $license_key,
             $item_ID,
             $item_name,
             $plugin_slug,
-            $plugin_version
+            $plugin_version,
+            $plugin_license->minCoreVersion(),
+            $license_status
         );
 
         $license_expires  = $license_data->expires ?? '';
-        $license_status   = $license_data->license ?? '';
+        $license_status   = $license_data->license ?? $license_status;
         $activations_left = $license_data->activations_left ?? '?';
         $license_status   = $license_key !== '' ? $license_status : '';
 
@@ -35,7 +38,7 @@ class LicenseKeyFormInput extends EE_Text_Input
 
         if ($license_key !== '') {
             $license_status_for_notice = $license_status;
-            $status_class              = LicenseStatus::statusClass($license_status);
+            $status_class              = LicenseStatusDisplay::statusClass($license_status);
             $input_status_class        .= $license_status !== 'valid' ? " ee-status-outline--$status_class" : '';
 
             if ($license_status === 'valid' && $license_expires !== '') {
@@ -72,7 +75,7 @@ class LicenseKeyFormInput extends EE_Text_Input
                     [
                         '<div class="ee-license-status__wrapper ee-layout-row--fixed">',
                         ActivateLicenseButton::html($plugin_license, $license_data),
-                        LicenseStatus::statusNotice($license_status_for_notice),
+                        LicenseStatusDisplay::statusNotice($license_status_for_notice),
                         '</div>',
                         // %5$s is the form input
                     ]

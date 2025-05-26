@@ -44,12 +44,16 @@ class EE_Payment_Method_Form extends EE_Model_Form_Section
     public function __construct($options_array = [])
     {
         $this->_model         = EEM_Payment_Method::instance();
-        $this->_options_array = $options_array;
-        if (isset($options_array['payment_method_type'])) {
-            $this->_payment_method_type = $options_array['payment_method_type'];
+        $this->_options_array = (array) apply_filters(
+            'FHEE__EE_Payment_Method_Form___construct__options_array',
+            $options_array,
+            $this
+        );
+        if (isset($this->_options_array['payment_method_type'])) {
+            $this->_payment_method_type = $this->_options_array['payment_method_type'];
         }
-        if (isset($options_array['extra_meta_inputs'])) {
-            $this->_extra_meta_inputs = array_merge($this->_extra_meta_inputs, $options_array['extra_meta_inputs']);
+        if (isset($this->_options_array['extra_meta_inputs'])) {
+            $this->_extra_meta_inputs = array_merge($this->_extra_meta_inputs, $this->_options_array['extra_meta_inputs']);
         }
         if ($this->_extra_meta_inputs) {
             $this->_subsections = array_merge($this->_subsections, $this->_extra_meta_inputs);
@@ -85,7 +89,7 @@ class EE_Payment_Method_Form extends EE_Model_Form_Section
         );
         $this->_layout_strategy          = new EE_Admin_Two_Column_Layout();
 
-        parent::__construct($options_array);
+        parent::__construct($this->_options_array);
         $debug_mode = $this->_subsections['PMD_debug_mode'] ?? null;
         if ($debug_mode instanceof EE_Form_Input_Base) {
             $debug_mode->set_html_help_text(

@@ -4,6 +4,7 @@ namespace EventEspresso\core\libraries\rest_api\controllers\model;
 
 use DateTimeZone;
 use DomainException;
+use EE_Default_Where_Conditions;
 use EED_Core_Rest_Api;
 use EEH_DTT_Helper;
 use EEH_Inflector;
@@ -1330,12 +1331,12 @@ class Read extends Base
     public function validateDefaultQueryParams(string $default_where_conditions): string
     {
         $valid_default_where_conditions_for_api_calls = [
-            EEM_Base::default_where_conditions_all,
-            EEM_Base::default_where_conditions_minimum_all,
-            EEM_Base::default_where_conditions_minimum_others,
+            EE_Default_Where_Conditions::ALL,
+            EE_Default_Where_Conditions::MINIMUM_ALL,
+            EE_Default_Where_Conditions::MINIMUM_OTHERS,
         ];
         if (! $default_where_conditions) {
-            $default_where_conditions = EEM_Base::default_where_conditions_all;
+            $default_where_conditions = EE_Default_Where_Conditions::ALL;
         }
         if (
             in_array(
@@ -1346,7 +1347,7 @@ class Read extends Base
         ) {
             return $default_where_conditions;
         }
-        return EEM_Base::default_where_conditions_all;
+        return EE_Default_Where_Conditions::ALL;
     }
 
 

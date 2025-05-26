@@ -9,23 +9,15 @@ use EventEspresso\core\services\loaders\LoaderFactory;
 
 class LicenseData
 {
-    public const  LICENSE_ACTIVE  = 'active';
-
-    public const  LICENSE_DECAF   = 'decaf';
-
-    public const  LICENSE_EXPIRED = 'expired';
-
-    public const  LICENSE_VALID   = 'valid';
-
-
     private Domain $domain;
 
     private FeatureFlags $feature;
+
     private LicenseDataStrategy $license_data;
 
 
     /**
-     * @param Domain $domain
+     * @param Domain       $domain
      * @param FeatureFlags $feature
      */
     public function __construct(Domain $domain, FeatureFlags $feature)
@@ -39,7 +31,6 @@ class LicenseData
     }
 
 
-
     /**
      * @return bool
      * @since 5.0.22.p
@@ -50,9 +41,15 @@ class LicenseData
     }
 
 
+    public function licenseKey(): string
+    {
+        return $this->license_data->getLicenseKey();
+    }
+
+
     public function licenseStatus(): string
     {
-        return ! $this->domain->isDecaf() ? $this->license_data->getLicenseStatus() :  LicenseData::LICENSE_DECAF;
+        return ! $this->domain->isDecaf() ? $this->license_data->getLicenseStatus() : LicenseStatus::DECAF;
     }
 
 

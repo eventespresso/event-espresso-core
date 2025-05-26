@@ -2,6 +2,7 @@
 
 use EventEspresso\core\domain\Domain;
 use EventEspresso\core\domain\DomainFactory;
+use EventEspresso\core\domain\services\capabilities\FeatureFlag;
 use EventEspresso\core\domain\services\capabilities\FeatureFlags;
 use EventEspresso\core\domain\services\custom_post_types\RegisterCustomPostTypes;
 use EventEspresso\core\domain\services\custom_post_types\RegisterCustomTaxonomies;
@@ -15,7 +16,7 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\interfaces\ResettableInterface;
 use EventEspresso\core\services\addon\AddonManager;
 use EventEspresso\core\services\helpers\WordPressHooks;
-use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\licensing\PluginLicense;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\core\services\routing\Router;
@@ -107,7 +108,7 @@ final class EE_System implements ResettableInterface
     private ?int $_req_type = null;
 
     /**
-     * Whether or not there was a non-micro version change in EE core version during this request
+     * Whether there was a non-micro version change in EE core version during this request
      */
     private bool $_major_version_change = false;
 
@@ -343,6 +344,7 @@ final class EE_System implements ResettableInterface
      * @throws InvalidClassException
      * @throws InvalidFilePathException
      * @throws EE_Error
+     * @throws Exception
      */
     public function brewCaffeinated()
     {
@@ -352,8 +354,8 @@ final class EE_System implements ResettableInterface
         if ($domain->isCaffeinated() && ! $brew instanceof EE_Brewing_Regular) {
             require_once EE_CAFF_PATH . 'brewing_regular.php';
             /** @var EE_Brewing_Regular $brew */
-            $brew = LoaderFactory::getLoader()->getShared(EE_Brewing_Regular::class);
-            if (! $this->feature->allowed('use_edd_plugin_licensing')) {
+            $brew = $this->loader->getShared(EE_Brewing_Regular::class);
+            if (! $this->feature->allowed(FeatureFlag::USE_EDD_PLUGIN_LICENSING)) {
                 $brew->initializePUE();
             }
             add_action(
@@ -378,14 +380,19 @@ final class EE_System implements ResettableInterface
      */
     public function load_espresso_addons()
     {
-        if ($this->feature->allowed('use_edd_plugin_licensing')) {
-            new EventEspresso\core\services\licensing\PluginLicense(
+        if (
+            $this->feature->allowed(FeatureFlag::USE_EDD_PLUGIN_LICENSING)
+            && ! $this->request->isWordPressHeartbeat()
+        ) {
+            $core_license = new PluginLicense(
                 EVENT_ESPRESSO_MAIN_FILE,
-                0,
-                Domain::pluginName(),
-                Domain::pluginSlug(),
+                Domain::LICENSE_PLUGIN_ID,
+                Domain::LICENSE_PLUGIN_NAME,
+                Domain::LICENSE_PLUGIN_SLUG,
                 espresso_version()
             );
+            $core_license->setHooks();
+            $this->loader->share(PluginLicense::class, $core_license);
         }
         // looking for hooks? they've been moved into the AddonManager to maintain compatibility
         $this->addon_manager->loadAddons();
@@ -401,6 +408,7 @@ final class EE_System implements ResettableInterface
      *
      * @access public
      * @return void
+     * @throws EE_Error
      */
     public function detect_activations_or_upgrades()
     {
@@ -408,7 +416,7 @@ final class EE_System implements ResettableInterface
         $this->detect_if_activation_or_upgrade();
         foreach ($this->registry->addons as $addon) {
             if ($addon instanceof EE_Addon) {
-                // detect teh request type for that addon
+                // detect the request type for that addon
                 $addon->detect_req_type();
             }
         }
@@ -422,6 +430,7 @@ final class EE_System implements ResettableInterface
      *
      * @access public
      * @return void
+     * @throws EE_Error
      */
     public function detect_if_activation_or_upgrade()
     {
@@ -839,7 +848,7 @@ final class EE_System implements ResettableInterface
         $this->loader->getShared('EE_Load_Textdomain');
         // load textdomain
         EE_Load_Textdomain::load_textdomain();
-        // load and setup EE_Config and EE_Network_Config
+        /** @var EE_Config $config */
         $config = $this->loader->getShared('EE_Config');
         $this->loader->getShared('EE_Network_Config');
         // setup autoloaders
@@ -895,6 +904,7 @@ final class EE_System implements ResettableInterface
 
     /**
      * @throws Exception
+     * @throws Throwable
      * @since 4.9.71.p
      */
     public function loadRouteMatchSpecifications()
@@ -943,6 +953,7 @@ final class EE_System implements ResettableInterface
      * @access public
      * @return void
      * @throws Exception
+     * @throws Throwable
      */
     public function register_shortcodes_modules_and_widgets()
     {
@@ -1003,6 +1014,7 @@ final class EE_System implements ResettableInterface
      *
      * @return void
      * @throws Exception
+     * @throws Throwable
      */
     public function brew_espresso()
     {
@@ -1097,6 +1109,7 @@ final class EE_System implements ResettableInterface
      * @access public
      * @return void
      * @throws Exception
+     * @throws Throwable
      */
     public function load_controllers()
     {
@@ -1113,6 +1126,7 @@ final class EE_System implements ResettableInterface
      * @access public
      * @return void
      * @throws Exception
+     * @throws Throwable
      */
     public function core_loaded_and_ready()
     {
@@ -1162,6 +1176,7 @@ final class EE_System implements ResettableInterface
      * @access public
      * @return void
      * @throws Exception
+     * @throws Throwable
      */
     public function initialize_last()
     {

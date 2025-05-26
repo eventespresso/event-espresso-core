@@ -129,7 +129,7 @@ class RegFormHandler
                 // for any conditions they may have for it to pass.
                 apply_filters(
                     'FHEE__EventEspresso_core_domain_services_registration_form_v1_RegFormHandler__processRegistrations__bypass',
-                    false, // if true is returned by the plugin then the registration processing is halted.
+                    false, // if the plugin returns 'true' then the registration processing is halted.
                     $this->registrant_data->attendeeCount(),
                     $registration,
                     $registrations,
@@ -249,37 +249,38 @@ class RegFormHandler
      */
     private function processRegFormData(EE_Registration $registration, string $reg_url_link, array $reg_form_data): bool
     {
-        if (isset($reg_form_data[ $reg_url_link ])) {
-            // do we need to copy basic info from primary attendee ?
-            $copy_primary = isset($reg_form_data[ $reg_url_link ]['additional_attendee_reg_info'])
-                && absint($reg_form_data[ $reg_url_link ]['additional_attendee_reg_info']) === 0;
-            $this->registrant_data->setCopyPrimary($copy_primary);
-            // filter form input data for this registration
-            $reg_form_data[ $reg_url_link ] = (array) apply_filters(
-                'FHEE__EventEspresso_core_domain_services_registration_form_v1_RegFormHandler__processRegFormData__registrant_form_data',
-                $reg_form_data[ $reg_url_link ],
-                $registration
-            );
-            if (isset($reg_form_data['primary_attendee'])) {
-                $primary_reg_url_link = $reg_form_data['primary_attendee'] ?: '';
-                $this->registrant_data->addPrimaryRegistrantDataValue('reg_url_link', $primary_reg_url_link);
-                unset($reg_form_data['primary_attendee']);
+        if (! isset($reg_form_data[ $reg_url_link ])) {
+            return false;
+        }
+        // do we need to copy basic info from primary attendee ?
+        $copy_primary = isset($reg_form_data[ $reg_url_link ]['additional_attendee_reg_info'])
+            && absint($reg_form_data[ $reg_url_link ]['additional_attendee_reg_info']) === 0;
+        $this->registrant_data->setCopyPrimary($copy_primary);
+        // filter form input data for this registration
+        $reg_form_data[ $reg_url_link ] = (array) apply_filters(
+            'FHEE__EventEspresso_core_domain_services_registration_form_v1_RegFormHandler__processRegFormData__registrant_form_data',
+            $reg_form_data[ $reg_url_link ],
+            $registration
+        );
+        if (isset($reg_form_data['primary_attendee'])) {
+            $primary_reg_url_link = $reg_form_data['primary_attendee'] ?: '';
+            $this->registrant_data->addPrimaryRegistrantDataValue('reg_url_link', $primary_reg_url_link);
+            unset($reg_form_data['primary_attendee']);
+        }
+        // now loop through our array of valid post data && process attendee reg forms
+        foreach ($reg_form_data[ $reg_url_link ] as $form_section => $form_inputs) {
+            if (in_array($form_section, $this->non_input_form_sections, true)) {
+                continue;
             }
-            // now loop through our array of valid post data && process attendee reg forms
-            foreach ($reg_form_data[ $reg_url_link ] as $form_section => $form_inputs) {
-                if (in_array($form_section, $this->non_input_form_sections, true)) {
-                    continue;
-                }
-                foreach ($form_inputs as $form_input => $input_value) {
-                    $input_processed = $this->input_handler->processFormInput(
-                        $registration,
-                        $reg_url_link,
-                        $form_input,
-                        $input_value
-                    );
-                    if (! $input_processed) {
-                        return false;
-                    }
+            foreach ($form_inputs as $form_input => $input_value) {
+                $input_processed = $this->input_handler->processFormInput(
+                    $registration,
+                    $reg_url_link,
+                    $form_input,
+                    $input_value
+                );
+                if (! $input_processed) {
+                    return false;
                 }
             }
         }

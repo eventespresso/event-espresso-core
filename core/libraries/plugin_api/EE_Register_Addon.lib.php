@@ -1126,6 +1126,14 @@ class EE_Register_Addon implements EEI_Plugin_API
 
     private static function registerLicense($addon_name)
     {
+        static $request = null;
+        if ($request === null) {
+            /** @var RequestInterface $request */
+            $request = LoaderFactory::getLoader()->getShared(RequestInterface::class);
+        }
+        if ($request->isWordPressHeartbeat()) {
+            return;
+        }
         $addon_settings = self::$_settings[ $addon_name ] ?? [];
         if (empty($addon_settings)) {
             return;

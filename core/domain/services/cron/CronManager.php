@@ -6,31 +6,45 @@ use EE_Dependency_Map;
 use EE_Messages_Scheduler;
 use EventEspresso\core\domain\services\cron\jobs\ExpiredTransactionCheck;
 use EventEspresso\core\domain\services\cron\jobs\GarbageCollection;
+use EventEspresso\core\domain\services\cron\jobs\UpdatePluginLicenseData;
 use EventEspresso\core\domain\services\cron\jobs\UpdateTransactionsWithPayment;
 use EventEspresso\core\services\loaders\LoaderInterface;
+use RuntimeException;
 
 class CronManager
 {
     protected LoaderInterface $loader;
 
+    private static array $cron_jobs = [
+        // ExpiredTransactionCheck::class,
+        // GarbageCollection::class,
+        UpdatePluginLicenseData::class,
+        // UpdateTransactionsWithPayment::class,
+    ];
+
 
     public function __construct(LoaderInterface $loader)
     {
         $this->loader = $loader;
+
+    }
+
+    public function initialize(): void
+    {
         $this->registerDependencies();
+        $this->loadCronJobs();
+        add_action(
+            'AHEE__EE_System__load_core_configuration__complete',
+            [CronUtilities::class, 'updateMessagesOnSameRequest']
+        );
     }
 
 
     public function registerDependencies()
     {
-        $cron_jobs = [
-            ExpiredTransactionCheck::class,
-            GarbageCollection::class,
-            UpdateTransactionsWithPayment::class,
-        ];
-        foreach ($cron_jobs as $cronJob) {
+        foreach (CronManager::$cron_jobs as $cron_class) {
             EE_Dependency_Map::register_dependencies(
-                $cronJob,
+                $cron_class,
                 [LoaderInterface::class => EE_Dependency_Map::load_from_cache]
             );
         }
@@ -39,41 +53,19 @@ class CronManager
 
     public function loadCronJobs()
     {
-        $this->loadExpiredTransactionCheck();
-        $this->loadGarbageCollection();
-        $this->loadUpdateTransactionsWithPayment();
-        $this->loadMessagesScheduler();
-    }
-
-
-    private function loadExpiredTransactionCheck()
-    {
-        /** @var ExpiredTransactionCheck $cron_job */
-        $cron_job = $this->loader->getShared(ExpiredTransactionCheck::class);
-        $cron_job->setHooks();
-    }
-
-
-    private function loadGarbageCollection()
-    {
-        /** @var GarbageCollection $cron_job */
-        $cron_job = $this->loader->getShared(GarbageCollection::class);
-        $cron_job->setHooks();
-    }
-
-
-    private function loadUpdateTransactionsWithPayment()
-    {
-        /** @var UpdateTransactionsWithPayment $cron_job */
-        $cron_job = $this->loader->getShared(UpdateTransactionsWithPayment::class);
-        $cron_job->setHooks();
-    }
-
-
-    private function loadMessagesScheduler()
-    {
-        /** @var EE_Messages_Scheduler $cron_job */
-        $cron_job = $this->loader->getShared(EE_Messages_Scheduler::class);
-        $cron_job->setHooks();
+        foreach (CronManager::$cron_jobs as $cron_class) {
+            $cron_job = $this->loader->getShared($cron_class);
+            if (! $cron_job instanceof CronJob) {
+                throw new RuntimeException(
+                    sprintf(
+                        esc_html__('Class %s must be an instance of %s', 'event_espresso'),
+                        $cron_class,
+                        CronJob::class
+                    )
+                );
+            }
+            $cron_job->setHooks();
+        }
+        // will also need to load EE_Messages_Scheduler::class separately, because it's "special"
     }
 }

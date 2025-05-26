@@ -23,9 +23,10 @@ interface FormHandlerInterface
     /**
      * the absolute top level form section being used on the page
      *
-     * @return EE_Form_Section_Proper
+     * @param bool $for_display
+     * @return EE_Form_Section_Proper|null
      */
-    public function form();
+    public function form(bool $for_display = false): ?EE_Form_Section_Proper;
 
 
 

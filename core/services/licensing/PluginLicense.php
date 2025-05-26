@@ -2,7 +2,10 @@
 
 namespace EventEspresso\core\services\licensing;
 
+use EE_Network_Config;
+use EventEspresso\core\domain\Domain;
 use EventEspresso\core\domain\services\licensing\LicenseKeyFormInput;
+use EventEspresso\core\domain\services\licensing\LicenseStatus;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\third_party_libs\easy_digital_downloads\PluginUpdater;
 use stdClass;
@@ -30,9 +33,13 @@ class PluginLicense
 
     private string $plugin_slug;
 
+    private string $status = '';
+
     private string $version;
 
     private bool $beta;
+
+    private bool $initialized = false;
 
     private bool $wp_override;
 
@@ -57,8 +64,17 @@ class PluginLicense
         $this->wp_override      = $wp_override;
         $this->plugin_slug      = $this->removePluginSlugPrefixes($plugin_slug);
         $this->min_core_version = $min_core_version;
+    }
 
+
+    public function setHooks(): void
+    {
+        // only set hooks ONCE!
+        if ($this->initialized) {
+            return;
+        }
         add_action('init', [$this, 'loadPluginUpdater']);
+        add_action('admin_init', [$this, 'refreshPluginLicenseData'], 99);
         add_action(
             'AHEE__EventEspresso_core_services_licensing_PluginLicenseCollection__loadPluginLicenses',
             [$this, 'loadPluginLicense']
@@ -73,6 +89,7 @@ class PluginLicense
             10,
             2
         );
+        $this->initialized = true;
     }
 
 
@@ -130,6 +147,24 @@ class PluginLicense
 
 
     /**
+     * @return bool
+     */
+    public function hasLicenseKey(): bool
+    {
+        return ! empty($this->license_key);
+    }
+
+
+    /**
+     * @return bool
+     */
+    public function isMissingLicenseKey(): bool
+    {
+        return empty($this->license_key);
+    }
+
+
+    /**
      * @return string
      */
     public function licenseKey(): string
@@ -139,9 +174,16 @@ class PluginLicense
 
 
     /**
+     * !!! IMPORTANT !!!
+     * This method only sets the license key for this plugin,
+     * it does not persist the change to the database.
+     * To persist the change, use LicenseKeyData::updateLicenseDataForPlugin(),
+     * or call one of the methods on LicenseManager
+     * which will also send the change to EDD on the server.
+     *
      * @param string $license_key
      */
-    public function updateLicenseKey(string $license_key): void
+    public function setLicenseKey(string $license_key): void
     {
         $this->license_key = sanitize_text_field($license_key);
     }
@@ -172,6 +214,18 @@ class PluginLicense
     public function pluginSlug(): string
     {
         return $this->plugin_slug;
+    }
+
+
+    public function status(): string
+    {
+        return $this->status;
+    }
+
+
+    public function setStatus(string $status): void
+    {
+        $this->status = $status;
     }
 
 
@@ -209,10 +263,10 @@ class PluginLicense
             return;
         }
 
-        $license_key_data = $this->getLicenseKeyData();
-        $license_key      = $license_key_data->license_key ?? '';
-        if ($license_key) {
-            $this->updateLicenseKey($license_key);
+        $license_data = $this->getLicenseKeyData();
+        $license_key  = $license_data->license_key ?? '';
+        if ($license_key && $this->isMissingLicenseKey()) {
+            $this->setLicenseKey($license_key);
         }
 
         $this->updater = new PluginUpdater(
@@ -253,7 +307,81 @@ class PluginLicense
     {
         if ($api_data['item_name'] === $this->itemName()) {
             $api_params['event_espresso_core_version'] = EVENT_ESPRESSO_VERSION;
+            $core_license                              =
+                $this->license_key_data->getLicenseDataForPlugin(Domain::LICENSE_PLUGIN_SLUG);
+            if (! empty($core_license->license_key)) {
+                $api_params['event_espresso_core_license'] = $core_license->license_key;
+            }
         }
         return $api_params;
+    }
+
+
+    /**
+     * updates the license key and status for this plugin
+     * using the license data previously saved in the database
+     *
+     * @return void
+     * @since $VID:$
+     */
+    public function refreshPluginLicenseData()
+    {
+        $license_data = $this->getLicenseKeyData();
+        $update       = ! isset($license_data->license) || $license_data->license === 'none';
+        $license_key  = $license_data->license_key ?? '';
+        if ($this->isMissingLicenseKey()) {
+            if (! $license_key) {
+                $core_license = $this->license_key_data->getLicenseDataForPlugin(Domain::LICENSE_PLUGIN_SLUG);
+                if ($core_license->license_key && $core_license->license === LicenseStatus::VALID) {
+                    $license_key = $core_license->license_key;
+                    $update      = true;
+                } else {
+                    $network_config = $this->getNetworkConfig();
+                    if (! empty($network_config->core->site_license_key)) {
+                        $license_key = $network_config->core->site_license_key;
+                        $update      = true;
+                    }
+                }
+            }
+            if ($license_key) {
+                $this->setLicenseKey($license_key);
+            }
+        }
+        $license_status = $license_data->license ?? '';
+        if ($license_status && empty($this->status)) {
+            $this->setStatus($license_status);
+        }
+        if ($update && $this->hasLicenseKey()) {
+            $licence_manager = $this->getLicenseManager();
+            $licence_manager->checkLicense(
+                $this->licenseKey(),
+                $this->itemID(),
+                $this->itemName(),
+                $this->pluginSlug(),
+                $this->version(),
+                $this->minCoreVersion(),
+                $this->status()
+            );
+        }
+    }
+
+
+    private function getNetworkConfig(): EE_Network_Config
+    {
+        static $network_config = null;
+        if (! $network_config instanceof EE_Network_Config) {
+            $network_config = LoaderFactory::getShared(EE_Network_Config::class);
+        }
+        return $network_config;
+    }
+
+
+    private function getLicenseManager(): LicenseManager
+    {
+        static $licence_manager = null;
+        if (! $licence_manager instanceof LicenseManager) {
+            $licence_manager = LoaderFactory::getShared(LicenseManager::class);
+        }
+        return $licence_manager;
     }
 }

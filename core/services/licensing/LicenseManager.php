@@ -32,7 +32,7 @@ class LicenseManager
         string $plugin_version,
         string $min_core_version = ''
     ): stdCLass {
-        $license_data              = $this->license_api->postRequest(
+        $license_data = $this->license_api->postRequest(
             LicenseAPI::ACTION_ACTIVATE,
             $license_key,
             $item_id,
@@ -40,9 +40,13 @@ class LicenseManager
             $plugin_version,
             $min_core_version
         );
-        $license_data->license_key = $license_data->license === 'valid' ? $license_key : '';
-        $this->license_key_data->updateLicenseDataForPlugin($license_data, $plugin_slug);
-        return $license_data;
+        return $this->updateLicenseData(
+            $plugin_slug,
+            $license_key,
+            $license_data,
+            $license_data->license ?? '',
+            true
+        );
     }
 
 
@@ -82,10 +86,10 @@ class LicenseManager
         string $item_name,
         string $plugin_slug,
         string $plugin_version,
-        string $min_core_version = ''
+        string $min_core_version = '',
+        string $license_status = ''
     ): stdCLass {
-        $existing_license_data = $this->getLicenseData($plugin_slug);
-        $license_data          = $this->license_api->postRequest(
+        $license_data = $this->license_api->postRequest(
             LicenseAPI::ACTION_CHECK,
             $license_key,
             $item_id,
@@ -93,8 +97,12 @@ class LicenseManager
             $plugin_version,
             $min_core_version
         );
-        $license_data          = (array) $license_data + (array) $existing_license_data;
-        return (object) $license_data;
+        return $this->updateLicenseData(
+            $plugin_slug,
+            $license_key,
+            $license_data,
+            $license_status
+        );
     }
 
 
@@ -118,5 +126,43 @@ class LicenseManager
             ];
         }
         return $this->license_api->getProductVersions($products);
+    }
+
+
+    /**
+     * @param string   $plugin_slug
+     * @param string   $license_key
+     * @param stdClass $license_data
+     * @param string   $license_status
+     * @param bool     $force_update    true for license activation requests
+     * @return stdClass
+     * @since $VID:$
+     */
+    private function updateLicenseData(
+        string $plugin_slug,
+        string $license_key,
+        stdClass $license_data,
+        string $license_status = '',
+        bool $force_update = false
+    ): stdClass {
+        if (! isset($license_data->license_key)) {
+            $license_data->license_key = $license_key;
+        }
+        // if the license key or license status has changed, then update the license data
+        $success = $license_data->success ?? false;
+        if (
+            $success
+            && (
+                $force_update
+                || (
+                    (! empty($license_data->license_key) && $license_data->license_key !== $license_key)
+                    || (! empty($license_data->license) && $license_data->license !== $license_status)
+                )
+            )
+        ) {
+            $this->license_key_data->updateLicenseDataForPlugin($license_data, $plugin_slug);
+        }
+
+        return $license_data;
     }
 }

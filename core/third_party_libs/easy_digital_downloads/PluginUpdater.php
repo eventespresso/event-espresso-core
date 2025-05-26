@@ -55,7 +55,7 @@ class PluginUpdater
         $edd_plugin_data[ $this->slug ] = $this->api_data;
 
         /**
-         * Fires after the $edd_plugin_data is setup.
+         * Fires after the $edd_plugin_data is set up.
          *
          * @param array $edd_plugin_data Array of EDD SL plugin data.
          * @since x.x.x
@@ -379,14 +379,10 @@ class PluginUpdater
         if (! is_array($data) && ! is_object($data)) {
             return [];
         }
-        $new_data = [];
-        foreach ($data as $key => $value) {
-            $new_data[ $key ] = is_object($value)
-                ? $this->convertObjectToArray($value)
-                : $value;
-        }
-
-        return $new_data;
+        return array_map(
+            fn ($value) => is_object($value) ? $this->convertObjectToArray($value) : $value,
+            (array) $data
+        );
     }
 
 
@@ -407,7 +403,7 @@ class PluginUpdater
 
 
     /**
-     * Calls the API and, if successfull, returns the object delivered by the API.
+     * Calls the API and, if successful, returns the object delivered by the API.
      *
      * @param string $action The requested action.
      * @param array  $data   Parameters for the API action.

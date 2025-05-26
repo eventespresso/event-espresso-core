@@ -7,12 +7,12 @@ use EE_Line_Item;
 use EE_Transaction;
 use EEH_Line_Item;
 use EventEspresso\core\domain\services\licensing\LicenseData;
+use EventEspresso\core\domain\services\licensing\LicenseStatus;
 use EventEspresso\core\domain\values\gateways\GracePeriod;
 use Exception;
 use OutOfBoundsException;
 use ReflectionException;
 use RuntimeException;
-use stdClass;
 
 /**
  * PaymentProcessorFees
@@ -42,17 +42,17 @@ class PaymentProcessorFees
      * @var float[][] $gateway_fees
      */
     private array $gateway_fees = [
-        LicenseData::LICENSE_ACTIVE  => [
+        LicenseStatus::ACTIVE  => [
             PaymentProcessorFees::GATEWAY_PAYPAL => 0.00,
             PaymentProcessorFees::GATEWAY_SQUARE => 0.00,
             PaymentProcessorFees::GATEWAY_STRIPE => 0.00,
         ],
-        LicenseData::LICENSE_EXPIRED => [
+        LicenseStatus::EXPIRED => [
             PaymentProcessorFees::GATEWAY_PAYPAL => 3.00,
             PaymentProcessorFees::GATEWAY_SQUARE => 2.50,
             PaymentProcessorFees::GATEWAY_STRIPE => 3.00,
         ],
-        LicenseData::LICENSE_DECAF   => [
+        LicenseStatus::DECAF   => [
             PaymentProcessorFees::GATEWAY_PAYPAL => 3.00,
             PaymentProcessorFees::GATEWAY_SQUARE => 2.50,
             PaymentProcessorFees::GATEWAY_STRIPE => 3.00,

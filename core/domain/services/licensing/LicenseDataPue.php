@@ -14,6 +14,8 @@ use EE_Network_Core_Config;
  */
 class LicenseDataPue implements LicenseDataStrategy
 {
+    private string $license_key = '';
+
     private string $status;
 
     protected EE_Network_Core_Config $network_core_config;
@@ -31,11 +33,18 @@ class LicenseDataPue implements LicenseDataStrategy
     public function loadLicenseData(): void
     {
         if (empty($this->network_core_config->site_license_key)) {
-            $this->status = LicenseData::LICENSE_EXPIRED;
+            $this->status = LicenseStatus::EXPIRED;
             return;
         }
-        $verify_fail  = get_option('puvererr_' . basename(EE_PLUGIN_BASENAME), false);
-        $this->status = $verify_fail ? LicenseData::LICENSE_EXPIRED : LicenseData::LICENSE_ACTIVE;
+        $this->license_key = $this->network_core_config->site_license_key;
+        $verify_fail       = get_option('puvererr_' . basename(EE_PLUGIN_BASENAME), false);
+        $this->status      = $verify_fail ? LicenseStatus::EXPIRED : LicenseStatus::ACTIVE;
+    }
+
+
+    public function getLicenseKey(): string
+    {
+        return $this->license_key;
     }
 
 

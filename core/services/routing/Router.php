@@ -173,6 +173,9 @@ class Router
                 $this->route_handler->addRoute(
                     'EventEspresso\core\domain\entities\routing\handlers\admin\WordPressPluginsPage'
                 );
+                $this->route_handler->addRoute(
+                    'EventEspresso\core\domain\services\licensing\LicenseKeyActivationRoute'
+                );
                 break;
             case PrimaryRoute::ROUTE_REQUEST_TYPE_REGULAR:
                 $this->route_handler->addRoute(

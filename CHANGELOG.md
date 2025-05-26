@@ -6,6 +6,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Releases
 
+### [5.0.40]
+
+#### Added
+ - [Add hook for setting payment method form options (#1840)](https://github.com/eventespresso/cafe/pull/1840)
+
+#### Fixed
+ - [PPC. Stripe. Fix partner fees messages (#1830)](https://github.com/eventespresso/cafe/pull/1830)
+ - [Fix SPCO Update Requests (#1837)](https://github.com/eventespresso/cafe/pull/1837)
+ - [PPC. Fix log messages (#1841)](https://github.com/eventespresso/cafe/pull/1841)
+
+#### Changed
+ - [BuildMachine 5.0.39 changes](https://github.com/eventespresso/cafe/pull/1823)
+ - [fixed placeholder issue in edtr and p tag issue (Barista#1387) (#1822)](https://github.com/eventespresso/cafe/pull/1822)
+ - [Set EDD licensing feature flag default to true (#1824)](https://github.com/eventespresso/cafe/pull/1824)
+ - [Implemented CUID2 and Its Support for Jest (Barista#1409) (#1842)](https://github.com/eventespresso/cafe/pull/1842)
+ - [Move Default Where Conditions Constants (#1818)](https://github.com/eventespresso/cafe/pull/1818)
+ - [Transfer PUE License Key to EDD Client  (#1851)](https://github.com/eventespresso/cafe/pull/1851)
+
+
+
 ### [5.0.39]
 
 #### Added

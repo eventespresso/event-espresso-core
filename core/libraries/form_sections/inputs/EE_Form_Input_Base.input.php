@@ -22,35 +22,35 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     protected ?string $_html_name = null;
 
     /**
-     * id for the html label tag
+     * id for the HTML label tag
      *
      * @var string
      */
     protected $_html_label_id;
 
     /**
-     * class for teh html label tag
+     * class for the HTML label tag
      *
      * @var string
      */
     protected $_html_label_class;
 
     /**
-     * style for teh html label tag
+     * style for the HTML label tag
      *
      * @var string
      */
     protected $_html_label_style;
 
     /**
-     * text to be placed in the html label
+     * text to be placed in the HTML label
      *
      * @var string
      */
     protected $_html_label_text;
 
     /**
-     * the full html label. If used, all other html_label_* properties are invalid
+     * the full HTML label. If used, all other html_label_* properties are invalid
      *
      * @var string
      */
@@ -79,7 +79,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     protected $_html_help_style;
 
     /**
-     * Stores whether or not this input's response is required.
+     * Stores whether this input's response is required.
      * Because certain styling elements may also want to know that this
      * input is required etc.
      *
@@ -170,7 +170,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
 
     protected array $_data_attributes = [];
 
-    protected bool $_no_label = false; // if true, then no html label will be displayed for this input
+    protected bool $_no_label = false; // if true, then no HTML label will be displayed for this input
 
     /**
      * adds a class to the input's container
@@ -189,15 +189,15 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
 
     /**
      * @param array                         $input_args       {
-     * @type string                         $html_name        the html name for the input
-     * @type string                         $html_label_id    the id attribute to give to the html label tag
-     * @type string                         $html_label_class the class attribute to give to the html label tag
-     * @type string                         $html_label_style the style attribute to give ot teh label tag
+     * @type string                         $html_name        the HTML name for the input
+     * @type string                         $html_label_id    the id attribute to give to the HTML label tag
+     * @type string                         $html_label_class the class attribute to give to the HTML label tag
+     * @type string                         $html_label_style the style attribute to give ot the label tag
      * @type string                         $html_label_text  the text to put in the label tag
-     * @type string                         $html_label       the full html label. If used,
+     * @type string                         $html_label       the full HTML label. If used,
      *                                                        all other html_label_* args are invalid
      * @type string                         $html_help_text   text to put in help element
-     * @type string                         $html_help_style  style attribute to give to teh help element
+     * @type string                         $html_help_style  style attribute to give to the help element
      * @type string                         $html_help_class  class attribute to give to the help element
      * @type string                         $default          default value NORMALIZED (eg, if providing the default
      *                                                        for a Yes_No_Input, you should provide TRUE or FALSE, not
@@ -277,7 +277,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
 
 
     /**
-     * Sets the html_name to its default value, if none was specified in teh constructor.
+     * Sets the html_name to its default value, if none was specified in the constructor.
      * Calculation involves using the name and the parent's html_name
      *
      * @throws EE_Error
@@ -426,7 +426,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
 
 
     /**
-     * Returns all teh validation strategies which apply to this field, numerically indexed
+     * Returns all the validation strategies which apply to this field, numerically indexed
      *
      * @return EE_Validation_Strategy_Base[]
      */
@@ -618,7 +618,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
 
     /**
      * Validates the input's sanitized value (assumes _sanitize() has already been called)
-     * and returns whether or not the form input's submitted value is value
+     * and returns whether the form input's submitted value is value
      *
      * @return boolean
      */
@@ -662,10 +662,10 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
     /**
      * Picks out the form value that relates to this form input,
      * and stores it as the sanitized value on the form input, and sets the normalized value.
-     * Returns whether or not any validation errors occurred
+     * Returns whether any validation errors occurred
      *
      * @param array $req_data
-     * @return boolean whether or not there was an error
+     * @return boolean whether there was an error
      * @throws EE_Error
      */
     protected function _normalize($req_data)
@@ -819,7 +819,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
 
     /**
      * Returns a string safe to usage in form inputs when displaying, because
-     * it escapes all html entities
+     * it escapes all HTML entities
      *
      * @return string
      */
@@ -941,7 +941,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
 
 
     /**
-     * Sets whether or not this field is required, and adjusts the validation strategy.
+     * Sets whether this field is required, and adjusts the validation strategy.
      * If you want to use the EE_Conditionally_Required_Validation_Strategy,
      * please add it as a validation strategy using add_validation_strategy as normal
      *
@@ -962,7 +962,7 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
 
 
     /**
-     * Returns whether or not this field is required
+     * Returns whether this field is required
      *
      * @return boolean
      */
@@ -1122,23 +1122,15 @@ abstract class EE_Form_Input_Base extends EE_Form_Section_Validatable
      * @return array
      * @throws EE_Error
      */
-    protected function getInputNameParts()
+    protected function getInputNameParts(): array
     {
-        // break up the html name by "[]"
-        if (strpos($this->html_name(), '[') !== false) {
-            $before_any_brackets = substr($this->html_name(), 0, strpos($this->html_name(), '['));
-        } else {
-            $before_any_brackets = $this->html_name();
-        }
-        // grab all of the segments
-        preg_match_all('~\[([^]]*)\]~', $this->html_name(), $matches);
-        if (isset($matches[1]) && is_array($matches[1])) {
-            $name_parts = $matches[1];
-            array_unshift($name_parts, $before_any_brackets);
-        } else {
-            $name_parts = [$before_any_brackets];
-        }
-        return $name_parts;
+        // strip out ] brackets, then replace [ with . so we can explode
+        $html_name = str_replace(
+            [']', '['], // replace 1: ]  2: [
+            ['', '.'],  // with    1: '' 2: .
+            $this->html_name()
+        );
+        return explode('.', $html_name);
     }
 
 

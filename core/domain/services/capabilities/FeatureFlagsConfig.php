@@ -65,8 +65,7 @@ class FeatureFlagsConfig extends JsonDataWordpressOption
         return (object) [
             FeatureFlag::USE_DATETIME_STATUS_CONTROLS  => false,
             FeatureFlag::USE_DEFAULT_TICKET_MANAGER    => true,
-            FeatureFlag::USE_EDD_PLUGIN_LICENSING      => defined('EE_USE_EDD_PLUGIN_LICENSING')
-                                                            && EE_USE_EDD_PLUGIN_LICENSING,
+            FeatureFlag::USE_EDD_PLUGIN_LICENSING      => true,
             FeatureFlag::USE_EVENT_DESCRIPTION_RTE     => false,
             FeatureFlag::USE_EVENT_EDITOR_BULK_EDIT    => $this->domain->isCaffeinated()
                                                             && ! $this->domain->isMultiSite(),
@@ -88,10 +87,11 @@ class FeatureFlagsConfig extends JsonDataWordpressOption
      */
     public function getOverrides(): stdClass
     {
-        $overrides = [];
-        if (defined('EE_USE_EDD_PLUGIN_LICENSING')) {
-            $overrides[ FeatureFlag::USE_EDD_PLUGIN_LICENSING ] = EE_USE_EDD_PLUGIN_LICENSING;
-        }
+        // allow EDD to be disabled for testing.
+        $overrides[ FeatureFlag::USE_EDD_PLUGIN_LICENSING ] = defined('EE_USE_EDD_PLUGIN_LICENSING') 
+            ? EE_USE_EDD_PLUGIN_LICENSING 
+            : true;
+        
         return (object) $overrides;
     }
 

@@ -1,12 +1,11 @@
 <?php
 
 use EventEspresso\core\domain\services\licensing\LicenseKeysAdminForm;
-use EventEspresso\core\domain\services\licensing\LicenseStatus;
+use EventEspresso\core\domain\services\licensing\LicenseStatusDisplay;
 use EventEspresso\core\services\licensing\LicenseAPI;
 use EventEspresso\core\services\licensing\LicenseKeyData;
 use EventEspresso\core\services\licensing\LicenseManager;
 use EventEspresso\core\services\licensing\PluginLicenseCollection;
-use EventEspresso\core\services\request\DataType;
 
 /**
  * License_Keys_Admin_Page
@@ -105,7 +104,7 @@ class License_Keys_Admin_Page extends EE_Admin_Page
             'eeLicenseData',
             [
                 'domain'              => home_url(),
-                'statusMessages'      => LicenseStatus::statusMessages(),
+                'statusMessages'      => LicenseStatusDisplay::statusMessages(),
                 'confirmDeactivation' => esc_html__(
                     'Are you sure you want to deactivate this license?',
                     'event_espresso'
@@ -155,15 +154,9 @@ class License_Keys_Admin_Page extends EE_Admin_Page
     }
 
 
-    private function getLicenseManager(): LicenseManager
+    private function getLicenseKeysAdminForm(): LicenseKeysAdminForm
     {
-        return $this->loader->getShared(LicenseManager::class);
-    }
-
-
-    private function getPluginLicenseCollection(): PluginLicenseCollection
-    {
-        return $this->loader->getShared(PluginLicenseCollection::class);
+        return $this->loader->getShared(LicenseKeysAdminForm::class);
     }
 
 
@@ -174,7 +167,7 @@ class License_Keys_Admin_Page extends EE_Admin_Page
     {
         $this->_template_args['admin_page_content'] = '';
         try {
-            $license_keys_admin_form                    = $this->loader->getShared(LicenseKeysAdminForm::class);
+            $license_keys_admin_form                    = $this->getLicenseKeysAdminForm();
             $this->_template_args['admin_page_content'] = EEH_HTML::div(
                 $license_keys_admin_form->display(),
                 '',
@@ -194,73 +187,26 @@ class License_Keys_Admin_Page extends EE_Admin_Page
      */
     public function updateLicenseKey()
     {
-        if ($this->capabilities->current_user_can('manage_options', __FUNCTION__)) {
-            $licence_manager  = $this->getLicenseManager();
-            $license_action   = $this->request->getRequestParam(LicenseAPI::REQUEST_PARAM_ACTION);
-            $license_key      = $this->request->getRequestParam(LicenseAPI::REQUEST_PARAM_LICENSE_KEY);
-            $item_id          = $this->request->getRequestParam(LicenseAPI::REQUEST_PARAM_ITEM_ID, 0, DataType::INT);
-            $item_name        = $this->request->getRequestParam(LicenseAPI::REQUEST_PARAM_ITEM_NAME);
-            $plugin_slug      = $this->request->getRequestParam(LicenseAPI::REQUEST_PARAM_PLUGIN_SLUG);
-            $plugin_version   = $this->request->getRequestParam(LicenseAPI::REQUEST_PARAM_PLUGIN_VER);
-            $min_core_version = $this->request->getRequestParam(LicenseAPI::REQUEST_PARAM_MIN_CORE_VER);
-
-            $license_data = [];
-            switch ($license_action) {
-                case LicenseAPI::ACTION_ACTIVATE:
-                    $license_data = $licence_manager->activateLicense(
-                        $license_key,
-                        $item_id,
-                        $item_name,
-                        $plugin_slug,
-                        $plugin_version,
-                        $min_core_version
-                    );
-                    break;
-
-                case LicenseAPI::ACTION_DEACTIVATE:
-                    $license_data = $licence_manager->deactivateLicense(
-                        $license_key,
-                        $item_id,
-                        $item_name,
-                        $plugin_slug,
-                        $plugin_version,
-                        $min_core_version
-                    );
-                    break;
-
-                case LicenseAPI::ACTION_CHECK:
-                    $license_data = $licence_manager->checkLicense(
-                        $license_key,
-                        $item_id,
-                        $item_name,
-                        $plugin_slug,
-                        $plugin_version,
-                        $min_core_version
-                    );
-                    break;
-
-                case LicenseAPI::ACTION_GET_VERSION:
-                    $license_data = $licence_manager->getVersionInfo();
-                    break;
-
-                case LicenseAPI::ACTION_RESET:
-                    $license_data = $licence_manager->resetLicenseKey($plugin_slug);
-                    break;
-            }
-
-            $license_data = (object) $license_data;
-            $license_data->statusNotice = LicenseStatus::statusNotice($license_data->license);
-            $license_data->statusClass  = LicenseStatus::statusClass($license_data->license);
-            $notices = EE_Error::get_notices(false, false, false);
-        } else {
-            $license_data = new stdClass();
-            $notices = [
-                'success' => false,
-                'errors'  => [
-                    esc_html__('You do not have the required privileges to perform this action', 'event_espresso'),
-                ],
-            ];
+        $license_data = new stdClass();
+        try {
+            $license_form = $this->getLicenseKeysAdminForm();
+            $license_data = $license_form->process($this->request->postParams());
+        } catch (Exception $exception) {
+            EE_Error::add_error(
+                sprintf(
+                    esc_html__(
+                        'The following error occurred while attempting to update your license key: %1$s',
+                        'event_espresso'
+                    ),
+                    $exception->getMessage()
+                ),
+                __FILE__,
+                __FUNCTION__,
+                __LINE__
+            );
         }
+
+        $notices = EE_Error::get_notices(false, false, false);
 
         if ($this->request->isAjax()) {
             wp_send_json(

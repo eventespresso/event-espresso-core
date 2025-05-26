@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\domain\services\cron;
 
+use EE_Network_Config;
 use EventEspresso\core\domain\services\database\DbStatus;
 
 class CronUtilities
@@ -65,5 +66,21 @@ class CronUtilities
             );
         }
         return true;
+    }
+
+
+    public static function updateMessagesOnSameRequest()
+    {
+        // verify that WP Cron is not enabled
+        if (
+            defined('DISABLE_WP_CRON')
+            && DISABLE_WP_CRON
+            && is_admin()
+            && did_action('AHEE__EE_System__load_core_configuration__begin')
+            && EE_Network_Config::instance()->core->do_messages_on_same_request !== true
+        ) {
+            EE_Network_Config::instance()->core->do_messages_on_same_request = true;
+            EE_Network_Config::instance()->update_config(true, false);
+        }
     }
 }

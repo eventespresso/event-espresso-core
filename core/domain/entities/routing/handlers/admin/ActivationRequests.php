@@ -3,6 +3,7 @@
 namespace EventEspresso\core\domain\entities\routing\handlers\admin;
 
 use EventEspresso\core\services\routing\PrimaryRoute;
+use EventEspresso\core\services\routing\Route;
 
 /**
  * Class ActivationRequests
@@ -38,6 +39,10 @@ class ActivationRequests extends PrimaryRoute
         $this->dependency_map->registerDependencies(
             'EventEspresso\core\domain\entities\routing\handlers\admin\WordPressPluginsPage',
             AdminRoute::getDefaultDependencies()
+        );
+        $this->dependency_map->registerDependencies(
+            'EventEspresso\core\domain\services\licensing\LicenseKeyActivationRoute',
+            Route::getDefaultDependencies()
         );
     }
 

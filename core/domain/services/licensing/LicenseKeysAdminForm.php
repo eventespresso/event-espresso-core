@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\domain\services\licensing;
 
+use EE_Capabilities;
 use EE_Error;
 use EE_Form_Section_HTML;
 use EE_Form_Section_Proper;
@@ -10,6 +11,11 @@ use EE_Registry;
 use EEH_Array;
 use EEH_HTML;
 use EventEspresso\core\libraries\form_sections\form_handlers\FormHandler;
+use EventEspresso\core\services\licensing\LicenseAPI;
+use EventEspresso\core\services\licensing\LicenseManager;
+use EventEspresso\core\services\loaders\LoaderFactory;
+use RuntimeException;
+use stdClass;
 
 class LicenseKeysAdminForm extends FormHandler
 {
@@ -47,7 +53,7 @@ class LicenseKeysAdminForm extends FormHandler
     private function addCoreSupportLicenseKey(array $subsections): array
     {
         // we want to move the license key input for core to a different location,
-        // so to do that we need to copy it, delete the old location, then add re-add to the form
+        // so to do that, we need to copy it, delete the old location, then add re-add to the form
         $core_license_key = $subsections['event_espresso_core'] ?? null;
         unset($subsections['event_espresso_core']);
         $new_subsections = [
@@ -58,10 +64,8 @@ class LicenseKeysAdminForm extends FormHandler
                     'ee-admin-settings-hdr'
                 )
             ),
-            'event_espresso_core'        => $core_license_key,
             'support_license_notice'     => new EE_Form_Section_HTML(
-                EEH_HTML::br()
-                . EEH_HTML::div(
+                EEH_HTML::div(
                     '<span class="dashicons dashicons-sos"></span>'
                     . EEH_HTML::span(
                         esc_html__(
@@ -70,9 +74,12 @@ class LicenseKeysAdminForm extends FormHandler
                         )
                     ),
                     'support-license-notice-dv',
-                    'ee-status-outline ee-status-outline--micro ee-status-outline--info ee-status-bg--info'
+                    'ee-status-outline ee-status-outline--small ee-status-bg--info'
                 )
-                . EEH_HTML::br()
+            ),
+            'event_espresso_core'        => $core_license_key,
+            'dev_site_notice'            => new EE_Form_Section_HTML(
+                EEH_HTML::br()
                 . EEH_HTML::div(
                     EEH_HTML::span(
                         sprintf(
@@ -84,8 +91,8 @@ class LicenseKeysAdminForm extends FormHandler
                             '</strong>'
                         )
                     ),
-                    '',
-                    'ee-status-outline ee-status-outline--attention'
+                    'dev-site-notice-dv',
+                    'ee-status--warning'
                 )
             ),
             'add-on-license-keys-hdr'    => new EE_Form_Section_HTML(
@@ -111,9 +118,89 @@ class LicenseKeysAdminForm extends FormHandler
         ];
 
         if ($core_license_key instanceof LicenseKeyFormInput && $core_license_key->get_default()) {
+            unset($new_subsections['dev_site_notice']);
             unset($new_subsections['support_license_notice']);
             unset($new_subsections['add-on-license-keys-notice']);
         }
         return EEH_Array::insert_into_array($subsections, $new_subsections);
+    }
+
+
+    /**
+     * @param array $submitted_form_data
+     * @return stdClass
+     * @throws EE_Error
+     */
+    public function process($submitted_form_data = [])
+    {
+        $capabilities = LoaderFactory::getShared(EE_Capabilities::class);
+        if (! $capabilities->current_user_can('manage_options', __FUNCTION__)) {
+            throw new RuntimeException(
+                esc_html__('You do not have the required privileges to perform this action', 'event_espresso')
+            );
+        }
+
+        // NOTE! we're not using parent::process() here
+        // because the requests are coming in via ajax
+        // and the request parameters do not match the form schema
+        $license_action   = $submitted_form_data[ LicenseAPI::REQUEST_PARAM_ACTION ] ?? '';
+        $license_key      = $submitted_form_data[ LicenseAPI::REQUEST_PARAM_LICENSE_KEY ] ?? '';
+        $item_id          = $submitted_form_data[ LicenseAPI::REQUEST_PARAM_ITEM_ID ] ?? 0;
+        $item_name        = $submitted_form_data[ LicenseAPI::REQUEST_PARAM_ITEM_NAME ] ?? '';
+        $plugin_slug      = $submitted_form_data[ LicenseAPI::REQUEST_PARAM_PLUGIN_SLUG ] ?? '';
+        $plugin_version   = $submitted_form_data[ LicenseAPI::REQUEST_PARAM_PLUGIN_VER ] ?? '';
+        $min_core_version = $submitted_form_data[ LicenseAPI::REQUEST_PARAM_MIN_CORE_VER ] ?? '';
+
+        /** @var LicenseManager $licence_manager */
+        $licence_manager = LoaderFactory::getShared(LicenseManager::class);
+
+        $license_data = [];
+        switch ($license_action) {
+            case LicenseAPI::ACTION_ACTIVATE:
+                $license_data = $licence_manager->activateLicense(
+                    $license_key,
+                    $item_id,
+                    $item_name,
+                    $plugin_slug,
+                    $plugin_version,
+                    $min_core_version
+                );
+                break;
+
+            case LicenseAPI::ACTION_DEACTIVATE:
+                $license_data = $licence_manager->deactivateLicense(
+                    $license_key,
+                    $item_id,
+                    $item_name,
+                    $plugin_slug,
+                    $plugin_version,
+                    $min_core_version
+                );
+                break;
+
+            case LicenseAPI::ACTION_CHECK:
+                $license_data = $licence_manager->checkLicense(
+                    $license_key,
+                    $item_id,
+                    $item_name,
+                    $plugin_slug,
+                    $plugin_version,
+                    $min_core_version
+                );
+                break;
+
+            case LicenseAPI::ACTION_GET_VERSION:
+                $license_data = $licence_manager->getVersionInfo();
+                break;
+
+            case LicenseAPI::ACTION_RESET:
+                $license_data = $licence_manager->resetLicenseKey($plugin_slug);
+                break;
+        }
+
+        $license_data               = (object) $license_data;
+        $license_data->statusNotice = LicenseStatusDisplay::statusNotice($license_data->license);
+        $license_data->statusClass  = LicenseStatusDisplay::statusClass($license_data->license);
+        return $license_data;
     }
 }

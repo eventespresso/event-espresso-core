@@ -891,6 +891,11 @@ class EE_Dependency_Map
                 null,
                 'EE_Template_Config' => EE_Dependency_Map::load_from_cache,
             ],
+            'EventEspresso\core\services\licensing\LicenseManager' => [
+                'EventEspresso\core\services\licensing\LicenseAPI'              => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\licensing\LicenseKeyData'          => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\licensing\PluginLicenseCollection' => EE_Dependency_Map::load_from_cache,
+            ],
             'EventEspresso\core\domain\services\licensing\LicenseKeyFormInput'                                                    => [
                 'EventEspresso\core\services\licensing\PluginLicense'  => EE_Dependency_Map::not_registered,
                 'EventEspresso\core\services\licensing\LicenseManager' => EE_Dependency_Map::load_from_cache,

@@ -7,6 +7,9 @@ interface LicenseDataStrategy
     public function loadLicenseData();
 
 
+    public function getLicenseKey(): string;
+
+
     public function getLicenseStatus(): string;
 
 

@@ -27,8 +27,9 @@ class RegistrationCheckoutRequests extends FrontendRequests
         return parent::matchesCurrentRequest()
             && (
                 str_contains($this->request->requestUri(false, true), 'registration-checkout')
-                || $this->request->getRequestParam('action', '', DataType::STRING) === 'process_reg_step'
                 || $this->request->getRequestParam('action', '', DataType::STRING) === 'display_spco_reg_step'
+                || $this->request->getRequestParam('action', '', DataType::STRING) === 'process_reg_step'
+                || $this->request->getRequestParam('action', '', DataType::STRING) === 'update_reg_step'
             );
     }
 

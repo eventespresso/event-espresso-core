@@ -179,7 +179,7 @@ class FeatureFlag
                 'name'            => esc_html__('EDD Plugin Licensing', 'event_espresso'),
                 'html_label_text' => esc_html__('Use EDD Plugin Licensing', 'event_espresso'),
                 'help_text'       => esc_html__(
-                    'Whether to use the EDD Plugin Licensing system to manage licenses for the EE plugins. default: Disabled',
+                    'Whether to use the EDD Plugin Licensing system to manage licenses for the EE plugins. default: Enabled',
                     'event_espresso'
                 ),
                 'overridden'      => defined('EE_USE_EDD_PLUGIN_LICENSING'),

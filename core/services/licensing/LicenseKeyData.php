@@ -21,25 +21,18 @@ class LicenseKeyData extends WordPressOption
      */
     const OPTION_NAME = 'event-espresso-license-keys';
 
+    private static array $no_license = [
+        'item_id'     => false,
+        'item_name'   => '',
+        'license'     => 'none',
+        'license_key' => '',
+        'success'     => false,
+    ];
+
 
     public function __construct()
     {
         parent::__construct(LicenseKeyData::OPTION_NAME, [], true);
-    }
-
-
-    /**
-     * Retrieves the license data for a specific plugin.
-     *
-     * @param string $plugin The plugin identifier.
-     * @return stdClass An object containing the license data for the specified plugin.
-     *                       Returns a default structure if no data exists.
-     */
-    public function getLicenseDataForPlugin(string $plugin): stdCLass
-    {
-        $licenses     = $this->loadOption();
-        $license_data = $licenses[ $plugin ] ?? ['license' => 'none', 'success' => false, 'error' => true];
-        return (object) $license_data;
     }
 
 
@@ -55,6 +48,21 @@ class LicenseKeyData extends WordPressOption
 
 
     /**
+     * Retrieves the license data for a specific plugin.
+     *
+     * @param string $plugin The plugin identifier.
+     * @return stdClass An object containing the license data for the specified plugin.
+     *                       Returns a default structure if no data exists.
+     */
+    public function getLicenseDataForPlugin(string $plugin): stdCLass
+    {
+        $licenses     = $this->loadOption();
+        $license_data = $licenses[ $plugin ] ?? LicenseKeyData::$no_license;
+        return (object) $license_data;
+    }
+
+
+    /**
      * Updates or adds the license data for a specific plugin.
      *
      * @param stdClass $license_data The new license data to store.
@@ -64,6 +72,9 @@ class LicenseKeyData extends WordPressOption
      */
     public function updateLicenseDataForPlugin(stdCLass $license_data, string $plugin, bool $force_update = false): int
     {
+        if (! isset($license_data->success) || (bool) $license_data->success !== true) {
+            return WordPressOption::UPDATE_NONE;
+        }
         $licenses = $this->loadOption();
         // convert objects to array and merge new data with old
         $licenses[ $plugin ] = (array) $license_data;

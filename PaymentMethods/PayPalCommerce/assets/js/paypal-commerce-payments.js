@@ -571,10 +571,11 @@ jQuery(document).ready(function ($) {
             }
             // add to PM logs
             if (typeof log_error === 'undefined' || log_error === true) {
-                if (! details) {
-                    details = error_message;
+                if (details && typeof details !== 'string') {
+                    details = JSON.stringify(details);
                 }
-                this.logError(details, pm_slug);
+                error_message += details ? ' | ' + details : '';
+                this.logError(error_message, pm_slug);
             }
         };
 
@@ -605,10 +606,10 @@ jQuery(document).ready(function ($) {
         /**
          * Logs this error in the EE system (Payment Methods >> Logs).
          * @function
-         * @param  {string} msg
+         * @param  {string} message
          * @param  {EeaPayPalCheckout} pm_slug
          */
-        this.logError = function (msg, pm_slug) {
+        this.logError = function (message, pm_slug) {
             const ajax_url = typeof ajaxurl === 'undefined' ? eei18n.ajax_url : ajaxurl;
             $.ajax({
                 type: 'POST',
@@ -618,7 +619,7 @@ jQuery(document).ready(function ($) {
                     action: 'eeaPPCommerceLogError',
                     pm_slug: pm_slug,
                     txn_id: eeaPPCommerceParameters.txn_id,
-                    message: msg,
+                    message: message,
                 }
             });
         };

@@ -495,54 +495,34 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     protected static $_db_verification_level = EEM_Base::db_verified_none;
 
     /**
-     * @const constant for 'default_where_conditions' to apply default where conditions to ALL queried models
-     *        (eg, if retrieving registrations ordered by their datetimes, this will only return non-trashed
-     *        registrations for non-trashed tickets for non-trashed datetimes)
+     * @deprecatd $VID:$
      */
-    const default_where_conditions_all = 'all';
+    const default_where_conditions_all = EE_Default_Where_Conditions::ALL;
 
     /**
-     * @const constant for 'default_where_conditions' to apply default where conditions to THIS model only, but
-     *        no other models which are joined to (eg, if retrieving registrations ordered by their datetimes, this will
-     *        return non-trashed registrations, regardless of the related datetimes and tickets' statuses).
-     *        It is preferred to use EEM_Base::default_where_conditions_minimum_others because, when joining to
-     *        models which share tables with other models, this can return data for the wrong model.
+     * @deprecatd $VID:$
      */
-    const default_where_conditions_this_only = 'this_model_only';
+    const default_where_conditions_this_only = EE_Default_Where_Conditions::THIS_MODEL_ONLY;
 
     /**
-     * @const constant for 'default_where_conditions' to apply default where conditions to other models queried,
-     *        but not the current model (eg, if retrieving registrations ordered by their datetimes, this will
-     *        return all registrations related to non-trashed tickets and non-trashed datetimes)
+     * @deprecatd $VID:$
      */
-    const default_where_conditions_others_only = 'other_models_only';
+    const default_where_conditions_others_only = EE_Default_Where_Conditions::OTHER_MODELS_ONLY;
 
     /**
-     * @const constant for 'default_where_conditions' to apply minimum where conditions to all models queried.
-     *        For most models this the same as EEM_Base::default_where_conditions_none, except for models which share
-     *        their table with other models, like the Event and Venue models. For example, when querying for events
-     *        ordered by their venues' name, this will be sure to only return real events with associated real venues
-     *        (regardless of whether those events and venues are trashed)
-     *        In contrast, using EEM_Base::default_where_conditions_none would could return WP posts other than EE
-     *        events.
+     * @deprecatd $VID:$
      */
-    const default_where_conditions_minimum_all = 'minimum';
+    const default_where_conditions_minimum_all = EE_Default_Where_Conditions::MINIMUM_ALL;
 
     /**
-     * @const constant for 'default_where_conditions' to apply apply where conditions to other models, and full default
-     *        where conditions for the queried model (eg, when querying events ordered by venues' names, this will
-     *        return non-trashed events for any venues, regardless of whether those associated venues are trashed or
-     *        not)
+     * @deprecatd $VID:$
      */
-    const default_where_conditions_minimum_others = 'full_this_minimum_others';
+    const default_where_conditions_minimum_others = EE_Default_Where_Conditions::MINIMUM_OTHERS;
 
     /**
-     * @const constant for 'default_where_conditions' to NOT apply any where conditions. This should very rarely be
-     *        used, because when querying from a model which shares its table with another model (eg Events and Venues)
-     *        it's possible it will return table entries for other models. You should use
-     *        EEM_Base::default_where_conditions_minimum_all instead.
+     * @deprecatd $VID:$
      */
-    const default_where_conditions_none = 'none';
+    const default_where_conditions_none = EE_Default_Where_Conditions::NONE;
 
 
     /**
@@ -1199,7 +1179,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         $model_object = $this->get_one(
             $this->alter_query_params_to_restrict_by_ID(
                 $id,
-                ['default_where_conditions' => EEM_Base::default_where_conditions_minimum_all]
+                ['default_where_conditions' => EE_Default_Where_Conditions::MINIMUM_ALL]
             )
         );
         $className    = $this->_get_class_name();
@@ -1832,7 +1812,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                 $query_params = [
                     [$this->primary_key_name() => ['IN', $model_objs_affected_ids]],
                     'limit'                    => count($model_objs_affected_ids),
-                    'default_where_conditions' => EEM_Base::default_where_conditions_none,
+                    'default_where_conditions' => EE_Default_Where_Conditions::NONE,
                 ];
             }
         }
@@ -2818,7 +2798,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         // we're just going to use the query params on the related model's normal get_all query,
         // except add a condition to say to match the current mod
         if (! isset($query_params['default_where_conditions'])) {
-            $query_params['default_where_conditions'] = EEM_Base::default_where_conditions_none;
+            $query_params['default_where_conditions'] = EE_Default_Where_Conditions::NONE;
         }
         $this_model_name                                                 = $this->get_this_model_name();
         $this_pk_field_name                                              = $this->get_primary_key_field()->get_name();
@@ -2857,7 +2837,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         // we're just going to use the query params on the related model's normal get_all query,
         // except add a condition to say to match the current mod
         if (! isset($query_params['default_where_conditions'])) {
-            $query_params['default_where_conditions'] = EEM_Base::default_where_conditions_none;
+            $query_params['default_where_conditions'] = EE_Default_Where_Conditions::NONE;
         }
         $this_model_name                                                 = $this->get_this_model_name();
         $this_pk_field_name                                              = $this->get_primary_key_field()->get_name();
@@ -3096,7 +3076,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     {
         return $this->exists(
             [
-                'default_where_conditions' => EEM_Base::default_where_conditions_none,
+                'default_where_conditions' => EE_Default_Where_Conditions::NONE,
                 [
                     $this->primary_key_name() => $id,
                 ],
@@ -3585,7 +3565,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         ) {
             $use_default_where_conditions = $query_params['default_where_conditions'];
         } else {
-            $use_default_where_conditions = EEM_Base::default_where_conditions_all;
+            $use_default_where_conditions = EE_Default_Where_Conditions::ALL;
         }
         $query_params[0] = array_merge(
             $this->_get_default_where_conditions_for_models_in_query(
@@ -3807,7 +3787,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      */
     private function _get_default_where_conditions_for_models_in_query(
         EE_Model_Query_Info_Carrier $query_info_carrier,
-        $use_default_where_conditions = EEM_Base::default_where_conditions_all,
+        $use_default_where_conditions = EE_Default_Where_Conditions::ALL,
         $where_query_params = []
     ) {
         $allowed_used_default_where_conditions_values = EEM_Base::valid_default_where_conditions();
@@ -3875,9 +3855,9 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                    && in_array(
                        $default_where_conditions_value,
                        [
-                           EEM_Base::default_where_conditions_all,
-                           EEM_Base::default_where_conditions_this_only,
-                           EEM_Base::default_where_conditions_minimum_others,
+                           EE_Default_Where_Conditions::ALL,
+                           EE_Default_Where_Conditions::THIS_MODEL_ONLY,
+                           EE_Default_Where_Conditions::MINIMUM_OTHERS,
                        ],
                        true
                    )
@@ -3887,8 +3867,8 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
                    && in_array(
                        $default_where_conditions_value,
                        [
-                           EEM_Base::default_where_conditions_all,
-                           EEM_Base::default_where_conditions_others_only,
+                           EE_Default_Where_Conditions::ALL,
+                           EE_Default_Where_Conditions::OTHER_MODELS_ONLY,
                        ],
                        true
                    )
@@ -3912,15 +3892,15 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     {
         return (
                    $for_this_model
-                   && $default_where_conditions_value === EEM_Base::default_where_conditions_minimum_all
+                   && $default_where_conditions_value === EE_Default_Where_Conditions::MINIMUM_ALL
                )
                || (
                    ! $for_this_model
                    && in_array(
                        $default_where_conditions_value,
                        [
-                           EEM_Base::default_where_conditions_minimum_others,
-                           EEM_Base::default_where_conditions_minimum_all,
+                           EE_Default_Where_Conditions::MINIMUM_OTHERS,
+                           EE_Default_Where_Conditions::MINIMUM_ALL,
                        ],
                        true
                    )
@@ -6150,7 +6130,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     {
         $query_params = [
             0                          => [$this->get_primary_key_field()->get_name() => $id],
-            'default_where_conditions' => EEM_Base::default_where_conditions_others_only,
+            'default_where_conditions' => EE_Default_Where_Conditions::OTHER_MODELS_ONLY,
         ];
         return $this->update($fields_n_values, $query_params);
     }
@@ -6472,12 +6452,12 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     public static function valid_default_where_conditions(): array
     {
         return [
-            EEM_Base::default_where_conditions_all,
-            EEM_Base::default_where_conditions_this_only,
-            EEM_Base::default_where_conditions_others_only,
-            EEM_Base::default_where_conditions_minimum_all,
-            EEM_Base::default_where_conditions_minimum_others,
-            EEM_Base::default_where_conditions_none,
+            EE_Default_Where_Conditions::ALL,
+            EE_Default_Where_Conditions::THIS_MODEL_ONLY,
+            EE_Default_Where_Conditions::OTHER_MODELS_ONLY,
+            EE_Default_Where_Conditions::MINIMUM_ALL,
+            EE_Default_Where_Conditions::MINIMUM_OTHERS,
+            EE_Default_Where_Conditions::NONE,
         ];
     }
 

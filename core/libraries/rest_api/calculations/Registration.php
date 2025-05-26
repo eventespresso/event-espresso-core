@@ -3,8 +3,8 @@
 namespace EventEspresso\core\libraries\rest_api\calculations;
 
 use EE_Checkin;
+use EE_Default_Where_Conditions;
 use EE_Error;
-use EEM_Base;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\libraries\rest_api\calculations\Base as RegistrationCalculationBase;
@@ -25,10 +25,7 @@ use WP_REST_Request;
  */
 class Registration extends RegistrationCalculationBase
 {
-    /**
-     * @var EEM_Registration
-     */
-    protected $registration_model;
+    protected EEM_Registration $registration_model;
 
     /**
      * Registration constructor.
@@ -78,7 +75,7 @@ class Registration extends RegistrationCalculationBase
                 [
                     'Ticket.TKT_ID' => $registration->ticket_ID(),
                 ],
-                'default_where_conditions' => EEM_Base::default_where_conditions_minimum_all,
+                'default_where_conditions' => EE_Default_Where_Conditions::MINIMUM_ALL,
             ]
         );
         $checkin_stati = [];

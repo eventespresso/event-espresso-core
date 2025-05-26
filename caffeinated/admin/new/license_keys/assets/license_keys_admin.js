@@ -5,6 +5,7 @@ jQuery(document).ready(function ($) {
     const $license_keys_admin_form = $('#update_license_keys_event_form');
     const $support_license_notice = $('#support-license-notice-dv');
     const $addon_license_keys_notice = $('#add-on-license-keys-notice-dv');
+    const $dev_site_notice = $('#dev-site-notice-dv');
 
     const disableLicenseInputs = function (disabled = true) {
         $('.ee-license-key__input').each(function (index) {
@@ -13,12 +14,23 @@ jQuery(document).ready(function ($) {
             }
         });
         if (disabled) {
+            $dev_site_notice.slideDown();
+            $support_license_notice.slideDown();
             $addon_license_keys_notice.slideDown();
         } else {
+            $dev_site_notice.slideUp();
             $support_license_notice.slideUp();
             $addon_license_keys_notice.slideUp();
         }
     }
+
+    // don't allow form submission with enter key
+    $license_keys_admin_form.on('keydown', function(e) {
+        if (e.keyCode === 13) {
+            e.preventDefault();
+            return false;
+        }
+    });
 
     $license_keys_admin_form.on("input", '.ee-license-key__input', function (e) {
         e.preventDefault();
@@ -70,7 +82,7 @@ jQuery(document).ready(function ($) {
             action: 'espresso_update_license',
             license_action: action,
             license_key: licenseKey,
-            //item_id: item_id,
+            item_id: item_id,
             item_name: item_name,
             plugin_slug: plugin_slug,
             min_core_ver: min_core_ver,

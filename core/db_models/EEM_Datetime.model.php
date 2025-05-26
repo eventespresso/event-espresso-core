@@ -430,7 +430,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
         $query_params[0]      = $this->addDefaultWhereParams($where_params, $include_deleted, $include_expired);
         $query_params         = $this->addDefaultWhereConditions(
             $query_params,
-            EEM_Base::default_where_conditions_this_only
+            EE_Default_Where_Conditions::THIS_MODEL_ONLY
         );
         $query_params         = $this->addDefaultQueryParams($query_params, $limit, 'DTT_order');
         return $this->getDatetimesAndRestoreModel($query_params, $prev_data_prep_value);
@@ -768,7 +768,7 @@ class EEM_Datetime extends EEM_Soft_Delete_Base
      */
     private function addDefaultWhereConditions(
         array $query_params,
-        $default_where_conditions = EEM_Base::default_where_conditions_none
+        $default_where_conditions = EE_Default_Where_Conditions::NONE
     ) {
         $query_params['default_where_conditions'] = $default_where_conditions;
         return $query_params;

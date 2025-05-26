@@ -17,9 +17,11 @@ class LicenseDataEDD implements LicenseDataStrategy
 {
     private LicenseKeyData $license_key_data;
 
-    private string $status;
+    private string $license_key = '';
 
-    private string $expiry;
+    private string $status = LicenseStatus::EXPIRED;
+
+    private string $expiry = '';
 
 
     /**
@@ -34,15 +36,21 @@ class LicenseDataEDD implements LicenseDataStrategy
     public function loadLicenseData()
     {
         $license_data = $this->license_key_data->getLicenseDataForPlugin(Domain::pluginSlug());
-        if (! isset($license_data->license)) {
-            $this->status = LicenseData::LICENSE_EXPIRED;
-            $this->expiry = '';
+        if (! isset($license_data->license) || ! isset($license_data->license_key)) {
+            $this->status = LicenseStatus::EXPIRED;
             return;
         }
-        $this->status = $license_data->license_key && $license_data->license === LicenseData::LICENSE_VALID
-            ? LicenseData::LICENSE_ACTIVE
-            : LicenseData::LICENSE_EXPIRED;
-        $this->expiry = $license_data->expires ?? '';
+        $this->license_key = $license_data->license_key;
+        $this->status      = $license_data->license_key && $license_data->license === LicenseStatus::VALID
+            ? LicenseStatus::ACTIVE
+            : LicenseStatus::EXPIRED;
+        $this->expiry      = $license_data->expires ?? '';
+    }
+
+
+    public function getLicenseKey(): string
+    {
+        return $this->license_key;
     }
 
 

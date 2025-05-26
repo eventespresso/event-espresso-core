@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\domain\services\licensing;
 
+use EventEspresso\core\services\licensing\LicenseAPI;
 use EventEspresso\core\services\licensing\PluginLicense;
 use stdClass;
 
@@ -14,29 +15,38 @@ class ActivateLicenseButton
      */
     public static function html(PluginLicense $plugin_license, ?stdClass $license_data): string
     {
-        $activate_btn_class   = '';
-        $deactivate_btn_class = '';
-        $license_status       = $license_data->license ?? '';
-        if ($license_status !== 'valid') {
-            $deactivate_btn_class = ' ee-license-action-btn--hidden';
-        } else {
-            $activate_btn_class = ' ee-license-action-btn--hidden';
-        }
+        // actions
+        $activate_action   = LicenseAPI::ACTION_ACTIVATE;
+        $deactivate_action = LicenseAPI::ACTION_DEACTIVATE;
+        $reset_action      = LicenseAPI::ACTION_RESET;
 
+        // action labels
         $activate_btn_label   = esc_html__('activate', 'event_espresso');
         $deactivate_btn_label = esc_html__('deactivate', 'event_espresso');
         $reset_btn_label      = esc_html__('reset/clear this license key', 'event_espresso');
 
+        // plugin license data
         $item_id        = $plugin_license->itemID();
         $item_name      = $plugin_license->itemName();
         $plugin_slug    = $plugin_license->pluginSlug();
         $min_core_ver   = $plugin_license->minCoreVersion();
         $plugin_version = $plugin_license->version();
-        $disabled       = empty($license_data->license_key) ? 'disabled' : '';
+        $license_status = $license_data->license ?? '';
+
+        // button attributes
+        $activate_btn_class   = '';
+        $deactivate_btn_class = '';
+        if ($license_status !== 'valid') {
+            $deactivate_btn_class = ' ee-license-action-btn--hidden';
+        } else {
+            $activate_btn_class = ' ee-license-action-btn--hidden';
+        }
+        $disabled = empty($license_data->license_key) ? 'disabled' : '';
+
         return "
         <button id='activate-$plugin_slug'
                 class='ee-license-action-btn ee-license-action-btn__activate$activate_btn_class button button--primary'
-                data-action='activate_license'
+                data-action='$activate_action'
                 data-target='$plugin_slug-license-key'
                 data-item_id='$item_id'
                 data-item_name='$item_name'
@@ -49,7 +59,7 @@ class ActivateLicenseButton
         </button>
         <button id='deactivate-$plugin_slug'
                 class='ee-license-action-btn ee-license-action-btn__deactivate$deactivate_btn_class button button--outline button--caution'
-                data-action='deactivate_license'
+                data-action='$deactivate_action'
                 data-target='$plugin_slug-license-key'
                 data-item_id='$item_id'
                 data-item_name='$item_name'
@@ -62,7 +72,7 @@ class ActivateLicenseButton
         <button id='reset-$plugin_slug'
                 aria-label='$reset_btn_label'
                 class='ee-license-action-btn ee-license-action-btn__reset button button--icon-only ee-aria-tooltip'
-                data-action='reset_license'
+                data-action='$reset_action'
                 data-target='$plugin_slug-license-key'
                 data-item_id='$item_id'
                 data-item_name='$item_name'
