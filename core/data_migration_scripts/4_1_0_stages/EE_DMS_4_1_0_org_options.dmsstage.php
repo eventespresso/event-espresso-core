@@ -205,15 +205,15 @@ class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage
                     $country_row['CNT_cur_dec_mrk'];                              // decimal mark: (comma) ',' = 0,01   or (decimal) '.' = 0.01
                 $c->currency->thsnds  = $country_row['CNT_cur_thsnds'];
                 break;  // thousands separator: (comma) ',' = 1,000   or (decimal) '.' = 1.000
-            //            $c->currency = new EE_Currency_Config($c->organization->CNT_ISO);break;
-            //        case 'currency_symbol': ignore the currency symbol. we'll just go by their country.
-            //            $c->currency->sign = $value;break;
+            //  $c->currency = new EE_Currency_Config($c->organization->CNT_ISO);break;
+            //  case 'currency_symbol': ignore the currency symbol. we'll just go by their country.
+            //  $c->currency->sign = $value;break;
             case 'show_pending_payment_options':
                 $c->registration->show_pending_payment_options = ($value == 'Y');
                 break;
-            case 'display_address_in_regform':
-                $c->template_settings->display_address_in_regform = ($value == 'Y');
-                break;
+            // case 'display_address_in_regform':
+            //     $c->template_settings->display_address_in_regform = ($value == 'Y');
+            //     break;
             case 'default_logo_url':
                 $c->organization->logo_url = $value;
                 break;
@@ -361,26 +361,26 @@ class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage
         'payment_message',
         'message',
         'default_payment_status',
-        'surcharge',// unused?
-        'country_id',// unused?
+        'surcharge',                                // used during price migration
+        'country_id',                               // used during price migration
         'organization_country',
-        //    'currency_symbol',
+        //'currency_symbol',
         'expire_on_registration_end',
         'email_before_payment',
         'email_fancy_headers',
-        'enable_default_style',
+        //'enable_default_style',                   // unused
         'event_ssl_active',
         'selected_style',
         'show_pending_payment_options',
         'show_reg_footer',
         'skip_confirmation_page',
-        'allow_mer_discounts',// no equiv
-        'allow_mer_vouchers',// no equiv
+        'allow_mer_discounts',                      // no equiv
+        'allow_mer_vouchers',                       // no equiv
         'display_short_description_in_event_list',
-        'display_description_on_multi_reg_page',
+        //'display_description_on_multi_reg_page',  // unused
         'display_address_in_event_list',
-        'display_address_in_regform',
-        'use_custom_post_types',// no equiv
+        //'display_address_in_regform',             // unused
+        //'use_custom_post_types',                    // no equiv
         'display_ical_download',
         'display_featured_image',
         'themeroller',
@@ -398,12 +398,12 @@ class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage
         'recaptcha_language',
         'espresso_dashboard_widget',
         'time_reg_limit',
-        //    'use_attendee_pre_approval', removed in 4.1- instead this is factored into the default reg status
-        'use_personnel_manager',// no equiv
+        //'use_attendee_pre_approval',              // removed in 4.1- instead this is factored into the default reg status
+        'use_personnel_manager',                    // no equiv
         'use_event_timezones',
-        'full_logging',
-        'surcharge_type',// unused
-        'surcharge_text',// unused
+        //'full_logging',                           // unused
+        'surcharge_type',                           // used during price migration
+        'surcharge_text',                           // used during price migration
         'affiliate_id',
         'site_license_key',
     ];

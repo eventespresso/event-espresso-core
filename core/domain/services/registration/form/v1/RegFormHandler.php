@@ -250,7 +250,7 @@ class RegFormHandler
     private function processRegFormData(EE_Registration $registration, string $reg_url_link, array $reg_form_data): bool
     {
         if (! isset($reg_form_data[ $reg_url_link ])) {
-            return false;
+            return true;
         }
         // do we need to copy basic info from primary attendee ?
         $copy_primary = isset($reg_form_data[ $reg_url_link ]['additional_attendee_reg_info'])

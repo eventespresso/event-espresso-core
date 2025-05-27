@@ -30,6 +30,13 @@ class EE_Template_Config extends EE_Config_Base
 
     private bool $template_caching_enabled = false;
 
+    // Deprecated optons saves within migration congifs.
+    private $display_address_in_regform = null;
+    private $enable_default_style = null;
+    private $display_description_on_multi_reg_page = null;
+    private $use_custom_templates = null;
+    private $custom_style_sheet = null;
+
 
     public function __construct()
     {

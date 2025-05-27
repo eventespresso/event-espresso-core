@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Releases
 
+### [5.0.41]
+
+#### Fixed
+ - [Fix Additional Registrant Incomplete Reg Forms (#1856)](https://github.com/eventespresso/cafe/pull/1856)
+
+#### Changed
+ - [Dont migrate options we dont use (#1845)](https://github.com/eventespresso/cafe/pull/1845)
+
+
+
 ### [5.0.40]
 
 #### Added
