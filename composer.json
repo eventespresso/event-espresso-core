@@ -35,7 +35,7 @@
 		"endyjasmi/cuid": "2.*",
 		"tijsverkoyen/css-to-inline-styles": "2.2.4",
 		"jaybizzle/crawler-detect": "^1.2",
-		"wp-graphql/wp-graphql": "~1.27.0"
+		"wp-graphql/wp-graphql": "~2.3.0"
 	},
     "config": {
         "platform": {
