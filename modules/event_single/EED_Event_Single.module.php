@@ -203,15 +203,16 @@ class EED_Event_Single extends EED_Module
 
 
     /**
-     * loop_start
-     *
-     * @param    array $wp_query_array an array containing the WP_Query object
-     * @return    void
+     * @param WP_Query $query
+     * @return void
      */
-    public static function loop_start($wp_query_array)
+    public static function loop_start(WP_Query $query)
     {
+        if (! $query->is_main_query()) {
+            return;
+        }
         global $post;
-        do_action('AHEE_event_details_before_post', $post, $wp_query_array);
+        do_action('AHEE_event_details_before_post', $post, $query);
     }
 
 

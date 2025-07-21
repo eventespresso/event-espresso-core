@@ -108,7 +108,7 @@ class ExceptionStackTraceDisplay
             <p class="ee-error-dev-msg-pg">
                 '
                 . sprintf(
-                    esc_html__('%1$s %2$s was thrown!%3$s code: %4$s', 'event_espresso'),
+                    '%1$s %2$s was thrown!%3$s code: %4$s',
                     '<strong class="ee-error-dev-msg-str">',
                     ucwords(EEH_Inflector::add_indefinite_article(get_class($exception))),
                     '</strong>  &nbsp; <span>',
@@ -121,12 +121,12 @@ class ExceptionStackTraceDisplay
                    . '" class="display-ee-error-trace-lnk small-text" rel="ee-error-trace-1'
                    . $time
                    . '">
-                    ' . esc_html__('click to view backtrace and class/method details', 'event_espresso') . '
+                    ' . 'click to view backtrace and class/method details' . '
                 </a><br />
                 '
                 . $exception->getFile()
                 . sprintf(
-                    esc_html__('%1$s( line no: %2$s )%3$s', 'event_espresso'),
+                    '%1$s( line no: %2$s )%3$s',
                     ' &nbsp; <span class="small-text lt-grey-text">',
                     $exception->getLine(),
                     '</span>'
@@ -156,7 +156,7 @@ class ExceptionStackTraceDisplay
         return '
             <div style="padding:3px; margin:0 0 1em; border:1px solid #999; background:#fff; border-radius:3px;">
                 <div style="padding:1em 2em; border:1px solid #999; background:#fcfcfc;">
-                    <h3>' . esc_html__('Class Details', 'event_espresso') . '</h3>
+                    <h3>Class Details</h3>
                     <pre>' . $a . '</pre>
                 </div>
             </div>';
@@ -172,10 +172,7 @@ class ExceptionStackTraceDisplay
     {
         $trace = $exception->getTrace();
         if (empty($trace)) {
-            return esc_html__(
-                'Sorry, but no trace information was available for this exception.',
-                'event_espresso'
-            );
+            return 'Sorry, but no trace information was available for this exception.';
         }
 
         $trace_details = '
@@ -186,9 +183,7 @@ class ExceptionStackTraceDisplay
                     <th scope="col" class="ee-align-right" style="width:3.5%;">Line</th>
                     <th scope="col" class="ee-align-left" style="width:40%;">File</th>
                     <th scope="col" class="ee-align-left">
-                    ' . esc_html__('Class', 'event_espresso')
-                              . '->'
-                              . esc_html__('Method( arguments )', 'event_espresso') . '
+                        Class -> Method
                     </th>
                 </tr>';
         $last_on_stack = count($trace) - 1;

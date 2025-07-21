@@ -16,7 +16,7 @@ interface LoaderInterface
      * @param bool                      $shared
      * @return mixed
      */
-    public function load($fqcn, array $arguments = [], $shared = true);
+    public function load($fqcn, array $arguments = [], bool $shared = true);
 
 
     /**
@@ -46,7 +46,7 @@ interface LoaderInterface
      * @return bool
      * @throws InvalidArgumentException
      */
-    public function share($fqcn, $object, array $arguments = []);
+    public function share($fqcn, $object, array $arguments = []): bool;
 
 
     /**
@@ -54,7 +54,7 @@ interface LoaderInterface
      * @return bool
      * @throws InvalidArgumentException
      */
-    public function remove($fqcn);
+    public function remove($fqcn): bool;
 
 
     /**

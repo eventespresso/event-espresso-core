@@ -2,6 +2,7 @@
 
 use EventEspresso\core\services\json\JsonDataHandler;
 use EventEspresso\core\services\orm\model_field\SchemaType;
+use EventEspresso\core\services\request\DataType;
 
 class EE_JSON_Field extends EE_Model_Field_Base
 {
@@ -26,6 +27,7 @@ class EE_JSON_Field extends EE_Model_Field_Base
         );
         parent::__construct($table_column, $nicename, $nullable, $default_value);
         $this->setSchemaType(SchemaType::STRING);
+        $this->setDataType(DataType::STRING);
     }
 
 

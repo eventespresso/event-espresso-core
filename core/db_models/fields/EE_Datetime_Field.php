@@ -7,6 +7,7 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\orm\model_field\SchemaFormat;
 use EventEspresso\core\services\orm\model_field\SchemaType;
+use EventEspresso\core\services\request\DataType;
 
 /**
  * EE_Datetime_Field
@@ -132,6 +133,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base
         $this->set_timezone($timezone_string);
         $this->setSchemaType(SchemaType::STRING);
         $this->setSchemaFormat(SchemaFormat::DATETIME);
+        $this->setDataType(DataType::STRING); // best to url encode the date using DateTime::ATOM
     }
 
 
@@ -232,7 +234,7 @@ class EE_Datetime_Field extends EE_Model_Field_Base
      */
     public function set_timezone(?string $timezone_string = '')
     {
-        if (empty($timezone_string) && $this->_timezone_string !== null) {
+        if (empty($timezone_string) && $this->_timezone_string) {
             // leave the timezone AS-IS if we already have one and
             // the function arg didn't provide one
             return;
@@ -268,9 +270,9 @@ class EE_Datetime_Field extends EE_Model_Field_Base
      * @access public
      * @return string timezone string
      */
-    public function get_timezone(): ?string
+    public function get_timezone(): string
     {
-        return $this->_timezone_string;
+        return (string) $this->_timezone_string;
     }
 
 

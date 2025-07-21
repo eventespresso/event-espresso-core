@@ -2372,7 +2372,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
                     esc_url_raw(
                         apply_filters(
                             'FHEE__EE_Admin_Page__espresso_news_post_box__feed_url',
-                            'https://eventespresso.com/feed/'
+                            'https://eventespresso.com/api/feed/'
                         )
                     )
                 );
@@ -4209,16 +4209,13 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      */
     private function resolveEntityFieldDataType(EE_Primary_Key_Field_Base $entity_PK): string
     {
-        $entity_PK_type = $entity_PK->getSchemaType();
+        $entity_PK_type = $entity_PK->dataType();
         switch ($entity_PK_type) {
-            case 'boolean':
-                return DataType::BOOL;
-            case 'integer':
-                return DataType::INT;
-            case 'number':
-                return DataType::FLOAT;
-            case 'string':
-                return DataType::STRING;
+            case DataType::BOOL;
+            case DataType::INT;
+            case DataType::FLOAT;
+            case DataType::STRING;
+                return $entity_PK_type;
         }
         throw new RuntimeException(
             sprintf(

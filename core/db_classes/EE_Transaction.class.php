@@ -84,15 +84,15 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function lock()
+    public function lock(bool $throw_exception = true)
     {
         // attempt to set lock, but if that fails...
         if (! $this->add_extra_meta('lock', time(), true)) {
             // then attempt to remove the lock in case it is expired
             if ($this->_remove_expired_lock()) {
                 // if removal was successful, then try setting lock again
-                $this->lock();
-            } else {
+                $this->lock($throw_exception);
+            } else if ($throw_exception) {
                 // but if the lock can not be removed, then throw an exception
                 throw new EE_Error(
                     sprintf(
@@ -118,17 +118,17 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function unlock()
+    public function unlock(): int
     {
         return $this->delete_extra_meta('lock');
     }
 
 
     /**
-     * Decides whether or not now is the right time to update the transaction.
+     * Decides whether now is the right time to update the transaction.
      * This is useful because we don't always know if it is safe to update the transaction
-     * and its related data. why?
-     * because it's possible that the transaction is being used in another
+     * and its related data. Why?
+     * Because it's possible that the transaction is being used in another
      * request and could overwrite anything we save.
      * So we want to only update the txn once we know that won't happen.
      * We also check that the lock isn't expired, and remove it if it is
@@ -140,7 +140,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function is_locked()
+    public function is_locked(): bool
     {
         // if TXN is not locked, then return false immediately
         if (! $this->_get_lock()) {
@@ -164,7 +164,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    protected function _get_lock()
+    protected function _get_lock(): int
     {
         return (int) $this->get_extra_meta('lock', true, 0);
     }
@@ -180,7 +180,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    protected function _remove_expired_lock()
+    protected function _remove_expired_lock(): int
     {
         $locked = $this->_get_lock();
         if ($locked && time() - EE_Transaction::LOCK_EXPIRATION > $locked) {

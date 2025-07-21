@@ -13,41 +13,46 @@
  */
 class EEH_Sideloader extends EEH_Base
 {
-    /**
-     * @since   4.1.0
-     * @var     string
-     */
-    private $_upload_to;
 
     /**
      * @since   4.10.5.p
      * @var     string
      */
-    private $_download_from;
-
-    /**
-     * @since   4.1.0
-     * @var     int|string
-     */
-    private $_permissions;
+    private string $download_url = '';
 
     /**
      * @since   4.1.0
      * @var     string
      */
-    private $_new_file_name;
+    private string $upload_path = '';
+
+    /**
+     * @since   4.1.0
+     * @var     int
+     */
+    private int $permissions = 0644;
+
+    /**
+     * @since   4.1.0
+     * @var     string
+     */
+    private string $new_file_name = '';
 
 
     /**
-     * constructor allows the user to set the properties on the sideloader on construction.
+     * constructor allows the user to set the properties on the side loader on construction.
      * However, there are also setters for doing so.
      *
-     * @param array $init array fo initializing the sideloader if keys match the properties.
+     * @param array $props array fo initializing the side loader if keys match the properties.
      * @since 4.1.0
      */
-    public function __construct(array $init = [])
+    public function __construct(array $props = [])
     {
-        $this->_init($init);
+        // make sure we include the required wp file for necessary functions
+        require_once(ABSPATH . 'wp-admin/includes/file.php');
+        if (! empty($props)) {
+            $this->initialize($props);
+        }
     }
 
 
@@ -58,22 +63,40 @@ class EEH_Sideloader extends EEH_Base
      * @return void
      * @since 4.1.0
      */
-    private function _init(array $props)
+    public function initialize(array $props)
     {
+        $props = $this->convertOldProps($props);
+        // set defaults
         $props += [
-            '_upload_to'     => $this->_get_wp_uploads_dir(),
-            '_download_from' => '',
-            '_permissions'   => 0644,
-            '_new_file_name' => 'EE_Sideloader_' . uniqid() . '.default',
+            'download_url'  => '',
+            'upload_path'   => EVENT_ESPRESSO_UPLOAD_DIR,
+            'new_file_name' => 'EE_Sideloader_' . uniqid() . '.default',
+            'permissions'   => 0644,
         ];
 
-        $this->set_upload_to($props['_upload_to']);
-        $this->set_download_from($props['_download_from']);
-        $this->set_permissions($props['_permissions']);
-        $this->set_new_file_name($props['_new_file_name']);
+        $this->setUploadPath($props['upload_path']);
+        $this->setDownloadUrl($props['download_url']);
+        $this->setPermissions($props['permissions']);
+        $this->setNewFileName($props['new_file_name']);
+    }
 
-        // make sure we include the required wp file for needed functions
-        require_once(ABSPATH . 'wp-admin/includes/file.php');
+
+    private function convertOldProps(array $props): array
+    {
+        // keys are old property names, values are new property names
+        $prop_mapping = [
+            '_upload_to'     => 'upload_path',
+            '_download_from' => 'download_url',
+            '_permissions'   => 'permissions',
+            '_new_file_name' => 'new_file_name',
+        ];
+        foreach ($prop_mapping as $old_key => $new_key) {
+            if (isset($props[ $old_key ])) {
+                $props[ $new_key ] = $props[ $old_key ];
+                unset($props[ $old_key ]);
+            }
+        }
+        return $props;
     }
 
 
@@ -83,8 +106,9 @@ class EEH_Sideloader extends EEH_Base
     /**
      * @return string
      * @since 4.1.0
+     * @depecated 5.0.42
      */
-    private function _get_wp_uploads_dir(): string
+    private function getWpUploadsDir(): string
     {
         $uploads = wp_upload_dir();
         return $uploads['basedir'];
@@ -96,52 +120,52 @@ class EEH_Sideloader extends EEH_Base
     /**
      * sets the _upload_to property to the directory to upload to.
      *
-     * @param string $upload_to_folder
+     * @param string $upload_folder
      * @return void
      * @since 4.1.0
      */
-    public function set_upload_to(string $upload_to_folder)
+    public function setUploadPath(string $upload_folder): void
     {
-        $this->_upload_to = trailingslashit($upload_to_folder);
+        $this->upload_path = trailingslashit($upload_folder);
     }
 
 
     /**
-     * sets the _download_from property to the location we should download the file from.
+     * sets the download_url property to the location we should download the file from.
      *
-     * @param string $download_from The full path to the file we should sideload.
+     * @param string $download_url The full path to the file we should side-load.
      * @return void
      * @since 4.10.5.p
      */
-    public function set_download_from(string $download_from)
+    public function setDownloadUrl(string $download_url): void
     {
-        $this->_download_from = $download_from;
+        $this->download_url = $download_url;
     }
 
 
     /**
-     * sets the _permissions property used on the sideloaded file.
+     * sets the _permissions property used on the side-loaded file.
      *
      * @param int|string $permissions
      * @return void
      * @since 4.1.0
      */
-    public function set_permissions($permissions)
+    public function setPermissions($permissions = 0644): void
     {
-        $this->_permissions = $permissions;
+        $this->permissions = intval($permissions, 8);
     }
 
 
     /**
-     * sets the _new_file_name property used on the sideloaded file.
+     * sets the _new_file_name property used on the side-loaded file.
      *
      * @param string $new_file_name
      * @return void
      * @since 4.1.0
      */
-    public function set_new_file_name(string $new_file_name)
+    public function setNewFileName(string $new_file_name): void
     {
-        $this->_new_file_name = $new_file_name;
+        $this->new_file_name = $new_file_name;
     }
 
     // getters
@@ -151,9 +175,9 @@ class EEH_Sideloader extends EEH_Base
      * @return string
      * @since 4.1.0
      */
-    public function get_upload_to(): string
+    public function uploadPath(): string
     {
-        return $this->_upload_to;
+        return $this->upload_path;
     }
 
 
@@ -161,19 +185,19 @@ class EEH_Sideloader extends EEH_Base
      * @return string
      * @since 4.10.5.p
      */
-    public function get_download_from(): string
+    public function downloadUrl(): string
     {
-        return $this->_download_from;
+        return $this->download_url;
     }
 
 
     /**
-     * @return int|string
+     * @return int
      * @since 4.1.0
      */
-    public function get_permissions()
+    public function permissions(): int
     {
-        return $this->_permissions;
+        return $this->permissions;
     }
 
 
@@ -181,9 +205,9 @@ class EEH_Sideloader extends EEH_Base
      * @return string
      * @since 4.1.0
      */
-    public function get_new_file_name(): string
+    public function newFileName(): string
     {
-        return $this->_new_file_name;
+        return $this->new_file_name;
     }
 
 
@@ -200,7 +224,7 @@ class EEH_Sideloader extends EEH_Base
     {
         try {
             // setup temp dir
-            $temp_file = wp_tempnam($this->_download_from);
+            $temp_file = wp_tempnam($this->download_url);
 
             if (! $temp_file) {
                 throw new RuntimeException(
@@ -220,7 +244,7 @@ class EEH_Sideloader extends EEH_Base
                 $temp_file
             );
 
-            $response = wp_safe_remote_get($this->_download_from, $wp_remote_args);
+            $response = wp_safe_remote_get($this->download_url, $wp_remote_args);
 
             if ($this->isResponseError($response) || $this->isDownloadError($response)) {
                 EEH_File::delete($temp_file);
@@ -240,7 +264,7 @@ class EEH_Sideloader extends EEH_Base
             // now we have the file, let's get it in the right directory with the right name.
             $path = apply_filters(
                 'FHEE__EEH_Sideloader__sideload__new_path',
-                $this->_upload_to . $this->_new_file_name,
+                $this->upload_path . $this->new_file_name,
                 $this
             );
             if (! EEH_File::move($temp_file, $path, true)) {
@@ -250,9 +274,10 @@ class EEH_Sideloader extends EEH_Base
             // set permissions
             $permissions = apply_filters(
                 'FHEE__EEH_Sideloader__sideload__permissions_applied',
-                $this->_permissions,
+                $this->permissions,
                 $this
             );
+            $permissions = intval($permissions, 8);
             // verify permissions are an integer but don't actually modify the value
             if (! absint($permissions)) {
                 EE_Error::add_error(
@@ -294,7 +319,7 @@ class EEH_Sideloader extends EEH_Base
                         'The following error occurred while attempting to download the file from "%1$s":',
                         'event_espresso'
                     ),
-                    $this->_download_from,
+                    $this->download_url,
                     $response->get_error_message()
                 ),
                 __FILE__,
@@ -327,7 +352,7 @@ class EEH_Sideloader extends EEH_Base
                             'Attempted to download a file from "%1$s" but encountered a "404 File Not Found" error.',
                             'event_espresso'
                         ),
-                        $this->_download_from
+                        $this->download_url
                     ),
                     __FILE__,
                     __FUNCTION__,
@@ -340,7 +365,7 @@ class EEH_Sideloader extends EEH_Base
                             'Unable to download the file. Either the path given is incorrect, or something else happened. Here is the path given: %s',
                             'event_espresso'
                         ),
-                        $this->_download_from
+                        $this->download_url
                     ),
                     __FILE__,
                     __FUNCTION__,
@@ -349,5 +374,90 @@ class EEH_Sideloader extends EEH_Base
             }
         }
         return true;
+    }
+
+
+    /**
+     * @depecated 5.0.42
+     * @return string
+     */
+    public function get_download_from(): string
+    {
+        return $this->downloadUrl();
+    }
+
+
+    /**
+     *
+     * @param string $download_url The full path to the file we should side-load.
+     * @return void
+     * @depecated 5.0.42
+     */
+    public function set_download_from(string $download_url): void
+    {
+        $this->setDownloadUrl($download_url);
+    }
+
+
+    /**
+     * @return string
+     * @depecated 5.0.42
+     */
+    public function get_upload_to(): string
+    {
+        return $this->uploadPath();
+    }
+
+
+    /**
+     * @param string $upload_folder
+     * @return void
+     * @depecated 5.0.42
+     */
+    public function set_upload_to(string $upload_folder): void
+    {
+        $this->setUploadPath($upload_folder);
+    }
+
+
+    /**
+     * @return int
+     * @depecated 5.0.42
+     */
+    public function get_permissions(): int
+    {
+        return $this->permissions();
+    }
+
+
+    /**
+     * @param int|string $permissions
+     * @return void
+     * @depecated 5.0.42
+     */
+    public function set_permissions($permissions): void
+    {
+        $this->setPermissions($permissions);
+    }
+
+
+    /**
+     * @return string
+     * @depecated 5.0.42
+     */
+    public function get_new_file_name(): string
+    {
+        return $this->newFileName();
+    }
+
+
+    /**
+     * @param string $new_file_name
+     * @return void
+     * @depecated 5.0.42
+     */
+    public function set_new_file_name(string $new_file_name): void
+    {
+        $this->setNewFileName($new_file_name);
     }
 }

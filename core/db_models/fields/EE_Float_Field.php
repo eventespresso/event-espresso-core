@@ -1,6 +1,7 @@
 <?php
 
 use EventEspresso\core\services\orm\model_field\SchemaType;
+use EventEspresso\core\services\request\DataType;
 
 /**
  * Text_Fields is a base class for any fields which are have float value. (Exception: foreign and private key fields.
@@ -27,6 +28,7 @@ class EE_Float_Field extends EE_Model_Field_Base
             : new EE_Currency_Config();
         parent::__construct($table_column, $nicename, $nullable, $default_value);
         $this->setSchemaType(SchemaType::NUMBER);
+        $this->setDataType(DataType::FLOAT);
     }
 
 

@@ -1,10 +1,13 @@
 <?php
 
+use EventEspresso\core\services\request\DataType;
+
 class EE_Primary_Key_String_Field extends EE_Primary_Key_Field_Base
 {
     public function __construct($table_column, $nicename)
     {
         parent::__construct($table_column, $nicename, null);
+        $this->setDataType(DataType::STRING);
     }
 
 

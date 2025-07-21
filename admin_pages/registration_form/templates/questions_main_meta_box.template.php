@@ -363,7 +363,7 @@ try {
                                                        class="option-value ee-input-width--reg"
                                                        id="question_options-<?php esc_attr_e($count); ?>-QSO_value"
                                                        name="question_options[<?php esc_attr_e($count); ?>][QSO_value]"
-                                                       value="<?php esc_attr_e($option->get_f('QSO_value')); ?>"
+                                                       value="<?php esc_attr_e($option->value()); ?>"
                                                     <?php esc_attr_e($disabled_attr); ?>
                                                 />
                                                 <input type="hidden"

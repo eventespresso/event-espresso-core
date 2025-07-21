@@ -135,11 +135,23 @@ class CachingLoader extends CachingLoaderDecorator
     /**
      * @param FullyQualifiedName|string $fqcn
      * @param array                     $arguments
+     * @return bool
+     * @since 5.0.42
+     */
+    public function isShared($fqcn, array $arguments = []): bool
+    {
+        $object_identifier = $this->object_identifier->getIdentifier($fqcn, $arguments);
+        return $this->cache->has($object_identifier);
+    }
+
+
+    /**
+     * @param FullyQualifiedName|string $fqcn
+     * @param array                     $arguments
      * @param bool                      $shared
-     * @param array                     $interfaces
      * @return mixed
      */
-    public function load($fqcn, $arguments = [], $shared = true, array $interfaces = [])
+    public function load($fqcn, array $arguments = [], bool $shared = true)
     {
         $fqcn = ltrim($fqcn, '\\');
         // caching can be turned off via the following code:
@@ -181,10 +193,11 @@ class CachingLoader extends CachingLoaderDecorator
         $cache_class          = get_class($this->cache);
         $collection_interface = $this->cache->collectionInterface();
         $this->cache->trashAndDetachAll();
-        $this->cache = new $cache_class($collection_interface);
-        if (! $this->cache instanceof CollectionInterface) {
-            throw new InvalidDataTypeException('CachingLoader::$cache', $this->cache, 'CollectionInterface');
+        $new_cache = new $cache_class($collection_interface);
+        if (! $new_cache instanceof CollectionInterface) {
+            throw new InvalidDataTypeException('CachingLoader::$cache', $new_cache, 'CollectionInterface');
         }
+        $this->cache = $new_cache;
     }
 
 

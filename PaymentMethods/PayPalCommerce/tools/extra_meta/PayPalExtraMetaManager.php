@@ -6,6 +6,7 @@ use EE_Error;
 use EE_Payment_Method;
 use EventEspresso\core\services\encryption\Base64Encoder;
 use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\PaymentMethods\PayPalCommerce\domain\Domain;
 use EventEspresso\PaymentMethods\PayPalCommerce\tools\encryption\OpenSSLEncryption;
 use EventEspresso\PaymentMethods\PayPalCommerce\tools\encryption\PPCommerceEncryptionKeyManager;
@@ -37,9 +38,14 @@ class PayPalExtraMetaManager
      */
     public static function extraMeta(EE_Payment_Method $paypal_pm): PayPalExtraMeta
     {
+        $post_params = LoaderFactory::getLoader()->getShared(RequestInterface::class)->postParams();
         if (
             ! PayPalExtraMetaManager::$pay_pal_extra_meta instanceof PayPalExtraMeta
             || PayPalExtraMetaManager::$pay_pal_extra_meta->pm->slug() !== $paypal_pm->slug()
+            || (! empty($post_params['sandbox_mode'])
+                && in_array($post_params['sandbox_mode'], ['0', '1'], true)
+                && $paypal_pm->debug_mode() !== (bool) $post_params['sandbox_mode']
+            )
         ) {
             PayPalExtraMetaManager::$pay_pal_extra_meta = new PayPalExtraMeta($paypal_pm);
         }

@@ -4,6 +4,7 @@ use EventEspresso\core\entities\interfaces\HasSchemaInterface;
 use EventEspresso\core\services\database\WpdbDataFormat;
 use EventEspresso\core\services\orm\model_field\SchemaFormat;
 use EventEspresso\core\services\orm\model_field\SchemaType;
+use EventEspresso\core\services\request\DataType;
 
 /**
  * EE_Model_Field_Base class
@@ -98,6 +99,14 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
      * @link http://json-schema.org/latest/json-schema-hypermedia.html#rfc.section.4.4
      */
     private bool $_schema_readonly = false;
+
+    /**
+     * The data type used for request vars and sanitization.
+     * For model fields that represent objects or arrays of values, like enums,
+     * the data type should be set to whatever the data type is for a single value,
+     * as it would be used in a request var.
+     */
+    private string $data_type = DataType::STRING;
 
 
     /**
@@ -553,5 +562,33 @@ abstract class EE_Model_Field_Base implements HasSchemaInterface
     public function is_db_only_field(): bool
     {
         return false;
+    }
+
+
+    /**
+     * the data type used for request vars and sanitization
+     *
+     * @return string
+     * @since 5.0.42
+     */
+    public function dataType(): string
+    {
+        return $this->data_type;
+    }
+
+
+    /**
+     * @param string $data_type The data type used for request vars and sanitization.
+     *                          For model fields that represent objects or arrays of values, like enums,
+     *                          the data type should be set to whatever the data type is for a single value,
+     *                          as it would be used in a request var.
+     * @throws InvalidArgumentException
+     * @since 5.0.42
+     */
+    public function setDataType(string $data_type): void
+    {
+        if (DataType::isValidDataType($data_type)) {
+            $this->data_type = $data_type;
+        }
     }
 }

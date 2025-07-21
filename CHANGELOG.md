@@ -8,11 +8,45 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### [5.0.41]
 
+#### Added
+ - NEW
+
 #### Fixed
  - [Fix Additional Registrant Incomplete Reg Forms (#1856)](https://github.com/eventespresso/cafe/pull/1856)
+ - [Fix License Keys Admin Menu Loading on Multisite (#1860)](https://github.com/eventespresso/cafe/pull/1860)
+ - [Fix PluginLicense Error During Cron (#1866)](https://github.com/eventespresso/cafe/pull/1866)
+ - [Fix Version Parsing (#1883)](https://github.com/eventespresso/cafe/pull/1883)
+ - [Prevent _load_textdomain_just_in_time notice from GraphQL (#1882)](https://github.com/eventespresso/cafe/pull/1882)
+ - [Fix Admin Page RSS Feed (#1893)](https://github.com/eventespresso/cafe/pull/1893)
+ - [PPC. Fix updating onboarding status (#1888)](https://github.com/eventespresso/cafe/pull/1888)
+ - [Modify System Hook Points (#1891)](https://github.com/eventespresso/cafe/pull/1891)
+ - [Fix Payment Method Nag Notices (#1895)](https://github.com/eventespresso/cafe/pull/1895)
+ - [Decode HTML Entities in Reg Form Options (#1892)](https://github.com/eventespresso/cafe/pull/1892)
+ - [Fix SPCO Transaction Lock (#1906)](https://github.com/eventespresso/cafe/pull/1906)
+ - [SAAS. After deploy fixes Jul 16 (#1911)](https://github.com/eventespresso/cafe/pull/1911)
+ - [Remove types in EEM_Base that were changed or might be null (#1912)](https://github.com/eventespresso/cafe/pull/1912)
+ - FIX
 
 #### Changed
  - [Dont migrate options we dont use (#1845)](https://github.com/eventespresso/cafe/pull/1845)
+ - [Rename Version Files and Fallback to Main File for Version (#1880)](https://github.com/eventespresso/cafe/pull/1880)
+ - [Load Textdomain on Init (#1637)](https://github.com/eventespresso/cafe/pull/1637)
+ - [Define Model Field Data Types (#1714)](https://github.com/eventespresso/cafe/pull/1714)
+ - [Refactor Events Calendar Plus Data Loading and Add Data Migration Management (#1881)](https://github.com/eventespresso/cafe/pull/1881)
+ - [Removed Default Filters From Datetimes And Tickets In Editor (Barista#1422) (#1910)](https://github.com/eventespresso/cafe/pull/1910)
+ - [Fix Plugin Action Settings Links and Improve Plugin Menu Items (#1377)](https://github.com/eventespresso/cafe/pull/1377)
+ - [Move Existing and Add New SPCO Line Item Filters (#1907)](https://github.com/eventespresso/cafe/pull/1907)
+ - [Check For Main Query Before Running Logic in THE LOOP (#1767)](https://github.com/eventespresso/cafe/pull/1767)
+ - MOD
+
+#### Deprecated
+ - DEP
+
+#### Removed
+ - RMV
+
+#### Security
+ - SEC
 
 
 

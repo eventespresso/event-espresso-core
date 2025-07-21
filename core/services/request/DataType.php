@@ -2,6 +2,9 @@
 
 namespace EventEspresso\core\services\request;
 
+use EventEspresso\core\services\orm\model_field\SchemaType;
+use InvalidArgumentException;
+
 /**
  * Class DataType
  * Constants for defining data types used within EE's Request related classes
@@ -47,6 +50,55 @@ class DataType
     const STRING  = 'string';
 
 
+    private static array $valid_types = [
+        DataType::ARRAY,
+        DataType::BOOL,
+        DataType::BOOLEAN,
+        DataType::DOUBLE,
+        DataType::FLOAT,
+        DataType::EDITOR,
+        DataType::EMAIL,
+        DataType::FQCN,
+        DataType::HTML,
+        DataType::INT,
+        DataType::INTEGER,
+        DataType::KEY,
+        DataType::OBJECT,
+        DataType::NULL,
+        DataType::TITLE,
+        DataType::URL,
+        DataType::STRING,
+    ];
+
+
+    /**
+     * @param string $data_type
+     * @param bool   $throw_exception
+     * @return bool
+     * @throws InvalidArgumentException
+     * @since 5.0.42
+     */
+    public static function isValidDataType(string $data_type, bool $throw_exception = false): bool
+    {
+        if (in_array($data_type, DataType::$valid_types, true)) {
+            return true;
+        }
+        if (! $throw_exception) {
+            return false;
+        }
+        throw new InvalidArgumentException(
+            sprintf(
+                esc_html__(
+                    'The incoming argument (%1$s) must be one of the allowable types: %2$s',
+                    'event_espresso'
+                ),
+                $data_type,
+                implode(',', DataType::$valid_types)
+            )
+        );
+    }
+
+
     /**
      * @param mixed  $param
      * @param string $type
@@ -80,7 +132,7 @@ class DataType
     {
         if (is_array($schema_type)) {
             foreach ($schema_type as $type) {
-                $data_type = self::convertModelFieldSchemaType($type);
+                $data_type = DataType::convertModelFieldSchemaType($type);
                 if ($data_type) {
                     return $data_type;
                 }

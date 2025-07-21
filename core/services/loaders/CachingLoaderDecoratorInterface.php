@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\services\loaders;
 
+use EventEspresso\core\domain\values\FullyQualifiedName;
 use InvalidArgumentException;
 
 /**
@@ -11,20 +12,28 @@ use InvalidArgumentException;
 interface CachingLoaderDecoratorInterface extends LoaderDecoratorInterface
 {
     /**
-     * @param string $fqcn
-     * @param mixed  $object
-     * @param array  $arguments
+     * @param FullyQualifiedName|string $fqcn
+     * @param mixed                     $object
+     * @param array                     $arguments
      * @return bool
      * @throws InvalidArgumentException
      */
-    public function share($fqcn, $object, array $arguments = []);
+    public function share($fqcn, $object, array $arguments = []): bool;
 
 
     /**
-     * @param string $fqcn
-     * @param array  $arguments
+     * @param FullyQualifiedName|string $fqcn
+     * @param array                     $arguments
+     * @return bool
+     */
+    public function isShared($fqcn, array $arguments = []): bool;
+
+
+    /**
+     * @param FullyQualifiedName|string $fqcn
+     * @param array                     $arguments
      * @return bool
      * @throws InvalidArgumentException
      */
-    public function remove($fqcn, array $arguments = []);
+    public function remove($fqcn, array $arguments = []): bool;
 }

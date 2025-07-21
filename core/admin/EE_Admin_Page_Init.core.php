@@ -9,7 +9,7 @@ use EventEspresso\core\services\request\RequestInterface;
 
 /**
  * EE_Admin_Page_Init
- * This is utilizes by all Admin_Page_Init child classes in order to define their require methods
+ * This is utilized by all Admin_Page_Init child classes in order to define their required methods
  *
  * @package            Event Espresso
  * @abstract
@@ -224,7 +224,7 @@ abstract class EE_Admin_Page_Init extends EE_Base
 
     public function setCapability($capability, $menu_slug)
     {
-        $this->capability = apply_filters('FHEE_' . $menu_slug . '_capability', $capability);
+        $this->capability = apply_filters("FHEE_{$menu_slug}_capability", $capability);
     }
 
 
@@ -247,6 +247,7 @@ abstract class EE_Admin_Page_Init extends EE_Base
      * @return void
      * @throws EE_Error
      * @throws ReflectionException
+     * @throws Throwable
      */
     public function initialize_admin_page()
     {
@@ -300,15 +301,13 @@ abstract class EE_Admin_Page_Init extends EE_Base
      * before the load-page... hook. Note, the page loads are happening around the wp_init hook.
      *
      * @return void
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws EE_Error
      * @throws ReflectionException
+     * @throws Throwable
      */
     public function do_initial_loads()
     {
-        // no loading or initializing if menu map is setup incorrectly.
+        // no loading or initializing if menu map is set up incorrectly.
         if (! $this->_menu_map instanceof AdminMenuItem) {
             return;
         }
@@ -325,7 +324,7 @@ abstract class EE_Admin_Page_Init extends EE_Base
     {
         $bt = debug_backtrace();
         // for more reliable determination of folder name
-        // we're using this to get the actual folder name of the CALLING class (i.e. the child class that extends this).  Why?  Because $this->menu_slug may be different than the folder name (to avoid conflicts with other plugins)
+        // we're using this to get the actual folder name of the CALLING class (i.e. the child class that extends this).  Why?  Because $this->menu_slug may be different from the folder name (to avoid conflicts with other plugins)
         $class = get_class($this);
         foreach ($bt as $index => $values) {
             if (isset($values['class']) && $values['class'] == $class) {
@@ -349,14 +348,17 @@ abstract class EE_Admin_Page_Init extends EE_Base
      * "dropped" in. Example: if we wanted to set this up for Messages hooking into Events then we would do:
      * events_Messages_Hooks.class.php
      *
-     * @param bool $extend This indicates whether we're checking the extend directory for any register_hooks
+     * @param bool $extend This indicates whether we're checking the "extend" directory for any register_hooks
      *                     files/classes
      * @return array
      */
     public function register_hooks(bool $extend = false): array
     {
         // get a list of files in the directory that have the "Hook" in their name an
-        // if this is an extended check (i.e. caf is active) then we will scan the caffeinated/extend directory first and any hook files that are found will be have their reference added to the $_files_hook array property.  Then, we make sure that when we loop through the core decaf directories to find hook files that we skip over any hooks files that have already been set by caf.
+        // if this is an extended check (i.e. caf is active) then we will scan the caffeinated/extend directory first
+        // and any hook files that are found will have their reference added to the $_files_hook array property.
+        // Then, we make sure that when we loop through the core decaf directories to find hook files
+        // that we skip over any hooks files that have already been set by caf.
         if ($extend) {
             $hook_files_glob_path = apply_filters(
                 'FHEE__EE_Admin_Page_Init__register_hooks__hook_files_glob_path__extend',
@@ -418,10 +420,9 @@ abstract class EE_Admin_Page_Init extends EE_Base
 
 
     /**
-     * _initialize_admin_page
-     *
      * @throws EE_Error
      * @throws ReflectionException
+     * @throws Throwable
      * @see  initialize_admin_page() for info
      */
     protected function _initialize_admin_page()
@@ -464,7 +465,8 @@ abstract class EE_Admin_Page_Init extends EE_Base
         if (! is_readable($path_to_file)) {
             return;
         }
-        // This is a place where EE plugins can hook in to make sure their own files are required in the appropriate place
+        // This is a place where EE plugins can hook into
+        // to make sure their own files are required in the appropriate place
         do_action('AHEE__EE_Admin_Page___initialize_admin_page__before_initialization');
         do_action("AHEE__EE_Admin_Page___initialize_admin_page__before_initialization_$menu_slug");
         require_once($path_to_file);
@@ -492,9 +494,8 @@ abstract class EE_Admin_Page_Init extends EE_Base
 
 
     /**
-     * _check_user_access
-     * verifies user access for this admin page.  If no user access is available then let's gracefully exit with a
-     * WordPress die message.
+     * verifies user access for this admin page.
+     * If no user access is available then let's gracefully exit with a WordPress die message.
      *
      * @return void  wp_die if fail
      */

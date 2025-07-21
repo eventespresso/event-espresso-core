@@ -128,6 +128,8 @@ jQuery(document).ready(function ($) {
                 const sandbox_mode = this_pm.sandbox_select.val();
                 // Update the onboarding URL if the debug mode was changed.
                 this_pm.toggleBtnText(this_pm, sandbox_mode);
+                // Save this change.
+                this_pm.sendRequest('eeaPpSaveDebugMode');
             });
         };
 
@@ -333,6 +335,8 @@ jQuery(document).ready(function ($) {
          * @function
          */
         this.sendRequest = function (request_action, request_data, callback, update_ui) {
+            $(this.onboard_btn).attr('disabled', true);
+            $(this.offboard_btn).attr('disabled', true);
             if (typeof request_data === 'undefined') {
                 request_data = {};
             }
@@ -356,6 +360,8 @@ jQuery(document).ready(function ($) {
                         callback(this_pm, response);
                     } else {
                         this_pm.processing_icon.fadeOut('fast');
+                        $(this_pm.onboard_btn).attr('disabled', false);
+                        $(this_pm.offboard_btn).attr('disabled', false);
                     }
                     if (update_ui) {
                         this_pm.updateOnboardingUI(this_pm, false);
@@ -441,7 +447,7 @@ jQuery(document).ready(function ($) {
          */
         this.checkForErrors = function (this_pm, response, close_window) {
             if (response === null || response.error) {
-                if (close_window) {
+                if (typeof close_window !== 'undefined' && close_window && this_pm.onboard_window) {
                     this_pm.onboard_window.close();
                 }
                 let error = eeaPPOnboardParameters.request_error;

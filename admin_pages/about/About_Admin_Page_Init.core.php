@@ -1,6 +1,8 @@
 <?php
 
+use EventEspresso\core\domain\entities\admin\menu\AdminMenuGroup;
 use EventEspresso\core\domain\entities\admin\menu\AdminMenuItem;
+use EventEspresso\core\domain\entities\admin\menu\AdminMenuTopLevel;
 
 /**
  * EE_About_Admin_Page_Init
@@ -39,14 +41,14 @@ class About_Admin_Page_Init extends EE_Admin_Page_Init
     {
         return [
             'menu_type'               => AdminMenuItem::TYPE_MENU_SUB_ITEM,
-            'menu_group'              => 'extras',
+            'menu_group'              => AdminMenuGroup::MENU_SLUG_EXTRAS,
             'menu_order'              => 40,
             'show_on_menu'            => AdminMenuItem::DISPLAY_BLOG_AND_NETWORK,
-            'parent_slug'             => 'espresso_events',
-            'menu_slug'               => 'espresso_about',
+            'parent_slug'             => AdminMenuTopLevel::MENU_PARENT_ACTIVE,
+            'menu_slug'               => EE_ABOUT_PG_SLUG,
             'menu_label'              => EE_ABOUT_LABEL,
             'capability'              => 'manage_options',
-            'maintenance_mode_parent' => 'espresso_maintenance_settings',
+            'maintenance_mode_parent' => AdminMenuTopLevel::MENU_PARENT_MAINTENANCE,
         ];
     }
 }

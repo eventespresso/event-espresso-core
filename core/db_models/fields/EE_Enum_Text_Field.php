@@ -1,6 +1,7 @@
 <?php
 
 use EventEspresso\core\services\orm\model_field\SchemaType;
+use EventEspresso\core\services\request\DataType;
 
 /**
  * Class EE_Enum_Text_Field
@@ -24,9 +25,10 @@ class EE_Enum_Text_Field extends EE_Text_Field_Base
      */
     public function __construct($table_column, $nice_name, $nullable, $default_value, array $allowed_enum_values)
     {
-        $this->_allowed_enum_values = (array) $allowed_enum_values;
+        $this->_allowed_enum_values = $allowed_enum_values;
         parent::__construct($table_column, $nice_name, $nullable, $default_value);
         $this->setSchemaType(SchemaType::OBJECT);
+        $this->setDataType(DataType::STRING);
     }
 
 

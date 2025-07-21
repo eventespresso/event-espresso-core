@@ -2,6 +2,8 @@
 
 use EventEspresso\core\domain\entities\notifications\PersistentAdminNotice;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
+use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\notifications\PersistentAdminNoticeManager;
 
 /**
  * Payment Method Model
@@ -387,20 +389,28 @@ class EEM_Payment_Method extends EEM_Base
      */
     protected function _create_objects($rows = [])
     {
-        EE_Registry::instance()->load_lib('Payment_Method_Manager');
-        $PMM             = EE_Payment_Method_Manager::instance();
+        $PMM             = LoaderFactory::getLoader()->getShared(EE_Payment_Method_Manager::class);
         $payment_methods = parent::_create_objects($rows);
         /* @var $payment_methods EE_Payment_Method[] */
         $usable_payment_methods = [];
         foreach ($payment_methods as $key => $payment_method) {
             // check if the payment method type exists and force recheck
             $pm_type_exists = $PMM->payment_method_type_exists($payment_method->type(), true);
+            $nag_notice_name = 'auto-deactivated-' . $payment_method->slug();
             if ($pm_type_exists) {
                 $usable_payment_methods[ $key ] = $payment_method;
                 // some payment methods enqueue their scripts in EE_PMT_*::__construct
                 // which is kinda a no-no (just because it's being constructed doesn't mean we need to enqueue
                 // its scripts). but for backwards-compat we should continue to do that
                 $payment_method->type_obj();
+                if (
+                    ! $payment_method->active()
+                    && PersistentAdminNoticeManager::hasPersistentAdminNotice($nag_notice_name)
+                ) {
+                    $payment_method->set_active();
+                    $payment_method->save();
+                    PersistentAdminNoticeManager::dismissPersistentAdminNotice($nag_notice_name);
+                }
             } elseif ($payment_method->active()) {
                 // only deactivate and notify the admin if the payment is active somewhere
                 $payment_method->deactivate();
@@ -410,7 +420,7 @@ class EEM_Payment_Method extends EEM_Base
                     $payment_method
                 );
                 new PersistentAdminNotice(
-                    'auto-deactivated-' . $payment_method->slug(),
+                    $nag_notice_name,
                     sprintf(
                         esc_html__(
                             'The payment method %1$s was automatically deactivated because it appears its associated Event Espresso Addon was recently deactivated.%2$sIt can be reactivated on the %3$sPlugins admin page%4$s, then you can reactivate the payment method.',
@@ -421,7 +431,7 @@ class EEM_Payment_Method extends EEM_Base
                         '<a href="' . admin_url('plugins.php') . '">',
                         '</a>'
                     ),
-                    true,
+                    false,
                     'manage_options',
                     'view persistent admin notice',
                     false,

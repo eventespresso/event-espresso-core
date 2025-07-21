@@ -424,9 +424,11 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
                 default:
                     // only add a property to the array if it's not null (otherwise the model should just use the default value)
                     if ($this->request->requestParamIsSet($fieldName)) {
-                        // convert the schema type to the appropriate data type
-                        $schema_type = DataType::convertModelFieldSchemaType($settings->getSchemaType());
-                        $column_values[ $fieldName ] = $this->request->getRequestParam($fieldName, null, $schema_type);
+                        $column_values[ $fieldName ] = $this->request->getRequestParam(
+                            $fieldName,
+                            null,
+                            $settings->dataType()
+                        );
                     }
             }
         }
@@ -583,6 +585,17 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
                     $option_req_index = $this->_get_option_req_data_index($option_ID);
                     if ($option_req_index !== false) {
                         $question_options[ $option_req_index ]['QSO_default'] = $option_req_index === $QSO_default;
+                        // decode options converted to html_entities by wp_kses()
+                        $question_options[ $option_req_index ]['QSO_value'] = html_entity_decode(
+                            $question_options[ $option_req_index ]['QSO_value'],
+                            ENT_QUOTES | ENT_HTML5,
+                            'UTF-8'
+                        );
+                        $question_options[ $option_req_index ]['QSO_desc'] = html_entity_decode(
+                            $question_options[ $option_req_index ]['QSO_desc'],
+                            ENT_QUOTES | ENT_HTML5,
+                            'UTF-8'
+                        );
                         $option->save($question_options[ $option_req_index ]);
                     } else {
                         // not found, remove it

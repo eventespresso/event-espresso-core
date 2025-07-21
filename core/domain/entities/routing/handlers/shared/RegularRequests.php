@@ -19,6 +19,7 @@ use EventEspresso\core\domain\entities\routing\handlers\frontend\RegistrationChe
 use EventEspresso\core\domain\entities\routing\handlers\frontend\ShortcodeRequests;
 use EventEspresso\core\services\assets\AssetManifestFactory;
 use EventEspresso\core\services\assets\BaristaFactory;
+use EventEspresso\core\services\i18n\Textdomain;
 use EventEspresso\core\services\routing\PrimaryRoute;
 use EventEspresso\core\services\routing\Route;
 

@@ -197,7 +197,7 @@ class EE_Registration_Config extends EE_Config_Base
     {
         add_action('AHEE__EE_Config___load_core_config__end', [$this, 'set_default_reg_status_on_EEM_Event']);
         add_action('AHEE__EE_Config___load_core_config__end', [$this, 'set_default_max_ticket_on_EEM_Event']);
-        add_action('setup_theme', [$this, 'setDefaultCheckboxLabelText']);
+        add_action('AHEE__EE_System__load_core_configuration__complete', [$this, 'setDefaultCheckboxLabelText']);
     }
 
 

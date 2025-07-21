@@ -15,7 +15,7 @@ abstract class LoaderDecorator implements LoaderDecoratorInterface
     /**
      * @var LoaderDecoratorInterface $loader
      */
-    protected $loader;
+    protected LoaderDecoratorInterface $loader;
 
 
     /**

@@ -1,6 +1,7 @@
 <?php
 
 use EventEspresso\core\services\orm\model_field\SchemaType;
+use EventEspresso\core\services\request\DataType;
 
 /**
  * Class EE_Enum_Integer_Field
@@ -26,6 +27,7 @@ class EE_Enum_Integer_Field extends EE_Integer_Field
         $this->_allowed_enum_values = $allowed_enum_values;
         parent::__construct($table_column, $nicename, $nullable, $default_value);
         $this->setSchemaType(SchemaType::OBJECT);
+        $this->setDataType(DataType::INTEGER);
     }
 
 

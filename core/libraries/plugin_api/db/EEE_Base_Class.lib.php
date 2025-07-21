@@ -4,15 +4,16 @@
  * EEE_Base_Class
  * Class for dynamically adding functions onto model objects (EE_Base_Class children).
  * Example usage: create a child of EEE_Base_Class like so:
- * class EEE_Sample_Attendee extends EEE_Base_Class{
- * public function __construct() {
- * $this->_model_name_extended = 'Attendee';
- * parent::__construct();
- * }
- * function ext_foobar($txn_id){
- * echo "you have called foobar $txn_id on ".$this->_->fname()";
- * }
- * }
+ *
+ *  class EEE_Sample_Attendee extends EEE_Base_Class{
+ *      public function __construct() {
+ *          parent::__construct('Attendee');
+ *      }
+ *
+ *      function ext_foobar($txn_id){
+ *          echo "you have called foobar $txn_id on ".$this->_->fname()";
+ *      }
+ *  }
  * Early during the request (before the models are used) include the file containing it and
  * create a new instance of the class using: new EEE_Sample_Attendee().
  * For every function you want to be magically added onto EE_Attendee (eg "foobar")
@@ -27,7 +28,7 @@
  * @subpackage
  * @author                Mike Nelson
  */
-class EEE_Base_Class
+abstract class EEE_Base_Class
 {
     const extending_method_prefix        = 'ext_';
 
@@ -36,9 +37,9 @@ class EEE_Base_Class
     /**
      * The model name that is extended (not classname)
      *
-     * @var string|null
+     * @var string
      */
-    protected ?string $_model_name_extended = null;
+    protected string $_model_name_extended = '';
 
     /**
      * The model this extends
@@ -51,28 +52,35 @@ class EEE_Base_Class
     /**
      * @throws EE_Error
      */
-    public function __construct()
+    public function __construct(?string $model_name_extended = '')
     {
+        if ($model_name_extended) {
+            // setting this inside a conditional for backwards compatibility
+            // because non-updated child classes may set the property directly and not pass to this constructor
+            $this->_model_name_extended = $model_name_extended;
+        }
         if (! $this->_model_name_extended) {
             throw new EE_Error(
-                esc_html__(
-                    "When declaring a class extension, you must define its _model_name_extended property. It should be a model name like 'Attendee' or 'Event'",
-                    "event_espresso"
-                )
+                // not translated because this is happening prior to the WP init hook when translations are set up
+                "When declaring a class extension, you must define its _model_name_extended property. It should be a model name like 'Attendee' or 'Event'",
             );
         }
         if (did_action('AHEE__EE_' . $this->_model_name_extended . '__construct__end')) {
             throw new EE_Error(
                 sprintf(
-                    esc_html__(
-                        "Hooked in model object extension '%s' too late! The model object %s has already been used!",
-                        "event_espresso"
-                    ),
+                    "Hooked in model object extension '%s' too late! The model object %s has already been used!",
                     get_class($this),
                     $this->_model_name_extended
                 )
             );
         }
+
+        add_action("AHEE__EE_{$this->_model_name_extended}__construct", [$this, 'extendBaseClass']);
+    }
+
+
+    public function extendBaseClass()
+    {
         $this->_register_extending_methods();
     }
 

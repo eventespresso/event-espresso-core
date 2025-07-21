@@ -2,15 +2,17 @@
 
 namespace EventEspresso\core\services\loaders;
 
+use EventEspresso\core\domain\values\FullyQualifiedName;
+
 interface LoaderDecoratorInterface
 {
     /**
-     * @param string $fqcn
-     * @param array  $arguments
-     * @param bool   $shared
+     * @param FullyQualifiedName|string $fqcn
+     * @param array                     $arguments
+     * @param bool                      $shared
      * @return mixed
      */
-    public function load($fqcn, $arguments = array(), $shared = true);
+    public function load($fqcn, array $arguments = array(), bool $shared = true);
 
 
 

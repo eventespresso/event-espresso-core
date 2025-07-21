@@ -4,15 +4,20 @@ namespace EventEspresso\core\domain\entities\admin\menu;
 
 class AdminMenuTopLevel extends AdminMenuItem
 {
+    public const MENU_PARENT_ACTIVE      = 'espresso_events';
+
+    public const MENU_PARENT_MAINTENANCE = 'espresso_maintenance_settings';
+
+
     /**
-     * The page to a icon used for this menu.
+     * The page to an icon used for this menu.
      *
      * @since  4.4.0
      * @see    http://codex.wordpress.org/Function_Reference/add_menu_page#Parameters
      *        for what can be set for this property.
      * @var string
      */
-    protected $icon_url = '';
+    protected string $icon_url = '';
 
     /**
      * What position in the main menu order for the WP admin menu this menu item
@@ -23,7 +28,7 @@ class AdminMenuTopLevel extends AdminMenuItem
      *        for what can be set for this property.
      * @var integer
      */
-    protected $position = 0;
+    protected int $position = 0;
 
     /**
      * If included int incoming params, then this class will also register a Sub Menu Admin page with a different
@@ -32,7 +37,7 @@ class AdminMenuTopLevel extends AdminMenuItem
      * @since 4.4.0
      * @var string
      */
-    protected $subtitle = '';
+    protected string $subtitle = '';
 
 
     public function __construct(array $menu_args)

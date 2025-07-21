@@ -1,6 +1,7 @@
 <?php
 
 use EventEspresso\core\services\orm\model_field\SchemaType;
+use EventEspresso\core\services\request\DataType;
 
 class EE_Primary_Key_Int_Field extends EE_Primary_Key_Field_Base
 {
@@ -8,6 +9,7 @@ class EE_Primary_Key_Int_Field extends EE_Primary_Key_Field_Base
     {
         parent::__construct($table_column, $nicename, 0);
         $this->setSchemaType(SchemaType::INTEGER);
+        $this->setDataType(DataType::INTEGER);
     }
 
     public function prepare_for_set($value_inputted_for_field_on_model_object)

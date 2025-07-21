@@ -63,6 +63,7 @@ class RequestStackCoreApp implements RequestDecoratorInterface, RequestStackCore
         );
         // legacy action for backwards compatibility
         do_action('EE_Load_Espresso_Core__handle_request__initialize_core_loading');
+        espressoLoadWpGraphQL();
         $this->setupFramework();
         $capabilities_checker = LoaderFactory::getShared(CapabilitiesChecker::class, [EE_Capabilities::instance()]);
         LoaderFactory::getShared(PersistentAdminNoticeManager::class, [$capabilities_checker, $request]);
@@ -86,11 +87,11 @@ class RequestStackCoreApp implements RequestDecoratorInterface, RequestStackCore
     private function setupFramework()
     {
         espresso_load_required('EE_Bootstrap', EE_CORE . 'EE_Bootstrap.core.php');
-        add_action('plugins_loaded', ['EE_Bootstrap', 'load_espresso_addons'], 1);
-        add_action('plugins_loaded', ['EE_Bootstrap', 'detect_activations_or_upgrades'], 3);
-        add_action('plugins_loaded', ['EE_Bootstrap', 'load_core_configuration'], 5);
-        add_action('plugins_loaded', ['EE_Bootstrap', 'register_shortcodes_modules_and_widgets'], 7);
-        add_action('plugins_loaded', ['EE_Bootstrap', 'brew_espresso'], 9);
+        add_action('plugins_loaded', ['EE_Bootstrap', 'load_espresso_addons']);
+        add_action('setup_theme', ['EE_Bootstrap', 'detect_activations_or_upgrades']);
+        add_action('after_setup_theme', ['EE_Bootstrap', 'load_core_configuration']);
+        add_action('after_setup_theme', ['EE_Bootstrap', 'register_shortcodes_modules_and_widgets'], 15);
+        add_action('init', ['EE_Bootstrap', 'brew_espresso'], 1);
     }
 
 

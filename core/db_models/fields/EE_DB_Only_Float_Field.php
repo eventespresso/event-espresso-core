@@ -1,6 +1,7 @@
 <?php
 
 use EventEspresso\core\services\orm\model_field\SchemaType;
+use EventEspresso\core\services\request\DataType;
 
 class EE_DB_Only_Float_Field extends EE_DB_Only_Field_Base
 {
@@ -14,5 +15,6 @@ class EE_DB_Only_Float_Field extends EE_DB_Only_Field_Base
     {
         parent::__construct($table_column, $nicename, $nullable, $default_value);
         $this->setSchemaType(SchemaType::FLOAT);
+        $this->setDataType(DataType::FLOAT);
     }
 }

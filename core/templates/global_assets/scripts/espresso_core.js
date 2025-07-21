@@ -243,7 +243,6 @@ jQuery( document ).ready( function ( $ ) {
 
 
 	function display_espresso_notices() {
-		$('#espresso-notices').eeCenter('relative');
 		$('.espresso-notices').slideDown();
 		$('.espresso-notices.fade-away').delay(10000).slideUp();
 	}

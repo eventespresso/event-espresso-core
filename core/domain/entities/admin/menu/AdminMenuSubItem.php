@@ -13,6 +13,6 @@ class AdminMenuSubItem extends AdminMenuTopLevel
             $this->capability(),
             $this->menuSlug(),
             $this->menuCallback()
-        );
+        ) ?: '';
     }
 }

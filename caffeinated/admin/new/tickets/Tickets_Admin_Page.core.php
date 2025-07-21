@@ -42,7 +42,8 @@ class Tickets_Admin_Page extends EE_Admin_Page
     {
 
         $tkt_id = ! empty($this->_req_data['TKT_ID']) && ! is_array($this->_req_data['TKT_ID'])
-            ? $this->_req_data['TKT_ID'] : 0;
+            ? $this->_req_data['TKT_ID']
+            : 0;
 
         $this->_page_routes = array(
             'default'         => array(
@@ -173,7 +174,7 @@ class Tickets_Admin_Page extends EE_Admin_Page
     {
 
         $orderby = empty($this->_req_data['orderby']) ? 'TKT_name' : $this->_req_data['orderby'];
-        $order = empty($this->_req_data['order']) ? 'ASC' : $order;
+        $order = empty($this->_req_data['order']) ? 'ASC' : $this->_req_data['order'];
 
         switch ($orderby) {
             case 'TKT_name':

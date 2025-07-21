@@ -16,6 +16,7 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\interfaces\ResettableInterface;
 use EventEspresso\core\services\addon\AddonManager;
 use EventEspresso\core\services\helpers\WordPressHooks;
+use EventEspresso\core\services\i18n\Textdomain;
 use EventEspresso\core\services\licensing\PluginLicense;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\request\RequestInterface;
@@ -38,15 +39,15 @@ final class EE_System implements ResettableInterface
     const req_type_normal = 0;
 
     /**
-     * Indicates this is a brand new installation of EE so we should install
+     * Indicates this is a brand-new installation of EE so we should install
      * tables and default data etc
      */
     const req_type_new_activation = 1;
 
     /**
      * we've detected that EE has been reactivated (or EE was activated during maintenance mode,
-     * and we just exited maintenance mode). We MUST check the database is setup properly
-     * and that default data is setup too
+     * and we just exited maintenance mode). We MUST check the database is set up properly
+     * and that default data is set up too
      */
     const req_type_reactivation = 2;
 
@@ -143,6 +144,7 @@ final class EE_System implements ResettableInterface
      * resets the instance and returns it
      *
      * @return EE_System
+     * @throws EE_Error
      */
     public static function reset(): EE_System
     {
@@ -184,11 +186,6 @@ final class EE_System implements ResettableInterface
         $this->maintenance_mode = $maintenance_mode;
         $this->feature          = $feature;
         do_action('AHEE__EE_System__construct__begin', $this);
-        add_action(
-            'AHEE__EE_Bootstrap__load_espresso_addons',
-            [$this, 'loadWpGraphQL'],
-            3
-        );
         add_action(
             'AHEE__EE_Bootstrap__load_espresso_addons',
             [$this, 'loadCapabilities'],
@@ -240,11 +237,6 @@ final class EE_System implements ResettableInterface
             'AHEE__EE_Bootstrap__load_core_configuration',
             [$this, 'loadCustomPostTypes']
         );
-        // load specifications for custom post types
-        add_action(
-            'AHEE__EE_Bootstrap__load_core_configuration',
-            [$this, 'loadCustomPostTypes']
-        );
         // register shortcodes, modules, and widgets
         add_action(
             'AHEE__EE_Bootstrap__register_shortcodes_modules_and_widgets',
@@ -261,8 +253,7 @@ final class EE_System implements ResettableInterface
         // exclude EE critical pages from wp_list_pages
         add_filter(
             'wp_list_pages_excludes',
-            [$this, 'remove_pages_from_wp_list_pages'],
-            10
+            [$this, 'remove_pages_from_wp_list_pages']
         );
         // ALL EE Addons should use the following hook point to attach their initial setup too
         // it's extremely important for EE Addons to register any class autoloaders so that they can be available when the EE_Config loads
@@ -271,19 +262,6 @@ final class EE_System implements ResettableInterface
 
 
     /**
-     * load and setup EE_Capabilities
-     *
-     * @return void
-     */
-    public function loadWpGraphQL()
-    {
-        espressoLoadWpGraphQL();
-    }
-
-
-    /**
-     * load and setup EE_Capabilities
-     *
      * @return void
      */
     public function loadCapabilities()
@@ -367,7 +345,6 @@ final class EE_System implements ResettableInterface
 
 
     /**
-     * load_espresso_addons
      * allow addons to load first so that they can set hooks for running DMS's, etc
      * this is hooked into both:
      *    'AHEE__EE_Bootstrap__load_core_configuration'
@@ -400,13 +377,11 @@ final class EE_System implements ResettableInterface
 
 
     /**
-     * detect_activations_or_upgrades
      * Checks for activation or upgrade of core first;
      * then also checks if any registered addons have been activated or upgraded
      * This is hooked into 'AHEE__EE_Bootstrap__detect_activations_or_upgrades'
      * which runs during the WP 'plugins_loaded' action at priority 3
      *
-     * @access public
      * @return void
      * @throws EE_Error
      */
@@ -424,18 +399,16 @@ final class EE_System implements ResettableInterface
 
 
     /**
-     * detect_if_activation_or_upgrade
      * Takes care of detecting whether this is a brand new install or code upgrade,
      * and either setting up the DB or setting up maintenance mode etc.
      *
-     * @access public
      * @return void
      * @throws EE_Error
      */
     public function detect_if_activation_or_upgrade()
     {
         do_action('AHEE__EE_System___detect_if_activation_or_upgrade__begin');
-        // check if db has been updated, or if its a brand-new installation
+        // check if db has been updated, or if it's a brand-new installation
         $espresso_db_update = $this->fix_espresso_db_upgrade_option();
         $request_type       = $this->detect_req_type($espresso_db_update);
         switch ($request_type) {
@@ -543,16 +516,18 @@ final class EE_System implements ResettableInterface
      * migration scripts that need to be run and a version change happens), enqueues core for database initialization,
      * so that it will be done when migrations are finished
      *
-     * @param boolean $initialize_addons_too if true, we double-check addons' database tables etc too;
-     * @param boolean $verify_schema         if true will re-check the database tables have the correct schema.
+     * @param bool $initialize_addons_too    if true, we double-check addon's database tables etc too;
+     * @param bool $verify_schema            if true will re-check the database tables have the correct schema.
      *                                       This is a resource-intensive job
      *                                       so we prefer to only do it when necessary
      * @return void
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function initialize_db_if_no_migrations_required($initialize_addons_too = false, $verify_schema = true)
-    {
+    public function initialize_db_if_no_migrations_required(
+        bool $initialize_addons_too = false,
+        bool $verify_schema = true
+    ) {
         $request_type = $this->detect_req_type();
         // only initialize system if we're not in maintenance mode.
         if (! MaintenanceStatus::isFullSite()) {
@@ -605,12 +580,14 @@ final class EE_System implements ResettableInterface
     /**
      * Adds the current code version to the saved wp option which stores a list of all ee versions ever installed.
      *
-     * @param array  $version_history
-     * @param string $current_version_to_add version to be added to the version history
-     * @return    boolean success as to whether or not this option was changed
+     * @param array|null  $version_history
+     * @param string|null $current_version_to_add version to be added to the version history
+     * @return bool success if this option was changed
      */
-    public function update_list_of_installed_versions($version_history = null, $current_version_to_add = null): bool
-    {
+    public function update_list_of_installed_versions(
+        ?array $version_history = null,
+        ?string $current_version_to_add = null
+    ): bool {
         if (! $version_history) {
             $version_history = $this->fix_espresso_db_upgrade_option($version_history);
         }
@@ -625,7 +602,7 @@ final class EE_System implements ResettableInterface
 
     /**
      * Detects if the current version indicated in the has existed in the list of
-     * previously-installed versions of EE (espresso_db_update). Does NOT modify it (ie, no side-effect)
+     * previously-installed versions of EE (espresso_db_update). Does NOT modify it (ie, no side effect)
      *
      * @param array|null $espresso_db_update array from the wp option stored under the name 'espresso_db_update'.
      *                                       If not supplied, fetches it from the options table.
@@ -653,7 +630,7 @@ final class EE_System implements ResettableInterface
 
 
     /**
-     * Returns whether or not there was a non-micro version change (ie, change in either
+     * Returns whether there was a non-micro version change (ie, change in either
      * the first or second number in the version. Eg 4.9.0.rc.001 to 4.10.0.rc.000,
      * but not 4.9.0.rc.0001 to 4.9.1.rc.0001
      *
@@ -666,14 +643,14 @@ final class EE_System implements ResettableInterface
         $previous_version_parts = explode('.', $previous_version);
         $current_version_parts  = explode('.', espresso_version());
         return isset(
-            $previous_version_parts[0],
-            $previous_version_parts[1],
-            $current_version_parts[0],
-            $current_version_parts[1]
-        ) && (
-                   $previous_version_parts[0] !== $current_version_parts[0]
-                   || $previous_version_parts[1] !== $current_version_parts[1]
-               );
+                $previous_version_parts[0],
+                $previous_version_parts[1],
+                $current_version_parts[0],
+                $current_version_parts[1]
+            ) && (
+                $previous_version_parts[0] !== $current_version_parts[0]
+                || $previous_version_parts[1] !== $current_version_parts[1]
+            );
     }
 
 
@@ -690,7 +667,7 @@ final class EE_System implements ResettableInterface
 
 
     /**
-     * Determines the request type for any ee addon, given three piece of info: the current array of activation
+     * Determines the request type for any ee addon, given three-piece of info: the current array of activation
      * histories (for core that' 'espresso_db_update' wp option); the name of the WordPress option which is temporarily
      * set upon activation of the plugin (for core it's 'ee_espresso_activation'); and the version that this plugin was
      * just activated to (for core that will always be espresso_version())
@@ -834,7 +811,6 @@ final class EE_System implements ResettableInterface
 
 
     /**
-     * load_core_configuration
      * this is hooked into 'AHEE__EE_Bootstrap__load_core_configuration'
      * which runs during the WP 'plugins_loaded' action at priority 5
      *
@@ -845,12 +821,13 @@ final class EE_System implements ResettableInterface
     public function load_core_configuration()
     {
         do_action('AHEE__EE_System__load_core_configuration__begin', $this);
-        $this->loader->getShared('EE_Load_Textdomain');
-        // load textdomain
-        EE_Load_Textdomain::load_textdomain();
+        /** @var Textdomain $textdomain */
+        $textdomain = $this->loader->getShared(Textdomain::class);
+        $textdomain->loadPluginTextdomain();
+        // load and setup EE_Config and EE_Network_Config
         /** @var EE_Config $config */
-        $config = $this->loader->getShared('EE_Config');
-        $this->loader->getShared('EE_Network_Config');
+        $config = $this->loader->getShared(EE_Config::class);
+        $this->loader->getShared(EE_Network_Config::class);
         // setup autoloaders
         // enable logging?
         $this->loader->getShared('EventEspresso\core\services\orm\TrashLogger');
@@ -873,7 +850,7 @@ final class EE_System implements ResettableInterface
 
 
     /**
-     * cycles through all of the models/*.model.php files, and assembles an array of model names
+     * cycles through all the models/*.model.php files, and assembles an array of model names
      *
      * @return void
      * @throws ReflectionException
@@ -945,12 +922,10 @@ final class EE_System implements ResettableInterface
 
 
     /**
-     * register_shortcodes_modules_and_widgets
      * generate lists of shortcodes and modules, then verify paths and classes
      * This is hooked into 'AHEE__EE_Bootstrap__register_shortcodes_modules_and_widgets'
      * which runs during the WP 'plugins_loaded' action at priority 7
      *
-     * @access public
      * @return void
      * @throws Exception
      * @throws Throwable
@@ -967,9 +942,6 @@ final class EE_System implements ResettableInterface
 
 
     /**
-     * _incompatible_addon_error
-     *
-     * @access public
      * @return void
      */
     private function _incompatible_addon_error()
@@ -986,11 +958,11 @@ final class EE_System implements ResettableInterface
             $msg .= '<ul>';
             foreach ($class_names as $class_name) {
                 $msg .= '<li><b>Event Espresso - '
-                        . str_replace(
-                            ['EE_', 'EEM_', 'EED_', 'EES_', 'EEW_'],
-                            '',
-                            $class_name
-                        ) . '</b></li>';
+                    . str_replace(
+                        ['EE_', 'EEM_', 'EED_', 'EES_', 'EEW_'],
+                        '',
+                        $class_name
+                    ) . '</b></li>';
             }
             $msg .= '</ul>';
             $msg .= esc_html__(
@@ -1007,10 +979,9 @@ final class EE_System implements ResettableInterface
 
 
     /**
-     * brew_espresso
      * begins the process of setting hooks for initializing EE in the correct order
      * This is happening on the 'AHEE__EE_Bootstrap__brew_espresso' hook point
-     * which runs during the WP 'plugins_loaded' action at priority 9
+     * which runs during the WP 'init' action at priority 1
      *
      * @return void
      * @throws Exception
@@ -1018,14 +989,12 @@ final class EE_System implements ResettableInterface
      */
     public function brew_espresso()
     {
-        do_action('AHEE__EE_System__brew_espresso__begin', $this);
-        // load some final core systems
-        add_action('init', [$this, 'set_hooks_for_core'], 1);
-        add_action('init', [$this, 'perform_activations_upgrades_and_migrations'], 3);
-        add_action('init', [$this, 'load_CPTs_and_session'], 5);
-        add_action('init', [$this, 'load_controllers'], 7);
+        add_action('init', [$this, 'set_hooks_for_core'], 5);
+        add_action('init', [$this, 'perform_activations_upgrades_and_migrations'], 6);
+        add_action('init', [$this, 'load_CPTs_and_session'], 7);
+        add_action('init', [$this, 'load_controllers'], 8);
         add_action('init', [$this, 'core_loaded_and_ready'], 9);
-        add_action('init', [$this, 'initialize'], 10);
+        add_action('init', [$this, 'initialize']);
         add_action('init', [$this, 'initialize_last'], 100);
         $this->router->brewEspresso();
         $this->loader->getShared('EventEspresso\PaymentMethods\Manager');
@@ -1035,11 +1004,7 @@ final class EE_System implements ResettableInterface
 
 
     /**
-    /**
-     *    set_hooks_for_core
-     *
-     * @access public
-     * @return    void
+     * @return void
      * @throws EE_Error
      */
     public function set_hooks_for_core()
@@ -1075,10 +1040,7 @@ final class EE_System implements ResettableInterface
 
 
     /**
-     *    perform_activations_upgrades_and_migrations
-     *
-     * @access public
-     * @return    void
+     * @return void
      */
     public function perform_activations_upgrades_and_migrations()
     {
@@ -1101,12 +1063,10 @@ final class EE_System implements ResettableInterface
 
 
     /**
-     * load_controllers
      * this is the best place to load any additional controllers that needs access to EE core.
-     * it is expected that all basic core EE systems, that are not dependant on the current request are loaded at this
+     * it is expected that all basic core EE systems, that are not dependent on the current request are loaded at this
      * time
      *
-     * @access public
      * @return void
      * @throws Exception
      * @throws Throwable
@@ -1120,10 +1080,8 @@ final class EE_System implements ResettableInterface
 
 
     /**
-     * core_loaded_and_ready
-     * all of the basic EE core should be loaded at this point and available regardless of M-Mode
+     * all the basic EE core should be loaded at this point and available regardless of M-Mode
      *
-     * @access public
      * @return void
      * @throws Exception
      * @throws Throwable
@@ -1140,10 +1098,8 @@ final class EE_System implements ResettableInterface
 
 
     /**
-     * initialize
      * this is the best place to begin initializing client code
      *
-     * @access public
      * @return void
      */
     public function initialize()
@@ -1169,11 +1125,9 @@ final class EE_System implements ResettableInterface
 
 
     /**
-     * initialize_last
      * this is run really late during the WP init hook point, and ensures that mostly everything else that needs to
      * initialize has done so
      *
-     * @access public
      * @return void
      * @throws Exception
      * @throws Throwable
@@ -1204,10 +1158,8 @@ final class EE_System implements ResettableInterface
 
 
     /**
-     * do_not_cache
      * sets no cache headers and defines no cache constants for WP plugins
      *
-     * @access public
      * @return void
      */
     public static function do_not_cache()
@@ -1223,18 +1175,15 @@ final class EE_System implements ResettableInterface
             define('DONOTCACHEDB', true);
         }
         // add no cache headers
-        add_action('send_headers', ['EE_System', 'nocache_headers'], 10);
+        add_action('send_headers', ['EE_System', 'nocache_headers']);
         // plus a little extra for nginx and Google Chrome
-        add_filter('nocache_headers', ['EE_System', 'extra_nocache_headers'], 10, 1);
+        add_filter('nocache_headers', ['EE_System', 'extra_nocache_headers']);
         // prevent browsers from prefetching of the rel='next' link, because it may contain content that interferes with the registration process
         remove_action('wp_head', 'adjacent_posts_rel_link_wp_head');
     }
 
 
     /**
-     *    extra_nocache_headers
-     *
-     * @access    public
      * @param $headers
      * @return    array
      */
@@ -1249,9 +1198,6 @@ final class EE_System implements ResettableInterface
 
 
     /**
-     *    nocache_headers
-     *
-     * @access    public
      * @return    void
      */
     public static function nocache_headers()

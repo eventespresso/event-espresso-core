@@ -2627,7 +2627,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                     $registration_config->default_STS_ID = $valid_data['default_reg_status'];
                 }
                 if (isset($valid_data['default_max_tickets'])) {
-                    $registration_config->default_maximum_number_of_tickets = $valid_data['default_max_tickets'];
+                    $registration_config->default_maximum_number_of_tickets = (int) $valid_data['default_max_tickets'];
                 }
                 do_action(
                     'AHEE__Events_Admin_Page___update_default_event_settings',

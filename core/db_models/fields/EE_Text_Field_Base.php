@@ -1,6 +1,7 @@
 <?php
 
 use EventEspresso\core\services\orm\model_field\SchemaType;
+use EventEspresso\core\services\request\DataType;
 
 /**
  * Text_Fields is a base class for any fields which are have text value. (Exception: foreign and private key fields.
@@ -18,6 +19,7 @@ abstract class EE_Text_Field_Base extends EE_Model_Field_Base
     {
         parent::__construct($table_column, $nicename, $nullable, $default_value);
         $this->setSchemaType(SchemaType::STRING);
+        $this->setDataType(DataType::STRING);
     }
 
 

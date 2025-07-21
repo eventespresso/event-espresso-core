@@ -16,10 +16,7 @@ use EventEspresso\core\services\loaders\LoaderInterface;
  */
 class RequestTypeContextFactory implements RequestTypeContextFactoryInterface
 {
-    /**
-     * @var LoaderInterface $loader
-     */
-    private $loader;
+    private LoaderInterface $loader;
 
 
     /**
@@ -37,99 +34,54 @@ class RequestTypeContextFactory implements RequestTypeContextFactoryInterface
      * @param string $slug
      * @return RequestTypeContext
      */
-    public function create($slug)
+    public function create(string $slug): RequestTypeContext
     {
         switch ($slug) {
             case RequestTypeContext::ACTIVATION:
-                $description = esc_html__(
-                    'The current request is for some form of activation',
-                    'event_espresso'
-                );
+                $description = 'The current request is for some form of activation';
                 break;
             case RequestTypeContext::API:
-                $description = esc_html__(
-                    'The current request is for the EE REST API',
-                    'event_espresso'
-                );
+                $description = 'The current request is for the EE REST API';
                 break;
             case RequestTypeContext::AJAX_FRONT:
-                $description = esc_html__(
-                    'The current request is for the frontend via AJAX',
-                    'event_espresso'
-                );
+                $description = 'The current request is for the frontend via AJAX';
                 break;
             case RequestTypeContext::AJAX_ADMIN:
-                $description = esc_html__(
-                    'The current request is for the admin via AJAX',
-                    'event_espresso'
-                );
+                $description = 'The current request is for the admin via AJAX';
                 break;
             case RequestTypeContext::AJAX_HEARTBEAT:
-                $description = esc_html__(
-                    'The current request is for the WP Heartbeat',
-                    'event_espresso'
-                );
+                $description = 'The current request is for the WP Heartbeat';
                 break;
             case RequestTypeContext::AJAX_OTHER:
-                $description = esc_html__(
-                    'The current request is for non-EE related code via AJAX',
-                    'event_espresso'
-                );
+                $description = 'The current request is for non-EE related code via AJAX';
                 break;
             case RequestTypeContext::CRON:
-                $description = esc_html__(
-                    'The current request is for a WP_Cron',
-                    'event_espresso'
-                );
+                $description = 'The current request is for a WP_Cron';
                 break;
             case RequestTypeContext::CLI:
-                $description = esc_html__(
-                    'The current request is from the command line',
-                    'event_espresso'
-                );
+                $description = 'The current request is from the command line';
                 break;
             case RequestTypeContext::ADMIN:
-                $description = esc_html__(
-                    'The current request is for the admin',
-                    'event_espresso'
-                );
+                $description = 'The current request is for the admin';
                 break;
             case RequestTypeContext::IFRAME:
-                $description = esc_html__(
-                    'The current request is for an iframe',
-                    'event_espresso'
-                );
+                $description = 'The current request is for an iframe';
                 break;
             case RequestTypeContext::FEED:
-                $description = esc_html__(
-                    'The current request is for a feed (ie: RSS)',
-                    'event_espresso'
-                );
+                $description = 'The current request is for a feed (ie: RSS)';
                 break;
             case RequestTypeContext::GQL:
-                $description = esc_html__(
-                    'The current request is for the EE GraphQL Manager',
-                    'event_espresso'
-                );
+                $description = 'The current request is for the EE GraphQL Manager';
                 break;
             case RequestTypeContext::WP_API:
-                $description = esc_html__(
-                    'The current request is for the WordPress REST API',
-                    'event_espresso'
-                );
+                $description = 'The current request is for the WordPress REST API';
                 break;
             case RequestTypeContext::WP_SCRAPE:
-                $description = esc_html__(
-                    'The current request is for a WordPress loopback scrape',
-                    'event_espresso'
-                );
+                $description = 'The current request is for a WordPress loopback scrape';
                 break;
             case RequestTypeContext::FRONTEND:
             default:
-                $description = esc_html__(
-                    'The current request is for the frontend',
-                    'event_espresso'
-                );
+                $description = 'The current request is for the frontend';
                 break;
         }
         // we're using the Loader with sharing turned on,

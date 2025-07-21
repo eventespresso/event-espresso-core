@@ -73,7 +73,7 @@ class EE_Register_Addon implements EEI_Plugin_API
     protected static function _effective_version(string $min_core_version): string
     {
         // versions: 4 . 3 . 1 . p . 123
-        // offsets:    0 . 1 . 2 . 3 . 4
+        // offsets:  0 . 1 . 2 . 3 . 4
         $version_parts = explode('.', $min_core_version);
         // check they specified the micro version (after 2nd period)
         if (! isset($version_parts[2])) {
@@ -537,6 +537,7 @@ class EE_Register_Addon implements EEI_Plugin_API
             'payment_method_paths'  => isset($setup_args['payment_method_paths'])
                 ? (array) $setup_args['payment_method_paths']
                 : [],
+            'pm_slug'               => '',
             'default_terms'         => isset($setup_args['default_terms'])
                 ? (array) $setup_args['default_terms']
                 : [],
@@ -558,12 +559,22 @@ class EE_Register_Addon implements EEI_Plugin_API
                 ? (array) $setup_args['license']
                 : [],
         ];
-        // if plugin_action_slug is NOT set, but an admin page path IS set,
-        // then let's just use the plugin_slug since that will be used for linking to the admin page
-        $addon_settings['plugin_action_slug'] = empty($addon_settings['plugin_action_slug'])
-                                                && ! empty($addon_settings['admin_path'])
-            ? $addon_settings['plugin_slug']
-            : $addon_settings['plugin_action_slug'];
+
+        // if plugin_action_slug is NOT set...
+        if (empty($addon_settings['plugin_action_slug'])) {
+            if (! empty($addon_settings['payment_method_paths'])) {
+                // but the addon is a payment method
+                $payment_method_path = reset($addon_settings['payment_method_paths']);
+                $plugin_action_slug = basename(strtolower($payment_method_path));
+                $addon_settings['plugin_action_slug'] = $plugin_action_slug;
+                // let's also set the pm_slug to the same value
+                $addon_settings['pm_slug'] = $plugin_action_slug;
+            } elseif (! empty($addon_settings['admin_path'])) {
+                // or an admin page path IS set
+                $addon_settings['plugin_action_slug'] = basename($addon_settings['admin_path']);
+            }
+        }
+
         // full server path to main file (file loaded directly by WP)
         $addon_settings['plugin_basename'] = plugin_basename($addon_settings['main_file_path']);
         return $addon_settings;
@@ -1043,6 +1054,9 @@ class EE_Register_Addon implements EEI_Plugin_API
         $addon->set_config_section(self::$_settings[ $addon_name ]['config_section']);
         $addon->set_config_class(self::$_settings[ $addon_name ]['config_class']);
         $addon->set_config_name(self::$_settings[ $addon_name ]['config_name']);
+        if (! empty(self::$_settings[ $addon_name ]['pm_slug'])) {
+            $addon->setPaymentmethodSlug(self::$_settings[ $addon_name ]['pm_slug']);
+        }
         do_action(
             'AHEE__EE_Register_Addon___load_and_init_addon_class',
             $addon,

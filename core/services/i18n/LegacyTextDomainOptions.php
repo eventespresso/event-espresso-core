@@ -5,7 +5,7 @@ namespace EventEspresso\core\services\i18n;
 /**
  * Class LegacyTextDomainOptions
  * Previously Event Espresso stored a separate WP option record for every version for each locale.
- * This class attempts to collect all of the ee_lang_check_* options stored in the database
+ * This class attempts to collect all the ee_lang_check_* options stored in the database
  * and add them to the new LoadedTextDomains option then delete the old record.
  *
  * @author  Brent Christensen
@@ -14,10 +14,7 @@ namespace EventEspresso\core\services\i18n;
  */
 class LegacyTextDomainOptions
 {
-    /**
-     * @var LoadedTextDomains
-     */
-    private $loaded_text_domains;
+    private LoadedTextDomains $loaded_text_domains;
 
 
     /**
@@ -30,7 +27,7 @@ class LegacyTextDomainOptions
 
 
     /**
-     * attempts to collect all of the ee_lang_check_* options stored in the database
+     * attempts to collect all the ee_lang_check_* options stored in the database
      * and add them to one single option handled by EventEspresso\core\services\i18n\LoadedTextDomains
      *
      * @since   5.0.0.p

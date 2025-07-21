@@ -12,6 +12,9 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
  * @package               Event Espresso
  * @subpackage            includes/models/
  * @author                Michael Nelson, Brent Christensen
+ * @method EE_Event get_one(array $query_params)
+ * @method EE_Event ensure_is_obj($base_class_obj_or_id, $ensure_is_in_db = false)
+ * @method EE_Event[] get_all(array $query_params)
  */
 class EEM_Event extends EEM_CPT_Base
 {
@@ -46,6 +49,7 @@ class EEM_Event extends EEM_CPT_Base
      * @param string|null $timezone
      * @throws EE_Error
      * @throws ReflectionException
+     * @throws Exception
      */
     protected function __construct(?string $timezone = '')
     {
@@ -289,9 +293,9 @@ class EEM_Event extends EEM_CPT_Base
     /**
      * @param string $default_reg_status
      * @throws EE_Error
-     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public static function set_default_reg_status($default_reg_status)
+    public static function set_default_reg_status(string $default_reg_status)
     {
         self::$_default_reg_status = $default_reg_status;
         // if EEM_Event has already been instantiated,
@@ -317,11 +321,11 @@ class EEM_Event extends EEM_CPT_Base
     /**
      * Used to override the default for the additional limit field.
      *
-     * @param $additional_limit
+     * @param int $additional_limit
      */
-    public static function set_default_additional_limit($additional_limit)
+    public static function set_default_additional_limit(int $additional_limit)
     {
-        self::$_default_additional_limit = (int) $additional_limit;
+        self::$_default_additional_limit = $additional_limit;
         if (self::$_instance instanceof EEM_Event) {
             self::$_instance->_fields['Event_Meta']['EVT_additional_limit'] = new EE_Integer_Field(
                 'EVT_additional_limit',
@@ -343,7 +347,7 @@ class EEM_Event extends EEM_CPT_Base
      *
      * @return int
      */
-    public static function get_default_additional_limit()
+    public static function get_default_additional_limit(): int
     {
         return apply_filters('FHEE__EEM_Event__get_default_additional_limit', self::$_default_additional_limit);
     }
@@ -375,7 +379,7 @@ class EEM_Event extends EEM_CPT_Base
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function get_all_event_question_groups($EVT_ID = 0)
+    public function get_all_event_question_groups(int $EVT_ID = 0)
     {
         if (! isset($EVT_ID) || ! absint($EVT_ID)) {
             EE_Error::add_error(
@@ -409,7 +413,7 @@ class EEM_Event extends EEM_CPT_Base
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public function get_event_question_groups($EVT_ID = 0, $for_primary_attendee = true)
+    public function get_event_question_groups(int $EVT_ID = 0, bool $for_primary_attendee = true)
     {
         if (! isset($EVT_ID) || ! absint($EVT_ID)) {
             EE_Error::add_error(
@@ -452,7 +456,7 @@ class EEM_Event extends EEM_CPT_Base
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function get_question_groups_for_event($EVT_ID, EE_Registration $registration)
+    public function get_question_groups_for_event(int $EVT_ID, EE_Registration $registration)
     {
         if (! absint($EVT_ID)) {
             EE_Error::add_error(
@@ -489,7 +493,7 @@ class EEM_Event extends EEM_CPT_Base
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function get_questions_in_groups($QSG_IDs = '')
+    public function get_questions_in_groups(string $QSG_IDs = '')
     {
         if (empty($QSG_IDs)) {
             EE_Error::add_error(
@@ -521,7 +525,7 @@ class EEM_Event extends EEM_CPT_Base
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function get_options_for_question($QST_IDs)
+    public function get_options_for_question(string $QST_IDs)
     {
         if (empty($QST_IDs)) {
             EE_Error::add_error(
@@ -555,7 +559,7 @@ class EEM_Event extends EEM_CPT_Base
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function get_active_events($query_params, $count = false)
+    public function get_active_events(array $query_params, bool $count = false)
     {
         if (array_key_exists(0, $query_params)) {
             $where_params = $query_params[0];
@@ -596,7 +600,7 @@ class EEM_Event extends EEM_CPT_Base
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function get_upcoming_events($query_params, $count = false)
+    public function get_upcoming_events(array $query_params, bool $count = false)
     {
         if (array_key_exists(0, $query_params)) {
             $where_params = $query_params[0];
@@ -637,7 +641,7 @@ class EEM_Event extends EEM_CPT_Base
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function get_active_and_upcoming_events($query_params, $count = false)
+    public function get_active_and_upcoming_events(array $query_params, bool $count = false)
     {
         if (array_key_exists(0, $query_params)) {
             $where_params = $query_params[0];
@@ -668,11 +672,9 @@ class EEM_Event extends EEM_CPT_Base
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function get_expired_events($query_params, $count = false)
+    public function get_expired_events(array $query_params, bool $count = false)
     {
-        $where_params = isset($query_params[0])
-            ? $query_params[0]
-            : [];
+        $where_params = $query_params[0] ?? [];
         // if we have count make sure we don't include group by
         if ($count && isset($query_params['group_by'])) {
             unset($query_params['group_by']);
@@ -682,7 +684,7 @@ class EEM_Event extends EEM_CPT_Base
         if (isset($where_params['status'])) {
             unset($where_params['status']);
         }
-        // first get all events that have datetimes where its not expired.
+        // first get all events that have datetimes where it's not expired.
         $event_ids = $this->get_all_not_expired_event_ids($query_params);
         // if we have any additional query_params, let's add them to the 'AND' condition
         $and_condition = [
@@ -736,11 +738,9 @@ class EEM_Event extends EEM_CPT_Base
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function get_inactive_events($query_params, $count = false)
+    public function get_inactive_events(array $query_params, bool $count = false)
     {
-        $where_params = isset($query_params[0])
-            ? $query_params[0]
-            : [];
+        $where_params = $query_params[0] ?? [];
         // let's add in specific query_params for inactive events.
         if (isset($where_params['status'])) {
             unset($where_params['status']);
@@ -772,15 +772,15 @@ class EEM_Event extends EEM_CPT_Base
      * because we don't want to override any existing global default prices but instead insert NEW prices that get
      * attached to the event. See parent for param descriptions
      *
-     * @param        $id_or_obj
-     * @param        $other_model_id_or_obj
+     * @param int|string|EE_Base_Class $id_or_obj
+     * @param int|string|EE_Base_Class $other_model_id_or_obj
      * @param string $relationName
      * @param array  $where_query
      * @return EE_Base_Class
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function add_relationship_to($id_or_obj, $other_model_id_or_obj, $relationName, $where_query = [])
+    public function add_relationship_to($id_or_obj, $other_model_id_or_obj, $relationName, $where_query = []): EE_Base_Class
     {
         if ($relationName === 'Price') {
             // let's get the PRC object for the given ID to make sure that we aren't dealing with a default
@@ -843,7 +843,7 @@ class EEM_Event extends EEM_CPT_Base
      * @param array $query_params
      * @param array $where_params
      * @param bool  $count
-     * @return EE_Soft_Delete_Base_Class[]|int
+     * @return EE_Event[]|int
      * @throws EE_Error
      * @throws ReflectionException
      */

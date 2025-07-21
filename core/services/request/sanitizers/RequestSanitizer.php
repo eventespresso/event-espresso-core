@@ -45,11 +45,10 @@ class RequestSanitizer
         // check if we are getting an improperly typed array and correct
         $is_array = $is_array && is_array($param);
         if ($is_array) {
-            $values = [];
-            foreach ((array) $param as $key => $value) {
-                $values[ $key ] = $this->clean($value, $type, is_array($value), $delimiter);
-            }
-            return $values;
+            return array_map(
+                fn ($value) => $this->clean($value, $type, is_array($value), $delimiter),
+                (array) $param
+            );
         }
         return $this->sanitizeParam($param, $type);
     }

@@ -17,7 +17,7 @@ class DeprecationManager
      */
     public static function loadDeprecations(): void
     {
-        $files = glob(EE_CORE . 'domain/deprecated/v*.php');
+        $files = glob(EE_CORE . 'domain/deprecated/*.php');
         foreach ($files as $filename) {
             include $filename;
         }

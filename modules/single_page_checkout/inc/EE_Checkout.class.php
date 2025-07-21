@@ -270,6 +270,8 @@ class EE_Checkout
      */
     public $available_payment_methods = array();
 
+    public ?EE_Payment_Method $default_payment_method = null;
+
 
     /**
      *    class constructor

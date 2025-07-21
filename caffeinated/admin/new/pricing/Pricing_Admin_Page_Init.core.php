@@ -1,7 +1,8 @@
 <?php
 
+use EventEspresso\core\domain\entities\admin\menu\AdminMenuGroup;
 use EventEspresso\core\domain\entities\admin\menu\AdminMenuItem;
-use EventEspresso\core\domain\entities\admin\menu\AdminMenuSubItem;
+use EventEspresso\core\domain\entities\admin\menu\AdminMenuTopLevel;
 
 /**
  * Pricing_Admin_Page_Init class
@@ -43,24 +44,18 @@ class Pricing_Admin_Page_Init extends EE_Admin_Page_Init
     }
 
 
-    /**
-     * @return array|void
-     * @throws EE_Error
-     * @since 5.0.0.p
-     */
-    protected function _set_menu_map()
+    public function getMenuProperties(): array
     {
-        $this->_menu_map = new AdminMenuSubItem(
-            array(
-                'menu_group'      => 'management',
-                'menu_order'      => 20,
-                'show_on_menu'    => AdminMenuItem::DISPLAY_BLOG_ONLY,
-                'parent_slug'     => 'espresso_events',
-                'menu_slug'       => PRICING_PG_SLUG,
-                'menu_label'      => PRICING_LABEL,
-                'capability'      => 'ee_read_default_prices',
-                'admin_init_page' => $this,
-            )
-        );
+        return [
+            'menu_type'       => AdminMenuItem::TYPE_MENU_SUB_ITEM,
+            'menu_group'      => AdminMenuGroup::MENU_SLUG_MANAGEMENT,
+            'menu_order'      => 20,
+            'show_on_menu'    => AdminMenuItem::DISPLAY_BLOG_ONLY,
+            'parent_slug'     => AdminMenuTopLevel::MENU_PARENT_ACTIVE,
+            'menu_slug'       => PRICING_PG_SLUG,
+            'menu_label'      => PRICING_LABEL,
+            'capability'      => 'ee_read_default_prices',
+            'admin_init_page' => $this,
+        ];
     }
 }

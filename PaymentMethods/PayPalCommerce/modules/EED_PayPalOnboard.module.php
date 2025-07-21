@@ -61,13 +61,14 @@ class EED_PayPalOnboard extends EED_Module
         // Get onboarding URL.
         add_action('wp_ajax_eeaPpGetOnboardingUrl', [__CLASS__, 'getOnboardingUrl']);
         // Catch the return/redirect from PayPal onboarding page.
-        add_action('init', [__CLASS__, 'updateOnboardingStatus']);
+        add_action('admin_init', [__CLASS__, 'updateOnboardingStatus']);
         // Return the connection/onboard status.
         add_action('wp_ajax_eeaPpGetOnboardStatus', [__CLASS__, 'getOnboardStatus']);
         // Revoke access.
         add_action('wp_ajax_eeaPpOffboard', [__CLASS__, 'offboard']);
         // Clear all metadata.
         add_action('wp_ajax_eeaPpClearMetaData', [__CLASS__, 'clearMetaData']);
+        add_action('wp_ajax_eeaPpSaveDebugMode', [__CLASS__, 'eeaPpSaveDebugMode']);
         // Admin notice.
         add_action('admin_init', [__CLASS__, 'adminNotice']);
     }
@@ -298,6 +299,15 @@ class EED_PayPalOnboard extends EED_Module
         $get_params = EED_Module::getRequest()->getParams();
         // Get the payment method.
         $paypal_pm = EED_PayPalCommerce::getPaymentMethod();
+        if (! $paypal_pm instanceof EE_Payment_Method) {
+            PayPalLogger::errorLog(
+                esc_html__('Not able to validate the payment method.', 'event_espresso'),
+                $get_params,
+                $paypal_pm
+            );
+            EED_PayPalOnboard::redirectToPmSettingsHome();
+            return;
+        }
         // Check the response (GET) parameters.
         if (! EED_PayPalOnboard::onboardingStatusResponseValid($get_params, $paypal_pm)) {
             // Missing parameters. Can't proceed.
@@ -316,7 +326,7 @@ class EED_PayPalOnboard extends EED_Module
         );
         if (! isset($onboarding_status['valid']) || ! $onboarding_status['valid']) {
             PayPalLogger::errorLog(
-                $onboarding_status['message'],
+                $onboarding_status['message'] ?? esc_html__('Failed to track seller onboarding.', 'event_espresso'),
                 array_merge($get_params, $onboarding_status),
                 $paypal_pm
             );
@@ -365,7 +375,7 @@ class EED_PayPalOnboard extends EED_Module
      */
     public static function getPartnerAccessToken(EE_Payment_Method $paypal_pm): string
     {
-        // Do we have it saved ?
+        // See if it's already saved.
         $access_token = PayPalExtraMetaManager::getPmOption($paypal_pm, Domain::META_KEY_ACCESS_TOKEN);
         // If we don't have it, request/update it.
         if (! $access_token) {
@@ -395,8 +405,8 @@ class EED_PayPalOnboard extends EED_Module
         }
         // Validate the token expiration date.
         $minutes_left = round(($expires_at - time()) / 60);
-        // Count as expired if less than 60 minutes till expiration left.
-        if ($minutes_left <= 60) {
+        // Refresh if less than 2 hours till expiration left. Access tokens have a life of 15 minutes or 8 hours.
+        if ($minutes_left <= 60 * 2) {
             return true;
         }
         return false;
@@ -559,6 +569,26 @@ class EED_PayPalOnboard extends EED_Module
             EED_Module::getRequest()->postParams(),
             $paypal_pm
         );
+        wp_send_json(['success' => true]);
+    }
+
+
+    /**
+     * Save the sandbox mode option.
+     * (AJAX)
+     *
+     * @return void
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public static function eeaPpSaveDebugMode(): void
+    {
+        $paypal_pm = EED_PayPalCommerce::getPaymentMethod();
+        EED_PayPalOnboard::validatePmAjax($paypal_pm);
+        // Reset the partner access token.
+        PayPalExtraMetaManager::updateDebugMode($paypal_pm, EED_Module::getRequest()->postParams());
+        // And do the data reset.
+        PayPalExtraMetaManager::deleteAllData($paypal_pm);
         wp_send_json(['success' => true]);
     }
 

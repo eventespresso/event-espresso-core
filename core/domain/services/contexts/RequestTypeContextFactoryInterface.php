@@ -18,5 +18,5 @@ interface RequestTypeContextFactoryInterface
      * @param string $slug
      * @return RequestTypeContext
      */
-    public function create($slug);
+    public function create(string $slug): RequestTypeContext;
 }

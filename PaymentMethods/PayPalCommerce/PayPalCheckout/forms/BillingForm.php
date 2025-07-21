@@ -461,7 +461,7 @@ class BillingForm extends EE_Billing_Attendee_Info_Form
         $merchant_id   = false;
         $funding_options = ['venmo', 'paylater'];
 
-        // Override the above if thrid party integration
+        // Override the above if third party integration
         if (EED_PayPalCommerce::isThirdParty($this->_pm_instance)) {
             $client_id_key = Domain::META_KEY_PARTNER_CLIENT_ID;
             $merchant_id   = PayPalExtraMetaManager::getPmOption(

@@ -21,12 +21,12 @@ class ClassInterfaceCache
      *
      * @var string[][] $interfaces
      */
-    private $interfaces = [];
+    private array $interfaces = [];
 
     /**
      * @type string[][] $aliases
      */
-    protected $aliases = [];
+    protected array $aliases = [];
 
 
     /**

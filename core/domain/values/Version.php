@@ -23,13 +23,12 @@ class Version
 
     const RELEASE_TYPE_PROD  = 'p';
 
+
     private int $major;
 
     private int $minor;
 
     private int $patch;
-
-    private string $release;
 
     private int $build;
 
@@ -40,8 +39,8 @@ class Version
      * @param int    $major
      * @param int    $minor
      * @param int    $patch
-     * @param string $release
-     * @param int    $build
+     * @param int|string|null $build_or_release
+     * @param int|null    $build
      * @throws InvalidDataTypeException
      * @throws InvalidArgumentException
      */
@@ -49,13 +48,13 @@ class Version
         int $major,
         int $minor,
         int $patch,
-        string $release = Version::RELEASE_TYPE_PROD,
-        int $build = 0
+        $build_or_release = 0,
+        ?int $build = null
     ) {
         $this->setMajor($major);
         $this->setMinor($minor);
         $this->setPatch($patch);
-        $this->setRelease($release);
+        $build = $build ?? $build_or_release;
         $this->setBuild($build);
     }
 
@@ -79,6 +78,10 @@ class Version
         }
         // break apart incoming version string
         $version_parts = explode('.', $version_string);
+        // remove any non-numeric parts
+        $version_parts = array_filter($version_parts, 'is_numeric');
+        // reindex the array so that the keys are sequential
+        $version_parts = array_values($version_parts);
         // verify that version string at least contains {major}.{minor}.{patch}
         if (count($version_parts) < 3) {
             throw new InvalidArgumentException(
@@ -91,29 +94,22 @@ class Version
                 )
             );
         }
-        // convert semver 1.2.3.001 to 1.2.3.p.001 style... FOR THE TIME BEING
-        if (count($version_parts) === 4 && is_numeric($version_parts[3])) {
-            $version_parts[4] = $version_parts[3];
-            unset($version_parts[3]);
+        if (isset($version_parts[4])) {
+            // if there are more than 4 parts, then the version string includes the old "release" part
+            $build = $version_parts[4];
+            $version_parts[3] = $build;
+            unset($version_parts[4]);
         }
-        $release = isset($version_parts[4]) && (string) $version_parts[4] === '000'
-            ? Version::RELEASE_TYPE_PROD
-            : Version::RELEASE_TYPE_RC;
-        // semver styles like 1.2.3 will be considered production releases
-        $release = ! isset($version_parts[3], $version_parts[4])
-            ? Version::RELEASE_TYPE_PROD
-            : $release;
         // add defaults for missing pieces
-        $version_parts += ['0', '0', '0', "$release", '000'];
+        $version_parts += ['0', '0', '0', '000'];
         ksort($version_parts, SORT_NUMERIC);
         $version_parts = array_map('trim', $version_parts);
         // reassign to individual variables
-        [$major, $minor, $patch, $release, $build] = $version_parts;
+        [$major, $minor, $patch, $build] = $version_parts;
         return new Version(
             (int) $major,
             (int) $minor,
             (int) $patch,
-            (string) $release,
             (int) $build
         );
     }
@@ -202,35 +198,7 @@ class Version
      */
     public function release(): string
     {
-        return $this->release;
-    }
-
-
-    /**
-     * @param string $release
-     * @throws InvalidArgumentException
-     */
-    private function setRelease(string $release)
-    {
-        $valid_release_types = [
-            Version::RELEASE_TYPE_RC,
-            Version::RELEASE_TYPE_BETA,
-            Version::RELEASE_TYPE_DECAF,
-            Version::RELEASE_TYPE_PROD,
-        ];
-        if (! in_array($release, $valid_release_types, true)) {
-            throw new InvalidArgumentException(
-                sprintf(
-                    esc_html__(
-                        '"%1$s" is not a valid release type. Please use one of the following values: %2$s',
-                        'event_espresso'
-                    ),
-                    $release,
-                    implode(', ', $valid_release_types)
-                )
-            );
-        }
-        $this->release = $release;
+        return '';
     }
 
 
@@ -305,10 +273,11 @@ class Version
      */
     public function __toString()
     {
-        $version_string = "$this->major.$this->minor.$this->patch.$this->release";
-        if ($this->release !== Version::RELEASE_TYPE_PROD && $this->release !== Version::RELEASE_TYPE_DECAF) {
-            $version_string .= '.' . str_pad($this->build, 3, '0', STR_PAD_LEFT);
-        }
+        $version_string = "$this->major.$this->minor.$this->patch";
+        // if the build number is not 0, then append it to the version string
+        $version_string .= $this->build
+            ? '.' . str_pad($this->build, 3, '0', STR_PAD_LEFT)
+            : '';
         return $version_string;
     }
 }

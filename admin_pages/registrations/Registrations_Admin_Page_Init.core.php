@@ -1,6 +1,8 @@
 <?php
 
+use EventEspresso\core\domain\entities\admin\menu\AdminMenuGroup;
 use EventEspresso\core\domain\entities\admin\menu\AdminMenuItem;
+use EventEspresso\core\domain\entities\admin\menu\AdminMenuTopLevel;
 
 /**
  * Registrations_Admin_Page_Init class
@@ -45,14 +47,14 @@ class Registrations_Admin_Page_Init extends EE_Admin_Page_CPT_Init
     public function getMenuProperties(): array
     {
         return [
-            'menu_type'       => AdminMenuItem::TYPE_MENU_SUB_ITEM,
-            'menu_group'      => 'main',
-            'menu_order'      => 40,
-            'show_on_menu'    => AdminMenuItem::DISPLAY_BLOG_ONLY,
-            'parent_slug'     => 'espresso_events',
-            'menu_slug'       => REG_PG_SLUG,
-            'menu_label'      => esc_html__('Registrations', 'event_espresso'),
-            'capability'      => 'ee_read_registrations',
+            'menu_type'    => AdminMenuItem::TYPE_MENU_SUB_ITEM,
+            'menu_group'   => AdminMenuGroup::MENU_SLUG_MAIN,
+            'menu_order'   => 40,
+            'show_on_menu' => AdminMenuItem::DISPLAY_BLOG_ONLY,
+            'parent_slug'  => AdminMenuTopLevel::MENU_PARENT_ACTIVE,
+            'menu_slug'    => REG_PG_SLUG,
+            'menu_label'   => esc_html__('Registrations', 'event_espresso'),
+            'capability'   => 'ee_read_registrations',
         ];
     }
 }

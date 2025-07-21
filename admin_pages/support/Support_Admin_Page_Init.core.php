@@ -1,6 +1,8 @@
 <?php
 
+use EventEspresso\core\domain\entities\admin\menu\AdminMenuGroup;
 use EventEspresso\core\domain\entities\admin\menu\AdminMenuItem;
+use EventEspresso\core\domain\entities\admin\menu\AdminMenuTopLevel;
 
 /**
  * Support_Admin_Page_Init
@@ -38,14 +40,14 @@ class Support_Admin_Page_Init extends EE_Admin_Page_Init
     {
         return [
             'menu_type'               => AdminMenuItem::TYPE_MENU_SUB_ITEM,
-            'menu_group'              => 'extras',
+            'menu_group'              => AdminMenuGroup::MENU_SLUG_EXTRAS,
             'menu_order'              => 30,
             'show_on_menu'            => AdminMenuItem::DISPLAY_BLOG_AND_NETWORK,
-            'parent_slug'             => 'espresso_events',
+            'parent_slug'             => AdminMenuTopLevel::MENU_PARENT_ACTIVE,
             'menu_slug'               => EE_SUPPORT_PG_SLUG,
             'menu_label'              => esc_html__('Help & Support', 'event_espresso'),
             'capability'              => 'ee_read_ee',
-            'maintenance_mode_parent' => 'espresso_maintenance_settings',
+            'maintenance_mode_parent' => AdminMenuTopLevel::MENU_PARENT_MAINTENANCE,
         ];
     }
 }

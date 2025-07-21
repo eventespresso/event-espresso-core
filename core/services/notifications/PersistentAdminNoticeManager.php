@@ -420,6 +420,15 @@ class PersistentAdminNoticeManager
     }
 
 
+    public static function hasPersistentAdminNotice(string $notice_name): bool
+    {
+        /** @var PersistentAdminNoticeManager $persistent_admin_notice_manager */
+        $persistent_admin_notice_manager = LoaderFactory::getLoader()->getShared(PersistentAdminNoticeManager::class);
+        $persistent_admin_notice_manager->getPersistentAdminNoticeCollection();
+        return $persistent_admin_notice_manager->notice_collection->has(sanitize_key($notice_name));
+    }
+
+
     public static function dismissPersistentAdminNotice(string $notice_name)
     {
         /** @var PersistentAdminNoticeManager $persistent_admin_notice_manager */

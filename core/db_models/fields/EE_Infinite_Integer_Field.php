@@ -1,6 +1,7 @@
 <?php
 
 use EventEspresso\core\services\orm\model_field\SchemaType;
+use EventEspresso\core\services\request\DataType;
 
 /**
  * For storing integers which can assume the value of INFINITY. They're stored in the DB as -1,
@@ -21,6 +22,7 @@ class EE_Infinite_Integer_Field extends EE_Model_Field_Base
     {
         parent::__construct($table_column, $nicename, $nullable, $default_value);
         $this->setSchemaType([SchemaType::INTEGER, SchemaType::NULL]);
+        $this->setDataType(DataType::INTEGER);
     }
 
 

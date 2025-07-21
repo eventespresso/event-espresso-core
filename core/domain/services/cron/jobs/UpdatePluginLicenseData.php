@@ -3,6 +3,8 @@
 namespace EventEspresso\core\domain\services\cron\jobs;
 
 use EE_Dependency_Map;
+use EventEspresso\core\domain\services\capabilities\FeatureFlag;
+use EventEspresso\core\domain\services\capabilities\FeatureFlags;
 use EventEspresso\core\domain\services\cron\CronJob;
 use EventEspresso\core\services\licensing\LicenseAPI;
 use EventEspresso\core\services\licensing\LicenseKeyData;
@@ -42,6 +44,14 @@ class UpdatePluginLicenseData extends CronJob
 
     public function checkCoreLicense(): void
     {
+        /** @var FeatureFlags $feature */
+        $feature = $this->loader->getShared(FeatureFlags::class);
+        if (
+            ! $feature->allowed(FeatureFlag::USE_EDD_PLUGIN_LICENSING)
+            || ! $this->loader->isShared(PluginLicense::class)
+        ) {
+            return;
+        }
         EE_Dependency_Map::instance()->registerDependencies(
             LicenseManager::class,
             [

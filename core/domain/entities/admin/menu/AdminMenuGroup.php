@@ -16,11 +16,25 @@ namespace EventEspresso\core\domain\entities\admin\menu;
  */
 class AdminMenuGroup extends AdminMenuItem
 {
+    public const MENU_SLUG_ADDONS     = 'addons';
+
+    public const MENU_SLUG_EXTRAS     = 'extras';
+
+    public const MENU_SLUG_MAIN       = 'main';
+
+    public const MENU_SLUG_MANAGEMENT = 'management';
+
+    public const MENU_SLUG_SETTINGS   = 'settings';
+
+    public const MENU_SLUG_TEMPLATES  = 'templates';
+
+    public const MENU_SLUG_TOOLS      = 'tools';
+
+
     /**
      * @var AdminMenuItem[]
      */
-    private $menu_items = [];
-
+    private array $menu_items = [];
 
 
     public function __construct(array $menu_args)
@@ -32,7 +46,7 @@ class AdminMenuGroup extends AdminMenuItem
                 'menu_label',
                 'menu_slug',
                 'menu_order',
-                'parent_slug'
+                'parent_slug',
             ]
         );
     }
@@ -43,15 +57,18 @@ class AdminMenuGroup extends AdminMenuItem
         $this->menu_items[ $menu_item->menuSlug() ] = $menu_item;
     }
 
+
     public function getMenuItems(): array
     {
         return $this->menu_items;
     }
 
+
     public function hasNoMenuItems(): bool
     {
         return empty($this->menu_items);
     }
+
 
     public function setMenuItems(array $menu_items): void
     {

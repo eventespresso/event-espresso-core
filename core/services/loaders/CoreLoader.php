@@ -82,7 +82,7 @@ class CoreLoader implements LoaderDecoratorInterface
      * @throws InvalidInterfaceException
      * @throws InvalidArgumentException
      */
-    public function load($fqcn, $arguments = array(), $shared = true)
+    public function load($fqcn, array $arguments = array(), bool $shared = true)
     {
         $shared = filter_var($shared, FILTER_VALIDATE_BOOLEAN);
         if ($this->generator instanceof EE_Registry) {

@@ -27,7 +27,7 @@ class EE_Bootstrap
     /**
      * detect_activations_or_upgrades
      * runs during the WP 'plugins_loaded' action at priority 3
-     * Now that all of the addons have been loaded,
+     * Now that all the addons have been loaded,
      * we can determine if anything needs activating or upgrading
      */
     public static function detect_activations_or_upgrades()
@@ -40,7 +40,7 @@ class EE_Bootstrap
      * load_core_configuration
      * runs during the WP 'plugins_loaded' action at priority 5
      * Now that the database is assumed to be at the correct version
-     * we can load and set all of the system configurations
+     * we can load and set all the system configurations
      */
     public static function load_core_configuration()
     {

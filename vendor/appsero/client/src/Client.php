@@ -198,7 +198,7 @@ class Client {
 
             require_once ABSPATH . 'wp-admin/includes/plugin.php';
 
-            $plugin_data = get_plugin_data( $this->file );
+            $plugin_data = get_plugin_data( $this->file, false, false );
 
             $this->project_version = $plugin_data['Version'];
             $this->type = 'plugin';

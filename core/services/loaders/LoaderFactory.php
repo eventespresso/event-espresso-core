@@ -16,12 +16,12 @@ use InvalidArgumentException;
  * But other times, objects need to be created dynamically within another class
  * after some decision has been made, or relevant data has been collected.
  * If the constructors for the classes being generated have injected dependencies themselves,
- * then we want to use the Loader class for creating the classes as opposed to using the "new" keyword,
- * because using the Loader will ensure that all of the dependencies will get automatically injected.
+ * then we want to use the Loader class for creating the classes as opposed to using the "new" keyword.
+ * Using the Loader will ensure that all the dependencies will get automatically injected.
  * So then the issue becomes HOW to get access to the Loader !?!?
- * First off, we do NOT  want  to be injecting the Loader all over the place,
- * because this is considered to be an anti pattern called "Service Location",
- * so instead we want to use Factory classes anywhere we would need to use the "new" keyword,
+ * First off, we do NOT want to be injecting the Loader all over the place,
+ * because this is considered to be an antipattern called "Service Location".
+ * So instead we want to use Factory classes anywhere we would need to use the "new" keyword,
  * and then inject the factories we need into our other classes.
  * It is considered acceptable to inject the Loader into these factories.
  * But since the Loader would now be a hard dependency for these factories,
@@ -33,8 +33,8 @@ use InvalidArgumentException;
  * And that's the purpose of this class.
  * This class is a temporary measure for providing access to the ONE single instance of the Loader.
  * The Loader should still be injected into your factory class constructor
- * so that it can ultimately be provided via the dependency tree,
- * but it should not YET be required, and a class property should be created for holding the Loader.
+ * so that it can ultimately be provided via the dependency tree.
+ * However, it should not YET be required, and a class property should be created for holding the Loader;
  * ie:
  *      private $loader;
  *      public function __construct(LoaderInterface $loader = null)
@@ -42,7 +42,7 @@ use InvalidArgumentException;
  *          $this->loader = $loader;
  *      }
  * The getter for the Loader should check the instance to see if injection was successful,
- * and if not, use THIS class to obtain the ONE single instance of the Loader.
+ * and if not, use THIS class to obtain the ONE single instance of the Loader;
  * ie:
  *      private function getLoader()
  *      {
@@ -52,7 +52,7 @@ use InvalidArgumentException;
  *          return $this->loader;
  *      }
  * Then the methods in your factory class that generate their target classes,
- * can use this getter to obtain the Loader to use for generating objects.
+ * can use this getter to obtain the Loader to use for generating objects;
  * ie:
  *      public function createSomeObject(array $arguments = array())
  *      {
@@ -70,10 +70,7 @@ use InvalidArgumentException;
  */
 class LoaderFactory
 {
-    /**
-     * @var LoaderInterface $loader ;
-     */
-    private static $loader;
+    private static ?LoaderInterface $loader = null;
 
 
     /**

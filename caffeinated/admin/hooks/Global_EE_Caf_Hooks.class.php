@@ -9,11 +9,12 @@
  * @package         Global_EE_Caf_Hooks
  * @subpackage      caffeinated/admin/hooks/Global_EE_Caf_Hooks.core.php
  * @author          Darren Ethier
- *
- * ------------------------------------------------------------------------
  */
 class Global_EE_Caf_Hooks
 {
+    private const RSS_FEED_URL = 'https://eventespresso.com/api/feed/';
+
+
     public function __construct()
     {
         $this->_do_hooks();
@@ -22,27 +23,25 @@ class Global_EE_Caf_Hooks
 
     private function _do_hooks()
     {
-        add_filter('FHEE_show_sponsors_meta_box', '__return_false', 10);
-        add_filter('FHEE_show_ratings_request_meta_box', '__return_false', 10);
+        add_filter('FHEE_show_sponsors_meta_box', '__return_false');
+        add_filter('FHEE_show_ratings_request_meta_box', '__return_false');
         add_filter(
             'FHEE__EE_Admin_Page_Core__load_global_scripts_styles__loader_containers',
-            array($this, 'forums_lazy_loading'),
-            10
+            [$this, 'forums_lazy_loading']
         );
-        add_action(
-            'AHEE__EE_Admin_Page__espresso_news_post_box__after_content',
-            array($this, 'extra_news_box_content'),
-            10
-        );
+        // commenting out for now because it's a duplicate of EE_Admin_Page::espresso_news_post_box()
+        // add_action(
+        //     'AHEE__EE_Admin_Page__espresso_news_post_box__after_content',
+        //     [$this, 'extra_news_box_content']
+        // );
     }
 
 
-    public function extra_news_box_content($content)
+    public function extra_news_box_content()
     {
         echo '<h3 style="margin:0">' . esc_html__('From the Forums', 'event_espresso') . '</h3>';
         echo '<div id="ee_forum_posts_content">';
-        $url = 'https://eventespresso.com/forum/event-espresso-support/feed/';
-        EE_Admin_Page::cached_rss_display('ee_forum_posts_content', $url);
+        EE_Admin_Page::cached_rss_display('ee_forum_posts_content', self::RSS_FEED_URL);
         echo '</div>';
     }
 

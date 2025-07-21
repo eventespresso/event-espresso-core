@@ -458,8 +458,7 @@ class EED_Single_Page_Checkout extends EED_Module
                 return;
             }
             do_action('AHEE__Single_Page_Checkout___initialize__after_final_verifications', $this->checkout);
-            // lock the transaction
-            $this->checkout->transaction->lock();
+            $this->lockTransaction();
             // make sure all of our cached objects are added to their respective model entity mappers
             $this->checkout->refresh_all_entities();
             // set amount owing
@@ -483,8 +482,6 @@ class EED_Single_Page_Checkout extends EED_Module
             EE_System::do_not_cache();
             // add anchor
             add_action('loop_start', [$this, 'set_checkout_anchor'], 1);
-            // remove transaction lock
-            add_action('shutdown', [$this, 'unlock_transaction'], 1);
         } catch (Exception $e) {
             EE_Error::add_error($e->getMessage(), __FILE__, __FUNCTION__, __LINE__);
         }
@@ -872,8 +869,6 @@ class EED_Single_Page_Checkout extends EED_Module
     /**
      * @param EE_Transaction|null $transaction
      * @return EE_Cart
-     * @throws EE_Error
-     * @throws ReflectionException
      */
     private function _get_cart_for_transaction(?EE_Transaction $transaction): EE_Cart
     {
@@ -884,8 +879,6 @@ class EED_Single_Page_Checkout extends EED_Module
     /**
      * @param EE_Transaction|null $transaction
      * @return EE_Cart
-     * @throws EE_Error
-     * @throws ReflectionException
      */
     public function get_cart_for_transaction(?EE_Transaction $transaction): EE_Cart
     {
@@ -1264,6 +1257,12 @@ class EED_Single_Page_Checkout extends EED_Module
      */
     private function _process_form_action()
     {
+        // dynamically creates hook point like:
+        //   AHEE__Single_Page_Checkout__before_attendee_information__process_reg_step
+        do_action(
+            "AHEE__Single_Page_Checkout__before_{$this->checkout->current_step->slug()}__{$this->checkout->action}",
+            $this->checkout->current_step
+        );
         // what cha wanna do?
         switch ($this->checkout->action) {
             // AJAX next step reg form
@@ -1281,12 +1280,6 @@ class EED_Single_Page_Checkout extends EED_Module
                     ! empty($this->checkout->action)
                     && is_callable([$this->checkout->current_step, $this->checkout->action])
                 ) {
-                    // dynamically creates hook point like:
-                    //   AHEE__Single_Page_Checkout__before_attendee_information__process_reg_step
-                    do_action(
-                        "AHEE__Single_Page_Checkout__before_{$this->checkout->current_step->slug()}__{$this->checkout->action}",
-                        $this->checkout->current_step
-                    );
                     $process_reg_step = apply_filters(
                         "AHEE__Single_Page_Checkout__process_reg_step__{$this->checkout->current_step->slug()}__{$this->checkout->action}",
                         true,
@@ -1311,12 +1304,6 @@ class EED_Single_Page_Checkout extends EED_Module
                         // pack it up, pack it in...
                         $this->_setup_redirect();
                     }
-                    // dynamically creates hook point like:
-                    //  AHEE__Single_Page_Checkout__after_payment_options__process_reg_step
-                    do_action(
-                        "AHEE__Single_Page_Checkout__after_{$this->checkout->current_step->slug()}__{$this->checkout->action}",
-                        $this->checkout->current_step
-                    );
                 } else {
                     EE_Error::add_error(
                         sprintf(
@@ -1334,6 +1321,12 @@ class EED_Single_Page_Checkout extends EED_Module
                 }
             // end default
         }
+        // dynamically creates hook point like:
+        //  AHEE__Single_Page_Checkout__after_payment_options__process_reg_step
+        do_action(
+            "AHEE__Single_Page_Checkout__after_{$this->checkout->current_step->slug()}__{$this->checkout->action}",
+            $this->checkout->current_step
+        );
         // store our progress so far
         $this->checkout->stash_transaction_and_checkout();
         // advance to the next step! If you pass GO, collect $200
@@ -1557,6 +1550,30 @@ class EED_Single_Page_Checkout extends EED_Module
      * @throws EE_Error
      * @throws ReflectionException
      */
+    private function lockTransaction()
+    {
+        if ($this->checkout instanceof EE_Checkout && $this->checkout->transaction instanceof EE_Transaction) {
+            // lock the transaction
+            $this->checkout->transaction->lock(false);
+            // set up transaction lock removal
+            add_action('shutdown', [$this, 'unlock_transaction'], 1);
+            add_filter(
+                'wp_redirect',
+                function (string $location) {
+                    // this is hacky, but WP doesn't supply an action to hook into before the redirect
+                    $this->unlock_transaction();
+                    return $location;
+                }
+            );
+        }
+    }
+
+
+    /**
+     * @return void
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
     public function unlock_transaction()
     {
         if ($this->checkout instanceof EE_Checkout && $this->checkout->transaction instanceof EE_Transaction) {
@@ -1653,11 +1670,15 @@ class EED_Single_Page_Checkout extends EED_Module
 
 
     /**
+     * @param WP_Query $query
      * @return void
      */
-    public function set_checkout_anchor()
+    public function set_checkout_anchor(WP_Query $query)
     {
-        echo '<a id="checkout" style="float: left; margin-left: -999em;"></a>';
+        if (! $query->is_main_query()) {
+            return;
+        }
+        echo '<a id="checkout" class="screen-reader-text"></a>';
     }
 
 

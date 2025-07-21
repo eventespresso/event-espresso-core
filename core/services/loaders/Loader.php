@@ -3,7 +3,6 @@
 namespace EventEspresso\core\services\loaders;
 
 use EventEspresso\core\domain\values\FullyQualifiedName;
-use InvalidArgumentException;
 
 /**
  * Class Loader
@@ -16,9 +15,10 @@ class Loader implements LoaderInterface
 {
     private LoaderDecoratorInterface $new_loader;
 
-    private LoaderDecoratorInterface $shared_loader;
+    private CachingLoaderDecoratorInterface $shared_loader;
 
     private ClassInterfaceCache $class_cache;
+
 
     /**
      * Loader constructor.
@@ -41,7 +41,7 @@ class Loader implements LoaderInterface
     /**
      * @return LoaderDecoratorInterface
      */
-    public function getNewLoader()
+    public function getNewLoader(): LoaderDecoratorInterface
     {
         return $this->new_loader;
     }
@@ -50,7 +50,7 @@ class Loader implements LoaderInterface
     /**
      * @return CachingLoaderDecoratorInterface
      */
-    public function getSharedLoader()
+    public function getSharedLoader(): CachingLoaderDecoratorInterface
     {
         return $this->shared_loader;
     }
@@ -62,7 +62,7 @@ class Loader implements LoaderInterface
      * @param bool                      $shared
      * @return mixed
      */
-    public function load($fqcn, array $arguments = array(), $shared = true)
+    public function load($fqcn, array $arguments = [], bool $shared = true)
     {
         $fqcn = $this->class_cache->getFqn($fqcn);
         if ($this->class_cache->hasInterface($fqcn, 'EventEspresso\core\interfaces\ReservedInstanceInterface')) {
@@ -79,7 +79,7 @@ class Loader implements LoaderInterface
      * @param array                     $arguments
      * @return mixed
      */
-    public function getNew($fqcn, array $arguments = array())
+    public function getNew($fqcn, array $arguments = [])
     {
         return $this->load($fqcn, $arguments, false);
     }
@@ -90,9 +90,21 @@ class Loader implements LoaderInterface
      * @param array                     $arguments
      * @return mixed
      */
-    public function getShared($fqcn, array $arguments = array())
+    public function getShared($fqcn, array $arguments = [])
     {
         return $this->load($fqcn, $arguments);
+    }
+
+
+    /**
+     * @param FullyQualifiedName|string $fqcn
+     * @param array                     $arguments
+     * @return bool
+     */
+    public function isShared($fqcn, array $arguments = []): bool
+    {
+        $fqcn = $this->class_cache->getFqn($fqcn);
+        return $this->getSharedLoader()->isShared($fqcn, $arguments);
     }
 
 
@@ -101,9 +113,8 @@ class Loader implements LoaderInterface
      * @param mixed                     $object
      * @param array                     $arguments
      * @return bool
-     * @throws InvalidArgumentException
      */
-    public function share($fqcn, $object, array $arguments = [])
+    public function share($fqcn, $object, array $arguments = []): bool
     {
         $fqcn = $this->class_cache->getFqn($fqcn);
         return $this->getSharedLoader()->share($fqcn, $object, $arguments);
@@ -112,10 +123,10 @@ class Loader implements LoaderInterface
 
     /**
      * @param FullyQualifiedName|string $fqcn
+     * @param array                     $arguments
      * @return bool
-     * @throws InvalidArgumentException
      */
-    public function remove($fqcn, array $arguments = [])
+    public function remove($fqcn, array $arguments = []): bool
     {
         $fqcn = $this->class_cache->getFqn($fqcn);
         return $this->getSharedLoader()->remove($fqcn, $arguments);

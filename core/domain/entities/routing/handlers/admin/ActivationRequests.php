@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\domain\entities\routing\handlers\admin;
 
+use EventEspresso\core\services\i18n\Textdomain;
 use EventEspresso\core\services\routing\PrimaryRoute;
 use EventEspresso\core\services\routing\Route;
 
@@ -56,6 +57,10 @@ class ActivationRequests extends PrimaryRoute
     protected function requestHandler(): bool
     {
         $this->setRouteRequestType(PrimaryRoute::ROUTE_REQUEST_TYPE_ACTIVATION);
+        /** @var Textdomain $textdomain */
+        $textdomain = $this->loader->getShared(Textdomain::class);
+        add_action('init', [$textdomain, 'loadTranslationsForLocaleOnActivation'], 0);
+        add_action('admin_init', [$textdomain, 'deleteLegacyTextDomainOption'], 99);
         return true;
     }
 }

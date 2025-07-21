@@ -18,6 +18,7 @@ use EventEspresso\core\services\request\middleware\DetectLogin;
 use EventEspresso\core\services\request\middleware\PreProductionVersionWarning;
 use EventEspresso\core\services\request\middleware\RecommendedVersions;
 use EventEspresso\core\services\request\middleware\SetRequestTypeContextChecker;
+use EventEspresso\core\services\request\middleware\SkipRequests;
 use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\core\services\request\RequestStack;
 use EventEspresso\core\services\request\RequestStackBuilder;
@@ -237,8 +238,9 @@ class BootstrapCore
                 DetectFileEditorRequest::class     => [],
                 PreProductionVersionWarning::class => [],
                 RecommendedVersions::class         => [],
-                // last in first out
                 DetectLogin::class                 => [],
+                // last in first out
+                SkipRequests::class                => [],
             ]
         );
         // legacy filter for backwards compatibility

@@ -633,7 +633,7 @@ class EE_Payment_Method extends EE_Base_Class
      * Overrides parent to add some logging for when payment methods get deactivated
      *
      * @param array $set_cols_n_values
-     * @return int @see EE_Base_Class::save()
+     * @return bool|int|string @see EE_Base_Class::save()
      * @throws EE_Error
      * @throws ReflectionException
      */

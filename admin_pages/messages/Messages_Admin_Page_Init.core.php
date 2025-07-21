@@ -1,6 +1,8 @@
 <?php
 
+use EventEspresso\core\domain\entities\admin\menu\AdminMenuGroup;
 use EventEspresso\core\domain\entities\admin\menu\AdminMenuItem;
+use EventEspresso\core\domain\entities\admin\menu\AdminMenuTopLevel;
 
 /**
  * Messages_Admin_Page_Init
@@ -46,10 +48,10 @@ class Messages_Admin_Page_Init extends EE_Admin_Page_Init
     {
         return [
             'menu_type'    => AdminMenuItem::TYPE_MENU_SUB_ITEM,
-            'menu_group'   => 'management',
+            'menu_group'   => AdminMenuGroup::MENU_SLUG_MANAGEMENT,
             'menu_order'   => 10,
             'show_on_menu' => AdminMenuItem::DISPLAY_BLOG_ONLY,
-            'parent_slug'  => 'espresso_events',
+            'parent_slug'  => AdminMenuTopLevel::MENU_PARENT_ACTIVE,
             'menu_slug'    => EE_MSG_PG_SLUG,
             'menu_label'   => esc_html__('Messages', 'event_espresso'),
             'capability'   => 'ee_read_global_messages',

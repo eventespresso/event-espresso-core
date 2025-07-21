@@ -146,7 +146,7 @@ class EEH_Schema
      * @param AddressInterface|null $obj_with_address
      * @return string
      */
-    public static function streetAddress(AddressInterface $obj_with_address = null): string
+    public static function streetAddress(?AddressInterface $obj_with_address = null): string
     {
         $address = $obj_with_address->address();
         return ! empty($address)
@@ -162,7 +162,7 @@ class EEH_Schema
      * @param AddressInterface|null $obj_with_address
      * @return string
      */
-    public static function postOfficeBoxNumber(AddressInterface $obj_with_address = null): string
+    public static function postOfficeBoxNumber(?AddressInterface $obj_with_address = null): string
     {
         $address2 = $obj_with_address->address2();
         // regex check for some form of PO Box or P.O. Box, etc, etc, etc
@@ -187,7 +187,7 @@ class EEH_Schema
      * @param AddressInterface|null $obj_with_address
      * @return string
      */
-    public static function addressLocality(AddressInterface $obj_with_address = null): string
+    public static function addressLocality(?AddressInterface $obj_with_address = null): string
     {
         $city = $obj_with_address->city();
         return ! empty($city)
@@ -203,7 +203,7 @@ class EEH_Schema
      * @param AddressInterface|null $obj_with_address
      * @return string
      */
-    public static function addressRegion(AddressInterface $obj_with_address = null): string
+    public static function addressRegion(?AddressInterface $obj_with_address = null): string
     {
         $state = $obj_with_address->state_name();
         return ! empty($state)
@@ -219,7 +219,7 @@ class EEH_Schema
      * @param AddressInterface|null $obj_with_address
      * @return string
      */
-    public static function addressCountry(AddressInterface $obj_with_address = null): string
+    public static function addressCountry(?AddressInterface $obj_with_address = null): string
     {
         $country = $obj_with_address->country_name();
         return ! empty($country)
@@ -235,7 +235,7 @@ class EEH_Schema
      * @param AddressInterface|null $obj_with_address
      * @return string
      */
-    public static function postalCode(AddressInterface $obj_with_address = null): string
+    public static function postalCode(?AddressInterface $obj_with_address = null): string
     {
         $postal_code = $obj_with_address->zip();
         return ! empty($postal_code)

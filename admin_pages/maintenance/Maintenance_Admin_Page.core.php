@@ -15,25 +15,15 @@ use EventEspresso\core\libraries\batch\JobHandlers\DatetimeOffsetFix;
  */
 class Maintenance_Admin_Page extends EE_Admin_Page
 {
-    /**
-     * @var EE_Data_Migration_Manager
-     */
-    protected $migration_manager;
+    protected EE_Data_Migration_Manager $migration_manager;
 
-    /**
-     * @var EE_Maintenance_Mode
-     */
-    protected $maintenance_mode;
+    protected EE_Maintenance_Mode $maintenance_mode;
 
-    /**
-     * @var EE_Form_Section_Proper
-     */
-    protected $datetime_fix_offset_form;
+    protected ?EE_Form_Section_Proper $datetime_fix_offset_form = null;
 
 
     /**
      * @param bool $routing
-     * @throws EE_Error
      * @throws ReflectionException
      */
     public function __construct($routing = true)
@@ -645,7 +635,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function _reset_db($nuke_old_ee4_data = true)
+    public function _reset_db(bool $nuke_old_ee4_data = true)
     {
         $this->maintenance_mode->set_maintenance_level(EE_Maintenance_Mode::STATUS_OFF);
         if ($nuke_old_ee4_data) {
@@ -821,7 +811,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page
     /**
      * @throws EE_Error
      */
-    protected function _get_datetime_offset_fix_form()
+    protected function _get_datetime_offset_fix_form(): EE_Form_Section_Proper
     {
         if (! $this->datetime_fix_offset_form instanceof EE_Form_Section_Proper) {
             $this->datetime_fix_offset_form = new EE_Form_Section_Proper(
@@ -917,6 +907,7 @@ class Maintenance_Admin_Page extends EE_Admin_Page
      * Callback for the run_datetime_offset_fix route.
      *
      * @throws EE_Error
+     * @throws Exception
      */
     protected function _apply_datetime_offset()
     {

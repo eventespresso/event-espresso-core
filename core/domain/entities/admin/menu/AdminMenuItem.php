@@ -19,7 +19,7 @@ abstract class AdminMenuItem
 
     public const DISPLAY_NETWORK_ONLY     = 3;
 
-    public const TYPE_MENU_TOP           = 'top';
+    public const TYPE_MENU_TOP            = 'top';
 
     public const TYPE_MENU_GROUP          = 'group';
 
@@ -32,7 +32,7 @@ abstract class AdminMenuItem
      * @since 4.4.0
      * @var string
      */
-    protected $capability = 'administrator';
+    protected string $capability = 'administrator';
 
     /**
      * set to TRUE if site is currently in maintenance mode level 2
@@ -47,13 +47,13 @@ abstract class AdminMenuItem
      *
      * @var string
      */
-    public $maintenance_mode_parent = '';
+    public string $maintenance_mode_parent = '';
 
     /**
      * The callback for displaying the page that the menu references.
      *
      * @since 4.4.0
-     * @var string
+     * @var callable|string|null
      */
     protected $menu_callback;
 
@@ -63,7 +63,7 @@ abstract class AdminMenuItem
      * @since 4.4.0
      * @var string
      */
-    protected $menu_group;
+    protected string $menu_group;
 
     /**
      * The label for the menu item. (What shows up in the actual menu).
@@ -71,7 +71,7 @@ abstract class AdminMenuItem
      * @since 4.4.0
      * @var string
      */
-    protected $menu_label;
+    protected string $menu_label;
 
     /**
      * What order this item should be in the menu.
@@ -79,7 +79,7 @@ abstract class AdminMenuItem
      * @since 4.4.0
      * @var int
      */
-    protected $menu_order;
+    protected int $menu_order;
 
     /**
      * What slug should be used to reference this menu item.
@@ -87,7 +87,7 @@ abstract class AdminMenuItem
      * @since 4.4.0
      * @var string
      */
-    protected $menu_slug;
+    protected string $menu_slug;
 
     /**
      * What menu item is the parent of this menu item.
@@ -95,14 +95,14 @@ abstract class AdminMenuItem
      * @since 4.4.0
      * @var string
      */
-    protected $parent_slug;
+    protected string $parent_slug;
 
     /**
      * set to TRUE once menu item has been added to generated menu
      *
      * @var bool
      */
-    protected $registered = false;
+    protected bool $registered = false;
 
     /**
      * Whether this item is displayed in the menu or not.
@@ -112,7 +112,7 @@ abstract class AdminMenuItem
      * @since 4.4.0
      * @var int
      */
-    protected $show_on_menu = self::DISPLAY_BLOG_ONLY;
+    protected int $show_on_menu = self::DISPLAY_BLOG_ONLY;
 
     /**
      * The title for the menu page. (the page the menu links to)
@@ -120,7 +120,7 @@ abstract class AdminMenuItem
      * @since  4.4.0
      * @var string
      */
-    protected $title;
+    protected string $title;
 
 
     /**
@@ -234,7 +234,7 @@ abstract class AdminMenuItem
             'menu_label'              => '',
             'menu_order'              => 100,
             'menu_slug'               => '',
-            'parent_slug'             => 'espresso_events',
+            'parent_slug'             => AdminMenuTopLevel::MENU_PARENT_ACTIVE,
             'show_on_menu'            => AdminMenuItem::DISPLAY_NONE,
             'title'                   => '',
         ];
@@ -342,9 +342,9 @@ abstract class AdminMenuItem
 
 
     /**
-     * @param callable|null $menu_callback
+     * @param callable|string|null $menu_callback
      */
-    public function setMenuCallback(?callable $menu_callback): void
+    public function setMenuCallback($menu_callback): void
     {
         $this->menu_callback = $menu_callback;
     }
@@ -471,9 +471,9 @@ abstract class AdminMenuItem
      * - site is currently NOT in full site maintenance mode
      * - site IS in full site maintenance mode and menu item has a valid maintenance mode parent
      *
-     * @return int
+     * @return bool
      */
-    public function showOnMaintenanceModeMenu(): int
+    public function showOnMaintenanceModeMenu(): bool
     {
         return ! $this->maintenance_mode || $this->maintenanceModeParent() !== '';
     }

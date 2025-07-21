@@ -1,6 +1,8 @@
 <?php
 
+use EventEspresso\core\domain\entities\admin\menu\AdminMenuGroup;
 use EventEspresso\core\domain\entities\admin\menu\AdminMenuItem;
+use EventEspresso\core\domain\entities\admin\menu\AdminMenuTopLevel;
 use EventEspresso\core\domain\services\database\MaintenanceStatus;
 
 /**
@@ -52,10 +54,12 @@ class Maintenance_Admin_Page_Init extends EE_Admin_Page_Init
     {
         return [
             'menu_type'               => AdminMenuItem::TYPE_MENU_SUB_ITEM,
-            'menu_group'              => $this->is_full_m_mode ? 'main' : 'extras',
+            'menu_group'              => $this->is_full_m_mode
+                ? AdminMenuGroup::MENU_SLUG_MAIN
+                : AdminMenuGroup::MENU_SLUG_EXTRAS,
             'menu_order'              => 30,
             'show_on_menu'            => AdminMenuItem::DISPLAY_BLOG_ONLY,
-            'parent_slug'             => 'espresso_events',
+            'parent_slug'             => AdminMenuTopLevel::MENU_PARENT_ACTIVE,
             'menu_slug'               => EE_MAINTENANCE_PG_SLUG,
             'menu_label'              => EE_MAINTENANCE_LABEL,
             'capability'              => 'manage_options',

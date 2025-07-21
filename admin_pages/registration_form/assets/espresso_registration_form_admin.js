@@ -9,7 +9,7 @@ jQuery(document).ready(function($) {
     }).on('click', '#QST_admin_only', function () {
         espresso_maybe_switch_required(this);
     }).on('keydown', '.question-options-table input', function (e) {
-        var keyPressed = e.which;
+        const keyPressed = e.which;
         if (keyPressed === 13) { //enter key
             e.preventDefault();
             e.stopPropagation();
@@ -34,8 +34,8 @@ jQuery(document).ready(function($) {
 
 
 function espresso_update_option_order() {
-	var allOptions = jQuery( '.question-options-table tr.ee-options-sortable' );
-	allOptions.each( function(i) {
+    const allOptions = jQuery('.question-options-table tr.ee-options-sortable');
+    allOptions.each( function(i) {
 	    //always add one to the index because there should always be a default option for selects
 		jQuery('.QSO_order', this).val(i+1);
 	});
@@ -44,8 +44,8 @@ function espresso_update_option_order() {
 
 
 function espresso_reg_forms_show_or_hide_question_options(){
-	var val=jQuery('#QST_type').val();
-	if ( ee_question_data.question_type_with_options.indexOf(val) !== -1 ){
+    const val = jQuery('#QST_type').val();
+    if ( ee_question_data.question_type_with_options.indexOf(val) !== -1 ){
 		jQuery('#question_options').show();
 		espresso_reg_forms_show_option_desc();
 	}else{
@@ -84,7 +84,7 @@ function espresso_reg_forms_add_option(){
 	const newContent = newRowHtml.replace(new RegExp("xxcountxx", 'g'), count);
 
 	//add to dom
-    $question_options.find('tr:last').before(newContent);
+    $question_options.find('tr:last').after(newContent);
 	//add new count to dom.
     $question_options_count.val(count);
 

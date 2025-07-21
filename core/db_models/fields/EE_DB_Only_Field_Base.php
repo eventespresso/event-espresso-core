@@ -1,6 +1,7 @@
 <?php
 
 use EventEspresso\core\services\orm\model_field\SchemaType;
+use EventEspresso\core\services\request\DataType;
 
 /**
  * Field for DB columns which don't correspond to model fields. Eg, on the Event model, which
@@ -22,6 +23,7 @@ abstract class EE_DB_Only_Field_Base extends EE_Model_Field_Base
         parent::__construct($table_column, $nicename, $nullable, $default_value);
         $this->setSchemaType(SchemaType::STRING);
         $this->setSchemaReadOnly(true);
+        $this->setDataType(DataType::STRING);
     }
 
 

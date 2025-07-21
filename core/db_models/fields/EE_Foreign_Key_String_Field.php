@@ -1,5 +1,7 @@
 <?php
 
+use EventEspresso\core\services\request\DataType;
+
 class EE_Foreign_Key_String_Field extends EE_Foreign_Key_Field_Base
 {
     /**
@@ -23,6 +25,7 @@ class EE_Foreign_Key_String_Field extends EE_Foreign_Key_Field_Base
     {
         $this->is_uppercase = $is_uppercase;
         parent::__construct($table_column, $nicename, $nullable, $default_value, $model_name);
+        $this->setDataType(DataType::STRING);
     }
 
     /**

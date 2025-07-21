@@ -109,6 +109,11 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
     private $domain;
 
 
+    private string $payment_method_slug = '';
+
+    private bool $is_payment_method = false;
+
+
     /**
      * @param EE_Dependency_Map|null $dependency_map [optional]
      * @param DomainInterface|null   $domain         [optional]
@@ -786,15 +791,43 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
      */
     public function plugin_action_links(array $links, string $file): array
     {
-        if ($file === $this->plugin_basename() && $this->plugin_action_slug() !== '') {
-            // before other links
-            array_unshift(
-                $links,
-                '<a href="admin.php?page=' . $this->plugin_action_slug() . '">'
-                . esc_html__('Settings', 'event_espresso')
-                . '</a>'
-            );
+        $plugin_action_slug = $this->plugin_action_slug();
+        if ($this->plugin_basename() !== $file || empty($plugin_action_slug)) {
+            return $links;
         }
+        // ensure the plugin action slug starts with 'espresso_'
+        $plugin_action_slug = strpos($plugin_action_slug, 'espresso_') !== 0
+            ? 'espresso_' . $plugin_action_slug
+            : $plugin_action_slug;
+
+        $plugin_action_link_url = 'admin.php?page=' . $plugin_action_slug;
+        if ($this->isPaymentMethod()) {
+            $pm_slug = $this->paymentMethodSlug();
+            $plugin_action_link_url = "admin.php?page=espresso_payment_settings&action=default";
+            $plugin_action_link_url .= "&payment_method=$pm_slug#espresso_{$pm_slug}_payment_settings";
+        }
+        // filter settings link url and text
+        $plugin_action_link_url  = apply_filters(
+            "FHEE__EE_Addon_plugin_action_links__url",
+            $plugin_action_link_url,
+            $this->plugin_slug(),
+            $file
+        );
+        if (! $plugin_action_link_url) {
+            return $links;
+        }
+        $plugin_action_link_text = apply_filters(
+            "FHEE__EE_Addon_plugin_action_links__text",
+            __('Settings', 'event_espresso'),
+            $this->plugin_slug(),
+            $file
+        );
+
+        // before other links
+        array_unshift(
+            $links,
+            '<a href="' . $plugin_action_link_url . '">' . esc_html($plugin_action_link_text) . '</a>'
+        );
         return $links;
     }
 
@@ -815,11 +848,9 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
         $plugins_page_row = $this->get_plugins_page_row();
         if (! empty($plugins_page_row) && $plugin_file === $this->plugin_basename()) {
             $class       = $status ? 'active' : 'inactive';
-            $link_text   = isset($plugins_page_row['link_text']) ? $plugins_page_row['link_text'] : '';
-            $link_url    = isset($plugins_page_row['link_url']) ? $plugins_page_row['link_url'] : '';
-            $description = isset($plugins_page_row['description'])
-                ? $plugins_page_row['description']
-                : '';
+            $link_text   = $plugins_page_row['link_text'] ?? '';
+            $link_url    = $plugins_page_row['link_url'] ?? '';
+            $description = $plugins_page_row['description'] ?? '';
             if (! empty($link_text) && ! empty($link_url) && ! empty($description)) {
                 $after_plugin_row .= '<tr id="' . sanitize_title($plugin_file) . '-ee-addon" class="' . $class . '">';
                 $after_plugin_row .= '<th class="check-column" scope="row"></th>';
@@ -886,4 +917,25 @@ abstract class EE_Addon extends EE_Configurable implements RequiresDependencyMap
     {
         $this->pue_slug = $pue_slug;
     }
+
+
+    public function isPaymentMethod(): bool
+    {
+        return $this->is_payment_method;
+    }
+
+
+    public function paymentMethodSlug(): string
+    {
+        return $this->payment_method_slug;
+    }
+
+
+    public function setPaymentMethodSlug(string $payment_method_slug): void
+    {
+        $this->payment_method_slug = $payment_method_slug;
+        $this->is_payment_method = true;
+    }
+
+
 }

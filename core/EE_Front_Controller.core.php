@@ -400,14 +400,15 @@ final class EE_Front_Controller
 
 
     /**
-     * display_errors
-     *
-     * @access public
+     * @param WP_Query $query
      * @return void
      * @throws DomainException
      */
-    public function display_errors()
+    public function display_errors(WP_Query $query)
     {
+        if (! $query->is_main_query()) {
+            return;
+        }
         static $shown_already = false;
         do_action('AHEE__EE_Front_Controller__display_errors__begin');
         if (

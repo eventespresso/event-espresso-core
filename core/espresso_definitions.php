@@ -21,7 +21,7 @@ if (! defined('EENL')) {
 }
 // define the plugin directory and URL
 define('EE_PLUGIN_BASENAME', plugin_basename(EVENT_ESPRESSO_MAIN_FILE));
-define('EE_PLUGIN_DIR_PATH', dirname(EVENT_ESPRESSO_MAIN_FILE) . '/');
+define('EE_PLUGIN_DIR_PATH', plugin_dir_path(EVENT_ESPRESSO_MAIN_FILE));
 define('EE_PLUGIN_DIR_URL', plugin_dir_url(EVENT_ESPRESSO_MAIN_FILE));
 // main root folder paths
 define('EE_ADMIN_PAGES', EE_PLUGIN_DIR_PATH . 'admin_pages/');
