@@ -2797,7 +2797,7 @@ abstract class EE_Base_Class
             ],
         ];
         if ($previous_value !== null) {
-            $query_params[0]['EXM_value'] = $meta_value;
+            $query_params[0]['EXM_value'] = $previous_value;
         }
         $existing_rows_like_that = EEM_Extra_Meta::instance()->get_all($query_params);
         if (! $existing_rows_like_that) {

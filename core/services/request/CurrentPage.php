@@ -194,7 +194,7 @@ class CurrentPage
         if (! $post_name && $this->request->requestParamIsSet('post_name')) {
             $post_name = $this->request->getRequestParam('post_name');
         }
-        return $post_name;
+        return $post_name ?? '';
     }
 
 

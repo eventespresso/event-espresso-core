@@ -1,0 +1,3082 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=utf-8\n"
+"X-Generator: babel-plugin-makepot\n"
+
+#: packages/ui-components/src/Pagination/constants.ts:6
+msgid "2"
+msgstr ""
+
+#: packages/ui-components/src/Pagination/constants.ts:7
+msgid "6"
+msgstr ""
+
+#: packages/ui-components/src/Pagination/constants.ts:8
+msgid "12"
+msgstr ""
+
+#: packages/ui-components/src/Pagination/constants.ts:9
+msgid "24"
+msgstr ""
+
+#: packages/ui-components/src/Pagination/constants.ts:10
+msgid "48"
+msgstr ""
+
+#: domains/core/admin/blocks/src/components/AvatarImage.tsx:27
+msgid "contact avatar"
+msgstr ""
+
+#: domains/core/admin/blocks/src/components/OrderByControl.tsx:12
+msgid "Order by"
+msgstr ""
+
+#: domains/core/admin/blocks/src/components/RegStatusControl.tsx:17
+#: domains/core/admin/blocks/src/event-attendees/controls/SelectStatus.tsx:13
+msgid "Select Registration Status"
+msgstr ""
+
+#: domains/core/admin/blocks/src/components/SortOrderControl.tsx:14
+msgid "Ascending"
+msgstr ""
+
+#: domains/core/admin/blocks/src/components/SortOrderControl.tsx:18
+msgid "Descending"
+msgstr ""
+
+#: domains/core/admin/blocks/src/components/SortOrderControl.tsx:24
+msgid "Sort order:"
+msgstr ""
+
+#: domains/core/admin/blocks/src/event-attendees/AttendeesDisplay.tsx:41
+msgid "There was some error fetching attendees list"
+msgstr ""
+
+#: domains/core/admin/blocks/src/event-attendees/AttendeesDisplay.tsx:47
+msgid ""
+"To get started, select what event you want to show attendees from in the "
+"block settings."
+msgstr ""
+
+#: domains/core/admin/blocks/src/event-attendees/AttendeesDisplay.tsx:53
+msgid "There are no attendees for selected options."
+msgstr ""
+
+#: domains/core/admin/blocks/src/event-attendees/controls/ArchiveSettings.tsx:12
+msgid "Display on Archives"
+msgstr ""
+
+#: domains/core/admin/blocks/src/event-attendees/controls/ArchiveSettings.tsx:17
+msgid "Attendees are shown whenever this post is listed in an archive view."
+msgstr ""
+
+#: domains/core/admin/blocks/src/event-attendees/controls/ArchiveSettings.tsx:18
+msgid "Attendees are hidden whenever this post is listed in an archive view."
+msgstr ""
+
+#: domains/core/admin/blocks/src/event-attendees/controls/AttendeeLimit.tsx:29
+msgid "Number of Attendees to Display:"
+msgstr ""
+
+#: domains/core/admin/blocks/src/event-attendees/controls/AttendeeLimit.tsx:34
+#. %d attendees count
+msgid ""
+"Used to adjust the number of attendees displayed (There is %d total "
+"attendee for the current filter settings)."
+msgid_plural ""
+"Used to adjust the number of attendees displayed (There are %d total "
+"attendees for the current filter settings)."
+msgstr[0] ""
+msgstr[1] ""
+
+#: domains/core/admin/blocks/src/event-attendees/controls/GravatarSettings.tsx:27
+msgid "Display Gravatar"
+msgstr ""
+
+#: domains/core/admin/blocks/src/event-attendees/controls/GravatarSettings.tsx:32
+msgid "Gravatar images are shown for each attendee."
+msgstr ""
+
+#: domains/core/admin/blocks/src/event-attendees/controls/GravatarSettings.tsx:33
+msgid "No gravatar images are shown for each attendee."
+msgstr ""
+
+#: domains/core/admin/blocks/src/event-attendees/controls/GravatarSettings.tsx:38
+msgid "Size of Gravatar"
+msgstr ""
+
+#: domains/core/admin/blocks/src/event-attendees/controls/SelectDatetime.tsx:22
+msgid "Select Datetime"
+msgstr ""
+
+#: domains/core/admin/blocks/src/event-attendees/controls/SelectEvent.tsx:22
+#: domains/core/admin/blocks/src/event/controls/SelectEvent.tsx:22
+msgid "Select Event"
+msgstr ""
+
+#: domains/core/admin/blocks/src/event-attendees/controls/SelectOrderBy.tsx:11
+msgid "Attendee id"
+msgstr ""
+
+#: domains/core/admin/blocks/src/event-attendees/controls/SelectOrderBy.tsx:15
+msgid "Last name only"
+msgstr ""
+
+#: domains/core/admin/blocks/src/event-attendees/controls/SelectOrderBy.tsx:19
+msgid "First name only"
+msgstr ""
+
+#: domains/core/admin/blocks/src/event-attendees/controls/SelectOrderBy.tsx:23
+msgid "First, then Last name"
+msgstr ""
+
+#: domains/core/admin/blocks/src/event-attendees/controls/SelectOrderBy.tsx:27
+msgid "Last, then First name"
+msgstr ""
+
+#: domains/core/admin/blocks/src/event-attendees/controls/SelectOrderBy.tsx:41
+msgid "Order Attendees by:"
+msgstr ""
+
+#: domains/core/admin/blocks/src/event-attendees/controls/SelectTicket.tsx:22
+msgid "Select Ticket"
+msgstr ""
+
+#: domains/core/admin/blocks/src/event-attendees/controls/index.tsx:21
+msgid "Filter By Settings"
+msgstr ""
+
+#: domains/core/admin/blocks/src/event-attendees/controls/index.tsx:36
+msgid "Gravatar Setttings"
+msgstr ""
+
+#: domains/core/admin/blocks/src/event-attendees/controls/index.tsx:39
+msgid "Archive Settings"
+msgstr ""
+
+#: domains/core/admin/blocks/src/event-attendees/index.tsx:10
+msgid "Event Attendees"
+msgstr ""
+
+#: domains/core/admin/blocks/src/event-attendees/index.tsx:11
+msgid "Displays a list of people that have registered for the specified event"
+msgstr ""
+
+#: domains/core/admin/blocks/src/event-attendees/index.tsx:14
+#: domains/core/admin/blocks/src/event/index.tsx:12
+#: packages/edtr-services/src/constants.ts:25
+msgid "event"
+msgstr ""
+
+#: domains/core/admin/blocks/src/event-attendees/index.tsx:14
+msgid "attendees"
+msgstr ""
+
+#: domains/core/admin/blocks/src/event-attendees/index.tsx:14
+msgid "list"
+msgstr ""
+
+#: domains/core/admin/blocks/src/event/DisplayField.tsx:41
+msgid "An unknown error occurred while fetching event details."
+msgstr ""
+
+#: domains/core/admin/blocks/src/event/controls/SelectField.tsx:10
+#: domains/core/admin/blocks/src/services/utils.ts:24
+#: packages/utils/src/list/index.ts:14
+msgid "Select…"
+msgstr ""
+
+#: domains/core/admin/blocks/src/event/controls/SelectField.tsx:15
+#: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:75
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/details/useBulkEditFormConfig.ts:49
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:40
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:198
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:49
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:40
+msgid "Name"
+msgstr ""
+
+#: domains/core/admin/blocks/src/event/controls/SelectField.tsx:19
+#: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:80
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/details/useBulkEditFormConfig.ts:55
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:203
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:55
+#: packages/tpc/src/components/table/useHeaderRowGenerator.ts:47
+msgid "Description"
+msgstr ""
+
+#: domains/core/admin/blocks/src/event/controls/SelectField.tsx:23
+msgid "Short description"
+msgstr ""
+
+#: domains/core/admin/blocks/src/event/controls/SelectField.tsx:35
+msgid "Select Field"
+msgstr ""
+
+#: domains/core/admin/blocks/src/event/controls/index.tsx:27
+msgid "Text Color"
+msgstr ""
+
+#: domains/core/admin/blocks/src/event/controls/index.tsx:32
+msgid "Background Color"
+msgstr ""
+
+#: domains/core/admin/blocks/src/event/controls/index.tsx:41
+#: packages/form-builder/src/FormElement/Tabs/FormElementTabs.tsx:22
+#: packages/form-builder/src/FormSection/Tabs/FormSectionTabs.tsx:21
+msgid "Settings"
+msgstr ""
+
+#: domains/core/admin/blocks/src/event/controls/index.tsx:45
+msgid "Typography"
+msgstr ""
+
+#: domains/core/admin/blocks/src/event/controls/index.tsx:48
+msgid "Color"
+msgstr ""
+
+#: domains/core/admin/blocks/src/event/index.tsx:12
+msgid "field"
+msgstr ""
+
+#: domains/core/admin/blocks/src/event/index.tsx:8
+msgid "Event Field"
+msgstr ""
+
+#: domains/core/admin/blocks/src/event/index.tsx:9
+msgid "Displays the selected field of an event"
+msgstr ""
+
+#: domains/core/admin/blocks/src/services/utils.ts:17
+msgid "Error"
+msgstr ""
+
+#: domains/core/admin/blocks/src/services/utils.ts:9
+msgid "Loading…"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/EventDescription.tsx:33
+msgid "Event Description"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/EventRegistrationOptions/ActiveStatus.tsx:28
+msgid "Active status"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/EventRegistrationOptions/AltRegPage.tsx:12
+msgid "Alternative Registration Page"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/EventRegistrationOptions/DefaultRegistrationStatus.tsx:25
+msgid "Default Registration Status"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/EventRegistrationOptions/Donations.tsx:8
+msgid "Donations Enabled"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/EventRegistrationOptions/Donations.tsx:8
+msgid "Donations Disabled"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/EventRegistrationOptions/EventManager.tsx:16
+msgid "Event Manager"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/EventRegistrationOptions/EventPhoneNumber.tsx:15
+msgid "Event Phone Number"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/EventRegistrationOptions/MaxRegistrations.tsx:13
+msgid "Max Registrations per Transaction"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/EventRegistrationOptions/TicketSelector.tsx:8
+msgid "Ticket Selector Enabled"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/EventRegistrationOptions/TicketSelector.tsx:8
+msgid "Ticket Selector Disabled"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/EventRegistrationOptions/index.tsx:41
+msgid "Event Details"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/EventRegistrationOptions/index.tsx:47
+msgid "Registration Options"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/multiStep/DateFormSteps.tsx:10
+msgid "primary information about the date"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/multiStep/DateFormSteps.tsx:10
+msgid "Date Details"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/multiStep/DateFormSteps.tsx:11
+#: domains/core/admin/eventEditor/src/ui/tickets/defaultTickets/multiStep/TicketFormSteps.tsx:16
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/multiStep/TicketFormSteps.tsx:16
+msgid "relations between tickets and dates"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/multiStep/DateFormSteps.tsx:11
+msgid "Assign Tickets"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/multiStep/FooterButtons.tsx:22
+msgid "Save and assign tickets"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/multiStep/Modal.tsx:27
+#. %s datetime id
+msgid "Edit datetime %s"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/multiStep/Modal.tsx:30
+msgid "New Datetime"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:110
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/details/useBulkEditFormConfig.ts:108
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:233
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:108
+msgid "Details"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:114
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/details/useBulkEditFormConfig.ts:112
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:81
+msgid "Capacity"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:119
+msgid ""
+"The maximum number of registrants that can attend the event at this "
+"particular date."
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:123
+msgid "Set to 0 to close registration or leave blank for no limit."
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:129
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:171
+msgid "Trash"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:71
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/details/useBulkEditFormConfig.ts:45
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:194
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:45
+msgid "Basics"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:88
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/details/useBulkEditFormConfig.ts:63
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:63
+msgid "Dates"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:92
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:51
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:215
+msgid "Start Date"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/dateForm/useDateFormConfig.ts:99
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:65
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:222
+msgid "End Date"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/DateRegistrationsLink.tsx:13
+msgid "view ALL registrations for this date."
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/DateSoldLink.tsx:13
+msgid "view approved registrations for this date."
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/DatesList.tsx:35
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/tableView/TableView.tsx:33
+msgid "Event Dates"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/DatesList.tsx:38
+msgid "loading event dates…"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/DatesListButtons.tsx:22
+msgid "Add a date or a ticket in order to use Ticket Assignment Manager"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/DatesListButtons.tsx:32
+msgid "Ticket Assignments"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/actionsMenu/AssignTicketsButton.tsx:25
+msgid "Number of related tickets"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/actionsMenu/AssignTicketsButton.tsx:26
+msgid ""
+"There are no tickets assigned to this datetime. Please click the ticket "
+"icon to update the assignments."
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/actionsMenu/AssignTicketsButton.tsx:34
+msgid "assign tickets"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:21
+msgid "event date main menu"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:33
+msgid "edit datetime"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:34
+msgid "copy datetime"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DeleteDatetime.tsx:15
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/DeleteTicket.tsx:48
+msgid "delete permanently"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DeleteDatetime.tsx:15
+msgid "trash datetime"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DeleteDatetime.tsx:18
+msgid "Permanently Delete Datetime?"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DeleteDatetime.tsx:18
+msgid "Move Datetime to Trash?"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DeleteDatetime.tsx:20
+msgid ""
+"Are you sure you want to permanently delete this datetime? This action is "
+"permanent and can not be undone."
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DeleteDatetime.tsx:23
+msgid ""
+"Are you sure you want to move this datetime to the trash? You can "
+"\"untrash\" this datetime later if you need to."
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DeleteDatetime.tsx:33
+msgid "delete"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/actions/Actions.tsx:36
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:40
+#: packages/ui-components/src/bulkEdit/BulkActions.tsx:43
+msgid "bulk actions"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/actions/Actions.tsx:40
+msgid "edit datetime details"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/actions/Actions.tsx:44
+msgid "delete datetimes"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/actions/Actions.tsx:44
+msgid "trash datetimes"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/delete/Delete.tsx:14
+msgid ""
+"Are you sure you want to permanently delete these datetimes? This action "
+"can NOT be undone!"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/delete/Delete.tsx:15
+msgid "Are you sure you want to trash these datetimes?"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/delete/Delete.tsx:16
+msgid "Delete datetimes permanently"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/delete/Delete.tsx:16
+msgid "Trash datetimes"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/details/EditDetails.tsx:21
+msgid "Bulk edit date details"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/details/EditDetails.tsx:22
+msgid "any changes will be applied to ALL of the selected dates."
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/details/formValidation.ts:12
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/formValidation.ts:12
+msgid "Name must be at least three characters"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/details/useBulkEditFormConfig.ts:67
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:67
+msgid "Shift dates"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/details/useBulkEditFormConfig.ts:92
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:92
+msgid "earlier"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/details/useBulkEditFormConfig.ts:96
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:96
+msgid "later"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/DateCapacity.tsx:31
+#. click to edit capacity<linebreak>(registration limit)…
+msgid "click to edit capacity%s(registration limit)…"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/DateCardSidebar.tsx:31
+#: packages/ee-components/src/SimpleTicketCard/SimpleTicketCard.tsx:27
+#: packages/ui-components/src/CalendarDateSwitcher/CalendarDateSwitcher.tsx:34
+msgid "starts"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/DateCardSidebar.tsx:32
+#: packages/ee-components/src/SimpleTicketCard/SimpleTicketCard.tsx:34
+#: packages/ui-components/src/CalendarDateSwitcher/CalendarDateSwitcher.tsx:47
+msgid "ends"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/DateCardSidebar.tsx:32
+msgid "started"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/DateCardSidebar.tsx:32
+msgid "ended"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/DateCardSidebar.tsx:46
+msgid "Edit Event Date"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/DateCardSidebar.tsx:50
+msgid "edit start and end dates"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/DateDetailsPanel.tsx:16
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/TicketDetailsPanel.tsx:16
+msgid "sold"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/DateDetailsPanel.tsx:21
+msgid "capacity"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/DateDetailsPanel.tsx:27
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/TicketDetailsPanel.tsx:26
+msgid "reg list"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/Details.tsx:43
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/Details.tsx:35
+msgid "add description…"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/Details.tsx:44
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/Details.tsx:36
+msgid "Edit description"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/Details.tsx:45
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/Details.tsx:37
+msgid "click to edit description…"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/config.ts:10
+msgid "Move Date to Trash"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/config.ts:13
+#: packages/constants/src/datetime.ts:6
+msgid "Active"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/config.ts:14
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/config.ts:13
+msgid "Trashed"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/config.ts:15
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/config.ts:14
+#: packages/constants/src/datetime.ts:8
+msgid "Expired"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/config.ts:16
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/config.ts:16
+msgid "Sold Out"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/config.ts:17
+#: packages/constants/src/datetime.ts:12
+msgid "Upcoming"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/config.ts:7
+msgid "Edit Event Date Details"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/config.ts:8
+msgid "View Registrations for this Date"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/config.ts:9
+msgid "Manage Ticket Assignments"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/editable/EditableName.tsx:41
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/editable/EditableName.tsx:41
+msgid "click to edit title…"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/editable/EditableName.tsx:42
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/editable/EditableName.tsx:42
+msgid "add title…"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/filterBar/ActiveDatesFilters.tsx:17
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/filterBar/ActiveTicketsFilters.tsx:17
+msgid "ON"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:10
+msgid "end dates only"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:11
+msgid "start and end dates"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:16
+msgid "dates above 90% capacity"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:17
+msgid "dates above 75% capacity"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:18
+msgid "dates above 50% capacity"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:19
+msgid "dates below 50% capacity"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:23
+msgid "all dates"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:24
+msgid "all active and upcoming"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:25
+msgid "active dates only"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:26
+msgid "upcoming dates only"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:27
+msgid "next active or upcoming only"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:28
+msgid "sold out dates only"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:29
+msgid "recently expired dates"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:30
+msgid "all expired dates"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:31
+msgid "trashed dates only"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:35
+#: packages/dates/src/components/DateRangePicker/DateRangePickerLegend.tsx:9
+#: packages/dates/src/components/DateRangePicker/index.tsx:61
+msgid "start date"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:36
+msgid "name"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:37
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:31
+#: domains/core/admin/eventEditor/src/ui/ticketAssignmentsManager/components/table/DateCell.tsx:25
+#: domains/core/admin/eventEditor/src/ui/ticketAssignmentsManager/components/table/HeaderCell.tsx:27
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:31
+#: packages/tpc/src/components/table/useHeaderRowGenerator.ts:23
+msgid "ID"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:38
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/options.ts:47
+msgid "custom order"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:42
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/options.ts:51
+msgid "display"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:43
+msgid "recurrence"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:44
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/options.ts:53
+msgid "sales"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:45
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/options.ts:55
+msgid "sort by"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:46
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/options.ts:54
+#: packages/ee-components/src/EntityList/EntityListFilterBar.tsx:46
+msgid "search"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:47
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/options.ts:56
+msgid "status"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:9
+msgid "start dates only"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/newDateOptions/AddSingleDate.tsx:26
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/newDateOptions/NewDateModal.tsx:12
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/newDateOptions/OptionsModalButton.tsx:18
+msgid "Add New Date"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/newDateOptions/AddSingleDate.tsx:26
+msgid "Add Single Date"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/newDateOptions/AddSingleDate.tsx:44
+msgid "Add a single date that only occurs once"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/newDateOptions/AddSingleDate.tsx:46
+msgid "Single Date"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:106
+msgid "Reg list"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:107
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:111
+msgid "Regs"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:122
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:126
+#: packages/tpc/src/components/table/useHeaderRowGenerator.ts:59
+msgid "Actions"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:52
+msgid "Start"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:66
+msgid "End"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:82
+msgid "Cap"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:94
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:98
+msgid "Sold"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/registrationForm/ErrorMessage.tsx:33
+#: packages/form-builder/src/constants.ts:67
+msgid "Text Input"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/registrationForm/ErrorMessage.tsx:34
+#: domains/core/admin/eventEditor/src/ui/registrationForm/constants.ts:32
+msgid "Attendee First Name"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/registrationForm/ErrorMessage.tsx:39
+#. field name
+msgid "Registration form must have a field of type \"%1$s\" which maps to \"%2$s\""
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/registrationForm/ErrorMessage.tsx:40
+#: packages/form-builder/src/constants.ts:82
+msgid "Email Address"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/registrationForm/ErrorMessage.tsx:41
+#: domains/core/admin/eventEditor/src/ui/registrationForm/constants.ts:40
+msgid "Attendee Email Address"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/registrationForm/ErrorMessage.tsx:49
+msgid "Please add the required fields"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/registrationForm/RegistrationForm.tsx:12
+msgid "Registration Form"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/registrationForm/constants.ts:13
+msgid "primary registrant"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/registrationForm/constants.ts:17
+msgid "purchaser"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/registrationForm/constants.ts:21
+msgid "registrants"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/registrationForm/constants.ts:36
+msgid "Attendee Last Name"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/registrationForm/constants.ts:44
+msgid "Attendee Address"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/registrationForm/constants.ts:9
+msgid "all"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/ticketAssignmentsManager/components/ErrorMessage.tsx:18
+msgid ""
+"Tickets must always have at least one date assigned to them but one or more "
+"of the tickets below does not have any. \n"
+"Please correct the assignments for the highlighted cells."
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/ticketAssignmentsManager/components/ErrorMessage.tsx:22
+msgid ""
+"Event Dates must always have at least one Ticket assigned to them but one "
+"or more of the Event Dates below does not have any. \n"
+"Please correct the assignments for the highlighted cells."
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/ticketAssignmentsManager/components/ErrorMessage.tsx:32
+msgid "Please Update Assignments"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/ticketAssignmentsManager/components/ModalContainer.tsx:26
+msgid ""
+"There seem to be some dates/tickets which have no tickets/dates assigned. "
+"Do you want to fix them now?"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/ticketAssignmentsManager/components/ModalContainer.tsx:29
+msgid "Alert!"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/ticketAssignmentsManager/components/ModalContainer.tsx:42
+#. 1 entity id, 2 entity name
+msgid "Ticket Assignment Manager for Datetime: %1$s - %2$s"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/ticketAssignmentsManager/components/ModalContainer.tsx:49
+#. 1 entity id, 2 entity name
+msgid "Ticket Assignment Manager for Ticket: %1$s - %2$s"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/ticketAssignmentsManager/components/TicketAssignmentsManagerModal.tsx:28
+#: domains/core/admin/eventEditor/src/ui/ticketAssignmentsManager/components/table/Table.tsx:13
+msgid "Ticket Assignment Manager"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/ticketAssignmentsManager/components/config.ts:10
+msgid "existing relation"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/ticketAssignmentsManager/components/config.ts:15
+msgid "remove existing relation"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/ticketAssignmentsManager/components/config.ts:20
+msgid "add new relation"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/ticketAssignmentsManager/components/config.ts:25
+msgid "invalid relation"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/ticketAssignmentsManager/components/config.ts:29
+msgid "no relation"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/ticketAssignmentsManager/components/table/BodyCell.tsx:23
+msgid "assign ticket"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/ticketAssignmentsManager/components/table/useGetHeaderRows.tsx:15
+msgid "Assignments"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/ticketAssignmentsManager/components/table/useGetHeaderRows.tsx:16
+msgid "Event Dates are listed below"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/ticketAssignmentsManager/components/table/useGetHeaderRows.tsx:17
+msgid "Tickets are listed along the top"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/ticketAssignmentsManager/components/table/useGetHeaderRows.tsx:18
+msgid "Click the cell buttons to toggle assigments"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/ticketAssignmentsManager/components/useSubmitButtonProps.ts:29
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/prices/buttons/FooterButtons.tsx:16
+#: packages/ee-components/src/bulkEdit/details/Submit.tsx:27
+#: packages/form/src/Submit.tsx:25
+#: packages/tpc/src/buttons/useSubmitButtonProps.tsx:29
+#: packages/ui-components/src/Modal/useSubmitButtonProps.tsx:13
+#: packages/ui-components/src/Stepper/buttons/Submit.tsx:7
+msgid "Submit"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/ticketAssignmentsManager/filters/controls/DatesByMonthControl.tsx:20
+msgid "All Dates"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/ticketAssignmentsManager/filters/controls/DatesByMonthControl.tsx:27
+msgid "dates by month"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/ticketAssignmentsManager/filters/controls/ShowExpiredTicketsControl.tsx:16
+msgid "show expired tickets"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/ticketAssignmentsManager/filters/controls/ShowTrashedDatesControl.tsx:13
+msgid "show trashed dates"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/ticketAssignmentsManager/filters/controls/ShowTrashedTicketsControl.tsx:16
+msgid "show trashed tickets"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/defaultTickets/Container.tsx:38
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/actions/Actions.tsx:25
+msgid "Default tickets"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/defaultTickets/ModalBody.tsx:63
+#: packages/edtr-services/src/constants.ts:26
+msgid "ticket"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/defaultTickets/multiStep/FooterButtons.tsx:26
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/multiStep/FooterButtons.tsx:33
+msgid "Set ticket prices"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/defaultTickets/multiStep/FooterButtons.tsx:31
+msgid "Skip prices - Save"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/defaultTickets/multiStep/FooterButtons.tsx:37
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/multiStep/FooterButtons.tsx:57
+msgid "Ticket details"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/defaultTickets/multiStep/FooterButtons.tsx:38
+msgid "Save"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/defaultTickets/multiStep/Modal.tsx:22
+#. %s ticket id
+msgid "Edit ticket %s"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/defaultTickets/multiStep/Modal.tsx:25
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/multiStep/Modal.tsx:30
+msgid "New Ticket Details"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/defaultTickets/multiStep/TicketFormSteps.tsx:10
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/multiStep/TicketFormSteps.tsx:10
+msgid "primary information about the ticket"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/defaultTickets/multiStep/TicketFormSteps.tsx:10
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/multiStep/TicketFormSteps.tsx:10
+msgid "Ticket Details"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/defaultTickets/multiStep/TicketFormSteps.tsx:12
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/multiStep/TicketFormSteps.tsx:12
+msgid "apply ticket price modifiers and taxes"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/defaultTickets/multiStep/TicketFormSteps.tsx:14
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/multiStep/TicketFormSteps.tsx:14
+msgid "Price Calculator"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/defaultTickets/multiStep/TicketFormSteps.tsx:16
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/multiStep/TicketFormSteps.tsx:16
+msgid "Assign Dates"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/multiStep/FooterButtons.tsx:39
+msgid "Skip prices - assign dates"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/multiStep/FooterButtons.tsx:50
+msgid "Save and assign dates"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/multiStep/Modal.tsx:26
+#. 1 ticket name, 2 ticket id
+msgid "Edit ticket \"%1$s\" - %2$s"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:101
+msgid "The maximum number of this ticket available for sale."
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:103
+msgid "Set to 0 to stop sales, or leave blank for no limit."
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:114
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:121
+msgid "Number of Uses"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:120
+msgid ""
+"Controls the total number of times this ticket can be used, regardless of "
+"the number of dates it is assigned to."
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:124
+msgid ""
+"Example: A ticket might have access to 4 different dates, but setting this "
+"field to 2 would mean that the ticket could only be used twice. Leave blank "
+"for no limit."
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:132
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:129
+msgid "Minimum Quantity"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:137
+msgid ""
+"The minimum quantity that can be selected for this ticket. Use this to "
+"create ticket bundles or graduated pricing."
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:141
+msgid "Leave blank for no minimum."
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:147
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:137
+msgid "Maximum Quantity"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:153
+msgid ""
+"The maximum quantity that can be selected for this ticket. Use this to "
+"create ticket bundles or graduated pricing."
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:157
+msgid "Leave blank for no maximum."
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:163
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:146
+msgid "Required Ticket"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:165
+msgid ""
+"If enabled, the ticket must be selected and will appear first in frontend "
+"ticket lists."
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:177
+msgid "Visibility"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:211
+msgid "Ticket Sales"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketForm/useTicketFormConfig.ts:95
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/useBulkEditFormConfig.ts:112
+msgid "Quantity For Sale"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/TicketRegistrationsLink.tsx:13
+msgid "total registrations."
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/TicketRegistrationsLink.tsx:14
+msgid "view ALL registrations for this ticket."
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/TicketSoldLink.tsx:13
+msgid "view approved registrations for this ticket."
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/TicketsList.tsx:36
+msgid "Available Tickets"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/TicketsList.tsx:39
+msgid "loading tickets…"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/actionsMenu/AssignDatesButton.tsx:26
+msgid "Number of related dates"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/actionsMenu/AssignDatesButton.tsx:27
+msgid ""
+"There are no event dates assigned to this ticket. Please click the calendar "
+"icon to update the assignments."
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/actionsMenu/AssignDatesButton.tsx:37
+msgid "assign dates"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/DeleteTicket.tsx:19
+msgid "Permanently Delete Ticket?"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/DeleteTicket.tsx:19
+msgid "Move Ticket to Trash?"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/DeleteTicket.tsx:22
+msgid ""
+"Are you sure you want to permanently delete this ticket? This action is "
+"permanent and can not be undone."
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/DeleteTicket.tsx:48
+#: packages/ee-components/src/SimpleTicketCard/actions/Trash.tsx:6
+msgid "trash ticket"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:25
+msgid "ticket main menu"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:38
+#: packages/ee-components/src/SimpleTicketCard/actions/Edit.tsx:15
+msgid "edit ticket"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/TicketMainMenu.tsx:39
+msgid "copy ticket"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:44
+msgid "edit ticket details"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:48
+msgid "delete tickets"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:48
+msgid "trash tickets"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:52
+msgid "edit ticket prices"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/delete/Delete.tsx:14
+msgid ""
+"Are you sure you want to permanently delete these tickets? This action can "
+"NOT be undone!"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/delete/Delete.tsx:15
+msgid "Are you sure you want to trash these tickets?"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/delete/Delete.tsx:16
+msgid "Delete tickets permanently"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/delete/Delete.tsx:16
+msgid "Trash tickets"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/EditDetails.tsx:21
+msgid "Bulk edit ticket details"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/EditDetails.tsx:22
+msgid "any changes will be applied to ALL of the selected tickets."
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/prices/EditPrices.tsx:19
+msgid "Bulk edit ticket prices"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/prices/buttons/EditModeButtons.tsx:20
+msgid "Edit all prices together"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/prices/buttons/EditModeButtons.tsx:21
+msgid "Edit all the selected ticket prices dynamically"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/prices/buttons/EditModeButtons.tsx:25
+msgid "Edit prices individually"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/prices/buttons/EditModeButtons.tsx:26
+msgid "Edit prices for each ticket individually"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/prices/buttons/FooterButtons.tsx:14
+#: packages/ee-components/src/bulkEdit/details/Submit.tsx:34
+#: packages/form/src/ResetButton.tsx:18
+#: packages/tpc/src/buttons/useResetButtonProps.tsx:12
+msgid "Reset"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/prices/buttons/FooterButtons.tsx:15
+#: packages/tpc/src/hooks/useLockedTicketAction.ts:76
+#: packages/ui-components/src/Modal/useCancelButtonProps.tsx:10
+msgid "Cancel"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/prices/editSeparately/TPCInstance.tsx:26
+#. %s ticket name
+msgid "Edit prices for Ticket: %s"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/TicketCardSidebar.tsx:30
+msgid "sales start"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/TicketCardSidebar.tsx:33
+msgid "sales began"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/TicketCardSidebar.tsx:35
+msgid "sales ended"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/TicketCardSidebar.tsx:36
+msgid "sales end"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/TicketCardSidebar.tsx:50
+msgid "Edit Ticket Sale Dates"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/TicketCardSidebar.tsx:54
+msgid "edit ticket sales start and end dates"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/TicketDetailsPanel.tsx:21
+msgid "quantity"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/TicketQuantity.tsx:28
+#: packages/edtr-services/src/apollo/mutations/tickets/useUpdateTicketQtyByCapacity.ts:78
+msgid ""
+"Ticket quantity has been adjusted because it cannot be more than the "
+"related event date capacity."
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/TicketQuantity.tsx:51
+msgid "edit quantity of tickets available…"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/config.ts:10
+msgid "Move Ticket to Trash"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/config.ts:15
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:52
+msgid "On Sale"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/config.ts:17
+msgid "Pending"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/config.ts:7
+msgid "Edit Ticket Details"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/config.ts:8
+msgid "Manage Date Assignments"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/config.ts:9
+#: packages/tpc/src/components/table/Table.tsx:43
+msgid "Ticket Price Calculator"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/editable/EditablePrice.tsx:39
+msgid "edit ticket total…"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/editable/EditablePrice.tsx:53
+msgid "set price…"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/IsChainedButton.tsx:23
+msgid ""
+"tickets list is linked to dates list and is showing tickets for above dates "
+"only"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/IsChainedButton.tsx:24
+msgid "tickets list is unlinked and is showing tickets for all event dates"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/options.ts:10
+msgid "ticket sales start and end dates"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/options.ts:15
+msgid "tickets with 90% or more sold"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/options.ts:16
+msgid "tickets with 75% or more sold"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/options.ts:17
+msgid "tickets with 50% or more sold"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/options.ts:19
+msgid "tickets with less than 50% sold"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/options.ts:28
+msgid "all tickets for all dates"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/options.ts:29
+msgid "all on sale and sale pending"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/options.ts:30
+msgid "on sale tickets only"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/options.ts:31
+msgid "sale pending tickets only"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/options.ts:32
+msgid "next on sale or sale pending only"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/options.ts:33
+msgid "sold out tickets only"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/options.ts:34
+msgid "expired tickets only"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/options.ts:35
+msgid "trashed tickets only"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/options.ts:40
+msgid "all tickets for above dates"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/options.ts:44
+msgid "ticket sale date"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/options.ts:45
+msgid "ticket name"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/options.ts:46
+msgid "ticket ID"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/options.ts:52
+msgid "link"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/options.ts:8
+msgid "ticket sales start date only"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/options.ts:9
+msgid "ticket sales end date only"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/newTicketOptions/AddSingleTicket.tsx:18
+msgid "Add New Ticket"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/newTicketOptions/AddSingleTicket.tsx:32
+msgid "Add a single ticket and assign the dates to it"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/newTicketOptions/AddSingleTicket.tsx:34
+msgid "Single Ticket"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/TableView.tsx:39
+msgid "Tickets"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:110
+msgid "Registrations"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:51
+msgid "Goes on Sale"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:65
+msgid "Sale Ends"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:66
+msgid "Ends"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:78
+msgid "Price"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:88
+msgid "Quantity"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:105
+msgid "Select a Venue for the Event"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:21
+msgid "Venue Details"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:38
+msgid "unlimited space"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:41
+#. %d venue capacity
+msgid "Space for up to %d people"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:60
+msgid "no image"
+msgstr ""
+
+#: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:96
+msgid "Edit this Venue"
+msgstr ""
+
+#: domains/core/admin/wpPluginsPage/src/exitSurvey/Popup.tsx:29
+msgid "Do you have a moment to share why you are deactivating Event Espresso?"
+msgstr ""
+
+#: domains/core/admin/wpPluginsPage/src/exitSurvey/Popup.tsx:40
+msgid "Skip"
+msgstr ""
+
+#: domains/core/admin/wpPluginsPage/src/exitSurvey/Popup.tsx:42
+msgid "Sure I'll help"
+msgstr ""
+
+#: packages/adapters/src/Pagination/Pagination.tsx:23
+msgid "pagination"
+msgstr ""
+
+#: packages/adapters/src/TagSelector/TagSelector.tsx:113
+msgid "toggle menu"
+msgstr ""
+
+#: packages/constants/src/datetime.ts:10
+msgid "Postponed"
+msgstr ""
+
+#: packages/constants/src/datetime.ts:11
+msgid "SoldOut"
+msgstr ""
+
+#: packages/constants/src/datetime.ts:7
+#: packages/predicates/src/registration/statusOptions.ts:11
+msgid "Cancelled"
+msgstr ""
+
+#: packages/constants/src/datetime.ts:9
+msgid "Inactive"
+msgstr ""
+
+#: packages/data/src/mutations/useMutationWithFeedback.ts:25
+msgid "error creating %s"
+msgstr ""
+
+#: packages/data/src/mutations/useMutationWithFeedback.ts:26
+msgid "error deleting %s"
+msgstr ""
+
+#: packages/data/src/mutations/useMutationWithFeedback.ts:27
+msgid "error updating %s"
+msgstr ""
+
+#: packages/data/src/mutations/useMutationWithFeedback.ts:28
+msgid "creating %s"
+msgstr ""
+
+#: packages/data/src/mutations/useMutationWithFeedback.ts:29
+msgid "deleting %s"
+msgstr ""
+
+#: packages/data/src/mutations/useMutationWithFeedback.ts:30
+msgid "updating %s"
+msgstr ""
+
+#: packages/data/src/mutations/useMutationWithFeedback.ts:31
+msgid "successfully created %s"
+msgstr ""
+
+#: packages/data/src/mutations/useMutationWithFeedback.ts:32
+msgid "successfully deleted %s"
+msgstr ""
+
+#: packages/data/src/mutations/useMutationWithFeedback.ts:33
+msgid "successfully updated %s"
+msgstr ""
+
+#: packages/dates/src/components/DateRangePicker/DateRangePickerLegend.tsx:13
+msgid "day in range"
+msgstr ""
+
+#: packages/dates/src/components/DateRangePicker/DateRangePickerLegend.tsx:17
+#: packages/dates/src/components/DateRangePicker/index.tsx:79
+msgid "end date"
+msgstr ""
+
+#: packages/dates/src/components/DateTimePicker.tsx:17
+#: packages/dates/src/components/TimePicker.tsx:17
+#: packages/form-builder/src/state/utils.ts:433
+msgid "time"
+msgstr ""
+
+#: packages/dates/src/constants.ts:7
+msgid "End Date & Time must be set later than the Start Date & Time"
+msgstr ""
+
+#: packages/dates/src/constants.ts:9
+msgid "Start Date & Time must be set before the End Date & Time"
+msgstr ""
+
+#: packages/dates/src/utils/misc.ts:16
+msgid "month(s)"
+msgstr ""
+
+#: packages/dates/src/utils/misc.ts:17
+msgid "week(s)"
+msgstr ""
+
+#: packages/dates/src/utils/misc.ts:18
+msgid "day(s)"
+msgstr ""
+
+#: packages/dates/src/utils/misc.ts:19
+msgid "hour(s)"
+msgstr ""
+
+#: packages/dates/src/utils/misc.ts:20
+msgid "minute(s)"
+msgstr ""
+
+#: packages/edtr-services/src/apollo/initialization/useCacheRehydration.ts:107
+msgid "price types initialized"
+msgstr ""
+
+#: packages/edtr-services/src/apollo/initialization/useCacheRehydration.ts:117
+msgid "datetimes initialized"
+msgstr ""
+
+#: packages/edtr-services/src/apollo/initialization/useCacheRehydration.ts:127
+msgid "tickets initialized"
+msgstr ""
+
+#: packages/edtr-services/src/apollo/initialization/useCacheRehydration.ts:137
+msgid "prices initialized"
+msgstr ""
+
+#: packages/edtr-services/src/apollo/mutations/useReorderEntities.ts:63
+msgid "order updated"
+msgstr ""
+
+#: packages/edtr-services/src/constants.ts:24
+msgid "datetime"
+msgstr ""
+
+#: packages/edtr-services/src/constants.ts:27
+msgid "price"
+msgstr ""
+
+#: packages/edtr-services/src/constants.ts:28
+#: packages/tpc/src/inputs/PriceTypeInput.tsx:19
+msgid "price type"
+msgstr ""
+
+#: packages/edtr-services/src/utils/dateAndTime.ts:38
+#: packages/ui-components/src/EditDateRangeButton/EditDateRangeButton.tsx:39
+msgid "End date has been adjusted"
+msgstr ""
+
+#: packages/edtr-services/src/utils/dateAndTime.ts:59
+msgid "Required"
+msgstr ""
+
+#: packages/edtr-services/src/utils/dateAndTime.ts:64
+msgid "Start Date is required"
+msgstr ""
+
+#: packages/edtr-services/src/utils/dateAndTime.ts:68
+msgid "End Date is required"
+msgstr ""
+
+#: packages/ee-components/src/EntityList/EntityList.tsx:32
+msgid "no results found"
+msgstr ""
+
+#: packages/ee-components/src/EntityList/EntityList.tsx:33
+msgid "try changing filter settings"
+msgstr ""
+
+#: packages/ee-components/src/bulkEdit/ActionCheckbox.tsx:38
+#. %d entity id
+msgid "select entity with id %d"
+msgstr ""
+
+#: packages/ee-components/src/bulkEdit/ActionCheckbox.tsx:41
+msgid "select all entities"
+msgstr ""
+
+#: packages/ee-components/src/bulkEdit/details/BulkEditDetails.tsx:20
+msgid "Note: "
+msgstr ""
+
+#: packages/ee-components/src/bulkEdit/details/BulkEditDetails.tsx:20
+msgid "any changes will be applied to ALL of the selected entities."
+msgstr ""
+
+#: packages/ee-components/src/bulkEdit/details/BulkEditDetails.tsx:27
+msgid "Bulk edit details"
+msgstr ""
+
+#: packages/ee-components/src/bulkEdit/details/Submit.tsx:17
+msgid "Are you sure you want to bulk update the details?"
+msgstr ""
+
+#: packages/ee-components/src/bulkEdit/details/Submit.tsx:18
+msgid "Bulk update details"
+msgstr ""
+
+#: packages/ee-components/src/filterBar/SortByControl/index.tsx:27
+msgid "set custom dates order"
+msgstr ""
+
+#: packages/ee-components/src/filterBar/SortByControl/index.tsx:28
+msgid "set custom tickets order"
+msgstr ""
+
+#: packages/ee-components/src/filterBar/SortByControl/index.tsx:30
+msgid "Set Custom Dates Order - this is how dates are ordered on the frontend"
+msgstr ""
+
+#: packages/ee-components/src/filterBar/SortByControl/index.tsx:31
+msgid "Set Custom Tickets Order - this is how tickets are ordered on the frontend"
+msgstr ""
+
+#: packages/form-builder/src/FormElement/FormElementToolbar.tsx:32
+msgid "delete form element"
+msgstr ""
+
+#: packages/form-builder/src/FormElement/FormElementToolbar.tsx:49
+msgid "form element settings"
+msgstr ""
+
+#: packages/form-builder/src/FormElement/FormElementToolbar.tsx:59
+msgid "copy form element"
+msgstr ""
+
+#: packages/form-builder/src/FormElement/FormElementToolbar.tsx:69
+msgid "click, hold, and drag to reorder form element"
+msgstr ""
+
+#: packages/form-builder/src/FormElement/Tabs/FieldOption.tsx:20
+msgid "remove option"
+msgstr ""
+
+#: packages/form-builder/src/FormElement/Tabs/FieldOption.tsx:42
+msgid "value"
+msgstr ""
+
+#: packages/form-builder/src/FormElement/Tabs/FieldOption.tsx:52
+msgid "label"
+msgstr ""
+
+#: packages/form-builder/src/FormElement/Tabs/FieldOption.tsx:63
+msgid "click, hold, and drag to reorder field option"
+msgstr ""
+
+#: packages/form-builder/src/FormElement/Tabs/FieldOptions.tsx:61
+msgid "Options are the choices you give people to select from."
+msgstr ""
+
+#: packages/form-builder/src/FormElement/Tabs/FieldOptions.tsx:63
+msgid ""
+"The value is a simple key that will be saved to the database and the label "
+"is what is shown to the user."
+msgstr ""
+
+#: packages/form-builder/src/FormElement/Tabs/FieldOptions.tsx:96
+msgid "add new option"
+msgstr ""
+
+#: packages/form-builder/src/FormElement/Tabs/FormElementTabs.tsx:26
+#: packages/form-builder/src/FormSection/Tabs/FormSectionTabs.tsx:25
+msgid "Styles"
+msgstr ""
+
+#: packages/form-builder/src/FormElement/Tabs/FormElementTabs.tsx:30
+msgid "Validation"
+msgstr ""
+
+#: packages/form-builder/src/FormElement/Tabs/InputType.tsx:18
+msgid "Change input type"
+msgstr ""
+
+#: packages/form-builder/src/FormElement/Tabs/InputType.tsx:19
+msgid ""
+"Some configurations might be lost. Are you sure you want to change the "
+"input type?"
+msgstr ""
+
+#: packages/form-builder/src/FormElement/Tabs/InputType.tsx:40
+msgid "type"
+msgstr ""
+
+#: packages/form-builder/src/FormElement/Tabs/Settings.tsx:26
+#: packages/form-builder/src/FormSection/Tabs/Settings.tsx:17
+msgid "public label"
+msgstr ""
+
+#: packages/form-builder/src/FormElement/Tabs/Settings.tsx:33
+#: packages/form-builder/src/FormSection/Tabs/Settings.tsx:22
+msgid "admin label"
+msgstr ""
+
+#: packages/form-builder/src/FormElement/Tabs/Settings.tsx:40
+msgid "content"
+msgstr ""
+
+#: packages/form-builder/src/FormElement/Tabs/Settings.tsx:48
+msgid "options"
+msgstr ""
+
+#: packages/form-builder/src/FormElement/Tabs/Settings.tsx:51
+msgid "placeholder"
+msgstr ""
+
+#: packages/form-builder/src/FormElement/Tabs/Settings.tsx:57
+msgid "admin only"
+msgstr ""
+
+#: packages/form-builder/src/FormElement/Tabs/Settings.tsx:62
+msgid "help text"
+msgstr ""
+
+#: packages/form-builder/src/FormElement/Tabs/Settings.tsx:71
+msgid "maps to"
+msgstr ""
+
+#: packages/form-builder/src/FormElement/Tabs/Styles.tsx:15
+#: packages/form-builder/src/FormSection/Tabs/Styles.tsx:13
+msgid "css class"
+msgstr ""
+
+#: packages/form-builder/src/FormElement/Tabs/Styles.tsx:20
+msgid "help text css class"
+msgstr ""
+
+#: packages/form-builder/src/FormElement/Tabs/Styles.tsx:27
+msgid "size"
+msgstr ""
+
+#: packages/form-builder/src/FormElement/Tabs/Styles.tsx:35
+msgid "step"
+msgstr ""
+
+#: packages/form-builder/src/FormElement/Tabs/Styles.tsx:41
+msgid "maxlength"
+msgstr ""
+
+#: packages/form-builder/src/FormElement/Tabs/Validation.tsx:123
+msgid "min"
+msgstr ""
+
+#: packages/form-builder/src/FormElement/Tabs/Validation.tsx:128
+msgid "max"
+msgstr ""
+
+#: packages/form-builder/src/FormElement/Tabs/Validation.tsx:28
+msgid "Germany"
+msgstr ""
+
+#: packages/form-builder/src/FormElement/Tabs/Validation.tsx:32
+msgid "France"
+msgstr ""
+
+#: packages/form-builder/src/FormElement/Tabs/Validation.tsx:36
+msgid "United Kingdom"
+msgstr ""
+
+#: packages/form-builder/src/FormElement/Tabs/Validation.tsx:40
+msgid "United States"
+msgstr ""
+
+#: packages/form-builder/src/FormElement/Tabs/Validation.tsx:44
+msgid "Custom"
+msgstr ""
+
+#: packages/form-builder/src/FormElement/Tabs/Validation.tsx:54
+msgid "required"
+msgstr ""
+
+#: packages/form-builder/src/FormElement/Tabs/Validation.tsx:59
+msgid "required text"
+msgstr ""
+
+#: packages/form-builder/src/FormElement/Tabs/Validation.tsx:66
+msgid "autocomplete"
+msgstr ""
+
+#: packages/form-builder/src/FormElement/Tabs/Validation.tsx:74
+msgid "custom format"
+msgstr ""
+
+#: packages/form-builder/src/FormElement/Tabs/Validation.tsx:75
+msgid "format"
+msgstr ""
+
+#: packages/form-builder/src/FormElement/Tabs/Validation.tsx:83
+msgid "pattern"
+msgstr ""
+
+#: packages/form-builder/src/FormSection/AddFormElementPopover.tsx:110
+msgid "add new form element"
+msgstr ""
+
+#: packages/form-builder/src/FormSection/AddFormElementPopover.tsx:117
+#: packages/form/src/renderers/RepeatableRenderer.tsx:52
+msgid "Add"
+msgstr ""
+
+#: packages/form-builder/src/FormSection/AddFormElementPopover.tsx:76
+msgid "Add Form Element"
+msgstr ""
+
+#: packages/form-builder/src/FormSection/AddFormElementPopover.tsx:85
+msgid ""
+"form element order can be changed after adding by using the drag handles in "
+"the form element toolbar"
+msgstr ""
+
+#: packages/form-builder/src/FormSection/AddFormElementPopover.tsx:92
+msgid "load existing form section"
+msgstr ""
+
+#: packages/form-builder/src/FormSection/FormSectionToolbar.tsx:32
+msgid "delete form section"
+msgstr ""
+
+#: packages/form-builder/src/FormSection/FormSectionToolbar.tsx:47
+msgid "form section settings"
+msgstr ""
+
+#: packages/form-builder/src/FormSection/FormSectionToolbar.tsx:57
+msgid "copy form section"
+msgstr ""
+
+#: packages/form-builder/src/FormSection/FormSectionToolbar.tsx:74
+msgid "click, hold, and drag to reorder form section"
+msgstr ""
+
+#: packages/form-builder/src/FormSection/FormSections.tsx:26
+msgid "Add Form Section"
+msgstr ""
+
+#: packages/form-builder/src/FormSection/SaveSection.tsx:47
+msgid "save form section for use in other forms"
+msgstr ""
+
+#: packages/form-builder/src/FormSection/SaveSection.tsx:51
+msgid "save as"
+msgstr ""
+
+#: packages/form-builder/src/FormSection/SaveSection.tsx:55
+msgid "default"
+msgstr ""
+
+#: packages/form-builder/src/FormSection/SaveSection.tsx:58
+msgid " a copy of this form section will be automatically added to ALL new events"
+msgstr ""
+
+#: packages/form-builder/src/FormSection/SaveSection.tsx:61
+msgid "shared"
+msgstr ""
+
+#: packages/form-builder/src/FormSection/SaveSection.tsx:64
+msgid ""
+"a copy of this form section will be saved for use in other events but not "
+"loaded by default"
+msgstr ""
+
+#: packages/form-builder/src/FormSection/Tabs/Settings.tsx:27
+msgid "show label"
+msgstr ""
+
+#: packages/form-builder/src/FormSection/Tabs/Settings.tsx:33
+msgid "applies to"
+msgstr ""
+
+#: packages/form-builder/src/constants.ts:102
+#: packages/form-builder/src/state/utils.ts:436
+msgid "URL"
+msgstr ""
+
+#: packages/form-builder/src/constants.ts:104
+msgid "adds a text input for entering a URL address"
+msgstr ""
+
+#: packages/form-builder/src/constants.ts:107
+msgid "Date"
+msgstr ""
+
+#: packages/form-builder/src/constants.ts:109
+msgid ""
+"adds a text input that allows users to enter a date directly via keyboard "
+"or a datepicker"
+msgstr ""
+
+#: packages/form-builder/src/constants.ts:112
+#: packages/form-builder/src/state/utils.ts:369
+msgid "Local Date"
+msgstr ""
+
+#: packages/form-builder/src/constants.ts:117
+msgid "Month"
+msgstr ""
+
+#: packages/form-builder/src/constants.ts:119
+msgid ""
+"adds a text input that allows users to enter a month and year directly via "
+"keyboard or a datepicker"
+msgstr ""
+
+#: packages/form-builder/src/constants.ts:122
+msgid "Time"
+msgstr ""
+
+#: packages/form-builder/src/constants.ts:124
+msgid ""
+"adds a text input that allows users to enter a time directly via keyboard "
+"or a timepicker"
+msgstr ""
+
+#: packages/form-builder/src/constants.ts:127
+msgid "Week"
+msgstr ""
+
+#: packages/form-builder/src/constants.ts:129
+msgid ""
+"adds a text input that allows users to enter a week and year directly via "
+"keyboard or a datepicker"
+msgstr ""
+
+#: packages/form-builder/src/constants.ts:132
+msgid "Day Selector"
+msgstr ""
+
+#: packages/form-builder/src/constants.ts:134
+msgid ""
+"adds a dropdown selector that allows users to select the day of the month "
+"(01 to 31)"
+msgstr ""
+
+#: packages/form-builder/src/constants.ts:137
+msgid "Month Selector"
+msgstr ""
+
+#: packages/form-builder/src/constants.ts:139
+msgid ""
+"adds a dropdown selector that allows users to select the month of the year "
+"(01 to 12)"
+msgstr ""
+
+#: packages/form-builder/src/constants.ts:142
+msgid "Year Selector"
+msgstr ""
+
+#: packages/form-builder/src/constants.ts:144
+msgid ""
+"adds a dropdown selector that allows users to select the year from a "
+"configurable range"
+msgstr ""
+
+#: packages/form-builder/src/constants.ts:147
+msgid "Radio Buttons"
+msgstr ""
+
+#: packages/form-builder/src/constants.ts:149
+msgid ""
+"adds one or more radio buttons that allow users to only select one option "
+"from those provided"
+msgstr ""
+
+#: packages/form-builder/src/constants.ts:152
+#: packages/form-builder/src/state/utils.ts:375
+msgid "Decimal Number"
+msgstr ""
+
+#: packages/form-builder/src/constants.ts:154
+msgid "adds a text input that only accepts numbers whose value is a decimal (float)"
+msgstr ""
+
+#: packages/form-builder/src/constants.ts:157
+#: packages/form-builder/src/state/utils.ts:378
+msgid "Whole Number"
+msgstr ""
+
+#: packages/form-builder/src/constants.ts:159
+msgid ""
+"adds a text input that only accepts numbers whose value is an integer "
+"(whole number)"
+msgstr ""
+
+#: packages/form-builder/src/constants.ts:162
+msgid "Number Range"
+msgstr ""
+
+#: packages/form-builder/src/constants.ts:167
+msgid "Phone Number"
+msgstr ""
+
+#: packages/form-builder/src/constants.ts:172
+msgid "Dropdown"
+msgstr ""
+
+#: packages/form-builder/src/constants.ts:174
+msgid "adds a dropdown selector that accepts a single value"
+msgstr ""
+
+#: packages/form-builder/src/constants.ts:177
+msgid "Multi Select"
+msgstr ""
+
+#: packages/form-builder/src/constants.ts:179
+msgid "adds a dropdown selector that accepts multiple values"
+msgstr ""
+
+#: packages/form-builder/src/constants.ts:182
+msgid "Toggle/Switch"
+msgstr ""
+
+#: packages/form-builder/src/constants.ts:184
+msgid "adds a toggle or a switch to accept true or false value"
+msgstr ""
+
+#: packages/form-builder/src/constants.ts:187
+msgid "Multi Checkbox"
+msgstr ""
+
+#: packages/form-builder/src/constants.ts:189
+msgid ""
+"adds checkboxes that allow users to select zero or more options from those "
+"provided"
+msgstr ""
+
+#: packages/form-builder/src/constants.ts:192
+msgid "Country Selector"
+msgstr ""
+
+#: packages/form-builder/src/constants.ts:194
+msgid ""
+"adds a dropdown selector populated with names of countries that are enabled "
+"for the site"
+msgstr ""
+
+#: packages/form-builder/src/constants.ts:197
+msgid "State Selector"
+msgstr ""
+
+#: packages/form-builder/src/constants.ts:202
+msgid "Button"
+msgstr ""
+
+#: packages/form-builder/src/constants.ts:204
+msgid ""
+"adds a button to the form that can be used for triggering fucntionality "
+"(requires custom coding)"
+msgstr ""
+
+#: packages/form-builder/src/constants.ts:207
+msgid "Reset Button"
+msgstr ""
+
+#: packages/form-builder/src/constants.ts:209
+msgid "adds a button that will reset the form back to its original state."
+msgstr ""
+
+#: packages/form-builder/src/constants.ts:55
+msgid "Form Section"
+msgstr ""
+
+#: packages/form-builder/src/constants.ts:57
+msgid ""
+"Used for creating logical groupings for questions and form elements. Need "
+"to add a heading or description? Use the HTML form element."
+msgstr ""
+
+#: packages/form-builder/src/constants.ts:62
+msgid "HTML Block"
+msgstr ""
+
+#: packages/form-builder/src/constants.ts:64
+msgid "allows you to add HTML like headings or text paragraphs to your form"
+msgstr ""
+
+#: packages/form-builder/src/constants.ts:69
+msgid "adds a text input that only accepts plain text"
+msgstr ""
+
+#: packages/form-builder/src/constants.ts:72
+msgid "Plain Text Area"
+msgstr ""
+
+#: packages/form-builder/src/constants.ts:74
+msgid "adds a textarea block that only accepts plain text"
+msgstr ""
+
+#: packages/form-builder/src/constants.ts:77
+msgid "HTML Text Area"
+msgstr ""
+
+#: packages/form-builder/src/constants.ts:79
+msgid "adds a textarea block that accepts text including simple HTML markup"
+msgstr ""
+
+#: packages/form-builder/src/constants.ts:84
+msgid "adds a text input that only accepts a valid email address"
+msgstr ""
+
+#: packages/form-builder/src/constants.ts:87
+msgid "Email Confirmation"
+msgstr ""
+
+#: packages/form-builder/src/constants.ts:92
+msgid "Password"
+msgstr ""
+
+#: packages/form-builder/src/constants.ts:94
+msgid "adds a text input that accepts text but masks what the user enters"
+msgstr ""
+
+#: packages/form-builder/src/constants.ts:97
+msgid "Password Confirmation"
+msgstr ""
+
+#: packages/form-builder/src/data/useElementMutator.ts:54
+msgid "element"
+msgstr ""
+
+#: packages/form-builder/src/data/useSectionMutator.ts:54
+msgid "section"
+msgstr ""
+
+#: packages/form-builder/src/state/utils.ts:360
+msgid "click"
+msgstr ""
+
+#: packages/form-builder/src/state/utils.ts:363
+msgid "checkboxes"
+msgstr ""
+
+#: packages/form-builder/src/state/utils.ts:366
+msgid "date"
+msgstr ""
+
+#: packages/form-builder/src/state/utils.ts:372
+msgid "day"
+msgstr ""
+
+#: packages/form-builder/src/state/utils.ts:381
+msgid "email address"
+msgstr ""
+
+#: packages/form-builder/src/state/utils.ts:384
+msgid "confirm email address"
+msgstr ""
+
+#: packages/form-builder/src/state/utils.ts:388
+msgid "month"
+msgstr ""
+
+#: packages/form-builder/src/state/utils.ts:391
+msgid "password"
+msgstr ""
+
+#: packages/form-builder/src/state/utils.ts:394
+msgid "confirm password"
+msgstr ""
+
+#: packages/form-builder/src/state/utils.ts:397
+msgid "radio buttons"
+msgstr ""
+
+#: packages/form-builder/src/state/utils.ts:400
+msgid "number range"
+msgstr ""
+
+#: packages/form-builder/src/state/utils.ts:403
+msgid "selection dropdown"
+msgstr ""
+
+#: packages/form-builder/src/state/utils.ts:406
+msgid "country"
+msgstr ""
+
+#: packages/form-builder/src/state/utils.ts:409
+msgid "multi-select dropdown"
+msgstr ""
+
+#: packages/form-builder/src/state/utils.ts:412
+msgid "state/province"
+msgstr ""
+
+#: packages/form-builder/src/state/utils.ts:415
+msgid "on/off switch"
+msgstr ""
+
+#: packages/form-builder/src/state/utils.ts:418
+msgid "reset"
+msgstr ""
+
+#: packages/form-builder/src/state/utils.ts:421
+msgid "phone number"
+msgstr ""
+
+#: packages/form-builder/src/state/utils.ts:424
+msgid "text"
+msgstr ""
+
+#: packages/form-builder/src/state/utils.ts:427
+msgid "simple textarea"
+msgstr ""
+
+#: packages/form-builder/src/state/utils.ts:430
+msgid "html textarea"
+msgstr ""
+
+#: packages/form-builder/src/state/utils.ts:439
+msgid "week"
+msgstr ""
+
+#: packages/form-builder/src/state/utils.ts:442
+msgid "year"
+msgstr ""
+
+#: packages/form/src/adapters/WPMediaImage.tsx:12
+msgid "Select Image"
+msgstr ""
+
+#: packages/form/src/adapters/WPMediaImage.tsx:44
+#: packages/rich-text-editor/src/components/AdvancedTextEditor/toolbarButtons/WPMedia.tsx:11
+#: packages/rich-text-editor/src/rte-old/components/toolbarButtons/WPMedia.tsx:12
+#: packages/ui-components/src/SimpleEntityList/EntityTemplate.tsx:32
+msgid "Select"
+msgstr ""
+
+#: packages/form/src/renderers/RepeatableRenderer.tsx:36
+#. %d the entry number
+msgid "Entry %d"
+msgstr ""
+
+#: packages/helpers/src/datetimes/getStatusTextLabel.ts:11
+#: packages/helpers/src/tickets/getStatusTextLabel.ts:17
+msgid "sold out"
+msgstr ""
+
+#: packages/helpers/src/datetimes/getStatusTextLabel.ts:14
+#: packages/helpers/src/tickets/getStatusTextLabel.ts:14
+msgid "expired"
+msgstr ""
+
+#: packages/helpers/src/datetimes/getStatusTextLabel.ts:17
+msgid "upcoming"
+msgstr ""
+
+#: packages/helpers/src/datetimes/getStatusTextLabel.ts:20
+msgid "active"
+msgstr ""
+
+#: packages/helpers/src/datetimes/getStatusTextLabel.ts:23
+#: packages/helpers/src/tickets/getStatusTextLabel.ts:11
+msgid "trashed"
+msgstr ""
+
+#: packages/helpers/src/datetimes/getStatusTextLabel.ts:26
+msgid "cancelled"
+msgstr ""
+
+#: packages/helpers/src/datetimes/getStatusTextLabel.ts:29
+msgid "postponed"
+msgstr ""
+
+#: packages/helpers/src/datetimes/getStatusTextLabel.ts:33
+msgid "inactive"
+msgstr ""
+
+#: packages/helpers/src/tickets/getStatusTextLabel.ts:20
+msgid "pending"
+msgstr ""
+
+#: packages/helpers/src/tickets/getStatusTextLabel.ts:23
+msgid "on sale"
+msgstr ""
+
+#: packages/helpers/src/tickets/ticketVisibilityOptions.ts:6
+msgid "Where the ticket can be viewed throughout the UI. "
+msgstr ""
+
+#: packages/predicates/src/registration/statusOptions.ts:16
+msgid "Declined"
+msgstr ""
+
+#: packages/predicates/src/registration/statusOptions.ts:21
+msgid "Incomplete"
+msgstr ""
+
+#: packages/predicates/src/registration/statusOptions.ts:26
+msgid "Not Approved"
+msgstr ""
+
+#: packages/predicates/src/registration/statusOptions.ts:31
+msgid "Pending Payment"
+msgstr ""
+
+#: packages/predicates/src/registration/statusOptions.ts:36
+msgid "Wait List"
+msgstr ""
+
+#: packages/predicates/src/registration/statusOptions.ts:6
+msgid "Approved"
+msgstr ""
+
+#: packages/rich-text-editor/src/components/AdvancedTextEditor/toolbarButtons/WPMedia.tsx:9
+#: packages/rich-text-editor/src/rte-old/components/toolbarButtons/WPMedia.tsx:10
+msgid "Select media"
+msgstr ""
+
+#: packages/rich-text-editor/src/components/RichTextEditor/RichTextEditor.tsx:84
+msgid "Write something…"
+msgstr ""
+
+#: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/Toolbar.tsx:20
+msgid "RTE Toolbar"
+msgstr ""
+
+#: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/blockType/Component.tsx:11
+msgid "Normal"
+msgstr ""
+
+#: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/blockType/Component.tsx:12
+msgid "H1"
+msgstr ""
+
+#: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/blockType/Component.tsx:13
+msgid "H2"
+msgstr ""
+
+#: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/blockType/Component.tsx:14
+msgid "H3"
+msgstr ""
+
+#: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/blockType/Component.tsx:15
+msgid "H4"
+msgstr ""
+
+#: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/blockType/Component.tsx:16
+msgid "H5"
+msgstr ""
+
+#: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/blockType/Component.tsx:17
+msgid "H6"
+msgstr ""
+
+#: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/blockType/Component.tsx:18
+msgid "Block quote"
+msgstr ""
+
+#: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/blockType/Component.tsx:19
+msgid "Code"
+msgstr ""
+
+#: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/colorPicker/Component.tsx:36
+msgid "Set color"
+msgstr ""
+
+#: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/colorPicker/Component.tsx:45
+msgid "Text color"
+msgstr ""
+
+#: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/colorPicker/Component.tsx:47
+msgid "Background color"
+msgstr ""
+
+#: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/image/Component.tsx:39
+msgid "Add image"
+msgstr ""
+
+#: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/image/Component.tsx:51
+msgid "Image URL"
+msgstr ""
+
+#: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/image/Component.tsx:55
+msgid "Alt text"
+msgstr ""
+
+#: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/image/Component.tsx:56
+msgid "Width"
+msgstr ""
+
+#: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/image/Component.tsx:60
+msgid "Height"
+msgstr ""
+
+#: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/link/Component.tsx:54
+msgid "Edit link"
+msgstr ""
+
+#: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/link/Component.tsx:64
+msgid "URL title"
+msgstr ""
+
+#: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/list/Component.tsx:11
+msgid "Unordered list"
+msgstr ""
+
+#: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/list/Component.tsx:12
+msgid "Ordered list"
+msgstr ""
+
+#: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/list/Component.tsx:13
+#: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/textAlign/Component.tsx:13
+msgid "Indent"
+msgstr ""
+
+#: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/list/Component.tsx:14
+#: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/textAlign/Component.tsx:14
+msgid "Outdent"
+msgstr ""
+
+#: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/textAlign/Component.tsx:11
+msgid "Unordered textalign"
+msgstr ""
+
+#: packages/rich-text-editor/src/components/RichTextEditor/Toolbar/controls/textAlign/Component.tsx:12
+msgid "Ordered textalign"
+msgstr ""
+
+#: packages/rich-text-editor/src/components/RichTextEditor/render/Image/Toolbar.tsx:32
+msgid "Image toolbar"
+msgstr ""
+
+#: packages/rich-text-editor/src/components/WithEditMode/WithEditMode.tsx:62
+#: packages/rich-text-editor/src/rte-old/components/RTEWithEditMode/RTEWithEditMode.tsx:35
+msgid "Visual editor"
+msgstr ""
+
+#: packages/rich-text-editor/src/components/WithEditMode/WithEditMode.tsx:66
+#: packages/rich-text-editor/src/rte-old/components/RTEWithEditMode/RTEWithEditMode.tsx:39
+msgid "HTML editor"
+msgstr ""
+
+#: packages/rich-text-editor/src/rte-old/components/toolbarButtons/WPMedia.tsx:68
+msgid "Add Media"
+msgstr ""
+
+#: packages/tpc/src/buttons/AddPriceModifierButton.tsx:14
+msgid "add new price modifier after this row"
+msgstr ""
+
+#: packages/tpc/src/buttons/DeleteAllPricesButton.tsx:14
+msgid "Delete all prices"
+msgstr ""
+
+#: packages/tpc/src/buttons/DeleteAllPricesButton.tsx:27
+msgid ""
+"Are you sure you want to delete all of this ticket's prices and make it "
+"free? This action is permanent and can not be undone."
+msgstr ""
+
+#: packages/tpc/src/buttons/DeleteAllPricesButton.tsx:31
+msgid "Delete all prices?"
+msgstr ""
+
+#: packages/tpc/src/buttons/DeletePriceModifierButton.tsx:12
+msgid "delete price modifier"
+msgstr ""
+
+#: packages/tpc/src/buttons/ReverseCalculateButton.tsx:14
+msgid ""
+"Ticket base price is being reverse calculated from bottom to top starting "
+"with the ticket total. Entering a new ticket total will reverse calculate "
+"the ticket base price after applying all price modifiers in reverse. Click "
+"to turn off reverse calculations"
+msgstr ""
+
+#: packages/tpc/src/buttons/ReverseCalculateButton.tsx:17
+msgid ""
+"Ticket total is being calculated normally from top to bottom starting from "
+"the base price. Entering a new ticket base price will recalculate the "
+"ticket total after applying all price modifiers. Click to turn on reverse "
+"calculations"
+msgstr ""
+
+#: packages/tpc/src/buttons/ReverseCalculateButton.tsx:21
+msgid "Disable reverse calculate"
+msgstr ""
+
+#: packages/tpc/src/buttons/ReverseCalculateButton.tsx:21
+msgid "Enable reverse calculate"
+msgstr ""
+
+#: packages/tpc/src/buttons/TicketPriceCalculatorButton.tsx:28
+msgid "ticket price calculator"
+msgstr ""
+
+#: packages/tpc/src/buttons/taxes/AddDefaultTaxesButton.tsx:9
+msgid "Add default taxes"
+msgstr ""
+
+#: packages/tpc/src/buttons/taxes/RemoveTaxesButton.tsx:10
+msgid "Are you sure you want to remove all of this ticket's taxes?"
+msgstr ""
+
+#: packages/tpc/src/buttons/taxes/RemoveTaxesButton.tsx:14
+msgid "Remove all taxes?"
+msgstr ""
+
+#: packages/tpc/src/buttons/taxes/RemoveTaxesButton.tsx:7
+msgid "Remove taxes"
+msgstr ""
+
+#: packages/tpc/src/components/DefaultPricesInfo.tsx:29
+msgid "Modify default prices."
+msgstr ""
+
+#: packages/tpc/src/components/DefaultTaxesInfo.tsx:29
+msgid ""
+"New default taxes are available. Click the - Add default taxes - button to "
+"add them now."
+msgstr ""
+
+#: packages/tpc/src/components/LockedTicketsBanner.tsx:12
+#: packages/tpc/src/hooks/useLockedTicketAction.ts:74
+msgid "Price editing is disabled!"
+msgstr ""
+
+#: packages/tpc/src/components/NoPricesBanner/AddDefaultPricesButton.tsx:9
+msgid "Add default prices"
+msgstr ""
+
+#: packages/tpc/src/components/NoPricesBanner/index.tsx:13
+msgid "This Ticket is Currently Free"
+msgstr ""
+
+#: packages/tpc/src/components/NoPricesBanner/index.tsx:21
+#. %s default prices
+msgid "Click the button below to load your %s into the calculator."
+msgstr ""
+
+#: packages/tpc/src/components/NoPricesBanner/index.tsx:22
+msgid "default prices"
+msgstr ""
+
+#: packages/tpc/src/components/NoPricesBanner/index.tsx:29
+msgid "Additional ticket price modifiers can be added or removed."
+msgstr ""
+
+#: packages/tpc/src/components/NoPricesBanner/index.tsx:32
+msgid ""
+"Click the save button below to assign which dates this ticket will be "
+"available for purchase on."
+msgstr ""
+
+#: packages/tpc/src/components/TicketPriceCalculatorModal.tsx:22
+#: packages/ui-components/src/Confirm/ConfirmClose.tsx:7
+#: packages/ui-components/src/Confirm/useConfirmWithButton.tsx:10
+#: packages/ui-components/src/Confirm/useConfirmationDialog.tsx:52
+msgid "Changes will be lost if you proceed."
+msgstr ""
+
+#: packages/tpc/src/components/TicketPriceCalculatorModal.tsx:33
+#. %s ticket name
+msgid "Price Calculator for Ticket: %s"
+msgstr ""
+
+#: packages/tpc/src/components/table/useFooterRowGenerator.tsx:48
+msgid "Total"
+msgstr ""
+
+#: packages/tpc/src/components/table/useFooterRowGenerator.tsx:57
+msgid "ticket total"
+msgstr ""
+
+#: packages/tpc/src/components/table/useHeaderRowGenerator.ts:29
+msgid "Order"
+msgstr ""
+
+#: packages/tpc/src/components/table/useHeaderRowGenerator.ts:35
+msgid "Price Type"
+msgstr ""
+
+#: packages/tpc/src/components/table/useHeaderRowGenerator.ts:41
+msgid "Label"
+msgstr ""
+
+#: packages/tpc/src/components/table/useHeaderRowGenerator.ts:53
+msgid "Amount"
+msgstr ""
+
+#: packages/tpc/src/hooks/useLockedTicketAction.ts:22
+msgid "Copy ticket"
+msgstr ""
+
+#: packages/tpc/src/hooks/useLockedTicketAction.ts:26
+msgid "Copy and archive this ticket"
+msgstr ""
+
+#: packages/tpc/src/hooks/useLockedTicketAction.ts:29
+msgid "OK"
+msgstr ""
+
+#: packages/tpc/src/inputs/PriceAmountInput.tsx:34
+msgid "amount"
+msgstr ""
+
+#: packages/tpc/src/inputs/PriceAmountInput.tsx:46
+msgid "amount…"
+msgstr ""
+
+#: packages/tpc/src/inputs/PriceDescriptionInput.tsx:14
+msgid "description…"
+msgstr ""
+
+#: packages/tpc/src/inputs/PriceDescriptionInput.tsx:9
+msgid "price description"
+msgstr ""
+
+#: packages/tpc/src/inputs/PriceIdInput.tsx:6
+msgid "price id"
+msgstr ""
+
+#: packages/tpc/src/inputs/PriceNameInput.tsx:13
+msgid "label…"
+msgstr ""
+
+#: packages/tpc/src/inputs/PriceNameInput.tsx:8
+msgid "price name"
+msgstr ""
+
+#: packages/tpc/src/inputs/PriceOrderInput.tsx:14
+msgid "price order"
+msgstr ""
+
+#: packages/tpc/src/utils/constants.ts:8
+msgid ""
+"Ticket price modifications are blocked for Tickets that have already been "
+"sold to registrants, because doing so would negatively affect internal "
+"accounting for the event. If you still need to modify ticket prices, then "
+"create a copy of those tickets, edit the prices for the new tickets, and "
+"then trash the old tickets."
+msgstr ""
+
+#: packages/ui-components/src/ActiveFilters/ActiveFilters.tsx:8
+msgid "active filters:"
+msgstr ""
+
+#: packages/ui-components/src/ActiveFilters/FilterTag/index.tsx:15
+#. %s filter name
+msgid "remove filter - %s"
+msgstr ""
+
+#: packages/ui-components/src/Address/Address.tsx:72
+msgid "Address:"
+msgstr ""
+
+#: packages/ui-components/src/Address/Address.tsx:80
+msgid "City:"
+msgstr ""
+
+#: packages/ui-components/src/Address/Address.tsx:86
+msgid "State:"
+msgstr ""
+
+#: packages/ui-components/src/Address/Address.tsx:92
+msgid "Country:"
+msgstr ""
+
+#: packages/ui-components/src/Address/Address.tsx:98
+msgid "Zip:"
+msgstr ""
+
+#: packages/ui-components/src/CalendarDateRange/CalendarDateRange.tsx:37
+msgid "to"
+msgstr ""
+
+#: packages/ui-components/src/CalendarPageDate/CalendarPageDate.tsx:54
+msgid "TO"
+msgstr ""
+
+#: packages/ui-components/src/ColorPicker/ColorPicker.tsx:60
+msgid "Custom color"
+msgstr ""
+
+#: packages/ui-components/src/ColorPicker/Swatch.tsx:23
+#. color name
+msgid "Color: %s"
+msgstr ""
+
+#: packages/ui-components/src/ColorPicker/constants.ts:13
+msgid "Cyan bluish gray"
+msgstr ""
+
+#: packages/ui-components/src/ColorPicker/constants.ts:17
+msgid "White"
+msgstr ""
+
+#: packages/ui-components/src/ColorPicker/constants.ts:21
+msgid "Pale pink"
+msgstr ""
+
+#: packages/ui-components/src/ColorPicker/constants.ts:25
+msgid "Vivid red"
+msgstr ""
+
+#: packages/ui-components/src/ColorPicker/constants.ts:29
+msgid "Luminous vivid orange"
+msgstr ""
+
+#: packages/ui-components/src/ColorPicker/constants.ts:33
+msgid "Luminous vivid amber"
+msgstr ""
+
+#: packages/ui-components/src/ColorPicker/constants.ts:37
+msgid "Light green cyan"
+msgstr ""
+
+#: packages/ui-components/src/ColorPicker/constants.ts:41
+msgid "Vivid green cyan"
+msgstr ""
+
+#: packages/ui-components/src/ColorPicker/constants.ts:45
+msgid "Pale cyan blue"
+msgstr ""
+
+#: packages/ui-components/src/ColorPicker/constants.ts:49
+msgid "Vivid cyan blue"
+msgstr ""
+
+#: packages/ui-components/src/ColorPicker/constants.ts:53
+msgid "Vivid purple"
+msgstr ""
+
+#: packages/ui-components/src/ColorPicker/constants.ts:9
+msgid "Black"
+msgstr ""
+
+#: packages/ui-components/src/Confirm/ConfirmClose.tsx:8
+#: packages/ui-components/src/Modal/ModalWithAlert.tsx:24
+msgid "Are you sure you want to close this?"
+msgstr ""
+
+#: packages/ui-components/src/Confirm/ConfirmClose.tsx:9
+#: packages/ui-components/src/Modal/ModalWithAlert.tsx:25
+msgid "Yes, discard changes"
+msgstr ""
+
+#: packages/ui-components/src/Confirm/ConfirmDelete.tsx:7
+msgid "Are you sure you want to delete this?"
+msgstr ""
+
+#: packages/ui-components/src/Confirm/useConfirmWithButton.tsx:11
+msgid "Please confirm this action."
+msgstr ""
+
+#: packages/ui-components/src/Confirm/useConfirmationDialog.tsx:39
+msgid "cancel"
+msgstr ""
+
+#: packages/ui-components/src/Confirm/useConfirmationDialog.tsx:40
+msgid "confirm"
+msgstr ""
+
+#: packages/ui-components/src/CurrencyDisplay/CurrencyDisplay.tsx:34
+msgid "free"
+msgstr ""
+
+#: packages/ui-components/src/DateTimeRangePicker/DateTimeRangePicker.tsx:117
+#: packages/ui-components/src/Popover/PopoverForm/PopoverForm.tsx:44
+msgid "save"
+msgstr ""
+
+#: packages/ui-components/src/DebugInfo/DebugInfo.tsx:36
+msgid "Hide Debug Info"
+msgstr ""
+
+#: packages/ui-components/src/DebugInfo/DebugInfo.tsx:36
+msgid "Show Debug Info"
+msgstr ""
+
+#: packages/ui-components/src/EditDateRangeButton/EditDateRangeButton.tsx:49
+msgid "Edit Start and End Dates and Times"
+msgstr ""
+
+#: packages/ui-components/src/EntityActionsMenu/entityMenuItems/CopyEntity.tsx:8
+msgid "copy"
+msgstr ""
+
+#: packages/ui-components/src/EntityActionsMenu/entityMenuItems/EditEntity.tsx:8
+msgid "edit"
+msgstr ""
+
+#: packages/ui-components/src/EntityActionsMenu/entityMenuItems/TrashEntity.tsx:8
+msgid "trash"
+msgstr ""
+
+#: packages/ui-components/src/EntityActionsMenu/entityMenuItems/Untrash.tsx:8
+msgid "untrash"
+msgstr ""
+
+#: packages/ui-components/src/EntityList/RegistrationsLink/index.tsx:12
+msgid "click to open the registrations admin page in a new tab or window"
+msgstr ""
+
+#: packages/ui-components/src/EntityList/filterBar/buttons/CardViewFilterButton.tsx:22
+msgid "card view"
+msgstr ""
+
+#: packages/ui-components/src/EntityList/filterBar/buttons/TableViewFilterButton.tsx:21
+msgid "table view"
+msgstr ""
+
+#: packages/ui-components/src/EntityList/filterBar/buttons/ToggleBulkActionsButton.tsx:8
+msgid "hide bulk actions"
+msgstr ""
+
+#: packages/ui-components/src/EntityList/filterBar/buttons/ToggleBulkActionsButton.tsx:8
+msgid "show bulk actions"
+msgstr ""
+
+#: packages/ui-components/src/EntityList/filterBar/buttons/ToggleFiltersButton.tsx:9
+msgid "hide filters"
+msgstr ""
+
+#: packages/ui-components/src/EntityList/filterBar/buttons/ToggleFiltersButton.tsx:9
+msgid "show filters"
+msgstr ""
+
+#: packages/ui-components/src/Legend/ToggleLegendButton.tsx:26
+msgid "hide legend"
+msgstr ""
+
+#: packages/ui-components/src/Legend/ToggleLegendButton.tsx:26
+msgid "show legend"
+msgstr ""
+
+#: packages/ui-components/src/LoadingNotice/LoadingNotice.tsx:11
+msgid "loading…"
+msgstr ""
+
+#: packages/ui-components/src/Modal/Modal.tsx:58
+msgid "close modal"
+msgstr ""
+
+#: packages/ui-components/src/Pagination/ItemRender.tsx:10
+msgid "jump to previous"
+msgstr ""
+
+#: packages/ui-components/src/Pagination/ItemRender.tsx:11
+msgid "jump to next"
+msgstr ""
+
+#: packages/ui-components/src/Pagination/ItemRender.tsx:12
+msgid "page"
+msgstr ""
+
+#: packages/ui-components/src/Pagination/ItemRender.tsx:8
+msgid "previous"
+msgstr ""
+
+#: packages/ui-components/src/Pagination/ItemRender.tsx:9
+msgid "next"
+msgstr ""
+
+#: packages/ui-components/src/Pagination/PerPage.tsx:37
+msgid "items per page"
+msgstr ""
+
+#: packages/ui-components/src/Pagination/constants.ts:10
+#. %s is per page value
+msgid "%s / page"
+msgstr ""
+
+#: packages/ui-components/src/Pagination/constants.ts:13
+msgid "Next Page"
+msgstr ""
+
+#: packages/ui-components/src/Pagination/constants.ts:14
+msgid "Previous Page"
+msgstr ""
+
+#: packages/ui-components/src/PercentSign/index.tsx:10
+msgid "%"
+msgstr ""
+
+#: packages/ui-components/src/SimpleEntityList/EntityOptionsRow/index.tsx:31
+#. entity type to select
+msgid "Select an existing %s to use as a template."
+msgstr ""
+
+#: packages/ui-components/src/SimpleEntityList/EntityOptionsRow/index.tsx:38
+msgid "or"
+msgstr ""
+
+#: packages/ui-components/src/SimpleEntityList/EntityOptionsRow/index.tsx:43
+#. entity type to add
+msgid "Add a new %s and insert details manually"
+msgstr ""
+
+#: packages/ui-components/src/SimpleEntityList/EntityOptionsRow/index.tsx:48
+msgid "Add New"
+msgstr ""
+
+#: packages/ui-components/src/Stepper/buttons/Next.tsx:8
+msgid "Next"
+msgstr ""
+
+#: packages/ui-components/src/Stepper/buttons/Previous.tsx:8
+msgid "Previous"
+msgstr ""
+
+#: packages/ui-components/src/Steps/Steps.tsx:31
+msgid "Steps"
+msgstr ""
+
+#: packages/ui-components/src/TabbableText/index.tsx:21
+msgid "click to edit…"
+msgstr ""
+
+#: packages/ui-components/src/TimezoneTimeInfo/Content.tsx:14
+msgid "The Website's Time Zone"
+msgstr ""
+
+#: packages/ui-components/src/TimezoneTimeInfo/Content.tsx:19
+msgid "UTC (Greenwich Mean Time)"
+msgstr ""
+
+#: packages/ui-components/src/TimezoneTimeInfo/Content.tsx:9
+msgid "Your Local Time Zone"
+msgstr ""
+
+#: packages/ui-components/src/TimezoneTimeInfo/TimezoneTimeInfo.tsx:25
+msgid "click for timezone information"
+msgstr ""
+
+#: packages/ui-components/src/TimezoneTimeInfo/TimezoneTimeInfo.tsx:30
+msgid "This Date Converted To:"
+msgstr ""
+
+#: packages/ui-components/src/VenueSelector/VenueSelector.tsx:120
+msgid "Add New Venue"
+msgstr ""
+
+#: packages/ui-components/src/VenueSelector/VenueSelector.tsx:36
+msgid "~ no venue ~"
+msgstr ""
+
+#: packages/ui-components/src/VenueSelector/VenueSelector.tsx:43
+msgid "assign venue…"
+msgstr ""
+
+#: packages/ui-components/src/VenueSelector/VenueSelector.tsx:44
+msgid "click to select a venue…"
+msgstr ""
+
+#: packages/ui-components/src/bulkEdit/BulkActions.tsx:51
+msgid "select all"
+msgstr ""
+
+#: packages/ui-components/src/bulkEdit/BulkActions.tsx:54
+msgid "apply"
+msgstr ""

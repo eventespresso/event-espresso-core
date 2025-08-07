@@ -176,10 +176,10 @@ class InvisibleRecaptcha
         }
         $results = json_decode(wp_remote_retrieve_body($response), true);
         if (filter_var($results['success'], FILTER_VALIDATE_BOOLEAN) !== true) {
-            $errors   = array_map(
-                array($this, 'getErrorCode'),
-                $results['error-codes']
-            );
+            $errors = [];
+            if (! empty($results['error-codes'])) {
+                $errors = array_map([$this, 'getErrorCode'], $results['error-codes']);
+            }
             if (isset($results['challenge_ts'])) {
                 $errors[] = 'challenge timestamp: ' . $results['challenge_ts'] . '.';
             }

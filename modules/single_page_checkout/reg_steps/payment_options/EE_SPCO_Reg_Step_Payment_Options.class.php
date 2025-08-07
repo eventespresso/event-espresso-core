@@ -195,12 +195,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
         if (! $transaction instanceof EE_Transaction || EEH_Money::compare_floats($transaction->remaining(), 0)) {
             return;
         }
-        foreach (
-            $this->payment_method_model->get_all_for_transaction(
-                $transaction,
-                EEM_Payment_Method::scope_cart
-            ) as $payment_method
-        ) {
+        foreach ($this->checkout->available_payment_methods as $payment_method) {
             $type_obj = $payment_method->type_obj();
             if ($type_obj instanceof EE_PMT_Base) {
                 $billing_form = $type_obj->generate_new_billing_form($transaction);
@@ -244,10 +239,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
             return false;
         }
         // get all active payment methods
-        $this->checkout->available_payment_methods = $this->payment_method_model->get_all_for_transaction(
-            $this->checkout->transaction,
-            EEM_Payment_Method::scope_cart
-        );
+        $this->checkout->available_payment_methods = $this->_get_available_payment_methods();
         $this->setDefaultPaymentMethod($this->checkout->available_payment_methods);
         return true;
     }
@@ -351,8 +343,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                 );
             } elseif (
                 ! $this->checkout->revisit
-                      && $registration->status_ID() !== RegStatus::AWAITING_REVIEW
-                      && $registration->ticket()->is_free()
+                && $registration->status_ID() !== RegStatus::AWAITING_REVIEW
+                && $registration->ticket()->is_free()
             ) {
                 $registrations_for_free_events[ $registration->ticket()->ID() ] = $registration;
             }
@@ -620,8 +612,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                 'layout_strategy' => new EE_Template_Layout(
                     [
                         'layout_template_file' => SPCO_REG_STEPS_PATH
-                                                  . $this->_slug
-                                                  . '/sold_out_events.template.php',
+                            . $this->_slug
+                            . '/sold_out_events.template.php',
                         'template_args'        => apply_filters(
                             'FHEE__EE_SPCO_Reg_Step_Payment_Options___sold_out_events__template_args',
                             [
@@ -678,8 +670,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                 'layout_strategy' => new EE_Template_Layout(
                     [
                         'layout_template_file' => SPCO_REG_STEPS_PATH
-                                                  . $this->_slug
-                                                  . '/sold_out_events.template.php',
+                            . $this->_slug
+                            . '/sold_out_events.template.php',
                         'template_args'        => apply_filters(
                             'FHEE__EE_SPCO_Reg_Step_Payment_Options___insufficient_spaces_available__template_args',
                             [
@@ -728,8 +720,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                 'layout_strategy' => new EE_Template_Layout(
                     [
                         'layout_template_file' => SPCO_REG_STEPS_PATH
-                                                  . $this->_slug
-                                                  . '/events_requiring_pre_approval.template.php', // layout_template
+                            . $this->_slug
+                            . '/events_requiring_pre_approval.template.php', // layout_template
                         'template_args'        => apply_filters(
                             'FHEE__EE_SPCO_Reg_Step_Payment_Options___sold_out_events__template_args',
                             [
@@ -765,8 +757,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
                 'layout_strategy' => new EE_Template_Layout(
                     [
                         'layout_template_file' => SPCO_REG_STEPS_PATH
-                                                  . $this->_slug
-                                                  . '/no_payment_required.template.php', // layout_template
+                            . $this->_slug
+                            . '/no_payment_required.template.php', // layout_template
                         'template_args'        => apply_filters(
                             'FHEE__EE_SPCO_Reg_Step_Payment_Options___no_payment_required__template_args',
                             [
@@ -935,7 +927,6 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
     public function _setup_payment_options(): EE_Form_Section_Proper
     {
         // load payment method classes
-        $this->checkout->available_payment_methods = $this->_get_available_payment_methods();
         if (empty($this->checkout->available_payment_methods)) {
             EE_Error::add_error(
                 apply_filters(

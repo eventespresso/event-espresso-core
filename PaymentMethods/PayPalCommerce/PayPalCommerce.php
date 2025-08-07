@@ -83,6 +83,7 @@ class PayPalCommerce
                 null,
                 null,
                 'EventEspresso\core\domain\services\capabilities\FeatureFlags' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\payment_methods\gateways\GatewayDataFormatter' => EE_Dependency_Map::load_from_cache,
             ]
         );
         EE_Dependency_Map::instance()->registerDependencies(

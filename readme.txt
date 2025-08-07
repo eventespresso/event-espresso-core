@@ -5,8 +5,8 @@ Donate link: [Support Our Work](https://eventespresso.com/pricing/?ee_ver=ee4&ut
 Tags: Events, Tickets, Event Registration, Ticket Sales, Calendar
 Requires at least: 4.5
 Requires PHP: 7.4
-Tested up to: 6.7.2
-Stable tag: 5.0.31.decaf
+Tested up to: 6.8.2
+Stable tag: 5.0.43decaf
 License: GPL2
 
 The best events plugin with event registration, free and paid ticket sales, event registration forms, PayPal payments, automatic emails, and more!

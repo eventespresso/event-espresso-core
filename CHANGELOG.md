@@ -6,10 +6,35 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Releases
 
-### [5.0.41]
+### [5.0.42]
 
 #### Added
  - NEW
+
+#### Fixed
+ - [SaaS. Fix fatals from Jul 24th (#1924)](https://github.com/eventespresso/cafe/pull/1924)
+ - [Previous value in method update_extra_meta (#1936)](https://github.com/eventespresso/cafe/pull/1936)
+ - [Fix SPCO Available Payment Methods Setup (#1927)](https://github.com/eventespresso/cafe/pull/1927)
+ - FIX
+
+#### Changed
+ - [Update type AssignmentStatus in Ticket Assignment Manager. (Barista#1408) (#1920)](https://github.com/eventespresso/cafe/pull/1920)
+ - [Fix PayPal Commerce order request (#1921)](https://github.com/eventespresso/cafe/pull/1921)
+ - MOD
+
+#### Deprecated
+ - DEP
+
+#### Removed
+ - RMV
+
+#### Security
+ - SEC
+
+
+
+### [5.0.41]
+
 
 #### Fixed
  - [Fix Additional Registrant Incomplete Reg Forms (#1856)](https://github.com/eventespresso/cafe/pull/1856)
@@ -25,7 +50,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - [Fix SPCO Transaction Lock (#1906)](https://github.com/eventespresso/cafe/pull/1906)
  - [SAAS. After deploy fixes Jul 16 (#1911)](https://github.com/eventespresso/cafe/pull/1911)
  - [Remove types in EEM_Base that were changed or might be null (#1912)](https://github.com/eventespresso/cafe/pull/1912)
- - FIX
 
 #### Changed
  - [Dont migrate options we dont use (#1845)](https://github.com/eventespresso/cafe/pull/1845)
@@ -37,16 +61,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - [Fix Plugin Action Settings Links and Improve Plugin Menu Items (#1377)](https://github.com/eventespresso/cafe/pull/1377)
  - [Move Existing and Add New SPCO Line Item Filters (#1907)](https://github.com/eventespresso/cafe/pull/1907)
  - [Check For Main Query Before Running Logic in THE LOOP (#1767)](https://github.com/eventespresso/cafe/pull/1767)
- - MOD
 
-#### Deprecated
- - DEP
 
-#### Removed
- - RMV
 
-#### Security
- - SEC
 
 
 

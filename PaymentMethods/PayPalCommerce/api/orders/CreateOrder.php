@@ -4,11 +4,14 @@ namespace EventEspresso\PaymentMethods\PayPalCommerce\api\orders;
 
 use EE_Error;
 use EE_Line_Item;
+use EE_Payment;
+use EEM_Payment;
 use EE_Transaction;
 use EventEspresso\core\domain\services\capabilities\FeatureFlag;
 use EventEspresso\core\domain\services\capabilities\FeatureFlags;
 use EventEspresso\core\domain\services\validation\email\strategies\Basic;
 use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\payment_methods\gateways\GatewayDataFormatter;
 use EventEspresso\core\services\request\sanitizers\RequestSanitizer;
 use EventEspresso\PaymentMethods\PayPalCommerce\api\PayPalApi;
 use EventEspresso\PaymentMethods\PayPalCommerce\domain\Domain;
@@ -74,6 +77,9 @@ class CreateOrder extends OrdersApi
 
     private FeatureFlags $feature;
 
+    private GatewayDataFormatter $gateway_data_formatter;
+
+    private EE_Payment $payment;
 
     /**
      * CreateOrder constructor.
@@ -83,13 +89,15 @@ class CreateOrder extends OrdersApi
      * @param array          $billing_info
      * @param FeatureFlags   $feature
      */
-    public function __construct(PayPalApi $api, EE_Transaction $transaction, array $billing_info, FeatureFlags $feature)
+    public function __construct(PayPalApi $api, EE_Transaction $transaction, array $billing_info, FeatureFlags $feature, GatewayDataFormatter $gateway_data_formatter)
     {
         parent::__construct($api);
         $this->transaction   = $transaction;
         $this->feature       = $feature;
         $this->currency_code = CurrencyManager::currencyCode();
         $this->sanitizeRequestParameters($billing_info);
+        $this->gateway_data_formatter = $gateway_data_formatter;
+        $this->setPaymentPlaceholder();
     }
 
 
@@ -146,10 +154,7 @@ class CreateOrder extends OrdersApi
         $registrant  = $this->transaction->primary_registration();
         $attendee    = $registrant->attendee();
         $event       = $registrant->event();
-        $description = $event->name() ?: sprintf(
-            esc_html__('Tickets for an event at %1$s', 'event_espresso'),
-            get_bloginfo('name')
-        );
+        $description = $this->gateway_data_formatter->formatOrderDescription($this->payment);
         $parameters  = [
             'intent'              => 'CAPTURE',
             'purchase_units'      => [
@@ -164,16 +169,24 @@ class CreateOrder extends OrdersApi
                     ],
                 ],
             ],
-            'application_context' => [
-                'shipping_preference' => 'NO_SHIPPING',
-                'user_action'         => 'PAY_NOW',
-            ],
-            'payer'               => [
-                'email_address' => $attendee->email(),
-                'name'          => [
-                    'given_name' => $attendee->fname(),
-                    'surname'    => $attendee->lname(),
-
+            'payment_source' => [
+                'paypal' => [
+                    'experience_context' => [
+                        'user_action' => 'PAY_NOW'
+                    ],
+                    'email_address' => $attendee->email(),
+                    'name'  => [
+                        'given_name' => $attendee->fname(),
+                        'surname' => $attendee->lname(),
+                    ],
+                    'address' => [
+                        'address_line_1'    => $attendee->address(),
+                        'address_line_2'    => $attendee->address2(),
+                        'admin_area_2'      => $attendee->city(),
+                        'admin_area_1'      => $attendee->state_abbrev(),
+                        'postal_code'       => $attendee->zip(),
+                        'country_code'      => $attendee->country_ID(),
+                    ],
                 ],
             ],
         ];
@@ -227,11 +240,10 @@ class CreateOrder extends OrdersApi
                 && $line_item->quantity() > 0
             ) {
                 $item_money     = CurrencyManager::normalizeValue($line_item->unit_price());
-                $li_description = $line_item->desc() ?? esc_html__('Event Ticket', 'event_espresso');
                 $line_items []  = [
-                    'name'        => substr(wp_strip_all_tags($line_item->name()), 0, 126),
+                    'name'        => substr(wp_strip_all_tags($this->gateway_data_formatter->formatLineItemName($line_item, $this->payment)), 0, 125),
                     'quantity'    => $line_item->quantity(),
-                    'description' => substr(wp_strip_all_tags($li_description), 0, 125),
+                    'description' => substr(wp_strip_all_tags($this->gateway_data_formatter->formatLineItemDesc($line_item, $this->payment)), 0, 125),
                     'unit_amount' => [
                         'currency_code' => $this->currency_code,
                         'value'         => (string) $item_money,
@@ -402,23 +414,15 @@ class CreateOrder extends OrdersApi
     protected function getSimplifiedItems(): array
     {
         // Simplified single line item.
-        $line_items         = [];
-        $primary_registrant = $this->transaction->primary_registration();
-        $event_obj          = $primary_registrant->event_obj();
-        $name               = sprintf(
-            esc_html__('Event Registrations from %1$s', "event_espresso"),
-            wp_specialchars_decode(get_bloginfo(), ENT_QUOTES),
-        );
-        $description        = sprintf(
-            esc_html__('Event Registrations from %1$s for %2$s', "event_espresso"),
-            wp_specialchars_decode(get_bloginfo(), ENT_QUOTES),
-            $event_obj instanceof EE_Event ? $event_obj->name() : esc_html__('Event', 'event_espresso')
-        );
-
+        $line_items             = [];
+        $primary_registrant     = $this->transaction->primary_registration();
+        $event_obj              = $primary_registrant->event_obj();
+        $name_and_description   = $this->gateway_data_formatter->formatOrderDescription($this->payment);
+        
         $line_items[]   = [
-            'name'        => substr(wp_strip_all_tags($name), 0, 126),
+            'name'        => substr(wp_strip_all_tags($name_and_description), 0, 125),
             'quantity'    => 1,
-            'description' => substr(wp_strip_all_tags($description), 0, 2047),
+            'description' => substr(wp_strip_all_tags($name_and_description), 0, 2047),
             'unit_amount' => [
                 'currency_code' => $this->currency_code,
                 'value'         => (string) CurrencyManager::normalizeValue($this->transaction->remaining() - $this->transaction->tax_total()),
@@ -426,5 +430,21 @@ class CreateOrder extends OrdersApi
             'category'    => 'DIGITAL_GOODS',
         ];
         return $line_items;
+    }
+
+    /**
+     * Generates an EE_Payment object but doesn't save it.
+     */
+    private function setPaymentPlaceholder(): void
+    {
+        $this->payment = EE_Payment::new_instance(
+            [
+                'STS_ID'        => EEM_Payment::status_id_pending,
+                'TXN_ID'        => $this->transaction->ID(),
+                'PMD_ID'        => $this->transaction->payment_method_ID(),
+                'PAY_amount'    => 0.00,
+                'PAY_timestamp' => time(),
+            ]
+        );
     }
 }
