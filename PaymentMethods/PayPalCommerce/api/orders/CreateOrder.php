@@ -172,24 +172,29 @@ class CreateOrder extends OrdersApi
             'payment_source' => [
                 'paypal' => [
                     'experience_context' => [
-                        'user_action' => 'PAY_NOW'
+                        'user_action' => 'PAY_NOW',
                     ],
                     'email_address' => $attendee->email(),
                     'name'  => [
                         'given_name' => $attendee->fname(),
                         'surname' => $attendee->lname(),
                     ],
-                    'address' => [
-                        'address_line_1'    => $attendee->address(),
-                        'address_line_2'    => $attendee->address2(),
-                        'admin_area_2'      => $attendee->city(),
-                        'admin_area_1'      => $attendee->state_abbrev(),
-                        'postal_code'       => $attendee->zip(),
-                        'country_code'      => $attendee->country_ID(),
-                    ],
                 ],
             ],
         ];
+
+        // If we have and address on the attendee, send it to PayPal.
+        if($attendee->country_ID()) {
+            $parameters['payment_source']['paypal']['address'] = [
+                'address_line_1'    => $attendee->address(),
+                'address_line_2'    => $attendee->address2(),
+                'admin_area_2'      => $attendee->city(),
+                'admin_area_1'      => $attendee->state_abbrev(),
+                'postal_code'       => $attendee->zip(),
+                'country_code'      => $attendee->country_ID(),
+            ];
+        }
+
         // Do we have the permissions for the fees ?
         $scopes = PayPalExtraMetaManager::getPmOption(
             $this->transaction->payment_method(),
