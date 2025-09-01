@@ -26,7 +26,7 @@ add_filter( 'FHEE__content_espresso_events__template_loaded', '__return_false' )
 
 global $post;
 $event_class = has_excerpt( $post->ID ) ? ' has-excerpt' : '';
-$event_class = apply_filters( 'FHEE__content_espresso_events__event_class', $event_class );
+$event_class = apply_filters('FHEE__content_espresso_events__event_class', $event_class, $post);
 ?>
 <?php do_action( 'AHEE_event_details_before_post', $post ); ?>
 <article id="post-<?php the_ID(); ?>" <?php post_class( $event_class ); ?>>
@@ -70,4 +70,3 @@ $event_class = apply_filters( 'FHEE__content_espresso_events__event_class', $eve
 </article>
 <!-- #post -->
 <?php do_action( 'AHEE_event_details_after_post', $post );
-

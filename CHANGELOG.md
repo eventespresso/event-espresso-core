@@ -6,20 +6,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Releases
 
-### [5.0.42]
+### [5.0.45]
 
 #### Added
  - NEW
 
 #### Fixed
- - [SaaS. Fix fatals from Jul 24th (#1924)](https://github.com/eventespresso/cafe/pull/1924)
- - [Previous value in method update_extra_meta (#1936)](https://github.com/eventespresso/cafe/pull/1936)
- - [Fix SPCO Available Payment Methods Setup (#1927)](https://github.com/eventespresso/cafe/pull/1927)
+ - [Dont send address to PayPal if country code is not  a 2 character ISO 3166 code (#1947)](https://github.com/eventespresso/cafe/pull/1947)
  - FIX
 
 #### Changed
- - [Update type AssignmentStatus in Ticket Assignment Manager. (Barista#1408) (#1920)](https://github.com/eventespresso/cafe/pull/1920)
- - [Fix PayPal Commerce order request (#1921)](https://github.com/eventespresso/cafe/pull/1921)
+ - [Trailing 0 Removed from Ticket Price Calculator (Barista#1426) (#1940)](https://github.com/eventespresso/cafe/pull/1940)
+ - [REM tickets do not fully retain their state when editing (Barista#1368) (#1942)](https://github.com/eventespresso/cafe/pull/1942)
+ - [PayPal Commerce - if no country has been set use state iso (#1956)](https://github.com/eventespresso/cafe/pull/1956)
+ - [Add Post Variable to Events List Event Class Filter (#1960)](https://github.com/eventespresso/cafe/pull/1960)
+ - [Fix readme and changelog (#1959)](https://github.com/eventespresso/cafe/pull/1959)
  - MOD
 
 #### Deprecated
@@ -33,15 +34,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
-### [5.0.41]
+### [5.0.44]
 
+#### Fixed
+ - [Fix PayPal Commerce payments when no address information is available (#1937)](https://github.com/eventespresso/cafe/pull/1937)
+
+
+
+### [5.0.43]
+
+#### Fixed
+ - [SaaS. Fix fatals from Jul 24th (#1924)](https://github.com/eventespresso/cafe/pull/1924)
+ - [Previous value in method update_extra_meta (#1936)](https://github.com/eventespresso/cafe/pull/1936)
+ - [Fix SPCO Available Payment Methods Setup (#1927)](https://github.com/eventespresso/cafe/pull/1927)
+
+#### Changed
+ - [Update type AssignmentStatus in Ticket Assignment Manager. (Barista#1408) (#1920)](https://github.com/eventespresso/cafe/pull/1920)
+ - [Fix PayPal Commerce order request (#1921)](https://github.com/eventespresso/cafe/pull/1921)
+
+
+
+### [5.0.42]
 
 #### Fixed
  - [Fix Additional Registrant Incomplete Reg Forms (#1856)](https://github.com/eventespresso/cafe/pull/1856)
  - [Fix License Keys Admin Menu Loading on Multisite (#1860)](https://github.com/eventespresso/cafe/pull/1860)
  - [Fix PluginLicense Error During Cron (#1866)](https://github.com/eventespresso/cafe/pull/1866)
  - [Fix Version Parsing (#1883)](https://github.com/eventespresso/cafe/pull/1883)
- - [Prevent _load_textdomain_just_in_time notice from GraphQL (#1882)](https://github.com/eventespresso/cafe/pull/1882)
+ - [Prevent load_textdomain_just_in_time notice from GraphQL (#1882)](https://github.com/eventespresso/cafe/pull/1882)
  - [Fix Admin Page RSS Feed (#1893)](https://github.com/eventespresso/cafe/pull/1893)
  - [PPC. Fix updating onboarding status (#1888)](https://github.com/eventespresso/cafe/pull/1888)
  - [Modify System Hook Points (#1891)](https://github.com/eventespresso/cafe/pull/1891)
@@ -64,6 +84,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
+### [5.0.41]
+
+#### Changed
+ - [Fix RegFormHandler not processing multiple registrations](https://github.com/eventespresso/cafe/pull/1837)
+ - [Don't migrate EE3 options that are no longer used](https://github.com/eventespresso/cafe/pull/1845)
 
 
 
@@ -109,6 +134,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - [Fixed Backspace in Date Input Crashes Calendar (Barista#1367) #1792](https://github.com/eventespresso/cafe/pull/1792)
 
 
+
 ### [5.0.38]
 
 #### Added
@@ -116,11 +142,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
-
-
-
 ### [5.0.37]
-
 
 #### Fixed
  - [Hide Final PM Deprecation Notice If Nothing Deactivated (#1761)](https://github.com/eventespresso/cafe/pull/1761)
@@ -131,11 +153,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
-
-
-
 ### [5.0.36]
-
 
 #### Fixed
  - [Use correct label_count default for a custom post status (#1738)](https://github.com/eventespresso/cafe/pull/1738)
@@ -147,11 +165,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
-
-
-
 ### [5.0.35]
-
 
 #### Fixed
  - [Fix Conditional Question Trigger ID Sanitization (#1677)](https://github.com/eventespresso/cafe/pull/1677)
@@ -163,35 +177,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
-
-
-
 ### [5.0.34]
-
 
 #### Fixed
  - [PPC. Fix Payment Methods Pro support for PayPal Commerce (#1696)](https://github.com/eventespresso/cafe/pull/1696)
  - [Fix Conflict With REM Styles (#1697)](https://github.com/eventespresso/cafe/pull/1697)
  - [Fix registration question admin label field not saving (#1647)](https://github.com/eventespresso/cafe/pull/1647)
-
-
-
-
-
-
-
-### [..]
-
-
-#### Fixed
  - [Fix SaaS Signup Form (#1660)](https://github.com/eventespresso/cafe/pull/1660)
  - [Fix SPCO Attendee Info Ticket Display (#1636)](https://github.com/eventespresso/cafe/pull/1636)
 
 #### Changed
  - [BuildMachine 5.0.33 changes (#1683)](https://github.com/eventespresso/cafe/pull/1683)
-
-
-
 
 
 
@@ -205,9 +201,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
-
-
-
 ### [5.0.32]
 
 #### Added
@@ -216,11 +209,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
-
-
-
 ### [5.0.31]
-
 
 #### Fixed
  - [Add Nonce for Add New State AJAX Requests (#1630)](https://github.com/eventespresso/cafe/pull/1630)
@@ -229,9 +218,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 #### Changed
  - [BuildMachine 5.0.30 changes (#1629)](https://github.com/eventespresso/cafe/pull/1629)
  - [Set the min required WP User integration version number to be 2.1.3 (#1633)](https://github.com/eventespresso/cafe/pull/1633)
-
-
-
 
 
 
@@ -263,9 +249,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
-
-
-
 ### [5.0.29]
 
 #### Fixed
@@ -273,9 +256,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Changed
  - [BuildMachine 5.0.28 changes (#1579)](https://github.com/eventespresso/cafe/pull/1579)
-
-
-
 
 
 
@@ -294,7 +274,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - [Fix CSS Output in iFrames (#1552)](https://github.com/eventespresso/cafe/pull/1552)
  - [Fix venue not being unassigned in EDTR (GraphQL) (#1561)](https://github.com/eventespresso/cafe/pull/1561)
  - [Fix Missing Check-ins Bulk Actions (#1549)](https://github.com/eventespresso/cafe/pull/1549)
- - [Fix Typing for EE_Datetime_Field::_prepare_for_display() (#1570)](https://github.com/eventespresso/cafe/pull/1570)
+ - [Fix Typing for EE_Datetime_Field::prepare_for_display() (#1570)](https://github.com/eventespresso/cafe/pull/1570)
  - [Fix List Table Views (#1576)](https://github.com/eventespresso/cafe/pull/1576)
  - [Fix MER Max Ticket Quantity Violations (#1567)](https://github.com/eventespresso/cafe/pull/1567)
 
@@ -729,7 +709,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - [Fix Co logo max width on Invoice/Receipt (#775)](https://github.com/eventespresso/cafe/pull/775)
  - [Allow attributes passed to the fallback_shortcode_processor to be an empty string (#743)](https://github.com/eventespresso/cafe/pull/743)
  - [Fix Nag Notice Display (#779)](https://github.com/eventespresso/cafe/pull/779)
- - [Walk Back $_cpt_model_obj Property Type Declaration (#783)](https://github.com/eventespresso/cafe/pull/783)
+ - [Walk Back $cpt_model_obj Property Type Declaration (#783)](https://github.com/eventespresso/cafe/pull/783)
  - [Use GRAPHQL_DEBUG and Fix Conditional (#785)](https://github.com/eventespresso/cafe/pull/785)
  - [Fix Edit CPT Route for Attendees (#797)](https://github.com/eventespresso/cafe/pull/797)
  - [Make Admin Only Tickets Visible to Super Admins (#798)](https://github.com/eventespresso/cafe/pull/798)

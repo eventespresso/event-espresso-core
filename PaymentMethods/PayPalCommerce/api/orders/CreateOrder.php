@@ -3,10 +3,13 @@
 namespace EventEspresso\PaymentMethods\PayPalCommerce\api\orders;
 
 use EE_Error;
+use EE_Country;
 use EE_Line_Item;
 use EE_Payment;
-use EEM_Payment;
+use EE_State;
 use EE_Transaction;
+use EEM_Country;
+use EEM_Payment;
 use EventEspresso\core\domain\services\capabilities\FeatureFlag;
 use EventEspresso\core\domain\services\capabilities\FeatureFlags;
 use EventEspresso\core\domain\services\validation\email\strategies\Basic;
@@ -183,8 +186,26 @@ class CreateOrder extends OrdersApi
             ],
         ];
 
+        $CNT_ISO = $attendee->country_ID();
+
+        // No country ID set, maybe just state?
+        if(empty($CNT_ISO)) {
+            $state_obj = $attendee->state_obj();
+            if ($state_obj instanceof EE_State) {
+                $CNT_ISO = $state_obj->country_iso();
+            }
+        }
+
+        if (strlen($CNT_ISO > 2)) {
+            // uh-oh... did someone save the country name for the ISO?
+            $country = EEM_Country::instance()->getCountryByName(ucwords(strtolower($CNT_ISO)));
+            if ($country instanceof EE_Country) {
+                $CNT_ISO = $country->ISO();
+            }
+        }
+        
         // If we have and address on the attendee, send it to PayPal.
-        if($attendee->country_ID()) {
+        if($CNT_ISO && strlen($CNT_ISO == 2)) {
             $parameters['payment_source']['paypal']['address'] = [
                 'address_line_1'    => $attendee->address(),
                 'address_line_2'    => $attendee->address2(),

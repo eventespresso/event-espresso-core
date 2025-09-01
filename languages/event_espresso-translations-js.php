@@ -2014,6 +2014,12 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	/* translators: %s ticket name */
 	__( 'Price Calculator for Ticket: %s', 'event_espresso' ),
 
+	// Reference: packages/tpc/src/components/price/input/Amount.tsx:23
+	__( 'amount', 'event_espresso' ),
+
+	// Reference: packages/tpc/src/components/price/input/Amount.tsx:27
+	__( 'amount…', 'event_espresso' ),
+
 	// Reference: packages/tpc/src/components/price/input/Description.tsx:15
 	__( 'price description', 'event_espresso' ),
 
@@ -2031,12 +2037,6 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 
 	// Reference: packages/tpc/src/components/price/input/Order.tsx:21
 	__( 'price order', 'event_espresso' ),
-
-	// Reference: packages/tpc/src/components/price/input/amount/Amount.tsx:85
-	__( 'amount', 'event_espresso' ),
-
-	// Reference: packages/tpc/src/components/price/input/amount/Amount.tsx:89
-	__( 'amount…', 'event_espresso' ),
 
 	// Reference: packages/tpc/src/components/table/useFooterRowGenerator.tsx:50
 	__( 'Total', 'event_espresso' ),
