@@ -8,8 +8,6 @@
  * @package         Event Espresso
  * @subpackage      includes/core/messages/EE_Messages_Base.core.php
  * @author          Darren Ethier
- *
- * ------------------------------------------------------------------------
  */
 abstract class EE_Messages_Base extends EE_Base
 {
@@ -19,7 +17,9 @@ abstract class EE_Messages_Base extends EE_Base
      * and also used by the EE_message_type object to figure out where to get template data.
      */
     public $name;
+
     public $description;
+
     protected $_messages_item_type; // messenger OR message_type?
 
 
@@ -37,8 +37,6 @@ abstract class EE_Messages_Base extends EE_Base
     public $label;
 
 
-
-
     /**
      * This property when set will hold the slugs of all EE admin pages that we will need to retrieve fields for
      * (and used to determine which callback method to call from the child class)
@@ -48,35 +46,25 @@ abstract class EE_Messages_Base extends EE_Base
      * 'page_action' => true
      * )
      *
-*@var array
+     * @var array
      */
-    public $admin_registered_pages = array();
-
-
-
-
-
-
+    public $admin_registered_pages = [];
 
 
     /**
      * this property holds any specific fields for holding any settings related to a messenger (if any needed)
+     *
      * @var array
      */
-    protected $_admin_settings_fields = array();
-
-
-
+    protected $_admin_settings_fields = [];
 
 
     /**
      * this property will hold any existing settings that may have been set in the admin.
+     *
      * @var array
      */
-    protected $_existing_admin_settings = array();
-
-
-
+    protected $_existing_admin_settings = [];
 
 
     /**
@@ -102,10 +90,7 @@ abstract class EE_Messages_Base extends EE_Base
      * @access protected
      * @var array
      */
-    protected $_valid_shortcodes = array();
-
-
-
+    protected $_valid_shortcodes = [];
 
 
     public function __construct()
@@ -114,9 +99,6 @@ abstract class EE_Messages_Base extends EE_Base
         $this->_set_valid_shortcodes();
         $this->_set_admin_pages();
     }
-
-
-
 
 
     /**
@@ -141,9 +123,6 @@ abstract class EE_Messages_Base extends EE_Base
     abstract protected function _set_admin_settings_fields();
 
 
-
-
-
     /**
      * sets any properties on whether a message type or messenger interface shows up on a ee administration page.
      * Child classes have to define this method but don't necessarily have to set the flags
@@ -160,9 +139,6 @@ abstract class EE_Messages_Base extends EE_Base
     abstract protected function _set_admin_pages();
 
 
-
-
-
     /**
      * Child classes must declare the $_valid_shortcodes property using this method.
      * See comments for $_valid_shortcodes property for details on what it is used for.
@@ -173,20 +149,21 @@ abstract class EE_Messages_Base extends EE_Base
     abstract protected function _set_valid_shortcodes();
 
 
-
     /**
      * sets the _existing_admin_settings property can be overridden by child classes.
      * We do this so we only do database calls if needed.
      *
      * @access protected
      * @param string $messenger
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _set_existing_admin_settings($messenger = '')
     {
         /** @var EE_Message_Resource_Manager $Message_Resource_Manager */
         $Message_Resource_Manager = EE_Registry::instance()->load_lib('Message_Resource_Manager');
-        $active_messengers = $Message_Resource_Manager->get_active_messengers_option();
-        $settings_to_use = $active_messengers;
+        $active_messengers        = $Message_Resource_Manager->get_active_messengers_option();
+        $settings_to_use          = $active_messengers;
 
         /**
          * This determines what will be used for the getting the settings.
@@ -198,14 +175,8 @@ abstract class EE_Messages_Base extends EE_Base
             $settings_to_use = $active_messengers[ $messenger ]['settings'][ $messenger . '-message_types' ];
         }
 
-        $this->_existing_admin_settings = isset($settings_to_use[ $this->name ]['settings'])
-            ? $settings_to_use[ $this->name ]['settings']
-            : null;
+        $this->_existing_admin_settings = $settings_to_use[ $this->name ]['settings'] ?? null;
     }
-
-
-
-
 
 
     /**
@@ -215,6 +186,8 @@ abstract class EE_Messages_Base extends EE_Base
      * @access public
      * @param string $messenger
      * @return array          settings
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_existing_admin_settings($messenger = '')
     {
@@ -228,12 +201,10 @@ abstract class EE_Messages_Base extends EE_Base
     }
 
 
-
-
-
-
     /**
-     * This returns the array of valid shortcodes for a message type or messenger as set by the child in the $_valid_shortcode property.
+     * This returns the array of valid shortcodes for a message type or messenger as set by the child in the
+     * $_valid_shortcode property.
+     *
      * @return array   an array of valid shortcodes.
      */
     public function get_valid_shortcodes()
@@ -244,11 +215,8 @@ abstract class EE_Messages_Base extends EE_Base
             $this
         );
         // The below filter applies to ALL messengers and message types so use with care!
-        $valid_shortcodes = apply_filters('FHEE__EE_Messages_Base__get_valid_shortcodes', $valid_shortcodes, $this);
-        return $valid_shortcodes;
+        return apply_filters('FHEE__EE_Messages_Base__get_valid_shortcodes', $valid_shortcodes, $this);
     }
-
-
 
 
     /**
@@ -263,38 +231,35 @@ abstract class EE_Messages_Base extends EE_Base
     }
 
 
-
-
-
     /**
      * this public method accepts a page slug (for an EE_admin page)
      * and will return the response from the child class callback function
      * if that page is registered via the `_admin_registered_page` property set by the child class.
      *
-     * @param string $page the slug of the EE admin page
-     * @param array $actives an array of active message type (or messenger) objects.
-     * @param string $action the page action (to allow for more specific handling - i.e. edit vs. add pages)
-     * @param array $extra This is just an extra argument that can be used
-     *                     to pass additional data for setting up page content.
+     * @param string $page    the slug of the EE admin page
+     * @param array  $actives an array of active message type (or messenger) objects.
+     * @param string $action  the page action (to allow for more specific handling - i.e. edit vs. add pages)
+     * @param array  $extra   This is just an extra argument that can be used
+     *                        to pass additional data for setting up page content.
      * @access protected
      * @return string $content for page.
      */
     protected function _get_admin_page_content($page, $action, $extra, $actives)
     {
         // we can also further refine the context by action (if present).
-        if (!empty($action)) {
+        if (! empty($action)) {
             $page = $page . '_' . $action;
         }
 
-        if (!isset($this->admin_registered_pages[ $page ])) {
+        if (! isset($this->admin_registered_pages[ $page ])) {
             // todo: a place to throw an exception?
             // We need to indicate there is no registered page so this function is not being called correctly.
             return false;
         }
         // k made it here so let's call the method
         $content = call_user_func_array(
-            array( $this, '_get_admin_content_' . $page ),
-            array( $actives, $extra )
+            [$this, '_get_admin_content_' . $page],
+            [$actives, $extra]
         );
         if ($content === false) {
             // todo this needs to be an exception once we've got exceptions in place.
@@ -307,6 +272,7 @@ abstract class EE_Messages_Base extends EE_Base
     /**
      * Allows a message type to specifically exclude template fields for the provided messenger.
      * Filtered so this can be programmatically altered as well.
+     *
      * @param string $messenger_name name of messenger
      * @return array
      */
@@ -314,7 +280,7 @@ abstract class EE_Messages_Base extends EE_Base
     {
         return apply_filters(
             'FHEE__EE_Messages_Base__excludedFieldForMessenger',
-            array(),
+            [],
             $messenger_name,
             $this->name,
             $this

@@ -1,7 +1,5 @@
 <?php
 
-use EventEspresso\core\services\request\sanitizers\AllowedTags;
-
 /**
  * EE_Html_messenger class
  *
@@ -32,7 +30,8 @@ class EE_Html_messenger extends EE_messenger
 
 
     /**
-     * EE_Html_messenger constructor.
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function __construct()
     {
@@ -279,7 +278,7 @@ class EE_Html_messenger extends EE_messenger
                 'format'     => '%s',
             ],
             'content' => '',
-            // left empty b/c it is in the "extra array" but messenger still needs needs to know this is a field.
+            // left empty b/c it is in the "extra array" but messenger still needs to know this is a field.
             'extra'   => [
                 'content' => [
                     'main'                          => [
@@ -315,9 +314,9 @@ class EE_Html_messenger extends EE_messenger
                     'ticket_line_item_no_pms'       => [
                         'input'               => 'textarea',
                         'label'               => '[TICKET_LINE_ITEM_LIST] <br>' . esc_html__(
-                            'Ticket Line Item List with no Price Modifiers',
-                            'event_espresso'
-                        ),
+                                'Ticket Line Item List with no Price Modifiers',
+                                'event_espresso'
+                            ),
                         'type'                => 'string',
                         'required'            => false,
                         'validation'          => true,
@@ -329,9 +328,9 @@ class EE_Html_messenger extends EE_messenger
                     'ticket_line_item_pms'          => [
                         'input'               => 'textarea',
                         'label'               => '[TICKET_LINE_ITEM_LIST] <br>' . esc_html__(
-                            'Ticket Line Item List with Price Modifiers',
-                            'event_espresso'
-                        ),
+                                'Ticket Line Item List with Price Modifiers',
+                                'event_espresso'
+                            ),
                         'type'                => 'string',
                         'required'            => false,
                         'validation'          => true,
@@ -463,7 +462,7 @@ class EE_Html_messenger extends EE_messenger
                 'main',
                 $this->_variation
             ),
-            'main_body' => wpautop(
+            'main_body'  => wpautop(
                 apply_filters(
                     'FHEE__EE_Html_messenger___send_message__main_body',
                     (string) $this->_content,
@@ -475,7 +474,7 @@ class EE_Html_messenger extends EE_messenger
         ];
         $this->_deregister_wp_hooks();
         add_action('wp_enqueue_scripts', [$this, 'enqueue_scripts_styles']);
-        echo ($this->_get_main_template());
+        echo($this->_get_main_template());
         exit();
     }
 
@@ -551,10 +550,10 @@ class EE_Html_messenger extends EE_messenger
             && apply_filters('FHEE_EE_Html_messenger__add_powered_by_credit_link_to_receipt_and_invoice', true)
         ) {
             $content .= EEH_Template::powered_by_event_espresso(
-                'aln-cntr',
-                '',
-                ['utm_content' => 'messages_system']
-            ) . EEH_HTML::div(EEH_HTML::p('&nbsp;'));
+                    'aln-cntr',
+                    '',
+                    ['utm_content' => 'messages_system']
+                ) . EEH_HTML::div(EEH_HTML::p('&nbsp;'));
         }
         return $content;
     }

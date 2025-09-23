@@ -5,11 +5,11 @@
  * EE_Pdf_messenger class
  *
  *
- * @since 4.5.0
+ * @since              4.5.0
  *
  * @package            Event Espresso
- * @subpackage        messages
- * @author            Darren Ethier
+ * @subpackage         messages
+ * @author             Darren Ethier
  */
 class EE_Pdf_messenger extends EE_messenger
 {
@@ -34,17 +34,19 @@ class EE_Pdf_messenger extends EE_messenger
 
 
     /**
-     * @return EE_Pdf_messenger
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function __construct()
     {
         // set properties
-        $this->name = 'pdf';
-        $this->description = esc_html__('This messenger is used for generating a pdf version of the message.', 'event_espresso');
-        $this->label = array(
+        $this->name                = 'pdf';
+        $this->description         =
+            esc_html__('This messenger is used for generating a pdf version of the message.', 'event_espresso');
+        $this->label               = [
             'singular' => esc_html__('PDF', 'event_espresso'),
-            'plural' => esc_html__('PDFs', 'event_espresso')
-        );
+            'plural'   => esc_html__('PDFs', 'event_espresso'),
+        ];
         $this->activate_on_install = true;
 
         parent::__construct();
@@ -53,9 +55,10 @@ class EE_Pdf_messenger extends EE_messenger
 
     /**
      * PDF Messenger desires execution immediately.
-     * @see  parent::send_now() for documentation.
-     * @since  4.9.0
+     *
      * @return bool
+     * @since  4.9.0
+     * @see    parent::send_now() for documentation.
      */
     public function send_now()
     {
@@ -65,9 +68,10 @@ class EE_Pdf_messenger extends EE_messenger
 
     /**
      * HTML Messenger allows an empty to field.
-     * @see parent::allow_empty_to_field() for documentation
-     * @since  4.9.0
+     *
      * @return bool
+     * @since  4.9.0
+     * @see    parent::allow_empty_to_field() for documentation
      */
     public function allow_empty_to_field()
     {
@@ -80,7 +84,7 @@ class EE_Pdf_messenger extends EE_messenger
      */
     protected function _set_admin_pages()
     {
-        $this->admin_registered_pages = array('events_edit' => false);
+        $this->admin_registered_pages = ['events_edit' => false];
     }
 
 
@@ -89,7 +93,7 @@ class EE_Pdf_messenger extends EE_messenger
      */
     protected function _set_valid_shortcodes()
     {
-        $this->_valid_shortcodes = array();
+        $this->_valid_shortcodes = [];
     }
 
 
@@ -98,35 +102,83 @@ class EE_Pdf_messenger extends EE_messenger
      */
     protected function _set_validator_config()
     {
-        $this->_validator_config = array(
-            'subject' => array(
-                'shortcodes' => array('recipient_details', 'organization', 'event', 'ticket', 'venue', 'primary_registration_details', 'event_author', 'email', 'event_meta', 'recipient_list', 'transaction', 'datetime_list', 'datetime')
-            ),
-            'content' => array(
-                'shortcodes' => array('recipient_details', 'organization', 'event', 'ticket', 'venue', 'primary_registration_details', 'event_author', 'email', 'event_meta', 'recipient_list', 'transaction', 'datetime_list', 'datetime')
-            ),
-            'attendee_list' => array(
-                'shortcodes' => array('attendee', 'event_list', 'ticket_list'),
-                'required' => array('[ATTENDEE_LIST]')
-            ),
-            'event_list' => array(
-                'shortcodes' => array('event', 'attendee_list', 'ticket_list', 'venue', 'datetime_list', 'attendee', 'primary_registration_details', 'primary_registration_list', 'event_author', 'recipient_details', 'recipient_list'),
-                'required' => array('[EVENT_LIST]')
-            ),
-            'ticket_list' => array(
-                'shortcodes' => array('event_list', 'attendee_list', 'ticket', 'datetime_list', 'primary_registration_details', 'recipient_details'),
-                'required' => array('[TICKET_LIST]')
-            ),
-            'datetime_list' => array(
-                'shortcodes' => array('datetime'),
-                'required' => array('[DATETIME_LIST]')
-            ),
-        );
+        $this->_validator_config = [
+            'subject'       => [
+                'shortcodes' => [
+                    'recipient_details',
+                    'organization',
+                    'event',
+                    'ticket',
+                    'venue',
+                    'primary_registration_details',
+                    'event_author',
+                    'email',
+                    'event_meta',
+                    'recipient_list',
+                    'transaction',
+                    'datetime_list',
+                    'datetime',
+                ],
+            ],
+            'content'       => [
+                'shortcodes' => [
+                    'recipient_details',
+                    'organization',
+                    'event',
+                    'ticket',
+                    'venue',
+                    'primary_registration_details',
+                    'event_author',
+                    'email',
+                    'event_meta',
+                    'recipient_list',
+                    'transaction',
+                    'datetime_list',
+                    'datetime',
+                ],
+            ],
+            'attendee_list' => [
+                'shortcodes' => ['attendee', 'event_list', 'ticket_list'],
+                'required'   => ['[ATTENDEE_LIST]'],
+            ],
+            'event_list'    => [
+                'shortcodes' => [
+                    'event',
+                    'attendee_list',
+                    'ticket_list',
+                    'venue',
+                    'datetime_list',
+                    'attendee',
+                    'primary_registration_details',
+                    'primary_registration_list',
+                    'event_author',
+                    'recipient_details',
+                    'recipient_list',
+                ],
+                'required'   => ['[EVENT_LIST]'],
+            ],
+            'ticket_list'   => [
+                'shortcodes' => [
+                    'event_list',
+                    'attendee_list',
+                    'ticket',
+                    'datetime_list',
+                    'primary_registration_details',
+                    'recipient_details',
+                ],
+                'required'   => ['[TICKET_LIST]'],
+            ],
+            'datetime_list' => [
+                'shortcodes' => ['datetime'],
+                'required'   => ['[DATETIME_LIST]'],
+            ],
+        ];
     }
 
 
     /**
-     * Takes care of enqueuing any necessary scripts or styles for the page.  A do_action() so message types using this messenger can add their own js.
+     * Takes care of enqueuing any necessary scripts or styles for the page.  A do_action() so message types using this
+     * messenger can add their own js.
      *
      * @return void.
      */
@@ -147,79 +199,80 @@ class EE_Pdf_messenger extends EE_messenger
     protected function _set_template_fields()
     {
         // any extra template fields that are NOT used by the messenger but will get used by a messenger field for shortcode replacement get added to the 'extra' key in an associated array indexed by the messenger field they relate to.  This is important for the Messages_admin to know what fields to display to the user.  Also, notice that the "values" are equal to the field type that messages admin will use to know what kind of field to display. The values ALSO have one index labeled "shortcode".  the values in that array indicate which ACTUAL SHORTCODE (i.e. [SHORTCODE]) is required in order for this extra field to be displayed.  If the required shortcode isn't part of the shortcodes array then the field is not needed and will not be displayed/parsed.
-        $this->_template_fields = array(
-            'subject' => array(
-                'input' => 'text',
-                'label' => esc_html__('Page Title', 'event_espresso'),
-                'type' => 'string',
-                'required' => true,
+        $this->_template_fields = [
+            'subject' => [
+                'input'      => 'text',
+                'label'      => esc_html__('Page Title', 'event_espresso'),
+                'type'       => 'string',
+                'required'   => true,
                 'validation' => true,
-                'css_class' => 'large-text',
-                'format' => '%s'
-            ),
-            'content' => '', // left empty b/c it is in the "extra array" but messenger still needs needs to know this is a field.
-            'extra' => array(
-                'content' => array(
-                    'main' => array(
-                        'input' => 'wp_editor',
-                        'label' => esc_html__('Main Content', 'event_espresso'),
-                        'type' => 'string',
-                        'required' => false,
+                'css_class'  => 'large-text',
+                'format'     => '%s',
+            ],
+            'content' => '',
+            // left empty b/c it is in the "extra array" but messenger still needs needs to know this is a field.
+            'extra'   => [
+                'content' => [
+                    'main'          => [
+                        'input'      => 'wp_editor',
+                        'label'      => esc_html__('Main Content', 'event_espresso'),
+                        'type'       => 'string',
+                        'required'   => false,
                         'validation' => true,
-                        'format' => '%s',
-                        'rows' => '15'
-                    ),
-                    'event_list' => array(
-                        'input' => 'wp_editor',
-                        'label' => '[EVENT_LIST]',
-                        'type' => 'string',
-                        'required' => false,
-                        'validation' => true,
-                        'format' => '%s',
-                        'rows' => '15',
-                        'shortcodes_required' => array('[EVENT_LIST]')
-                    ),
-                    'attendee_list' => array(
-                        'input' => 'textarea',
-                        'label' => '[ATTENDEE_LIST]',
-                        'type' => 'string',
-                        'required' => false,
-                        'validation' => true,
-                        'format' => '%s',
-                        'css_class' => 'large-text',
-                        'rows' => '5',
-                        'shortcodes_required' => array('[ATTENDEE_LIST]')
-                    ),
-                    'ticket_list' => array(
-                        'input' => 'textarea',
-                        'label' => '[TICKET_LIST]',
-                        'type' => 'string',
-                        'required' => false,
-                        'validation' => true,
-                        'format' => '%s',
-                        'css_class' => 'large-text',
-                        'rows' => '10',
-                        'shortcodes_required' => array('[TICKET_LIST]')
-                    ),
-                    'datetime_list' => array(
-                        'input' => 'textarea',
-                        'label' => '[DATETIME_LIST]',
-                        'type' => 'string',
-                        'required' => false,
-                        'validation' => true,
-                        'format' => '%s',
-                        'css_class' => 'large-text',
-                        'rows' => '10',
-                        'shortcodes_required' => array('[DATETIME_LIST]')
-                    )
-                )
-            )
-        );
+                        'format'     => '%s',
+                        'rows'       => '15',
+                    ],
+                    'event_list'    => [
+                        'input'               => 'wp_editor',
+                        'label'               => '[EVENT_LIST]',
+                        'type'                => 'string',
+                        'required'            => false,
+                        'validation'          => true,
+                        'format'              => '%s',
+                        'rows'                => '15',
+                        'shortcodes_required' => ['[EVENT_LIST]'],
+                    ],
+                    'attendee_list' => [
+                        'input'               => 'textarea',
+                        'label'               => '[ATTENDEE_LIST]',
+                        'type'                => 'string',
+                        'required'            => false,
+                        'validation'          => true,
+                        'format'              => '%s',
+                        'css_class'           => 'large-text',
+                        'rows'                => '5',
+                        'shortcodes_required' => ['[ATTENDEE_LIST]'],
+                    ],
+                    'ticket_list'   => [
+                        'input'               => 'textarea',
+                        'label'               => '[TICKET_LIST]',
+                        'type'                => 'string',
+                        'required'            => false,
+                        'validation'          => true,
+                        'format'              => '%s',
+                        'css_class'           => 'large-text',
+                        'rows'                => '10',
+                        'shortcodes_required' => ['[TICKET_LIST]'],
+                    ],
+                    'datetime_list' => [
+                        'input'               => 'textarea',
+                        'label'               => '[DATETIME_LIST]',
+                        'type'                => 'string',
+                        'required'            => false,
+                        'validation'          => true,
+                        'format'              => '%s',
+                        'css_class'           => 'large-text',
+                        'rows'                => '10',
+                        'shortcodes_required' => ['[DATETIME_LIST]'],
+                    ],
+                ],
+            ],
+        ];
     }
 
 
     /**
-     * @see definition of this method in parent
+     * @see   definition of this method in parent
      *
      * @since 4.5.0
      *
@@ -227,18 +280,18 @@ class EE_Pdf_messenger extends EE_messenger
     protected function _set_default_message_types()
     {
         // note currently PDF is only a secondary messenger so it never has any associated message types.
-        $this->_default_message_types = array();
+        $this->_default_message_types = [];
     }
 
 
     /**
-     * @see definition of this method in parent
+     * @see   definition of this method in parent
      *
      * @since 4.5.0
      */
     protected function _set_valid_message_types()
     {
-        $this->_valid_message_types = array();
+        $this->_valid_message_types = [];
     }
 
 
@@ -246,35 +299,58 @@ class EE_Pdf_messenger extends EE_messenger
      * Generates html version of the message content and then sends it to the pdf generator.
      *
      *
+     * @return void
      * @since 4.5.0
      *
-     * @return string.
      */
     protected function _send_message()
     {
-        $this->_template_args = array(
+        $this->_template_args = [
             'page_title' => $this->_subject,
-            'base_css' => $this->get_variation($this->_tmp_pack, $this->_incoming_message_type->name, true, 'base', $this->_variation),
-            'print_css' => $this->get_variation($this->_tmp_pack, $this->_incoming_message_type->name, true, 'print', $this->_variation),
-            'main_css' => $this->get_variation($this->_tmp_pack, $this->_incoming_message_type->name, true, 'main', $this->_variation),
-            'extra_css' => EE_LIBRARIES_URL . 'messages/defaults/default/variations/pdf_base_default.css',
-            'main_body' => apply_filters('FHEE__EE_Pdf_messenger___send_message__main_body', wpautop($this->_content), $this->_content)
-        );
+            'base_css'   => $this->get_variation(
+                $this->_tmp_pack,
+                $this->_incoming_message_type->name,
+                true,
+                'base',
+                $this->_variation
+            ),
+            'print_css'  => $this->get_variation(
+                $this->_tmp_pack,
+                $this->_incoming_message_type->name,
+                true,
+                'print',
+                $this->_variation
+            ),
+            'main_css'   => $this->get_variation(
+                $this->_tmp_pack,
+                $this->_incoming_message_type->name,
+                true,
+                'main',
+                $this->_variation
+            ),
+            'extra_css'  => EE_LIBRARIES_URL . 'messages/defaults/default/variations/pdf_base_default.css',
+            'main_body'  => apply_filters(
+                'FHEE__EE_Pdf_messenger___send_message__main_body',
+                wpautop($this->_content),
+                $this->_content
+            ),
+        ];
         $this->_deregister_wp_hooks();
-        add_action('wp_enqueue_scripts', array($this, 'enqueue_scripts_styles'));
+        add_action('wp_enqueue_scripts', [$this, 'enqueue_scripts_styles']);
         $content = $this->_get_main_template();
-//      die( $content );
         $this->_do_pdf($content);
         exit(0);
     }
 
 
     /**
-     * The purpose of this function is to de register all actions hooked into wp_head and wp_footer so that it doesn't interfere with our templates.  If users want to add any custom styles or scripts they must use the AHEE__EE_Pdf_messenger__enqueue_scripts_styles hook.
-     *
-     * @since 4.5.0
+     * The purpose of this function is to de register all actions hooked into wp_head and wp_footer so that it doesn't
+     * interfere with our templates.  If users want to add any custom styles or scripts they must use the
+     * AHEE__EE_Pdf_messenger__enqueue_scripts_styles hook.
      *
      * @return void
+     * @since 4.5.0
+     *
      */
     protected function _deregister_wp_hooks()
     {
@@ -283,7 +359,7 @@ class EE_Pdf_messenger extends EE_messenger
         remove_all_actions('wp_print_footer_scripts');
         remove_all_actions('wp_enqueue_scripts');
         global $wp_scripts, $wp_styles;
-        $wp_scripts = $wp_styles = array();
+        $wp_scripts = $wp_styles = [];
 
         // just add back in wp_enqueue_scripts and wp_print_footer_scripts cause that's all we want to load.
         add_action('wp_head', 'wp_enqueue_scripts');
@@ -295,10 +371,10 @@ class EE_Pdf_messenger extends EE_messenger
     /**
      * Overwrite parent _get_main_template for pdf purposes.
      *
-     * @since  4.5.0
-     *
      * @param bool $preview
      * @return string
+     * @since  4.5.0
+     *
      */
     protected function _get_main_template($preview = false)
     {
@@ -319,7 +395,7 @@ class EE_Pdf_messenger extends EE_messenger
     protected function _do_pdf($content = '')
     {
         $invoice_name = $this->_subject;
-        $options = new Dompdf\Options();
+        $options      = new Dompdf\Options();
         $options->set('isRemoteEnabled', true);
         $options->set('isJavascriptEnabled', false);
         if (defined('DOMPDF_FONT_DIR')) {
@@ -336,16 +412,16 @@ class EE_Pdf_messenger extends EE_messenger
         $dompdf->loadHtml($content);
         $dompdf->render();
         // forcing the browser to open a download dialog.
-        $dompdf->stream($invoice_name . ".pdf", array('Attachment' => true));
+        $dompdf->stream($invoice_name . ".pdf", ['Attachment' => true]);
     }
 
 
     /**
-     * @return string
+     * @return void
      */
     protected function _preview()
     {
-        return $this->_send_message();
+        $this->_send_message();
     }
 
 

@@ -8,6 +8,7 @@
  * @author      Brent Christensen
  * @method EE_Country get_one(array $query_params = [])
  * @method EE_Country[] get_all(array $query_params = [])
+ * @method EEM_Country|null reset(?string $timezone = '')
  */
 class EEM_Country extends EEM_Base
 {
@@ -24,11 +25,11 @@ class EEM_Country extends EEM_Base
      * Resets the country
      *
      * @param string|null $timezone
-     * @return EEM_Base|EEM_Country|null
+     * @return EEM_Country|null
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public static function reset($timezone = '')
+    public static function reset(?string $timezone = ''): ?EEM_Country
     {
         self::$_active_countries = null;
         self::$_all_countries    = null;

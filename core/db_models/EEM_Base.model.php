@@ -81,7 +81,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     /**
      * @type EE_Table_Base[] $_tables array of EE_Table objects for defining which tables comprise this model.
      */
-    protected $_tables;
+    protected array $_tables;
 
     /**
      * With two levels: top-level has array keys which are database table aliases (ie, keys in _tables)
@@ -90,7 +90,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      *
      * @var EE_Model_Field_Base[][] $_fields
      */
-    protected $_fields;
+    protected array $_fields;
 
     /**
      * array of different relations
@@ -193,7 +193,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      *
      * @var EE_Restriction_Generator_Base[]
      */
-    protected array $_cap_restriction_generators = [];
+    protected ?array $_cap_restriction_generators = [];
 
     /**
      * constants used to categorize capability restrictions on EEM_Base::_caps_restrictions
@@ -230,7 +230,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      *
      * @var string
      */
-    protected $_timezone = '';
+    protected string $_timezone = '';
 
 
     /**
@@ -450,7 +450,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      *
      * @var CustomSelects|null
      */
-    protected $_custom_selections = null;
+    protected ?CustomSelects $_custom_selections = null;
 
     /**
      * key => value Entity Map using  array( EEM_Base::$_model_query_blog_id => array( ID => model object ) )
@@ -458,7 +458,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      *
      * @var array
      */
-    protected $_entity_map = [];
+    protected array $_entity_map = [];
 
     /**
      * @var LoaderInterface|null
@@ -650,9 +650,14 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
         if ($this->_caps_slug === null) {
             $this->_caps_slug = EEH_Inflector::pluralize_and_lower($this->get_this_model_name());
         }
+        $this->_cap_contexts_to_cap_action_map = apply_filters(
+            'FHEE__EEM_Base__cap_contexts_to_cap_action_map',
+            $this->_cap_contexts_to_cap_action_map,
+            $this
+        );
         // initialize the standard cap restriction generators if none were specified by the child constructor
-        if (! empty($this->_cap_restriction_generators)) {
-            foreach ($this->cap_contexts_to_cap_action_map() as $cap_context => $action) {
+        if (is_array($this->_cap_restriction_generators)) {
+            foreach ($this->_cap_contexts_to_cap_action_map as $cap_context => $action) {
                 if (! isset($this->_cap_restriction_generators[ $cap_context ])) {
                     $this->_cap_restriction_generators[ $cap_context ] = apply_filters(
                         'FHEE__EEM_Base___construct__standard_cap_restriction_generator',
@@ -664,7 +669,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
             }
         }
         // if there are cap restriction generators, use them to make the default cap restrictions
-        if (! empty($this->_cap_restriction_generators)) {
+        if (is_array($this->_cap_restriction_generators)) {
             foreach ($this->_cap_restriction_generators as $context => $generator_object) {
                 if (! $generator_object) {
                     continue;
@@ -761,11 +766,11 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      *                                Note this just sends the timezone info to the date time model field objects.
      *                                Default is NULL
      *                                (and will be assumed using the set timezone in the 'timezone_string' wp option)
-     * @return EEM_Base (as in the concrete child class)
+     * @return static::class (as in the concrete child class)
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public static function instance($timezone = '')
+    public static function instance(?string $timezone = '')
     {
         // check if instance of Espresso_model already exists
         if (! static::$_instance instanceof static) {
@@ -803,7 +808,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public static function reset($timezone = '')
+    public static function reset(?string $timezone = ''): ?EEM_Base
     {
         if (! static::$_instance instanceof EEM_Base) {
             return null;
@@ -6722,5 +6727,113 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
     public function restrictedByRelatedModelPassword(): bool
     {
         return $this->model_chain_to_password !== null;
+    }
+
+
+    public function __sleep()
+    {
+        $vars = (array) $this;
+        $remove = [
+            '_custom_selections',
+            '_entity_map',
+        ];
+        foreach ($vars as $key => $val)
+        {
+            // removing null properties improves serialization performance
+            if (is_null($val) || in_array($val, $remove, true)) {
+                unset($vars[$key]);
+            }
+        }
+        return array_keys($vars);
+    }
+
+    private function normalizePropertyName(string $key): string
+{
+    // protected: "\0*\0_property"
+    if (strpos($key, "\0*\0") === 0) {
+        return substr($key, 3);
+    }
+    // private: "\0ClassName\0_property"
+    if (strpos($key, "\0") === 0) {
+        $parts = explode("\0", $key, 3);
+        return $parts[2] ?? $key;
+    }
+    // public property
+    return $key;
+}
+
+
+    public function __unserialize(array $data): void
+    {
+        $array_props = [
+            '_allowed_order_values',
+            '_allowed_query_params',
+            '_between_style_operators',
+            '_cache_foreign_key_to_fields',
+            '_cap_contexts_to_cap_action_map',
+            '_cap_restriction_generators',
+            '_cap_restrictions',
+            '_entity_map',
+            '_fields',
+            '_in_style_operators',
+            '_indexes',
+            '_like_style_operators',
+            '_logic_query_param_keys',
+            '_model_relations',
+            '_null_style_operators',
+            '_tables',
+            '_valid_operators',
+            '_valid_wpdb_data_types',
+            'foreign_key_aliases',
+        ];
+        $nullable_array_props = [
+            '_cached_fields',
+            '_cached_fields_non_db_only',
+        ];
+        $bool_props = [
+            '_ignore_where_strategy',
+            '_wp_core_model',
+        ];
+        $nullable_bool_props = [
+            '_has_primary_key_field',
+            'has_password_field',
+        ];
+        $string_props = [
+            '_model_chain_to_wp_user',
+            '_timezone',
+            'plural_item',
+            'singular_item',
+        ];
+        $nullable_string_props = [
+            'model_chain_to_password',
+        ];
+        $remove = [
+            '_custom_selections',
+            '_entity_map',
+        ];
+        foreach ($data as $key => $val)
+        {
+            $key = $this->normalizePropertyName($key);
+            if (in_array($key, $remove, true)) {
+                continue;
+            }
+            if (property_exists($this, $key)) {
+                if (in_array($key, $array_props, true)) {
+                    $this->{$key} = (array) $val;
+                } elseif (in_array($key, $nullable_array_props, true)) {
+                    $this->{$key} = ! is_null($val) ? (array) $val : null;
+                } elseif (in_array($key, $bool_props, true)) {
+                    $this->{$key} = (bool) $val;
+                } elseif (in_array($key, $nullable_bool_props, true)) {
+                    $this->{$key} = ! is_null($val) ? (bool) $val : null;
+                } elseif (in_array($key, $string_props, true)) {
+                    $this->{$key} = (string) $val;
+                } elseif (in_array($key, $nullable_string_props, true)) {
+                    $this->{$key} = ! is_null($val) ? (string) $val : null;
+                } else {
+                    $this->{$key} = $val;
+                }
+            }
+        }
     }
 }

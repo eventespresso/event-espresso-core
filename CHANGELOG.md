@@ -6,21 +6,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Releases
 
-### [5.0.45]
+### [5.0.46]
 
 #### Added
  - NEW
 
 #### Fixed
- - [Dont send address to PayPal if country code is not  a 2 character ISO 3166 code (#1947)](https://github.com/eventespresso/cafe/pull/1947)
  - FIX
 
 #### Changed
- - [Trailing 0 Removed from Ticket Price Calculator (Barista#1426) (#1940)](https://github.com/eventespresso/cafe/pull/1940)
- - [REM tickets do not fully retain their state when editing (Barista#1368) (#1942)](https://github.com/eventespresso/cafe/pull/1942)
- - [PayPal Commerce - if no country has been set use state iso (#1956)](https://github.com/eventespresso/cafe/pull/1956)
- - [Add Post Variable to Events List Event Class Filter (#1960)](https://github.com/eventespresso/cafe/pull/1960)
- - [Fix readme and changelog (#1959)](https://github.com/eventespresso/cafe/pull/1959)
+ - [Add Serialized Model Protection (#1914)](https://github.com/eventespresso/cafe/pull/1914)
+ - [Improve SessionStartHandler Error Handling (#1967)](https://github.com/eventespresso/cafe/pull/1967)
  - MOD
 
 #### Deprecated
@@ -30,7 +26,29 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - RMV
 
 #### Security
- - SEC
+ - [Fix Model Cap Restriction Generation (#1975)](https://github.com/eventespresso/cafe/pull/1975)
+
+
+
+### [5.0.45]
+
+#### Added
+ - NEW
+
+#### Fixed
+ - [Dont send address to PayPal if country code is not  a 2 character ISO 3166 code (#1947)](https://github.com/eventespresso/cafe/pull/1947)
+
+#### Changed
+ - [Trailing 0 Removed from Ticket Price Calculator (Barista#1426) (#1940)](https://github.com/eventespresso/cafe/pull/1940)
+ - [REM tickets do not fully retain their state when editing (Barista#1368) (#1942)](https://github.com/eventespresso/cafe/pull/1942)
+ - [PayPal Commerce - if no country has been set use state iso (#1956)](https://github.com/eventespresso/cafe/pull/1956)
+ - [Add Post Variable to Events List Event Class Filter (#1960)](https://github.com/eventespresso/cafe/pull/1960)
+ - [Fix readme and changelog (#1959)](https://github.com/eventespresso/cafe/pull/1959)
+ - [Add Serialized Model Protection (#1914)](https://github.com/eventespresso/cafe/pull/1914)
+ - [Improve SessionStartHandler Error Handling (#1967)](https://github.com/eventespresso/cafe/pull/1967)
+
+#### Security
+ - [Fix Model Cap Restriction Generation (#1975)](https://github.com/eventespresso/cafe/pull/1975)
 
 
 
