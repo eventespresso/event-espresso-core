@@ -163,4 +163,77 @@ jQuery(document).ready(function ($) {
 		}
 	);
 
+
+
+
+    function jiggleRequiredTicketMessage($element) {
+        // try to find the ticket-required paragraph within the same ticket row
+        let $row = $element.closest('.tckt-slctr-tbl-tr');
+        if (!$row.length) {
+            $row = $element.closest('tr');
+        }
+        if (!$row.length) {
+            return;
+        }
+        const $msg = $row.find('.ticket-required-pg').first();
+        if (!$msg.length) {
+            return;
+        }
+
+        if (window.espressoAnnounceToScreenReader) {
+            window.espressoAnnounceToScreenReader($msg.text());
+        }
+        // add class and ensure repeated triggers restart the timer.
+        $msg.addClass('look-at-meeeeee');
+        // Remove any existing timeout marker we may have stored and set a new one.
+        // Use data on the element to avoid leaking timers.
+        const existingTimer = $msg.data('lookTimer');
+        if (existingTimer) {
+            clearTimeout(existingTimer);
+        }
+        const timer = setTimeout(function () {
+            $msg.removeClass('look-at-meeeeee');
+            $msg.removeData('lookTimer');
+        }, 2000);
+
+        $msg.data('lookTimer', timer);
+    }
+
+    // Prevent users from unchecking required checkbox qty inputs.
+    // This covers mouse clicks, keyboard activation (spacebar), and a final
+    // safeguard in `change` to re-check if something toggles the input programmatically.
+    // helper to create/show the inline required-message next to the checkbox
+    $(document).on('click', '.ticket-selector-tbl-qty-slct[type="checkbox"][required]', function (e) {
+        // if currently checked, and user tries to uncheck it
+        if ($(this).prop("checked")) {
+            e.preventDefault();
+            e.stopPropagation();
+            // ensure it stays checked
+            $(this).prop("checked", true);
+            jiggleRequiredTicketMessage($checkbox);
+            return false;
+        }
+    });
+
+    // Keyboard support: prevent spacebar toggling off a required checkbox.
+    $(document).on('keydown', '.ticket-selector-tbl-qty-slct[type="checkbox"][required]', function (e) {
+        // spacebar (32) or ' ' in modern browsers
+        if (e.which === 32 || e.key === ' ') {
+            if ($(this).prop("checked")) {
+                e.preventDefault();
+                e.stopPropagation();
+                $(this).prop("checked", true);
+                jiggleRequiredTicketMessage($(this));
+            }
+        }
+    });
+
+    // Final safeguard: if the input was toggled programmatically, restore the checked state.
+    $(document).on('change', '.ticket-selector-tbl-qty-slct[type="checkbox"][required]', function () {
+        if (!$(this).prop("checked")) {
+            $(this).prop("checked", true);
+            jiggleRequiredTicketMessage($(this));
+        }
+    });
+
 });

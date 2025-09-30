@@ -174,11 +174,11 @@ jQuery( document ).ready( function ( $ ) {
 
 
 	window.do_before_admin_page_ajax = function do_before_admin_page_ajax() {
-		// stop any message alerts that are in progress
-		$(existing_message).stop().hide();
-		// spinny things pacify the masses
-		$('#espresso-ajax-loading').eeCenter('fixed').show();
-	};
+        // stop any message alerts that are in progress
+        $(existing_message).stop().hide();
+        // spinny things pacify the masses
+        $("#espresso-ajax-loading").eeCenter("fixed").show();
+    };
 
 
 
@@ -537,14 +537,24 @@ jQuery( document ).ready( function ( $ ) {
     };
 
 
-
     // display a "you need to enable cookies" message if cookies are disabled in the browser settings
     if (! navigator.cookieEnabled) {
     	$('#ee-cookies-not-set-msg').removeClass('hidden');
     }
 
 
-
+    window.espressoAnnounceToScreenReader = function (text) {
+        const $ariaLive = $('#espresso-aria-live-region');
+        const announcement = text.trim();
+        if (! $ariaLive.length || announcement === '') {
+            return;
+        }
+        // clear first to improve announcement reliability
+        $ariaLive.text('');
+        setTimeout(function () {
+            $ariaLive.text(announcement);
+        }, 50);
+    }
 });
 
 

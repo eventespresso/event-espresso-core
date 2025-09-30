@@ -7,6 +7,7 @@ use EE_Event;
 use EE_Tax_Config;
 use EE_Ticket;
 use EE_Ticket_Selector_Config;
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
 use ReflectionException;
 
 /**
@@ -124,6 +125,7 @@ class TicketSelectorStandard extends TicketSelector
                 $required_ticket_sold_out = $ticket_selector_row->getRequiredTicketSoldOut();
             }
         }
+        $this->template_args['allowed_form_tags']                = AllowedTags::getWithFormTags();
         $this->template_args['row']                              = $this->ticket_rows;
         $this->template_args['ticket_row_html']                  = $all_ticket_rows_html;
         $this->template_args['taxable_tickets']                  = $taxable_tickets;

@@ -6,34 +6,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Releases
 
-### [5.0.46]
-
-#### Added
- - NEW
+### [5.0.47]
 
 #### Fixed
- - FIX
+ - [Dont Verify Session Save Path If Handler Does Not Use The File System (#1984)](https://github.com/eventespresso/cafe/pull/1984)
+ - [Fix Session Save Path With open_basedir Restrictions (#1987)](https://github.com/eventespresso/cafe/pull/1987)
+ - [Dont Allow Bypass of Ticket Selector Required Checkbox (#1989)](https://github.com/eventespresso/cafe/pull/1989)
+
+#### Changed
+ - [Mark Mailchimp as Incompatible Addon (#1982)](https://github.com/eventespresso/cafe/pull/1982)
+
+
+
+### [5.0.46]
 
 #### Changed
  - [Add Serialized Model Protection (#1914)](https://github.com/eventespresso/cafe/pull/1914)
  - [Improve SessionStartHandler Error Handling (#1967)](https://github.com/eventespresso/cafe/pull/1967)
- - MOD
-
-#### Deprecated
- - DEP
-
-#### Removed
- - RMV
-
-#### Security
  - [Fix Model Cap Restriction Generation (#1975)](https://github.com/eventespresso/cafe/pull/1975)
 
 
 
 ### [5.0.45]
-
-#### Added
- - NEW
 
 #### Fixed
  - [Dont send address to PayPal if country code is not  a 2 character ISO 3166 code (#1947)](https://github.com/eventespresso/cafe/pull/1947)

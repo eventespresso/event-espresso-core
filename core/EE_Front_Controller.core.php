@@ -5,6 +5,7 @@ use EventEspresso\core\domain\services\event\FilterNextPreviousEventPostQuery;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\notifications\AriaLiveAnnouncer;
 use EventEspresso\core\services\request\CurrentPage;
 use EventEspresso\core\services\request\sanitizers\AllowedTags;
 use EventEspresso\core\services\shortcodes\LegacyShortcodesManager;
@@ -69,25 +70,26 @@ final class EE_Front_Controller
         $this->Module_Request_Router = $Module_Request_Router;
         // load other resources and begin to actually run shortcodes and modules
         // analyse the incoming WP request
-        add_action('parse_request', array($this, 'get_request'), 1, 1);
+        add_action('parse_request', [$this, 'get_request'], 1);
         // process request with module factory
-        add_action('pre_get_posts', array($this, 'pre_get_posts'), 10, 1);
+        add_action('pre_get_posts', [$this, 'pre_get_posts']);
         // before headers sent
-        add_action('wp', array($this, 'wp'), 5);
+        add_action('wp', [$this, 'wp'], 5);
         // primarily used to process any content shortcodes
-        add_action('template_redirect', array($this, 'templateRedirect'), 999);
+        add_action('template_redirect', [$this, 'templateRedirect'], 999);
         // header
-        add_action('wp_head', array($this, 'header_meta_tag'), 5);
-        add_action('wp_print_scripts', array($this, 'wp_print_scripts'), 10);
-        add_filter('template_include', array($this, 'template_include'), 1);
+        add_action('wp_head', [$this, 'header_meta_tag'], 5);
+        add_action('wp_print_scripts', [$this, 'wp_print_scripts']);
+        add_filter('template_include', [$this, 'template_include'], 1);
         // display errors
-        add_action('loop_start', array($this, 'display_errors'), 2);
+        add_action('loop_start', [$this, 'display_errors'], 2);
         // the content
         // add_filter( 'the_content', array( $this, 'the_content' ), 5, 1 );
         // exclude our private cpt comments
-        add_filter('comments_clauses', array($this, 'filter_wp_comments'), 10, 1);
-        // make sure any ajax requests will respect the url schema when requests are made against admin-ajax.php (http:// or https://)
-        add_filter('admin_url', array($this, 'maybe_force_admin_ajax_ssl'), 200, 1);
+        add_filter('comments_clauses', [$this, 'filter_wp_comments']);
+        // make sure any ajax requests will respect the url schema
+        // when requests are made against admin-ajax.php (http:// or https://)
+        add_filter('admin_url', [$this, 'maybe_force_admin_ajax_ssl'], 200);
         // action hook EE
         do_action('AHEE__EE_Front_Controller__construct__done', $this);
     }
@@ -134,7 +136,7 @@ final class EE_Front_Controller
      * This simply makes sure that any "private" EE CPTs do not have their comments show up in any wp comment
      * widgets/queries done on frontend
      *
-     * @param  array $clauses array of comment clauses setup by WP_Comment_Query
+     * @param array $clauses array of comment clauses setup by WP_Comment_Query
      * @return array array of comment clauses with modifications.
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
@@ -148,7 +150,7 @@ final class EE_Front_Controller
             $custom_post_types = LoaderFactory::getLoader()->getShared(
                 'EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions'
             );
-            $cpts = $custom_post_types->getPrivateCustomPostTypes();
+            $cpts              = $custom_post_types->getPrivateCustomPostTypes();
             foreach ($cpts as $cpt => $details) {
                 $clauses['where'] .= $wpdb->prepare(" AND $wpdb->posts.post_type != %s", $cpt);
             }
@@ -160,7 +162,7 @@ final class EE_Front_Controller
     /**
      * this just makes sure that if the site is using ssl that we force that for any admin ajax calls from frontend
      *
-     * @param  string $url incoming url
+     * @param string $url incoming url
      * @return string         final assembled url
      */
     public function maybe_force_admin_ajax_ssl($url)
@@ -258,6 +260,7 @@ final class EE_Front_Controller
      */
     public function wp()
     {
+        AriaLiveAnnouncer::setHooks();
     }
 
 
@@ -283,8 +286,8 @@ final class EE_Front_Controller
         // if we are already loading assets then just move along, otherwise check for widgets
         $load_assets = $load_assets || $this->espresso_widgets_in_active_sidebars();
         if ($load_assets) {
-            add_action('wp_enqueue_scripts', array($this, 'enqueueStyle'), 10);
-            add_action('wp_enqueue_scripts', array($this, 'enqueueScripts'), 10);
+            add_action('wp_enqueue_scripts', [$this, 'enqueueStyle']);
+            add_action('wp_enqueue_scripts', [$this, 'enqueueScripts']);
         }
 
         if (is_singular(EspressoPostType::EVENTS)) {
@@ -304,7 +307,7 @@ final class EE_Front_Controller
      */
     private function espresso_widgets_in_active_sidebars()
     {
-        $espresso_widgets = array();
+        $espresso_widgets = [];
         foreach ($this->Registry->widgets as $widget_class => $widget) {
             $id_base = EspressoWidget::getIdBase($widget_class);
             if (is_active_widget(false, false, $id_base)) {
@@ -389,7 +392,6 @@ final class EE_Front_Controller
     }
 
 
-
     /***********************************************        WP_FOOTER         ***********************************************/
 
 
@@ -425,7 +427,7 @@ final class EE_Front_Controller
             } else {
                 // block enabled themes run their query loop before headers are sent
                 // so we need to add our notices onto the beginning of the content
-                add_filter('the_content', [$this, 'prependNotices'], 1, 1);
+                add_filter('the_content', [$this, 'prependNotices'], 1);
             }
         }
         do_action('AHEE__EE_Front_Controller__display_errors__end');
@@ -476,9 +478,9 @@ final class EE_Front_Controller
             $this->_template_path = ! empty($this->_template_path)
                 ? basename($this->_template_path)
                 : basename((string) $template_include_path);
-            $template_path = EEH_Template::locate_template($this->_template_path, [], false);
+            $template_path        = EEH_Template::locate_template($this->_template_path, [], false);
             $this->_template_path = ! empty($template_path) ? $template_path : $template_include_path;
-            $this->_template = basename($this->_template_path);
+            $this->_template      = basename($this->_template_path);
             return $this->_template_path;
         }
         return $template_include_path;
@@ -493,7 +495,6 @@ final class EE_Front_Controller
     {
         return $with_path ? $this->_template_path : $this->_template;
     }
-
 
     /**
      * @param string $shortcode_class

@@ -42,6 +42,24 @@ class SessionStartHandler
 
     protected RequestInterface $request;
 
+    /**
+     * @var string
+     * @since 5.0.47
+     */
+    private string $open_basedir = '';
+
+    /**
+     * @var string
+     * @since 5.0.47
+     */
+    private string $save_handler = '';
+
+    /**
+     * @var string
+     * @since 5.0.47
+     */
+    private string $save_path = '';
+
 
     /**
      * StartSession constructor.
@@ -71,8 +89,9 @@ class SessionStartHandler
             $previous_handler = set_error_handler([$this, 'customErrorHandler'], E_WARNING);
 
             try {
+                $this->initializeSessionVars();
                 // starts a new session if one doesn't already exist, or re-initiates an existing one
-                if ($this->hasKnownCustomSessionSaveHandler()) {
+                if ($this->hasCustomSessionSaveHandler()) {
                     $this->checkCustomSessionSaveHandler();
                 } else {
                     $this->verifySessionSavePath();
@@ -103,10 +122,22 @@ class SessionStartHandler
 
     /**
      * @return void
+     * @since 5.0.47
+     */
+    private function initializeSessionVars(): void
+    {
+        $this->open_basedir = ini_get('open_basedir') ?: '';
+        $this->save_handler = strtolower((string) ini_get('session.save_handler'));
+        $this->save_path    = session_save_path() ?: '';
+    }
+
+
+    /**
+     * @return void
      * @throws Throwable
      * @since 5.0.46
      */
-    public function sessionStart(): void
+    private function sessionStart(): void
     {
         session_start();
         session_write_close();
@@ -120,25 +151,32 @@ class SessionStartHandler
      */
     private function verifySessionSavePath(): void
     {
-        $session_save_path = session_save_path() ?: '';
-        // Normalize "N;/path" style values
-        if (strpos($session_save_path, ';') !== false) {
-            $parts             = explode(';', $session_save_path);
-            $session_save_path = end($parts);
+        if (WP_DEBUG) {
+            error_log(
+                sprintf(
+                    "[SessionStartHandler] diagnostic: save_handler=%s save_path=%s open_basedir=%s",
+                    $this->save_handler,
+                    $this->save_path,
+                    $this->open_basedir ?: '(none)'
+                )
+            );
         }
-        $session_save_path = trim((string) $session_save_path);
-        if ($session_save_path === '') {
-            // fall back to a sane temp dir if PHP reports no explicit session_save_path
-            $session_save_path = sys_get_temp_dir();
+        // Only validate session save path as a filesystem directory when PHP is
+        // configured to use the 'files' session save handler. Other handlers
+        // (memcache, memcached, redis, user, etc.) use different transport
+        // formats (hosts, sockets, URIs) and are not filesystem directories.
+        if ($this->save_handler !== 'files') {
+            // assume the configured handler knows how to interpret the save path
+            // (e.g. "unix:///run/memcached/memcached.sock", "127.0.0.1:11211", etc.)
+            return;
         }
-
-        // use the real filesystem path
-        $real_path = realpath($session_save_path) ?: $session_save_path;
-        if (! is_dir($real_path) || ! is_writable($real_path)) {
+        $this->save_path = $this->normalizeSessionSavePath($this->save_path);
+        // Use @-suppressed checks to avoid PHP warnings while validating.
+        if (! @is_dir($this->save_path) || ! @is_writable($this->save_path)) {
             throw new ErrorException(
                 sprintf(
                     esc_html__('Invalid or missing session save path: %s', 'event_espresso'),
-                    $session_save_path
+                    $this->save_path
                 ),
                 0,
                 E_WARNING,
@@ -150,14 +188,101 @@ class SessionStartHandler
 
 
     /**
+     * @param string $session_save_path
+     * @return string
+     * @throws ErrorException
+     * @since 5.0.47
+     */
+    private function normalizeSessionSavePath(string $session_save_path): string
+    {
+        // Normalize "N;/path" style values
+        if (strpos($session_save_path, ';') !== false) {
+            $parts             = explode(';', $session_save_path);
+            $session_save_path = end($parts);
+        }
+        $session_save_path = trim((string) $session_save_path);
+        if ($session_save_path === '') {
+            // fall back to a sane temp dir if PHP reports no explicit session_save_path
+            $session_save_path = sys_get_temp_dir();
+        }
+        // normalize trailing separators
+        $session_save_path = rtrim($session_save_path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+        // For 'files' handler we expect a writable filesystem directory.
+        // However, calling realpath() or is_dir() on paths outside of PHP's
+        // configured open_basedir can trigger warnings.
+        // Handle that case explicitly by checking open_basedir first
+        // and avoiding functions that would emit warnings.
+        if ($this->open_basedir !== '') {
+            $session_save_path = $this->checkPathsOutsideBaseDir($session_save_path);
+        } else {
+            // No open_basedir restriction; realpath() is safe to use and gives
+            // us a canonical path for the directory checks.
+            $session_save_path = @realpath($session_save_path) ?: $session_save_path;
+        }
+        return $session_save_path;
+    }
+
+
+    /**
+     * @param string $session_save_path
+     * @return string
+     * @throws ErrorException
+     * @since 5.0.47
+     */
+    private function checkPathsOutsideBaseDir(string $session_save_path): string
+    {
+        // open_basedir is set; check whether the configured session path
+        // appears to be within one of the allowed paths.
+        $allowed_paths = array_filter(array_map('trim', explode(PATH_SEPARATOR, $this->open_basedir)));
+        $allowed       = false;
+        foreach ($allowed_paths as $allowed_path) {
+            if ($allowed_path === '') {
+                continue;
+            }
+            // normalize trailing separators for comparison
+            $allowed_path_norm = rtrim($allowed_path, DIRECTORY_SEPARATOR) . DIRECTORY_SEPARATOR;
+            // compare start of paths for a match
+            if (strncmp($session_save_path, $allowed_path_norm, strlen($allowed_path_norm)) === 0) {
+                $allowed = true;
+                break;
+            }
+        }
+        if ($allowed) {
+            return $session_save_path;
+        }
+        error_log(
+            sprintf(
+                "[SessionStartHandler] session_save_path outside open_basedir: save_path=%s open_basedir=%s",
+                $session_save_path,
+                $this->open_basedir
+            )
+        );
+        throw new ErrorException(
+            sprintf(
+                esc_html__(
+                    'Session save path "%s" is outside PHP open_basedir allowed paths: %s. Ask your server admin to move session.save_path inside open_basedir or update open_basedir',
+                    'event_espresso'
+                ),
+                $session_save_path,
+                $this->open_basedir
+            ),
+            0,
+            E_WARNING,
+            __FILE__,
+            __LINE__
+        );
+    }
+
+
+    /**
      * Returns `true` if the 'session.save_handler' ini setting matches a known custom handler
      *
      * @return bool
      * @since 4.9.68.p
      */
-    private function hasKnownCustomSessionSaveHandler(): bool
+    private function hasCustomSessionSaveHandler(): bool
     {
-        return strtolower((string) ini_get('session.save_handler')) === 'user';
+        return $this->save_handler === 'user';
     }
 
 

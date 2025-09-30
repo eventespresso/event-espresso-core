@@ -26,6 +26,13 @@ class IncompatibleAddonHandler
             'load_espresso_automated_upcoming_event_notification',
             'EE_AUTOMATED_UPCOMING_EVENT_NOTIFICATION_PLUGIN_FILE'
         );
+        $this->deactivateIncompatibleAddon(
+            'Mailchimp Integration',
+            'ESPRESSO_MAILCHIMP_VERSION',
+            '2.5.1.rc.009',
+            'load_ee4_espresso_mailchimp_class',
+            'ESPRESSO_MAILCHIMP_MAIN_FILE'
+        );
         // $this->deactivateIncompatibleAddon(
         //     'WP Users Integration',
         //     'EE_WPUSERS_VERSION',

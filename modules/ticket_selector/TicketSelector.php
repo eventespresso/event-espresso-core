@@ -4,6 +4,7 @@ namespace EventEspresso\modules\ticket_selector;
 
 use EE_Error;
 use EE_Event;
+use EE_Registry;
 use EE_Ticket;
 use EEH_Template;
 use EEH_URL;
@@ -60,6 +61,10 @@ abstract class TicketSelector
         $this->max_attendees = $max_attendees;
         $this->template_args = $template_args;
         $this->addTemplateArgs();
+        EE_Registry::$i18n_js_strings['required_checkbox_notice'] = esc_html__(
+            'This ticket is required and must be selected',
+            'event_espresso'
+        );
     }
 
 

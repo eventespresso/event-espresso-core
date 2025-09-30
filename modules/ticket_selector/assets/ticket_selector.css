@@ -443,6 +443,50 @@
 }
 
 
+.look-at-meeeeee {
+	animation: shakey-shakey 1000ms infinite; /*ease-in-out*/
+}
+/* Respect users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .look-at-meeeeee {
+        animation: none !important;
+    }
+}
+
+@keyframes shakey-shakey {
+    0% {
+        transform: translateX(0);
+    }
+    2.5% {
+        transform: translateX(.25rem);
+    }
+    5% {
+        transform: translateX(0);
+    }
+    7.5% {
+        transform: translateX(-.25rem);
+    }
+    10% {
+        transform: translateX(0);
+    }
+    12.5% {
+        transform: translateX(.25rem);
+    }
+    15% {
+        transform: translateX(0);
+    }
+    17.5% {
+        transform: translateX(-.25rem);
+    }
+    20% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(0);
+    }
+}
+
+
 @media (max-width: 600px) {
 
 	.tckt-slctr-tkt-details-tbl {

@@ -30,6 +30,7 @@ class TicketSelectorRowSimple extends TicketSelectorRow
     /**
      * @return bool|string
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function getTicketDescription()
     {
