@@ -96,7 +96,7 @@ abstract class EE_Messages_Validator extends EE_Base
      */
     public function __construct($fields, $context)
     {
-        // check that _m_name and _mt_name have been set by child class otherwise we get out.
+        // checks that child class has set _m_name and _mt_name, otherwise we get out.
         if (empty($this->_m_name) || empty($this->_mt_name)) {
             throw new EE_Error(
                 esc_html__(
@@ -365,7 +365,8 @@ abstract class EE_Messages_Validator extends EE_Base
                 isset($this->_validators[ $field ]['shortcodes'])
                 && ! empty($this->_validators[ $field ]['shortcodes'])
             ) {
-                $invalid_shortcodes = $this->_invalid_shortcodes((string) $value, (array) $this->_validators[ $field ]['shortcodes']);
+                $valid_shortcodes   = array_keys((array) $this->_validators[ $field ]['shortcodes']);
+                $invalid_shortcodes = $this->findInvalidShortcodes((string) $value, $valid_shortcodes);
                 // if true then that means there is a returned error message
                 // that we'll need to add to the _errors array for this field.
                 if ($invalid_shortcodes) {
@@ -474,35 +475,42 @@ abstract class EE_Messages_Validator extends EE_Base
      * @param string $value            string to evaluate
      * @param array  $valid_shortcodes array of shortcodes that are acceptable.
      * @return bool|string  return either a list of invalid shortcodes OR false if the shortcodes validate.
+     * @deprecated 5.0.48
      */
     protected function _invalid_shortcodes(string $value, array $valid_shortcodes)
     {
-        // first we need to go through the string and get the shortcodes in the string
-        preg_match_all('/(\[.+?\])/', $value, $matches);
-        $incoming_shortcodes = $matches[0];
+        return $this->findInvalidShortcodes($value, $valid_shortcodes) ?: false;
+    }
 
+
+    /**
+     * Validates a string against a list of accepted shortcodes
+     * This function takes in an array of shortcodes
+     * and makes sure that the given string ONLY contains shortcodes in that array.
+     *
+     * @param string $incoming_text    string to evaluate
+     * @param array  $valid_shortcodes array of shortcodes that are acceptable.
+     * @return string  return either a list of invalid shortcodes OR false if the shortcodes validate.
+     */
+    protected function findInvalidShortcodes(string $incoming_text, array $valid_shortcodes): string
+    {
+        // first we need to go through the string and get ALL the shortcodes in the string
+        // matches the opening [ plus the shortcode name, but nothing else
+        // examples:
+        //  [RECIPIENT_LNAME] matches as [RECIPIENT_LNAME
+        //  [RECEIPT_URL download=true] matches as [RECEIPT_URL
+        //  [PAYMENT_LINK_IF_NEEDED_* custom_text='pay me now man!'] matches as [PAYMENT_LINK_IF_NEEDED_*
+        preg_match_all(EE_Shortcodes::REGEX_SHORTCODE_NAME_ONLY, $incoming_text, $matches);
+        $shortcodes_in_text = $matches[0];
+        // now all we need to do is add the closing ] to each shortcode to make them "valid"
+        $shortcodes_in_text = array_map(fn($shortcode) => rtrim($shortcode) . ']', $shortcodes_in_text);
         // get a diff of the shortcodes in the string vs the valid shortcodes
-        $diff = array_diff($incoming_shortcodes, array_keys($valid_shortcodes));
-
-        // we need to account for custom codes so let's loop through the diff and remove any of those type of codes
-        foreach ($diff as $ind => $code) {
-            if (preg_match('/(\[[A-Za-z0-9\_]+_\*)/', $code)) {
-                // strip the shortcode so we just have the BASE string (i.e. [ANSWER_*] )
-                $dynamic_sc = preg_replace('/(_\*+.+)/', '_*]', $code);
-                // does this exist in the $valid_shortcodes?  If so then unset.
-                if (isset($valid_shortcodes[ $dynamic_sc ])) {
-                    unset($diff[ $ind ]);
-                }
-            }
+        $invalid_shortcodes = array_diff($shortcodes_in_text, $valid_shortcodes);
+        if (empty($invalid_shortcodes)) {
+            return '';
         }
-
-        if (empty($diff)) {
-            return false;
-        } //there is no diff, we have no invalid shortcodes, so return
-
         // made it here? then let's assemble the error message
-        $invalid_shortcodes = implode('</strong>,<strong>', $diff);
-        return '<strong>' . $invalid_shortcodes . '</strong>';
+        return '<strong>' . implode('</strong>,<strong>', $invalid_shortcodes) . '</strong>';
     }
 
 
@@ -526,10 +534,10 @@ abstract class EE_Messages_Validator extends EE_Base
         // If there are shortcodes and then later we find that there were no other valid emails
         // but the field isn't empty...
         // that means we've got extra commas that were left after stripping out shortcodes so probably still valid.
-        $has_shortcodes = preg_match('/(\[.+?\])/', $value);
+        $has_shortcodes = preg_match(EE_Shortcodes::REGEX_SHORTCODE_FULL, $value);
 
         // first we need to strip out all the shortcodes!
-        $value = preg_replace('/(\[.+?\])/', '', $value);
+        $value = preg_replace(EE_Shortcodes::REGEX_SHORTCODE_FULL, '', $value);
 
         // if original value is not empty and new value is, then we've parsed out a shortcode
         // and we now have an empty string which DOES validate.
@@ -544,8 +552,7 @@ abstract class EE_Messages_Validator extends EE_Base
         // trim any commas from beginning and end of string ( after whitespace trimmed );
         $value = trim(trim($value), ',');
 
-
-        // next we need to split up the string if its comma delimited.
+        // next we need to split up the string if it's comma-delimited.
         $emails = explode(',', $value);
         $empty  = false; // used to indicate that there is an empty comma.
         // now let's loop through the emails and do our checks

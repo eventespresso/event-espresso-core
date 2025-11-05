@@ -12,7 +12,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
 ?>
 
 <h3><?php esc_html_e('Transaction Details', 'event_espresso'); ?></h3>
-<?php do_action('AHEE__thank_you_page_transaction_details_template__after_heading'); ?>
+<?php do_action('AHEE__thank_you_page_transaction_details_template__after_heading', $transaction); ?>
 
 <div id="espresso-thank-you-page-transaction-details-dv">
     <table class='ee-table'>
@@ -77,6 +77,6 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
     <?php } ?>
 
-    <?php do_action('AHEE__thank_you_page_transaction_details_template__after_transaction_details'); ?>
+    <?php do_action('AHEE__thank_you_page_transaction_details_template__after_transaction_details', $transaction); ?>
 
 </div>

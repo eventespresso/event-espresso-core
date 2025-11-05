@@ -2,10 +2,13 @@
 
 namespace EventEspresso\core\domain\entities\routing\handlers\admin;
 
+use EventEspresso\core\domain\Domain;
 use EventEspresso\core\domain\services\admin\events\editor\ui\DuplicateEventButton;
 use EventEspresso\core\domain\services\admin\events\editor\ui\EventShortlinkButton;
 use EventEspresso\core\domain\services\admin\events\editor\ui\PreviewButton;
 use EventEspresso\core\domain\services\admin\events\editor\ui\TicketSelectorShortcodeButton;
+use EventEspresso\core\domain\services\capabilities\FeatureFlag;
+use EventEspresso\core\domain\services\capabilities\FeatureFlags;
 use EventEspresso\core\services\routing\Route;
 
 /**
@@ -46,8 +49,11 @@ class NonEspressoAdminAjax extends Route
      */
     protected function requestHandler(): bool
     {
-        $domain = $this->loader->getShared('EventEspresso\core\domain\Domain');
-        if ($domain->isCaffeinated()) {
+        /** @var Domain $domain */
+        $domain  = $this->loader->getShared(Domain::class);
+        /** @var FeatureFlags $feature */
+        $feature = $this->loader->getShared(FeatureFlags::class);
+        if ($domain->isCaffeinated() && $feature->allowed(FeatureFlag::USE_ADVANCED_EVENT_EDITOR)) {
             // Add duplicate button
             add_filter(
                 'get_sample_permalink_html',

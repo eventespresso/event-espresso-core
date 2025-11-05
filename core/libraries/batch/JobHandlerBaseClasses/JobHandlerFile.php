@@ -156,7 +156,7 @@ abstract class JobHandlerFile extends JobHandler
     {
         return apply_filters(
             'FHEE__EventEspressoBatchRequest\JobHandlerBaseClasses\JobHandlerFile__get_base_url',
-            EVENT_ESPRESSO_UPLOAD_URL
+            is_ssl() ? str_replace('http://', 'https://', EVENT_ESPRESSO_UPLOAD_URL) : EVENT_ESPRESSO_UPLOAD_URL
         );
     }
 }

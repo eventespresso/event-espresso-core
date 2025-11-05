@@ -5835,29 +5835,46 @@ body.espresso-admin #contextual-help-wrap strong {
     width: var(--ee-font-size-2xl);
 }
 
+.espresso-admin.wp-core-ui .dashicons.dashicons--tiny,
+.espresso-admin.wp-core-ui .dashicons.dashicons--tiny:before,
+.espresso-admin.wp-core-ui .button--tiny:not(.button--icon-only) .dashicons,
+.espresso-admin.wp-core-ui .button--tiny:not(.button--icon-only) .dashicons:before {
+    font-size: var(--ee-font-size-default);
+    height: var(--ee-font-size-default);
+    width: var(--ee-font-size-default);
+}
+
 .espresso-admin.wp-core-ui .dashicons.dashicons--small,
-.espresso-admin.wp-core-ui .dashicons.dashicons--small:before {
+.espresso-admin.wp-core-ui .dashicons.dashicons--small:before,
+.espresso-admin.wp-core-ui .button--small:not(.button--icon-only) .dashicons,
+.espresso-admin.wp-core-ui .button--small:not(.button--icon-only) .dashicons:before {
     font-size: var(--ee-font-size-bigger);
     height: var(--ee-font-size-bigger);
     width: var(--ee-font-size-bigger);
 }
 
 .espresso-admin.wp-core-ui .dashicons.dashicons--big,
-.espresso-admin.wp-core-ui .dashicons.dashicons--big:before {
+.espresso-admin.wp-core-ui .dashicons.dashicons--big:before,
+.espresso-admin.wp-core-ui .button--big:not(.button--icon-only) .dashicons,
+.espresso-admin.wp-core-ui .button--big:not(.button--icon-only) .dashicons:before {
     font-size: var(--ee-font-size-4xl);
     height: var(--ee-font-size-4xl);
     width: var(--ee-font-size-4xl);
 }
 
 .espresso-admin.wp-core-ui .dashicons.dashicons--bigger,
-.espresso-admin.wp-core-ui .dashicons.dashicons--bigger:before {
+.espresso-admin.wp-core-ui .dashicons.dashicons--bigger:before,
+.espresso-admin.wp-core-ui .button--big:not(.button--icon-only) .dashicons,
+.espresso-admin.wp-core-ui .button--big:not(.button--icon-only) .dashicons:before {
     font-size: var(--ee-font-size-7xl);
     height: var(--ee-font-size-7xl);
     width: var(--ee-font-size-7xl);
 }
 
 .espresso-admin.wp-core-ui .dashicons.dashicons--huge,
-.espresso-admin.wp-core-ui .dashicons.dashicons--huge:before {
+.espresso-admin.wp-core-ui .dashicons.dashicons--huge:before,
+.espresso-admin.wp-core-ui .button--big:not(.button--icon-only) .dashicons,
+.espresso-admin.wp-core-ui .button--big:not(.button--icon-only) .dashicons:before {
     font-size: var(--ee-font-size-9xl);
     height: var(--ee-font-size-9xl);
     width: var(--ee-font-size-9xl);

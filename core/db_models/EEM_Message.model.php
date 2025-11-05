@@ -52,9 +52,8 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
 
 
     /**
-     * indicates an attempt was a made to send this message
-     * at the scheduled time, but it failed at the time modified.  This differs from MDO status in that it will ALWAYS
-     * appear to the end user.
+     * Indicates an attempt was a made to send this message at the scheduled time, but it failed at the time modified.
+     * This differs from MDO status in that it will ALWAYS appear to the end user.
      */
     const status_failed = 'MFL';
 
@@ -66,8 +65,8 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
 
 
     /**
-     * indicates the message has been flagged for generation but has not been generated yet.  Messages always start as
-     * this status when added to the queue.
+     * Indicates the message has been flagged for generation but has not been generated yet.
+     * Messages always start as this status when added to the queue.
      */
     const status_incomplete = 'MIC';
 
@@ -102,11 +101,12 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
     /**
      * Private constructor to prevent direct creation.
      *
-     * @param string|null $timezone string representing the timezone we want to set for returned Date Time Strings (and
-     *                              any incoming timezone data that gets saved).  Note this just sends the timezone
+     * @param string|null $timezone string representing the timezone we want to set for returned Date Time Strings
+     *                              (and any incoming timezone data that gets saved). Note this just sends the timezone
      *                              info to the date time model field objects.  Default is null (and will be assumed
      *                              using the set timezone in the 'timezone_string' wp option)
      * @throws EE_Error
+     * @throws Exception
      */
     protected function __construct(?string $timezone = '')
     {
@@ -254,10 +254,11 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
 
 
     /**
-     * @return EE_Message
+     * @return EE_Message|null
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function create_default_object()
+    public function create_default_object(): ?EE_Message
     {
         /** @type EE_Message $message */
         $message = parent::create_default_object();
@@ -270,11 +271,11 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
 
     /**
      * @param mixed $cols_n_values
-     * @return EE_Message
+     * @return EE_Message|null
      * @throws EE_Error
-     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function instantiate_class_from_array_or_object($cols_n_values)
+    public function instantiate_class_from_array_or_object($cols_n_values): ?EE_Message
     {
         /** @type EE_Message $message */
         $message = parent::instantiate_class_from_array_or_object($cols_n_values);
@@ -286,22 +287,20 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
 
 
     /**
-     * Returns whether or not a message of that type was sent for a given attendee.
+     * Returns whether a message of that type was sent for a given attendee.
      *
      * @param EE_Attendee|int $attendee
      * @param string          $message_type the message type slug
-     * @return boolean
+     * @return bool
      * @throws EE_Error
-     * @throws EE_Error
-     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function message_sent_for_attendee($attendee, $message_type)
+    public function message_sent_for_attendee($attendee, string $message_type): bool
     {
-        $attendee_ID = EEM_Attendee::instance()->ensure_is_ID($attendee);
         return $this->exists(
             [
                 [
-                    'Attendee.ATT_ID'  => $attendee_ID,
+                    'Attendee.ATT_ID'  => EEM_Attendee::instance()->ensure_is_ID($attendee),
                     'MSG_message_type' => $message_type,
                     'STS_ID'           => ['IN', $this->stati_indicating_sent()],
                 ],
@@ -311,16 +310,15 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
 
 
     /**
-     * Returns whether or not a message of that type was sent for a given registration
+     * Returns whether a message of that type was sent for a given registration
      *
      * @param EE_Registration|int $registration
      * @param string              $message_type the message type slug
-     * @return boolean
+     * @return bool
      * @throws EE_Error
-     * @throws EE_Error
-     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function message_sent_for_registration($registration, $message_type)
+    public function message_sent_for_registration($registration, string $message_type): bool
     {
         $registrationID = EEM_Registration::instance()->ensure_is_ID($registration);
         return $this->exists(
@@ -339,18 +337,13 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
      * This retrieves an EE_Message object from the db matching the given token string.
      *
      * @param string $token
-     * @return EE_Message
+     * @return EE_Message|null
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function get_one_by_token($token)
+    public function get_one_by_token(string $token): ?EE_Message
     {
-        return $this->get_one(
-            [
-                [
-                    'MSG_token' => $token,
-                ],
-            ]
-        );
+        return $this->get_one([['MSG_token' => $token]]);
     }
 
 
@@ -359,9 +352,9 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
      *
      * @return array of strings for possible stati
      */
-    public function stati_indicating_sent()
+    public function stati_indicating_sent(): array
     {
-        return apply_filters('FHEE__EEM_Message__stati_indicating_sent', [self::status_sent]);
+        return (array) apply_filters('FHEE__EEM_Message__stati_indicating_sent', [self::status_sent]);
     }
 
 
@@ -370,9 +363,9 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
      *
      * @return array of strings for possible stati.
      */
-    public function stati_indicating_to_send()
+    public function stati_indicating_to_send(): array
     {
-        return apply_filters(
+        return (array) apply_filters(
             'FHEE__EEM_Message__stati_indicating_to_send',
             [self::status_idle, self::status_resend]
         );
@@ -384,7 +377,7 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
      *
      * @return array  array of strings for possible stati.
      */
-    public function stati_indicating_failed_sending()
+    public function stati_indicating_failed_sending(): array
     {
         $failed_stati = [
             self::status_failed,
@@ -395,7 +388,7 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
         if (WP_DEBUG) {
             $failed_stati[] = self::status_debug_only;
         }
-        return apply_filters('FHEE__EEM_Message__stati_indicating_failed_sending', $failed_stati);
+        return (array) apply_filters('FHEE__EEM_Message__stati_indicating_failed_sending', $failed_stati);
     }
 
 
@@ -404,9 +397,9 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
      *
      * @return array
      */
-    public function all_statuses()
+    public function all_statuses(): array
     {
-        return apply_filters(
+        return (array) apply_filters(
             'FHEE__EEM_Message__all_statuses',
             [
                 EEM_Message::status_sent,
@@ -423,12 +416,12 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
 
 
     /**
-     * Detects any specific query variables in the request and uses those to setup appropriate
-     * filter for any queries.
+     * Detects any specific query variables in the request
+     * and uses those to set up the appropriate filter for any queries.
      *
      * @return array
      */
-    public function filter_by_query_params()
+    public function filter_by_query_params(): array
     {
         /** @var RequestInterface $request */
         $request = EEM_Base::$loader->getShared(RequestInterface::class);
@@ -467,7 +460,7 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function get_pretty_label_for_results()
+    public function get_pretty_label_for_results(): string
     {
         /** @var RequestInterface $request */
         $request       = EEM_Base::$loader->getShared(RequestInterface::class);
@@ -475,7 +468,7 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
         $pretty_label  = '';
         $label_parts   = [];
         foreach ($expected_vars as $request_key => $model_name) {
-            $model_name        = strpos($model_name, 'EEM_', true) === 0 ? $model_name : "EEM_{$model_name}";
+            $model_name        = strpos($model_name, 'EEM_', true) === 0 ? $model_name : "EEM_$model_name";
             $model             = EEM_Base::$loader->getShared($model_name);
             $model_field_value = $request->getRequestParam($request_key);
             if ($model instanceof EEM_Base && $model_field_value !== '') {
@@ -547,7 +540,7 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
      * @return array
      * @since 4.9.0
      */
-    protected function _expected_vars_for_query_inject()
+    protected function _expected_vars_for_query_inject(): array
     {
         return [
             '_REG_ID' => 'Registration',
@@ -567,12 +560,12 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
      * 2. Defining `EE_DEBUG_MESSAGES` constant in wp-config.php
      * 3. Overriding the above via the provided filter.
      *
-     * @param bool|null $set_debug      If provided, then the debug mode will be set internally until reset via the
-     *                                  provided boolean. When no argument is provided (default null) then the debug
-     *                                  mode will be returned.
-     * @return bool         true means Messages is in debug mode.  false means messages system is not in debug mode.
+     * @param bool|null $set_debug If provided, then the debug mode will be set internally until reset via
+     *                             the provided boolean. When no argument is provided (default null),
+     *                             then the debug mode will be returned.
+     * @return bool         true means Messages is in debug mode.  false means Messages is not in debug mode.
      */
-    public static function debug($set_debug = null)
+    public static function debug(?bool $set_debug = null): bool
     {
         static $is_debugging = null;
 
@@ -586,7 +579,7 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
         }
 
         // return filtered value
-        return apply_filters('FHEE__EEM_Message__debug', $is_debugging);
+        return (bool) apply_filters('FHEE__EEM_Message__debug', $is_debugging);
     }
 
 
@@ -596,15 +589,13 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
      * - are older than the value of the delete_threshold in months.
      * - have a STS_ID other than EEM_Message::status_idle
      *
-     * @param int $delete_threshold This integer will be used to set the boundary for what messages are deleted in
-     *                              months.
-     * @return bool|false|int Either the number of records affected or false if there was an error (you can call
-     *                              $wpdb->last_error to find out what the error was.
+     * @param int $delete_threshold Used to set the boundary for what messages are deleted in months.
+     * @return bool|false|int       Either the number of records affected or false if there was an error
+     *                              (you can call $wpdb->last_error to find out what the error was.)
      * @throws EE_Error
-     * @throws EE_Error
-     * @throws EE_Error
+     * @throws ReflectionException
      */
-    public function delete_old_messages($delete_threshold = 6)
+    public function delete_old_messages(int $delete_threshold = 6)
     {
         $number_deleted = 0;
         /**
@@ -617,7 +608,7 @@ class EEM_Message extends EEM_Base implements EEI_Query_Filter
         $time_to_leave_alone = absint(
             apply_filters(
                 'FHEE__EEM_Message__delete_old_messages__time_to_leave_alone',
-                ((int) $delete_threshold) * MONTH_IN_SECONDS
+                $delete_threshold * MONTH_IN_SECONDS
             )
         );
 

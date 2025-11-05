@@ -5,8 +5,8 @@ Donate link: [Support Our Work](https://eventespresso.com/pricing/?ee_ver=ee4&ut
 Tags: Events, Tickets, Event Registration, Ticket Sales, Calendar
 Requires at least: 4.5
 Requires PHP: 7.4
-Tested up to: 6.8.2
-Stable tag: 5.0.47
+Tested up to: 6.8.3
+Stable tag: 5.0.48
 License: GPL2
 
 The best events plugin with event registration, free and paid ticket sales, event registration forms, PayPal payments, automatic emails, and more!
@@ -81,6 +81,22 @@ Explore more features and view screenshots [here](https://eventespresso.com/feat
 8. Customizable Country Settings
 
 == Changelog ==
+
+### [5.0.48]
+
+#### Added
+ - [New Thank You Page Hook (#2004)]
+
+#### Fixed
+ - [Fix CSV reports on SSL redirects (#2010)]
+
+#### Changed
+ - [Require ee_advanced_event_editor Cap to Duplicate Event (#1889)]
+ - [Skip Session Save Path Filesystem Checks for open_basedir Violations (#2005)]
+ - [Relax Restrictions Generator Action Type (#2008)]
+ - [Allow for dynamic shortcode parameters within the message system (#2012)]
+
+
 
 ### [5.0.47]
 

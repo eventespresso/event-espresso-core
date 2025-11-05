@@ -55,7 +55,11 @@ class FeatureFlags
      */
     public function allowed(string $feature): bool
     {
-        $flag = $this->feature_flags->{$feature} ?? false;
+        $flag = apply_filters(
+            'FHEE__EventEspresso_core_domain_services_capabilities_FeatureFlags__allowed__feature',
+            $this->feature_flags->{$feature} ?? false,
+            $feature
+        );
         try {
             return $flag instanceof CapCheck
                 ? $this->capabilities_checker->processCapCheck($flag)

@@ -46,7 +46,8 @@ abstract class JsonDataWordpressOption extends WordPressOption
 
 
     /**
-     * @param $value
+     * @param      $value
+     * @param bool $force_update
      * @return int
      */
     public function updateOption($value, bool $force_update = false): int

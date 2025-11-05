@@ -12,7 +12,7 @@ use EventEspresso\core\domain\services\registration\RegStatus;
 ?>
 
 <h3 class="ee-registration-details-h3"><?php esc_html_e('Registration Details', 'event_espresso'); ?></h3>
-<?php do_action('AHEE__thank_you_page_registration_details_template__after_heading'); ?>
+<?php do_action('AHEE__thank_you_page_registration_details_template__after_heading', $transaction); ?>
 
 <div class="ee-registration-details-dv">
     <?php
@@ -40,6 +40,13 @@ use EventEspresso\core\domain\services\registration\RegStatus;
                 </span>
                 <?php echo esc_html($registration->event_name()); ?>
             </h5>
+            <?php
+            do_action(
+                'AHEE__thank_you_page_registration_details_template__after_event_name',
+                $registration->event(),
+                $registration
+            );
+            ?>
             <table class='ee-table ee-registrations-list'>
             <thead>
                 <tr>
@@ -156,7 +163,7 @@ use EventEspresso\core\domain\services\registration\RegStatus;
             )
         );
     }
-    do_action('AHEE__thank_you_page_registration_details_template__after_registration_details');
+    do_action('AHEE__thank_you_page_registration_details_template__after_registration_details', $transaction);
     ?>
 
 </div>

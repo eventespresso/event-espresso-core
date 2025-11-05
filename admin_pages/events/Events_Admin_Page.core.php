@@ -1726,7 +1726,7 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
          */
         /** @var EEM_Datetime $datetime_model */
         $datetime_model = EE_Registry::instance()->load_model('Datetime');
-        /** @var EEM_Ticket $datetime_model */
+        /** @var EEM_Ticket $ticket_model */
         $ticket_model = EE_Registry::instance()->load_model('Ticket');
         $times        = $datetime_model->get_all_event_dates($event_id);
         /** @type EE_Datetime $first_datetime */
@@ -1754,13 +1754,11 @@ class Events_Admin_Page extends EE_Admin_Page_CPT
                 }
             } else {
                 $template_args['total_ticket_rows'] = 1;
-                /** @type EE_Ticket $ticket */
                 $ticket                       = $ticket_model->create_default_object();
                 $template_args['ticket_rows'] .= $this->_get_ticket_row($ticket);
             }
         } else {
             $template_args['time'] = $times[0];
-            /** @type EE_Ticket[] $tickets */
             $tickets                      = $ticket_model->get_all_default_tickets();
             $template_args['ticket_rows'] .= $this->_get_ticket_row($tickets[1]);
             // NOTE: we're just sending the first default row

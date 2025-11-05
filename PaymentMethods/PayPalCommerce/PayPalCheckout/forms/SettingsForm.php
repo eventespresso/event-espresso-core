@@ -11,7 +11,6 @@ use EE_Form_Section_HTML;
 use EE_Select_Input;
 use EE_Checkbox_Multi_Input;
 use EED_PayPalOnboard;
-use EEH_Array;
 use EEH_HTML;
 use EventEspresso\PaymentMethods\PayPalCommerce\domain\Domain;
 use EventEspresso\PaymentMethods\PayPalCommerce\tools\extra_meta\PayPalExtraMetaManager;
@@ -70,13 +69,6 @@ class SettingsForm extends EE_Payment_Method_Form
         parent::__construct($form_parameters);
         // Add a form for PayPal Onboard.
         $this->addOnboardingForm($payment_method, $pm_instance);
-        // Add a form for PayPal Onboard.
-        add_filter(
-            'FHEE__Payments_Admin_Page___generate_payment_method_settings_form__form_subsections',
-            [__CLASS__, 'addFeesNotice'],
-            10,
-            2
-        );
         // Add the clear data button.
         $this->clearMetadataButton($pm_instance);
         // Disable inputs if needed.
@@ -105,62 +97,6 @@ class SettingsForm extends EE_Payment_Method_Form
         } catch (EE_Error $e) {
             // Simply don't add the form.
         }
-    }
-
-
-    /**
-     * Add fees notice.
-     *
-     * @param array             $subsections
-     * @param EE_Payment_Method $payment_method
-     * @return array
-     * @throws EE_Error
-     * @throws ReflectionException
-     */
-    public static function addFeesNotice(array $subsections, EE_Payment_Method $payment_method): array
-    {
-        // We want to be able to disable fees. Also check if this is PayPal PM.
-        if ((defined('EE_PPC_USE_PAYMENT_FEES') && ! EE_PPC_USE_PAYMENT_FEES)
-            || $payment_method->slug() !== 'paypalcheckout'
-        ) {
-            return $subsections;
-        }
-        return EEH_Array::insert_into_array(
-            $subsections,
-            [
-                'partner_fees_notice' => new EE_Form_Section_HTML(
-                    EEH_HTML::tr(
-                        EEH_HTML::th()
-                        . EEH_HTML::thx()
-                        . EEH_HTML::td(
-                            EEH_HTML::div(
-                                EEH_HTML::strong(
-                                    esc_html__(
-                                        'PayPal Partner Commission Fees are based upon the status of your Support License:',
-                                        'event_espresso'
-                                    )
-                                )
-                                . EEH_HTML::ul()
-                                . EEH_HTML::li(
-                                    esc_html__('- Active licenses commission fees: 0%', 'event_espresso')
-                                )
-                                . EEH_HTML::li(
-                                    esc_html__('- Expired license commission fees: 3%', 'event_espresso')
-                                )
-                                . EEH_HTML::ulx()
-                                . esc_html__(
-                                    'Keep your support license active for: lower fees, up-to-date software and have access to our support team. By connecting and processing payments you agree to these terms.',
-                                    'event_espresso'
-                                ),
-                                '',
-                                'ee-status-outline ee-status-bg--info'
-                            )
-                        )
-                    )
-                ),
-            ],
-            'fine_print'
-        );
     }
 
 

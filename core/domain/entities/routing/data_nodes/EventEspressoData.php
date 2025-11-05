@@ -22,20 +22,11 @@ class EventEspressoData extends PrimaryJsonDataNode
 {
     const NODE_NAME = 'eventEspressoData';
 
-    /**
-     * @var Api $api
-     */
-    private $api;
+    private Api $api;
 
-    /**
-     * @var Config $config
-     */
-    private $config;
+    private Config $config;
 
-    /**
-     * @var JedLocaleData $jed_locale
-     */
-    private $jed_locale;
+    private JedLocaleData $jed_locale;
 
 
     /**
@@ -62,7 +53,7 @@ class EventEspressoData extends PrimaryJsonDataNode
     {
         $this->addDataNode($this->api);
         $this->addDataNode($this->config);
-        $this->addData('i18n', $this->jed_locale->getData(Domain::TEXT_DOMAIN));
+        $this->addData('i18n', $this->jed_locale->getData());
         $this->setInitialized(true);
     }
 }

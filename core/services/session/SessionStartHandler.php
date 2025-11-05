@@ -60,6 +60,21 @@ class SessionStartHandler
      */
     private string $save_path = '';
 
+    /**
+     * When true, verification of session save path filesystem checks was skipped
+     * because open_basedir prevented validation.
+     *
+     * @var bool
+     * @since 5.0.48
+     */
+    private bool $skip_save_path_checks = false;
+
+    /**
+     * @var bool
+     * @since 5.0.48
+     */
+    private bool $logging_enabled;
+
 
     /**
      * StartSession constructor.
@@ -69,6 +84,9 @@ class SessionStartHandler
     public function __construct(RequestInterface $request)
     {
         $this->request = $request;
+        // only log session details in staging and production environments
+        $environment           = wp_get_environment_type();
+        $this->logging_enabled = WP_DEBUG && ($environment === 'staging' || $environment === 'production');
     }
 
 
@@ -98,14 +116,16 @@ class SessionStartHandler
                     $this->sessionStart();
                 }
             } catch (Throwable $error) {
-                error_log(
-                    sprintf(
-                        '[SessionStartHandler] session_start() warning: %s in %s:%s',
-                        $error->getMessage(),
-                        $error->getFile(),
-                        $error->getLine()
-                    )
-                );
+                if ($this->logging_enabled) {
+                    error_log(
+                        sprintf(
+                            '[SessionStartHandler] session_start() warning: %s in %s:%s',
+                            $error->getMessage(),
+                            $error->getFile(),
+                            $error->getLine()
+                        )
+                    );
+                }
                 $this->displaySessionErrorNotice(
                     $error->getMessage(),
                     $error->getFile(),
@@ -151,7 +171,7 @@ class SessionStartHandler
      */
     private function verifySessionSavePath(): void
     {
-        if (WP_DEBUG) {
+        if ($this->logging_enabled) {
             error_log(
                 sprintf(
                     "[SessionStartHandler] diagnostic: save_handler=%s save_path=%s open_basedir=%s",
@@ -161,7 +181,7 @@ class SessionStartHandler
                 )
             );
         }
-        // Only validate session save path as a filesystem directory when PHP is
+        // Only validate the session save path as a filesystem directory when PHP is
         // configured to use the 'files' session save handler. Other handlers
         // (memcache, memcached, redis, user, etc.) use different transport
         // formats (hosts, sockets, URIs) and are not filesystem directories.
@@ -171,6 +191,20 @@ class SessionStartHandler
             return;
         }
         $this->save_path = $this->normalizeSessionSavePath($this->save_path);
+        // If we were unable to safely validate the session save path because it
+        // appears to live outside PHP's open_basedir, skip filesystem checks to
+        // avoid emitting warnings or throwing exceptions on some hosts.
+        if ($this->skip_save_path_checks === true) {
+            if ($this->logging_enabled) {
+                error_log(
+                    sprintf(
+                        '[SessionStartHandler] skipped session_save_path filesystem validation due to open_basedir: %s',
+                        $this->save_path
+                    )
+                );
+            }
+            return;
+        }
         // Use @-suppressed checks to avoid PHP warnings while validating.
         if (! @is_dir($this->save_path) || ! @is_writable($this->save_path)) {
             throw new ErrorException(
@@ -190,7 +224,6 @@ class SessionStartHandler
     /**
      * @param string $session_save_path
      * @return string
-     * @throws ErrorException
      * @since 5.0.47
      */
     private function normalizeSessionSavePath(string $session_save_path): string
@@ -226,7 +259,6 @@ class SessionStartHandler
     /**
      * @param string $session_save_path
      * @return string
-     * @throws ErrorException
      * @since 5.0.47
      */
     private function checkPathsOutsideBaseDir(string $session_save_path): string
@@ -250,27 +282,20 @@ class SessionStartHandler
         if ($allowed) {
             return $session_save_path;
         }
-        error_log(
-            sprintf(
-                "[SessionStartHandler] session_save_path outside open_basedir: save_path=%s open_basedir=%s",
-                $session_save_path,
-                $this->open_basedir
-            )
-        );
-        throw new ErrorException(
-            sprintf(
-                esc_html__(
-                    'Session save path "%s" is outside PHP open_basedir allowed paths: %s. Ask your server admin to move session.save_path inside open_basedir or update open_basedir',
-                    'event_espresso'
-                ),
-                $session_save_path,
-                $this->open_basedir
-            ),
-            0,
-            E_WARNING,
-            __FILE__,
-            __LINE__
-        );
+        // open_basedir is set and the session save path is outside it.
+        // Log for diagnostics and skip strict filesystem checks rather than
+        // throwing an exception which causes fatal behavior on some hosts.
+        if ($this->logging_enabled) {
+            error_log(
+                sprintf(
+                    "[SessionStartHandler] session_save_path outside open_basedir: save_path=%s open_basedir=%s - skipping validation",
+                    $session_save_path,
+                    $this->open_basedir
+                )
+            );
+        }
+        $this->skip_save_path_checks = true;
+        return $session_save_path;
     }
 
 

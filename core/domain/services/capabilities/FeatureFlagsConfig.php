@@ -30,27 +30,27 @@ class FeatureFlagsConfig extends JsonDataWordpressOption
      */
     public const  USE_EVENT_EDITOR_BULK_EDIT = FeatureFlag::USE_EVENT_EDITOR_BULK_EDIT;
 
-    private static array $removed = [
-        FeatureFlag::USE_ADVANCED_EVENT_EDITOR,
-    ];
 
-
+    private array $cap_checks;
 
     protected Domain $domain;
 
     private ?stdClass $feature_flags = null;
 
-
-    /**
-     * @var array|null
-     * @since 5.0.30.p
-     */
-    private ?array $feature_flags_form_options = null;
+    private array $removed;
 
 
     public function __construct(Domain $domain, JsonDataHandler $json_data_handler)
     {
-        $this->domain = $domain;
+        $this->domain     = $domain;
+        $this->cap_checks = apply_filters(
+            'FHEE__EventEspresso_core_domain_services_capabilities_FeatureFlagsConfig_cap_checks',
+            []
+        );
+        $this->removed    = apply_filters(
+            'FHEE__EventEspresso_core_domain_services_capabilities_FeatureFlagsConfig_removed',
+            []
+        );
         parent::__construct($json_data_handler, FeatureFlagsConfig::OPTION_NAME, $this->getDefaultFeatureFlagOptions());
     }
 
@@ -63,6 +63,7 @@ class FeatureFlagsConfig extends JsonDataWordpressOption
     public function getDefaultFeatureFlagOptions(): stdClass
     {
         return (object) [
+            FeatureFlag::USE_ADVANCED_EVENT_EDITOR     => true,
             FeatureFlag::USE_DATETIME_STATUS_CONTROLS  => false,
             FeatureFlag::USE_DEFAULT_TICKET_MANAGER    => true,
             FeatureFlag::USE_EDD_PLUGIN_LICENSING      => true,
@@ -88,10 +89,9 @@ class FeatureFlagsConfig extends JsonDataWordpressOption
     public function getOverrides(): stdClass
     {
         // allow EDD to be disabled for testing.
-        $overrides[ FeatureFlag::USE_EDD_PLUGIN_LICENSING ] = defined('EE_USE_EDD_PLUGIN_LICENSING') 
-            ? EE_USE_EDD_PLUGIN_LICENSING 
-            : true;
-        
+        $overrides[ FeatureFlag::USE_EDD_PLUGIN_LICENSING ] =
+            ! defined('EE_USE_EDD_PLUGIN_LICENSING') || EE_USE_EDD_PLUGIN_LICENSING;
+
         return (object) $overrides;
     }
 
@@ -109,6 +109,11 @@ class FeatureFlagsConfig extends JsonDataWordpressOption
         $overrides           = $this->getOverrides();
         // ensure that all feature flags are set
         foreach ($default_options as $key => $value) {
+            // unset any feature flags that have been removed
+            if (in_array($key, $this->removed, true)) {
+                unset($this->feature_flags->{$key});
+                continue;
+            }
             // if the feature flag is not set, use the default value
             if (! isset($this->feature_flags->$key)) {
                 $this->feature_flags->$key = $value;
@@ -116,6 +121,12 @@ class FeatureFlagsConfig extends JsonDataWordpressOption
             // ensure that all overrides are set
             if (isset($overrides->$key)) {
                 $this->feature_flags->$key = $overrides->$key;
+            }
+            // convert any feature flags that are CapChecks
+            if (in_array($key, $this->cap_checks, true)) {
+                if (! $this->feature_flags->{$key} instanceof CapCheck) {
+                    $this->feature_flags->{$key} = new CapCheck($key, "feature_flag_$key");
+                }
             }
         }
         return $this->feature_flags;
@@ -125,7 +136,7 @@ class FeatureFlagsConfig extends JsonDataWordpressOption
     public function saveFeatureFlagsConfig(?stdClass $feature_flags = null): int
     {
         $feature_flags = $feature_flags ?? $this->feature_flags;
-        foreach (FeatureFlagsConfig::$removed as $feature_flag) {
+        foreach ($this->removed as $feature_flag) {
             unset($feature_flags->{$feature_flag});
         }
         $this->feature_flags = $feature_flags;

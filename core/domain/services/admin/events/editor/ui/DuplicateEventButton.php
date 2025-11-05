@@ -36,7 +36,6 @@ class DuplicateEventButton extends PermalinkHtmlHook
                class='button button--tiny button--secondary'
                href='$href'
                id='ee-duplicate-event-button'
-               value='duplicate_event'
             >
                 <span class='dashicons dashicons-admin-page'></span>
                 $title

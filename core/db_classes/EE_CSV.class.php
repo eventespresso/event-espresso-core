@@ -371,7 +371,7 @@ class EE_CSV
                 'version'        => espresso_version(),
                 'timezone'       => EEH_DTT_Helper::get_timezone(),
                 'time_of_export' => current_time('mysql'),
-                'site_url'       => site_url(),
+                'site_url'       => is_ssl() ? str_replace('http://', 'https://', site_url()) : site_url(),
             ),
         );
         $this->write_data_array_to_csv($filehandle, $meta_data);

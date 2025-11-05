@@ -6,6 +6,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Releases
 
+### 5.0.48
+
+#### Added
+ - [Implement Square Partner Fees (#1995)](https://github.com/eventespresso/cafe/pull/1995)
+ - [New Thank You Page Hook (#2004)](https://github.com/eventespresso/cafe/pull/2004)
+
+#### Fixed
+ - [Fix CSV reports on SSL redirects (#2010)](https://github.com/eventespresso/cafe/pull/2010)
+
+#### Changed
+ - [Require ee_advanced_event_editor Cap to Duplicate Event (#1889)](https://github.com/eventespresso/cafe/pull/1889)
+ - [Skip Session Save Path Filesystem Checks for open_basedir Violations (#2005)](https://github.com/eventespresso/cafe/pull/2005)
+ - [Relax Restrictions Generator Action Type (#2008)](https://github.com/eventespresso/cafe/pull/2008)
+ - [Allow for dynamic shortcode parameters within the message system (#2012)](https://github.com/eventespresso/cafe/pull/2012)
+
+
+
+
+
+
 ### [5.0.47]
 
 #### Fixed

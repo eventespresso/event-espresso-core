@@ -5,6 +5,7 @@ use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\database\TableAnalysis;
 use EventEspresso\core\services\database\TableManager;
 use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\payments\PaymentProcessorFees;
 use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 /**
@@ -543,6 +544,7 @@ class Payments_Admin_Page extends EE_Admin_Page
                 'update'                  => $this->_update_payment_method_button($payment_method),
                 'deactivate'              => $this->_deactivate_payment_method_button($payment_method),
                 'fine_print'              => $this->_fine_print(),
+                'partner_fees_notice'     => $this->partnerFeesNotice($payment_method),
             ],
             $payment_method
         );
@@ -882,6 +884,31 @@ class Payments_Admin_Page extends EE_Admin_Page
                 )
             )
         );
+    }
+
+
+    /**
+     * partnerFeesNotice
+     *
+     * @access protected
+     * @param  EE_Payment_Method $payment_method
+     * @return ?EE_Form_Section_HTML
+     */
+    protected function partnerFeesNotice(EE_Payment_Method $payment_method): ?EE_Form_Section_HTML
+    {
+        /** @var PaymentProcessorFees $payment_proc_fees */
+        $payment_proc_fees = LoaderFactory::getLoader()->getShared(
+            'EventEspresso\core\services\payments\PaymentProcessorFees'
+        );
+        try {
+            $pm_name = $payment_method->name();
+        } catch (EE_Error|ReflectionException $e) {
+            return null;
+        }
+        if (! $payment_proc_fees->isPartnerGateway($pm_name)) {
+            return null;
+        }
+        return $payment_proc_fees->getFeesNotice($pm_name);
     }
 
 

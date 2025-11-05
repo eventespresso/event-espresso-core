@@ -3070,11 +3070,11 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
      * Like count, but is optimized and returns a boolean instead of an int
      *
      * @param array $query_params
-     * @return boolean
+     * @return bool
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function exists($query_params)
+    public function exists(array $query_params): bool
     {
         $query_params['limit'] = 1;
         return $this->count($query_params) > 0;

@@ -3,8 +3,10 @@
 namespace EventEspresso\core\services\payments;
 
 use EE_Error;
+use EE_Form_Section_HTML;
 use EE_Line_Item;
 use EE_Transaction;
+use EEH_HTML;
 use EEH_Line_Item;
 use EventEspresso\core\domain\services\licensing\LicenseData;
 use EventEspresso\core\domain\services\licensing\LicenseStatus;
@@ -49,12 +51,12 @@ class PaymentProcessorFees
         ],
         LicenseStatus::EXPIRED => [
             PaymentProcessorFees::GATEWAY_PAYPAL => 3.00,
-            PaymentProcessorFees::GATEWAY_SQUARE => 2.50,
+            PaymentProcessorFees::GATEWAY_SQUARE => 3.00,
             PaymentProcessorFees::GATEWAY_STRIPE => 3.00,
         ],
         LicenseStatus::DECAF   => [
             PaymentProcessorFees::GATEWAY_PAYPAL => 3.00,
-            PaymentProcessorFees::GATEWAY_SQUARE => 2.50,
+            PaymentProcessorFees::GATEWAY_SQUARE => 3.00,
             PaymentProcessorFees::GATEWAY_STRIPE => 3.00,
         ],
     ];
@@ -159,7 +161,7 @@ class PaymentProcessorFees
      * @param string $payment_method_name
      * @return bool
      */
-    private function isPartnerGateway(string $payment_method_name): bool
+    public function isPartnerGateway(string $payment_method_name): bool
     {
         return in_array($payment_method_name, $this->partner_gateways, true);
     }
@@ -183,6 +185,55 @@ class PaymentProcessorFees
                 esc_html__('A partner fee for %1$s with %2$s license is not defined.', 'event_espresso'),
                 $payment_method_name,
                 $license_status
+            )
+        );
+    }
+
+
+    /**
+     * Get fees notice.
+     *
+     * @param $pm_name
+     * @return EE_Form_Section_HTML
+     */
+    public function getFeesNotice($pm_name): EE_Form_Section_HTML
+    {
+        $active  = $this->gateway_fees[ LicenseStatus::ACTIVE ][ $pm_name ] ?? 0;
+        $expired = $this->gateway_fees[ LicenseStatus::EXPIRED ][ $pm_name ] ?? 3;
+        return new EE_Form_Section_HTML(
+            EEH_HTML::tr(
+                EEH_HTML::th()
+                . EEH_HTML::thx()
+                . EEH_HTML::td(
+                    EEH_HTML::div(
+                        EEH_HTML::strong(
+                            esc_html__(
+                                "$pm_name Application Fees are based upon the status of your Support License:",
+                                'event_espresso'
+                            )
+                        )
+                        . EEH_HTML::ul()
+                        . EEH_HTML::li(
+                            sprintf(
+                                esc_html__('- Active licenses commission fees: %1$s', 'event_espresso'),
+                                "$active%"
+                            )
+                        )
+                        . EEH_HTML::li(
+                            sprintf(
+                                esc_html__('- Expired license commission fees: %1$s', 'event_espresso'),
+                                "$expired%"
+                            )
+                        )
+                        . EEH_HTML::ulx()
+                        . esc_html__(
+                            'Keep your support license active for: lower fees, up-to-date software and have access to our support team. By connecting and processing payments you agree to these terms.',
+                            'event_espresso'
+                        ),
+                        '',
+                        'ee-status-outline ee-status-bg--info'
+                    )
+                )
             )
         );
     }

@@ -16,6 +16,35 @@
 abstract class EE_Shortcodes extends EE_Base
 {
     /**
+     * matches a full shortcode including shortcodes with attributes or dynamic shortcodes
+     * examples:
+     *  [RECIPIENT_LNAME]
+     *  [RECEIPT_URL download=true]
+     *  [PAYMENT_LINK_IF_NEEDED_* custom_text='pay me now man!']
+     */
+    public const REGEX_SHORTCODE_FULL = '/(\[.+?])/';
+
+    /**
+     * matches the opening [ plus the shortcode name, but nothing else
+     * examples:
+     *  [RECIPIENT_LNAME] matches as [RECIPIENT_LNAME
+     *  [RECEIPT_URL download=true] matches as [RECEIPT_URL
+     *  [PAYMENT_LINK_IF_NEEDED_* custom_text='pay me now man!'] matches as [PAYMENT_LINK_IF_NEEDED_*
+     */
+    public const REGEX_SHORTCODE_NAME_ONLY = '/\[[A-Z_*]+/';
+
+    /**
+     * matches the opening [ plus the dynamic shortcode name including _*, but nothing else
+     * examples:
+     *  [RECIPIENT_LNAME] does not match
+     *  [RECEIPT_URL download=true] does not match
+     *  [PAYMENT_LINK_IF_NEEDED_* custom_text='pay me now man!'] matches as [PAYMENT_LINK_IF_NEEDED_*
+     */
+    public const REGEX_SHORTCODE_DYNAMIC = '/(\[[A-Z_]+_\*)/';
+
+
+
+    /**
      * holds label for library
      * This is used for referencing the library label
      *
@@ -162,11 +191,11 @@ abstract class EE_Shortcodes extends EE_Base
         $this->_shortcodes = $this->get_shortcodes();
 
         // we need to set up any dynamic shortcodes so that they work with the array_key_exists
-        preg_match_all('/(\[[A-Za-z0-9\_]+_\*)/', $shortcode, $matches);
-        $sc_to_verify = ! empty($matches[0]) ? $matches[0][0] . ']' : $shortcode;
+        preg_match_all(EE_Shortcodes::REGEX_SHORTCODE_NAME_ONLY, $shortcode, $matches);
+        $shortcode_to_verify = ! empty($matches[0]) ? $matches[0][0] . ']' : $shortcode;
 
         // first we want to make sure this is a valid shortcode
-        if (! array_key_exists($sc_to_verify, $this->_shortcodes)) {
+        if (! array_key_exists($shortcode_to_verify, $this->_shortcodes)) {
             // get out, this parser doesn't handle the incoming shortcode.
             return '';
         }
@@ -300,7 +329,7 @@ abstract class EE_Shortcodes extends EE_Base
         }
 
         // let's get any attributes that may be present and set the defaults.
-        $shortcode_to_parse = str_replace('[', '', str_replace(']', '', $shortcode));
+        $shortcode_to_parse = str_replace(['[', ']'], '', $shortcode);
         return shortcode_parse_atts($shortcode_to_parse);
     }
 
@@ -311,7 +340,7 @@ abstract class EE_Shortcodes extends EE_Base
      * conditions existed in the opening tag.  This method handles parsing the actual template to show/hide this
      * conditional content.
      *
-     * @param string $shortcode This should be original shortcode as used in the template and passed to the parser.
+     * @param string $shortcode This should be the original shortcode as used in the template and passed to the parser.
      * @param bool   $show      true means the opening and closing tags are removed and the content is left showing,
      *                          false means the opening and closing tags and the contained content are removed.
      * @return string     The template for the shortcode is returned.

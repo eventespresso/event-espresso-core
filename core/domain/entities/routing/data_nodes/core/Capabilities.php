@@ -33,6 +33,7 @@ class Capabilities extends JsonDataNode
                 $capabilities[] = $capability;
             }
         }
+        sort($capabilities, SORT_NATURAL);
         $this->setDataArray($capabilities);
     }
 }

@@ -12,7 +12,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
 <h2 class="section-heading display-box-heading">
     <?php esc_html_e('Payment Overview', 'event_espresso'); ?>
 </h2>
-<?php do_action('AHEE__thank_you_page_payment_details_template__after_heading'); ?>
+<?php do_action('AHEE__thank_you_page_payment_details_template__after_heading', $transaction, $payments); ?>
 
 <div id="espresso-thank-you-page-payment-details-dv">
     <?php
@@ -69,4 +69,4 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
     echo wp_kses($gateway_content, AllowedTags::getWithFormTags());
     do_action('AHEE__thank_you_page_payment_details_template__after_gateway_content', $gateway_content);
     echo '<br/>';
-    do_action('AHEE__thank_you_page_payment_details_template__after_payment_details');
+    do_action('AHEE__thank_you_page_payment_details_template__after_payment_details', $transaction, $payments);

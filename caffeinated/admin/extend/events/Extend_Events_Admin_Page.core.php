@@ -4,6 +4,7 @@ use EventEspresso\core\domain\entities\custom_post_types\EspressoPostType;
 use EventEspresso\core\domain\services\admin\events\editor\ui\DuplicateEventButton;
 use EventEspresso\core\domain\services\admin\events\editor\ui\TicketSelectorShortcodeButton;
 use EventEspresso\core\domain\services\cache\TemplateCacheAdmin;
+use EventEspresso\core\domain\services\capabilities\FeatureFlag;
 use EventEspresso\core\domain\services\registration\RegStatus;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
@@ -208,9 +209,12 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
         // legend item
         add_filter('FHEE__Events_Admin_Page___event_legend_items__items', [$this, 'additional_legend_items']);
         add_action('admin_init', [$this, 'admin_init']);
-        // this is a filter that allows the addition of extra html after the permalink field on the wp post edit-form
-        // add_filter('get_sample_permalink_html', [DuplicateEventButton::class, 'addButton'], 8, 2);
-        DuplicateEventButton::addEventEditorPermalinkButton(8);
+
+        if ($this->feature->allowed(FeatureFlag::USE_ADVANCED_EVENT_EDITOR)) {
+            // this is a filter that allows the addition of extra html after the permalink field on the wp post edit-form
+            // add_filter('get_sample_permalink_html', [DuplicateEventButton::class, 'addButton'], 8, 2);
+            DuplicateEventButton::addEventEditorPermalinkButton(8);
+        }
     }
 
 
@@ -264,8 +268,11 @@ class Extend_Events_Admin_Page extends Events_Admin_Page
         ?string $new_title,
         ?string $new_slug
     ): string {
-        $return = DuplicateEventButton::addButton($return, $id, $new_title, $new_slug);
-        return TicketSelectorShortcodeButton::addButton($return, $id, $new_title, $new_slug);
+
+        if ($this->feature->allowed(FeatureFlag::USE_ADVANCED_EVENT_EDITOR)) {
+            $return = DuplicateEventButton::addButton($return, $id);
+        }
+        return TicketSelectorShortcodeButton::addButton($return, $id);
     }
 
 

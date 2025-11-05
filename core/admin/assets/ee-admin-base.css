@@ -773,9 +773,7 @@
 .wp-core-ui .espresso-notices.notice,
 .wp-core-ui .espresso-notices.error,
 .wp-core-ui .espresso-notices.updated {
-    align-items: center;
-    display: flex;
-    flex-direction: row-reverse;
+    display: block;
     padding: calc(.5 * var(--ee-base-ui-scale)) var(--ee-base-ui-scale);
 }
 
@@ -790,7 +788,9 @@
 }
 
 .wp-core-ui .espresso-notices.notice.ee-nag-notice {
-    display: block;
+    align-items: center;
+    display: flex;
+    flex-direction: row-reverse;
     padding-block: var(--ee-padding-default);
     padding-inline: var(--ee-padding-big);
     position: relative;

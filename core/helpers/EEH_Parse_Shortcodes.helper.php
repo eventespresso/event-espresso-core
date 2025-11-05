@@ -7,7 +7,6 @@
  * @package        Event Espresso
  * @subpackage     includes/core
  * @author         Darren Ethier
- *                 ------------------------------------------------------------------------
  */
 class EEH_Parse_Shortcodes
 {
@@ -36,11 +35,6 @@ class EEH_Parse_Shortcodes
      * @var EE_Shortcodes[]
      */
     private $_shortcode_objs = array();
-
-
-    public function __construct()
-    {
-    }
 
 
     /**
@@ -164,14 +158,13 @@ class EEH_Parse_Shortcodes
     /**
      * takes the given template and parses it with the $_shortcodes property
      *
-     * @access private
      * @return string
      */
-    private function _parse_message_template()
+    private function _parse_message_template(): string
     {
         // now let's get a list of shortcodes that are found in the given template
-        preg_match_all('/(\[.+?\])/', $this->_template, $matches);
-        $shortcodes = (array) $matches[0]; // this should be an array of shortcodes in the template string.
+        preg_match_all(EE_Shortcodes::REGEX_SHORTCODE_FULL, $this->_template, $matches);
+        $shortcodes = $matches[0]; // this should be an array of shortcodes in the template string.
 
         $matched_code = array();
         $sc_values    = array();
@@ -200,40 +193,44 @@ class EEH_Parse_Shortcodes
             $list_type_shortcodes
         );
 
-        // now lets go ahead and loop through our parsers for each shortcode and setup the values
+        // now lets go ahead and loop through our parsers for each shortcode and set up the values
         foreach ($shortcodes as $shortcode) {
+            // truncate full shortcode to shortcode name only (ie: remove attributes and dynamic portions)
+            preg_match_all(EE_Shortcodes::REGEX_SHORTCODE_NAME_ONLY, $shortcode, $matches);
+            // ensure shortcode ends with closing ]
+            $short_code_name = rtrim(reset($matches[0]), ']') . ']';
+
             foreach ($this->_shortcode_objs as $sc_obj) {
-                if ($sc_obj instanceof EE_Shortcodes) {
-                    // we need to setup any dynamic shortcodes so that they work with the array_key_exists
-                    preg_match_all('/(\[[A-Za-z0-9\_]+_\*)/', $shortcode, $matches);
-                    $sc_to_verify = ! empty($matches[0]) ? $matches[0][0] . ']' : $shortcode;
-
-                    if (! array_key_exists($sc_to_verify, $sc_obj->get_shortcodes())) {
-                        continue; // the given shortcode isn't in this object
-                    }
-
-                    // if this isn't  a "list" type shortcode then we'll send along the data vanilla instead of in an array.
-                    if (! in_array($sc_to_verify, $list_type_shortcodes)) {
-                        $data_send = ! is_object($this->_data) && isset($this->_data['data']) ? $this->_data['data'] : $this->_data;
-                    } else {
-                        $data_send = $this->_data;
-                    }
-
-                    // is this a conditional type shortcode?  If it is then we actually parse the template here.
-                    if ($this->_is_conditional_shortcode($shortcode)) {
-                        // most shortcode parsers are not going to have a match for this shortcode and will return an
-                        // empty string so we need to make sure that we're only replacing the template when there is a non empty string.
-                        $parsed = $sc_obj->parser($shortcode, $data_send, $this->_data['extra_data']);
-                        if ($parsed) {
-                            $this->_template = $parsed;
-                        }
-                    }
-
-                    $parsed = $sc_obj->parser($shortcode, $data_send, $this->_data['extra_data']);
-
-                    $matched_code[] = $shortcode;
-                    $sc_values[]    = $parsed;
+                if (! $sc_obj instanceof EE_Shortcodes) {
+                    continue;
                 }
+                // check if the given shortcode is in this object, if not, move on
+                if (! array_key_exists($short_code_name, $sc_obj->get_shortcodes())) {
+                    continue;
+                }
+
+                // if this isn't  a "list" type shortcode then we'll send along the data vanilla instead of in an array.
+                if (! in_array($shortcode, $list_type_shortcodes)) {
+                    $data_send = ! is_object($this->_data) && isset($this->_data['data']) ? $this->_data['data'] : $this->_data;
+                } else {
+                    $data_send = $this->_data;
+                }
+
+                // is this a conditional type shortcode?  If it is then we actually parse the template here.
+                if ($this->_is_conditional_shortcode($shortcode)) {
+                    // most shortcode parsers are not going to have a match for this shortcode
+                    // and will return an empty string so we need to make sure that we're only replacing
+                    // the template when there is a non-empty string.
+                    $parsed = $sc_obj->parser($shortcode, $data_send, $this->_data['extra_data']);
+                    if ($parsed) {
+                        $this->_template = $parsed;
+                    }
+                }
+
+                $parsed = $sc_obj->parser($shortcode, $data_send, $this->_data['extra_data']);
+
+                $matched_code[] = $shortcode;
+                $sc_values[]    = $parsed;
             }
         }
 
@@ -248,8 +245,9 @@ class EEH_Parse_Shortcodes
      * Does it match this format: `[IF_`
      *
      * @param $shortcode
+     * @return bool
      */
-    protected function _is_conditional_shortcode($shortcode)
+    protected function _is_conditional_shortcode($shortcode): bool
     {
         return strpos($shortcode, '[IF_') === 0;
     }
@@ -259,18 +257,17 @@ class EEH_Parse_Shortcodes
      * This sets the shortcodes property from the incoming array of valid shortcodes that corresponds to names of
      * various EE_Shortcode library objects
      *
-     * @access private
      * @param array $valid_shortcodes an array of strings corresponding to EE_Shortcode Library objects
      * @return void
      */
-    private function _set_shortcodes($valid_shortcodes)
+    private function _set_shortcodes(array $valid_shortcodes)
     {
         foreach ($valid_shortcodes as $shortcode_ref) {
             $ref       = ucwords(str_replace('_', ' ', $shortcode_ref));
             $ref       = str_replace(' ', '_', $ref);
             $classname = 'EE_' . $ref . '_Shortcodes';
-            if (class_exists($classname)) {
-                $this->_shortcode_objs[] = new $classname();
+            if (class_exists($classname) && ! isset($this->_shortcode_objs[ $classname ])) {
+                $this->_shortcode_objs[ $classname ] = new $classname();
             }
         }
     }
