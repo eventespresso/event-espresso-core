@@ -10,7 +10,7 @@
 <p>
     <strong><?php esc_html_e('Recommendations', 'event_espresso'); ?></strong>
     <br />
-    <?php esc_html__(
+    <?php esc_html_e(
         'To learn more about the options on this page, take a look at the different tabs that appear on the left side of the page.',
         'event_espresso'
     ); ?>
