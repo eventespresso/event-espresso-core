@@ -31,7 +31,7 @@ abstract class EE_Shortcodes extends EE_Base
      *  [RECEIPT_URL download=true] matches as [RECEIPT_URL
      *  [PAYMENT_LINK_IF_NEEDED_* custom_text='pay me now man!'] matches as [PAYMENT_LINK_IF_NEEDED_*
      */
-    public const REGEX_SHORTCODE_NAME_ONLY = '/\[[A-Z_*]+/';
+    public const REGEX_SHORTCODE_NAME_ONLY = '/\[[A-Z\d_*]+/';
 
     /**
      * matches the opening [ plus the dynamic shortcode name including _*, but nothing else

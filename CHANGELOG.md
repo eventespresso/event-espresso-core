@@ -6,6 +6,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Releases
 
+### 5.0.49
+
+
+#### Fixed
+ - [Fix events rest endpoint (#2021)](https://github.com/eventespresso/cafe/pull/2021)
+ - [Update message RegEx to include shortcodes within digits, e.g [CO_ADD1] (#2022)](https://github.com/eventespresso/cafe/pull/2022)
+
+#### Changed
+ - [Add Update URI: to all none WP.org hosted plugins. (#2018)](https://github.com/eventespresso/cafe/pull/2018)
+
+
+
+
+
+
 ### 5.0.48
 
 #### Added

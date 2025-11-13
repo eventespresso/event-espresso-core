@@ -260,14 +260,14 @@ abstract class EE_Restriction_Generator_Base
             || strpos($path_to_event_model, 'Event') !== false
         ) {
             $where_conditions['OR*status'] = [
-                "$path_to_event_model{status}" => $published_value,
+                "{$path_to_event_model}status" => $published_value,
                 'AND'                           => [
-                    "$path_to_event_model{Post_Meta.meta_key}"   => '_previous_event_status',
-                    "$path_to_event_model{Post_Meta.meta_value}" => $published_value,
+                    "{$path_to_event_model}Post_Meta.meta_key"   => '_previous_event_status',
+                    "{$path_to_event_model}Post_Meta.meta_value" => $published_value,
                 ],
             ];
         } else {
-            $where_conditions[ "$path_to_event_model{status}" ] = $published_value;
+            $where_conditions[ "{$path_to_event_model}status" ] = $published_value;
         }
         return $where_conditions;
     }
