@@ -196,9 +196,7 @@ class EEH_Parse_Shortcodes
         // now lets go ahead and loop through our parsers for each shortcode and set up the values
         foreach ($shortcodes as $shortcode) {
             // truncate full shortcode to shortcode name only (ie: remove attributes and dynamic portions)
-            preg_match_all(EE_Shortcodes::REGEX_SHORTCODE_NAME_ONLY, $shortcode, $matches);
-            // ensure shortcode ends with closing ]
-            $short_code_name = rtrim(reset($matches[0]), ']') . ']';
+            $short_code_name = EE_Shortcodes::extractShortcode($shortcode);
 
             foreach ($this->_shortcode_objs as $sc_obj) {
                 if (! $sc_obj instanceof EE_Shortcodes) {
@@ -226,7 +224,6 @@ class EEH_Parse_Shortcodes
                         $this->_template = $parsed;
                     }
                 }
-
                 $parsed = $sc_obj->parser($shortcode, $data_send, $this->_data['extra_data']);
 
                 $matched_code[] = $shortcode;

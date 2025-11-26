@@ -503,7 +503,7 @@ abstract class EE_Messages_Validator extends EE_Base
         preg_match_all(EE_Shortcodes::REGEX_SHORTCODE_NAME_ONLY, $incoming_text, $matches);
         $shortcodes_in_text = $matches[0];
         // now all we need to do is add the closing ] to each shortcode to make them "valid"
-        $shortcodes_in_text = array_map(fn($shortcode) => rtrim($shortcode) . ']', $shortcodes_in_text);
+        $shortcodes_in_text = array_map('EE_Shortcodes::extractShortcode', $shortcodes_in_text);
         // get a diff of the shortcodes in the string vs the valid shortcodes
         $invalid_shortcodes = array_diff($shortcodes_in_text, $valid_shortcodes);
         if (empty($invalid_shortcodes)) {

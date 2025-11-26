@@ -25,13 +25,15 @@ abstract class EE_Shortcodes extends EE_Base
     public const REGEX_SHORTCODE_FULL = '/(\[.+?])/';
 
     /**
-     * matches the opening [ plus the shortcode name, but nothing else
+     * matches the opening [ plus dynamic or static shortcode name including _*, but nothing else
      * examples:
      *  [RECIPIENT_LNAME] matches as [RECIPIENT_LNAME
      *  [RECEIPT_URL download=true] matches as [RECEIPT_URL
      *  [PAYMENT_LINK_IF_NEEDED_* custom_text='pay me now man!'] matches as [PAYMENT_LINK_IF_NEEDED_*
+     *  [PRIMARY_REGISTRANT_ANSWER_*Student ID] matches as [PRIMARY_REGISTRANT_ANSWER_*
+     *  [PRIMARY_REGISTRANT_ANSWER_* Student ID] matches as [PRIMARY_REGISTRANT_ANSWER_*
      */
-    public const REGEX_SHORTCODE_NAME_ONLY = '/\[[A-Z\d_*]+/';
+    public const REGEX_SHORTCODE_NAME_ONLY = '/(?:\[[A-Z0-9_]+\*?)/';
 
     /**
      * matches the opening [ plus the dynamic shortcode name including _*, but nothing else
@@ -41,7 +43,6 @@ abstract class EE_Shortcodes extends EE_Base
      *  [PAYMENT_LINK_IF_NEEDED_* custom_text='pay me now man!'] matches as [PAYMENT_LINK_IF_NEEDED_*
      */
     public const REGEX_SHORTCODE_DYNAMIC = '/(\[[A-Z_]+_\*)/';
-
 
 
     /**
@@ -190,10 +191,9 @@ abstract class EE_Shortcodes extends EE_Base
         // filter setup shortcodes
         $this->_shortcodes = $this->get_shortcodes();
 
-        // we need to set up any dynamic shortcodes so that they work with the array_key_exists
-        preg_match_all(EE_Shortcodes::REGEX_SHORTCODE_NAME_ONLY, $shortcode, $matches);
-        $shortcode_to_verify = ! empty($matches[0]) ? $matches[0][0] . ']' : $shortcode;
-
+        // Extract the shortcode name from the full shortcode
+        $shortcode_to_verify = EE_Shortcodes::extractShortcode($shortcode);
+        
         // first we want to make sure this is a valid shortcode
         if (! array_key_exists($shortcode_to_verify, $this->_shortcodes)) {
             // get out, this parser doesn't handle the incoming shortcode.
@@ -238,6 +238,24 @@ abstract class EE_Shortcodes extends EE_Base
 
         // note the below filter applies to ALL shortcode parsers... be careful!
         return (array) apply_filters('FHEE__EE_Shortcodes__shortcodes', $this->_shortcodes, $this);
+    }
+
+    /**
+     * This method parses a full shortcode passed and returns only the shortcode name
+     * This is includes both static and dynamic shortcodes (no attributes are returned if the shortcode is matched)
+     * If no shortcode name can be matched, the full shortcode is returned.
+     *
+     * @return string parsed shortcode [EXAMPLE]/[EXAMPLE_*]
+     * @since  $VID
+     */
+    public static function extractShortcode($shortcodeToParse): string
+    {
+        // We need to set up any dynamic shortcodes so that they work with the array_key_exists
+        preg_match_all(EE_Shortcodes::REGEX_SHORTCODE_NAME_ONLY, $shortcodeToParse, $matches);
+        $short_code_name = ! empty($matches[0][0])
+            ? $matches[0][0]
+            : $shortcodeToParse;
+        return rtrim($short_code_name, ']') . ']';
     }
 
 

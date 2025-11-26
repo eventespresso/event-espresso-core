@@ -6,7 +6,7 @@ Tags: Events, Tickets, Event Registration, Ticket Sales, Calendar
 Requires at least: 4.5
 Requires PHP: 7.4
 Tested up to: 6.8.3
-Stable tag: 5.0.49
+Stable tag: 5.0.50
 License: GPL2
 
 The best events plugin with event registration, free and paid ticket sales, event registration forms, PayPal payments, automatic emails, and more!
@@ -83,6 +83,17 @@ Explore more features and view screenshots [here](https://eventespresso.com/feat
 == Changelog ==
 
 ## Releases
+
+### [5.0.50]
+
+#### Fixed
+ - [Fix dynamic shortcodes not parsing correctly (#2028)]
+
+#### Changed
+ - [Add a capability check for the New Date Button (Barista#1463) (#2020)]
+ - [TPC - Decimal values broken (Barista#1459) (#2025)]
+
+
 
 ### [5.0.49]
 

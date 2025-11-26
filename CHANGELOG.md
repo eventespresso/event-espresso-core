@@ -6,6 +6,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Releases
 
+### 5.0.50
+
+
+#### Fixed
+ - [Fix dynamic shortcodes not parsing correctly (#2028)](https://github.com/eventespresso/cafe/pull/2028)
+
+#### Changed
+ - [Add a capability check for the New Date Button (Barista#1463) (#2020)](https://github.com/eventespresso/cafe/pull/2020)
+ - [TPC - Decimal values broken (Barista#1459) (#2025)](https://github.com/eventespresso/cafe/pull/2025)
+
+
+
+
+
+
 ### 5.0.49
 
 

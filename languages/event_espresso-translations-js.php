@@ -1027,10 +1027,10 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/config.ts:9
 	__( 'Edit Ticket Details', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/editable/EditablePrice.tsx:39
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/editable/EditablePrice.tsx:45
 	__( 'edit ticket total…', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/editable/EditablePrice.tsx:53
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/editable/EditablePrice.tsx:70
 	__( 'set price…', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/filterBar/controls/IsChainedButton.tsx:23
@@ -2159,7 +2159,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/ui-components/src/Confirm/useConfirmationDialog.tsx:40
 	__( 'confirm', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/CurrencyDisplay/CurrencyDisplay.tsx:34
+	// Reference: packages/ui-components/src/CurrencyDisplay/CurrencyDisplay.tsx:35
 	__( 'free', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/DateTimeRangePicker/DateTimeRangePicker.tsx:117
