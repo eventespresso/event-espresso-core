@@ -112,7 +112,7 @@ class SettingsForm extends EE_Payment_Method_Form
     {
         $pm_slug = $this->pm_instance->slug();
         // Section to be displayed if onboard.
-        $form_parameters['extra_meta_inputs'][Domain::META_KEY_CHECKOUT_TYPE] = new EE_Select_Input(
+        $form_parameters['extra_meta_inputs'][ Domain::META_KEY_CHECKOUT_TYPE ] = new EE_Select_Input(
             [
                 'express_checkout' => esc_html__('Express Checkout', 'event_espresso'),
                 'ppcp'             => esc_html__('Advanced Credit and Debit Card payments', 'event_espresso'),
@@ -145,10 +145,20 @@ class SettingsForm extends EE_Payment_Method_Form
     {
         $pm_slug = $this->pm_instance->slug();
         // Section to be displayed if onboard.
-        $form_parameters['extra_meta_inputs'][Domain::META_KEY_FUNDING_OPTIONS] = new EE_Checkbox_Multi_Input(
+        $form_parameters['extra_meta_inputs'][ Domain::META_KEY_FUNDING_OPTIONS ] = new EE_Checkbox_Multi_Input(
             [
-                'venmo'    => esc_html__('Venmo', 'event_espresso'),
-                'paylater' => esc_html__('PayLater', 'event_espresso'),
+                'venmo'       => esc_html__('Venmo', 'event_espresso'),
+                'paylater'    => esc_html__('PayLater', 'event_espresso'),
+                'bancontact'  => esc_html__('Bancontact', 'event_espresso'),
+                'blik'        => esc_html__('BLIK', 'event_espresso'),
+                'eps'         => esc_html__('EPS', 'event_espresso'),
+                'giropay'     => esc_html__('giropay', 'event_espresso'),
+                'ideal'       => esc_html__('iDEAL', 'event_espresso'),
+                'mercadopago' => esc_html__('Mercado Pago', 'event_espresso'),
+                'mybank'      => esc_html__('MyBank', 'event_espresso'),
+                'p24'         => esc_html__('Przelewy24', 'event_espresso'),
+                'sepa'        => esc_html__('SEPA-Lastschrift', 'event_espresso'),
+                'sofort'      => esc_html__('Sofort', 'event_espresso'),
             ],
             [
                 'html_name'       => "eep_checkout_funding_options_$pm_slug",

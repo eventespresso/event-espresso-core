@@ -220,7 +220,7 @@ class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage
             case 'event_page_id':
                 // also, find that post, and changes the shortcode in it from ESPRESSO_PAYMENTS
                 // to ESPRESSO_THANK_YOU
-                $reg_page_post               = get_post($value);
+                $reg_page_post               = get_post(absint($value));
                 $reg_page_post->post_content = str_replace(
                     "[ESPRESSO_EVENTS]",
                     "[ESPRESSO_CHECKOUT]",
@@ -232,21 +232,21 @@ class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage
             case 'return_url':
                 // also, find that post, and changes the shortcode in it from ESPRESSO_PAYMENTS
                 // to ESPRESSO_THANK_YOU
-                $thank_you_page_post               = get_post($value);
+                $thank_you_page_post               = get_post(absint($value));
                 $thank_you_page_post->post_content = str_replace(
                     "[ESPRESSO_PAYMENTS]",
                     "[ESPRESSO_THANK_YOU]",
                     $thank_you_page_post->post_content
                 );
                 wp_update_post($thank_you_page_post);
-                $c->core->thank_you_page_id = $value;
+                $c->core->thank_you_page_id = absint($value);
                 break;
             case 'cancel_return':
-                $c->core->cancel_page_id = $value;
+                $c->core->cancel_page_id = absint($value);
 
                 break;
             case 'notify_url':
-                $c->core->txn_page_id = $value;
+                $c->core->txn_page_id = absint($value);
                 break;
             case 'use_captcha':
                 $c->registration->use_captcha = ($value == 'Y');
@@ -389,6 +389,7 @@ class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage
         'return_url',
         'cancel_return',
         'notify_url',
+        'events_in_dasboard',
         'events_in_dashboard',
         'use_captcha',
         'recaptcha_publickey',

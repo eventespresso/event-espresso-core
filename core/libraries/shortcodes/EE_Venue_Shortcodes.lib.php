@@ -160,8 +160,12 @@ class EE_Venue_Shortcodes extends EE_Shortcodes
      */
     private function _get_venue()
     {
+        // if we have datetime, use the venue assigned to it.
+        if( $this->_data instanceof EE_Datetime ) {
+            return $this->_data->venue();
+        }
 
-        // we need the EE_Event object to get the venue.
+        // if we don't have a datetime, we need the EE_Event object to get the venue.
         $this->_event = $this->_data instanceof EE_Event ? $this->_data : null;
 
         // if no event, then let's see if there is a reg_obj.  If there IS, then we'll try and grab the event from the

@@ -176,7 +176,7 @@ class EE_Email_messenger extends EE_messenger
                 'required'   => ['[TICKET_LIST]'],
             ],
             'datetime_list' => [
-                'shortcodes' => ['datetime'],
+                'shortcodes' => ['datetime', 'venue'],
                 'required'   => ['[DATETIME_LIST]'],
             ],
         ];

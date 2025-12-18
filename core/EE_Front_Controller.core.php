@@ -206,10 +206,14 @@ final class EE_Front_Controller
      */
     public function get_request(WP $WP)
     {
+        static $done = false;
+        if ($done) {
+            return;
+        }
+        $done = true;
         do_action('AHEE__EE_Front_Controller__get_request__start');
         $this->current_page->parseQueryVars($WP);
         do_action('AHEE__EE_Front_Controller__get_request__complete');
-        remove_action('parse_request', [$this, 'get_request'], 1);
     }
 
 

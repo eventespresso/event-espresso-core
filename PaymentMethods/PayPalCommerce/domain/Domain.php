@@ -171,6 +171,32 @@ class Domain
      */
     public const PM_SLUG = 'paypalcheckout';
 
+    /**
+     * Holds an array of funding options.
+     */
+    public const FUNDING_OPTIONS = [
+        'venmo',
+        'paylater',
+        'bancontact',
+        'blik',
+        'eps',
+        'giropay',
+        'ideal',
+        'mercadopago',
+        'mybank',
+        'p24',
+        'sepa',
+        'sofort',
+    ];
+
+    /**
+     * Holds an array of default/enabled funding options.
+     */
+    public const DEFAULT_FUNDING_OPTIONS = [
+        'venmo',
+        'paylater',
+    ];
+
 
     /**
      * Returns the base PayPal API URL.

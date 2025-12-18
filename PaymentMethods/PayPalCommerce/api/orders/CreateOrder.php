@@ -76,13 +76,14 @@ class CreateOrder extends OrdersApi
      *
      * @var EE_Transaction
      */
-    protected EE_Transaction $transaction;
+    protected EE_Transaction     $transaction;
 
-    private FeatureFlags $feature;
+    private FeatureFlags         $feature;
 
     private GatewayDataFormatter $gateway_data_formatter;
 
-    private EE_Payment $payment;
+    private EE_Payment           $payment;
+
 
     /**
      * CreateOrder constructor.
@@ -92,8 +93,13 @@ class CreateOrder extends OrdersApi
      * @param array          $billing_info
      * @param FeatureFlags   $feature
      */
-    public function __construct(PayPalApi $api, EE_Transaction $transaction, array $billing_info, FeatureFlags $feature, GatewayDataFormatter $gateway_data_formatter)
-    {
+    public function __construct(
+        PayPalApi            $api,
+        EE_Transaction       $transaction,
+        array                $billing_info,
+        FeatureFlags         $feature,
+        GatewayDataFormatter $gateway_data_formatter
+    ) {
         parent::__construct($api);
         $this->transaction   = $transaction;
         $this->feature       = $feature;
@@ -156,11 +162,10 @@ class CreateOrder extends OrdersApi
     {
         $registrant  = $this->transaction->primary_registration();
         $attendee    = $registrant->attendee();
-        $event       = $registrant->event();
         $description = $this->gateway_data_formatter->formatOrderDescription($this->payment);
         $parameters  = [
-            'intent'              => 'CAPTURE',
-            'purchase_units'      => [
+            'intent'         => 'CAPTURE',
+            'purchase_units' => [
                 [
                     'custom_id'   => $this->transaction->ID(),
                     'description' => substr(wp_strip_all_tags($description), 0, 125),
@@ -177,19 +182,18 @@ class CreateOrder extends OrdersApi
                     'experience_context' => [
                         'user_action' => 'PAY_NOW',
                     ],
-                    'email_address' => $attendee->email(),
-                    'name'  => [
+                    'email_address'      => $attendee->email(),
+                    'name'               => [
                         'given_name' => $attendee->fname(),
-                        'surname' => $attendee->lname(),
+                        'surname'    => $attendee->lname(),
                     ],
                 ],
             ],
         ];
-
-        $CNT_ISO = $attendee->country_ID();
+        $CNT_ISO     = $attendee->country_ID();
 
         // No country ID set, maybe just state?
-        if(empty($CNT_ISO)) {
+        if (empty($CNT_ISO)) {
             $state_obj = $attendee->state_obj();
             if ($state_obj instanceof EE_State) {
                 $CNT_ISO = $state_obj->country_iso();
@@ -203,16 +207,16 @@ class CreateOrder extends OrdersApi
                 $CNT_ISO = $country->ISO();
             }
         }
-        
+
         // If we have and address on the attendee, send it to PayPal.
-        if($CNT_ISO && strlen($CNT_ISO == 2)) {
+        if ($CNT_ISO && strlen($CNT_ISO == 2)) {
             $parameters['payment_source']['paypal']['address'] = [
-                'address_line_1'    => $attendee->address(),
-                'address_line_2'    => $attendee->address2(),
-                'admin_area_2'      => $attendee->city(),
-                'admin_area_1'      => $attendee->state_abbrev(),
-                'postal_code'       => $attendee->zip(),
-                'country_code'      => $attendee->country_ID(),
+                'address_line_1' => $attendee->address(),
+                'address_line_2' => $attendee->address2(),
+                'admin_area_2'   => $attendee->city(),
+                'admin_area_1'   => $attendee->state_abbrev(),
+                'postal_code'    => $attendee->zip(),
+                'country_code'   => $attendee->country_ID(),
             ];
         }
 
@@ -228,7 +232,8 @@ class CreateOrder extends OrdersApi
                     && $this->feature->allowed(FeatureFlag::USE_PAYMENT_PROCESSOR_FEES)
                 )
             )
-            && ! empty($scopes) && in_array('partnerfee', $scopes)
+            && ! empty($scopes)
+            && in_array('partnerfee', $scopes)
         ) {
             /** @var PartnerPaymentFees $payment_fees */
             $payment_fees = LoaderFactory::getShared(PartnerPaymentFees::class);
@@ -240,7 +245,7 @@ class CreateOrder extends OrdersApi
                             'currency_code' => $this->currency_code,
                         ],
                     ],
-                ]
+                ],
             ];
         }
         return $parameters;
@@ -265,11 +270,23 @@ class CreateOrder extends OrdersApi
                 && $line_item->OBJ_type() !== 'Promotion'
                 && $line_item->quantity() > 0
             ) {
-                $item_money     = CurrencyManager::normalizeValue($line_item->unit_price());
-                $line_items []  = [
-                    'name'        => substr(wp_strip_all_tags($this->gateway_data_formatter->formatLineItemName($line_item, $this->payment)), 0, 125),
+                $item_money    = CurrencyManager::normalizeValue($line_item->unit_price());
+                $line_items [] = [
+                    'name'        => substr(
+                        wp_strip_all_tags(
+                            $this->gateway_data_formatter->formatLineItemName($line_item, $this->payment)
+                        ),
+                        0,
+                        125
+                    ),
                     'quantity'    => $line_item->quantity(),
-                    'description' => substr(wp_strip_all_tags($this->gateway_data_formatter->formatLineItemDesc($line_item, $this->payment)), 0, 125),
+                    'description' => substr(
+                        wp_strip_all_tags(
+                            $this->gateway_data_formatter->formatLineItemDesc($line_item, $this->payment)
+                        ),
+                        0,
+                        125
+                    ),
                     'unit_amount' => [
                         'currency_code' => $this->currency_code,
                         'value'         => (string) $item_money,
@@ -365,7 +382,7 @@ class CreateOrder extends OrdersApi
                     [$this->request_url, $parameters, $response],
                     $this->transaction->payment_method()
                 );
-            } catch (EE_Error | ReflectionException $e) {
+            } catch (EE_Error|ReflectionException $e) {
                 error_log("PayPalLogger Error: $message: " . json_encode($response));
             }
             return [
@@ -389,12 +406,12 @@ class CreateOrder extends OrdersApi
             return false;
         }
 
-        foreach($response['details'] as $detail) {
+        foreach ($response['details'] as $detail) {
             if (! empty($detail['issue'])) {
                 if (
                     strtoupper($detail['issue']) === 'ITEM_TOTAL_MISMATCH'
                     || strtoupper($detail['issue']) === 'AMOUNT_MISMATCH'
-            ) {
+                ) {
                     PayPalLogger::errorLog(
                         esc_html__('Mistmatch Error:', 'event_espresso'),
                         [$this->request_url, $response],
@@ -417,15 +434,15 @@ class CreateOrder extends OrdersApi
      */
     protected function getSimplifiedAmountBreakdown(): array
     {
-        $tax_total = $this->transaction->tax_total();
+        $tax_total               = $this->transaction->tax_total();
         $breakdown['item_total'] = [
             'currency_code' => $this->currency_code,
-            'value'         => (string) CurrencyManager::normalizeValue($this->transaction->remaining() - $tax_total)
+            'value'         => (string) CurrencyManager::normalizeValue($this->transaction->remaining() - $tax_total),
         ];
         if ($tax_total > 0) {
             $breakdown['tax_total'] = [
                 'currency_code' => $this->currency_code,
-                'value'         => (string) CurrencyManager::normalizeValue($tax_total)
+                'value'         => (string) CurrencyManager::normalizeValue($tax_total),
             ];
         }
         return $breakdown;
@@ -440,23 +457,26 @@ class CreateOrder extends OrdersApi
     protected function getSimplifiedItems(): array
     {
         // Simplified single line item.
-        $line_items             = [];
-        $primary_registrant     = $this->transaction->primary_registration();
-        $event_obj              = $primary_registrant->event_obj();
-        $name_and_description   = $this->gateway_data_formatter->formatOrderDescription($this->payment);
-        
-        $line_items[]   = [
+        $line_items           = [];
+        $primary_registrant   = $this->transaction->primary_registration();
+        $event_obj            = $primary_registrant->event_obj();
+        $name_and_description = $this->gateway_data_formatter->formatOrderDescription($this->payment);
+
+        $line_items[] = [
             'name'        => substr(wp_strip_all_tags($name_and_description), 0, 125),
             'quantity'    => 1,
             'description' => substr(wp_strip_all_tags($name_and_description), 0, 2047),
             'unit_amount' => [
                 'currency_code' => $this->currency_code,
-                'value'         => (string) CurrencyManager::normalizeValue($this->transaction->remaining() - $this->transaction->tax_total()),
+                'value'         => (string) CurrencyManager::normalizeValue(
+                    $this->transaction->remaining() - $this->transaction->tax_total()
+                ),
             ],
             'category'    => 'DIGITAL_GOODS',
         ];
         return $line_items;
     }
+
 
     /**
      * Generates an EE_Payment object but doesn't save it.

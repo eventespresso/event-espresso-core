@@ -39,9 +39,9 @@ class BillingForm extends EE_Billing_Attendee_Info_Form
 {
     protected EE_Payment_Method $paypal_pmt;
 
-    protected ?EE_Transaction $transaction = null;
+    protected ?EE_Transaction   $transaction = null;
 
-    protected string $checkout_type;
+    protected string            $checkout_type;
 
     /**
      * Filepath to template files
@@ -54,14 +54,14 @@ class BillingForm extends EE_Billing_Attendee_Info_Form
     /**
      * Class constructor.
      *
-     * @param EE_Payment_Method    $payment_method
-     * @param array                $options
+     * @param EE_Payment_Method $payment_method
+     * @param array             $options
      * @throws EE_Error
      * @throws ReflectionException
      */
     public function __construct(EE_Payment_Method $payment_method, array $options)
     {
-        $this->paypal_pmt    = $payment_method;
+        $this->paypal_pmt = $payment_method;
         // Can't be too careful.
         $this->transaction   = $options['transaction'] ?? null;
         $this->template_path = $options['template_path'] ?? '';
@@ -201,7 +201,7 @@ class BillingForm extends EE_Billing_Attendee_Info_Form
      */
     public static function excludeBillingFormFields(
         EE_Billing_Info_Form $billing_form,
-        EE_Payment_Method $payment_method
+        EE_Payment_Method    $payment_method
     ): EE_Billing_Info_Form {
         $request        = LoaderFactory::getShared(Request::class);
         $request_params = $request->requestParams();
@@ -407,7 +407,7 @@ class BillingForm extends EE_Billing_Attendee_Info_Form
      */
     public function addPayPalCheckout(): EE_Form_Section_Proper
     {
-        $template_args['pm_slug']     = $this->paypal_pmt->slug();
+        $template_args['pm_slug'] = $this->paypal_pmt->slug();
         return new EE_Form_Section_Proper(
             [
                 'layout_strategy' => new EE_Template_Layout(
@@ -457,10 +457,8 @@ class BillingForm extends EE_Billing_Attendee_Info_Form
     public function enqueue_js(): void
     {
         // Setup default values
-        $client_id_key = Domain::META_KEY_CLIENT_ID;
-        $merchant_id   = false;
-        $funding_options = ['venmo', 'paylater'];
-
+        $client_id_key   = Domain::META_KEY_CLIENT_ID;
+        $merchant_id     = false;
         // Override the above if third party integration
         if (EED_PayPalCommerce::isThirdParty($this->_pm_instance)) {
             $client_id_key = Domain::META_KEY_PARTNER_CLIENT_ID;
@@ -469,35 +467,30 @@ class BillingForm extends EE_Billing_Attendee_Info_Form
                 Domain::META_KEY_SELLER_MERCHANT_ID
             );
         }
-
         // Setup query args
-        $url_params            = [
-            'client-id'        => PayPalExtraMetaManager::getPmOption($this->_pm_instance, $client_id_key),
-            'currency'         => CurrencyManager::currencyCode(),
-            'components'       => implode(',', ['buttons','hosted-fields']),
-            'intent'           => 'capture',
-            'merchant-id'      => $merchant_id,
+        $url_params = [
+            'client-id'   => PayPalExtraMetaManager::getPmOption($this->_pm_instance, $client_id_key),
+            'currency'    => CurrencyManager::currencyCode(),
+            'components'  => implode(',', ['buttons', 'hosted-fields']),
+            'intent'      => 'capture',
+            'merchant-id' => $merchant_id,
         ];
-
         // Which funding methods are active?
-        $enabled_funding = $this->_pm_instance->get_extra_meta(Domain::META_KEY_FUNDING_OPTIONS, true, $funding_options);
-
-        // Any funding method not enabled should be disabled.
-        $disabled_funding = array_diff(
-            $funding_options,
-            $enabled_funding
+        $enabled_funding = $this->_pm_instance->get_extra_meta(
+            Domain::META_KEY_FUNDING_OPTIONS,
+            true,
+            Domain::DEFAULT_FUNDING_OPTIONS
         );
-
+        // Any funding method not enabled should be disabled.
+        $disabled_funding = array_diff(Domain::FUNDING_OPTIONS, $enabled_funding);
         // Any funding options enabled?
         if (count($enabled_funding) > 0) {
             $url_params['enable-funding'] = implode(',', $enabled_funding);
         }
-
         // Any funding options disabled?
         if (count($disabled_funding) > 0) {
             $url_params['disable-funding'] = implode(',', $disabled_funding);
         }
-
         // Enqueue the PayPal JS
         wp_enqueue_script(
             'eea_paypal_commerce_js_lib',
@@ -505,7 +498,6 @@ class BillingForm extends EE_Billing_Attendee_Info_Form
             [],
             null
         );
-
         wp_enqueue_script(
             'eea_paypal_commerce_js',
             EEP_PAYPAL_COMMERCE_URL . 'assets/js/paypal-commerce-payments.js',
@@ -551,7 +543,7 @@ class BillingForm extends EE_Billing_Attendee_Info_Form
         // Convert money for a display format.
         $decimal_places = CurrencyManager::getDecimalPlaces();
         $org_country    = isset(EE_Registry::instance()->CFG->organization)
-        && EE_Registry::instance()->CFG->organization instanceof EE_Organization_Config
+                          && EE_Registry::instance()->CFG->organization instanceof EE_Organization_Config
             ? EE_Registry::instance()->CFG->organization->CNT_ISO
             : 'US';
         $transaction_id = $this->transaction instanceof EE_Transaction ? $this->transaction->ID() : 0;
@@ -597,7 +589,10 @@ class BillingForm extends EE_Billing_Attendee_Info_Form
             'pm_capture_error'       => esc_html__('Payment could not be captured!', 'event_espresso'),
             'contact_support_msg'    => sprintf(
                 /* translators: %1$s: organization email, %2$s: the transaction ID */
-                esc_html__('Please contact support (%1$s) for more details on this transaction #%2$s.', 'event_espresso'),
+                esc_html__(
+                    'Please contact support (%1$s) for more details on this transaction #%2$s.',
+                    'event_espresso'
+                ),
                 EE_Registry::instance()->CFG->organization->get_pretty('email'),
                 $transaction_id
             ),

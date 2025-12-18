@@ -6,6 +6,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Releases
 
+### 5.0.51
+
+#### Added
+ - [Add Venue shortcodes to DATETIME_LIST in messages (#2033)](https://github.com/eventespresso/cafe/pull/2033)
+ - [PPC. Toggle alternative payment methods (#2034)](https://github.com/eventespresso/cafe/pull/2034)
+
+#### Fixed
+ - [Fix Integer Values in 4.1.0 DMS (#2050)](https://github.com/eventespresso/cafe/pull/2050)
+
+
+
+
+
+
+
 ### 5.0.50
 
 

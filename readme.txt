@@ -5,8 +5,8 @@ Donate link: [Support Our Work](https://eventespresso.com/pricing/?ee_ver=ee4&ut
 Tags: Events, Tickets, Event Registration, Ticket Sales, Calendar
 Requires at least: 4.5
 Requires PHP: 7.4
-Tested up to: 6.8.3
-Stable tag: 5.0.50
+Tested up to: 6.9
+Stable tag: 5.0.51
 License: GPL2
 
 The best events plugin with event registration, free and paid ticket sales, event registration forms, PayPal payments, automatic emails, and more!
@@ -83,6 +83,21 @@ Explore more features and view screenshots [here](https://eventespresso.com/feat
 == Changelog ==
 
 ## Releases
+
+### [5.0.51]
+
+#### Added
+- Add Venue shortcodes to DATETIME_LIST in message templates
+- PayPal Commerce: Add Toggle to activate alternative payment methods
+
+#### Fixed
+- Integer values in 4.1.0 DMS
+
+#### Changed
+- Escape translations on messages settings
+- Use guard clase instead of remove_action()
+
+
 
 ### [5.0.50]
 
