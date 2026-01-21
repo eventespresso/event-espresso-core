@@ -2,12 +2,7 @@
 
 namespace EventEspresso\core\domain\services\graphql\enums;
 
-use EE_Error;
-use EEM_Datetime;
-use EEM_Ticket;
-use EEM_Price;
 use EventEspresso\core\services\graphql\enums\EnumBase;
-use ReflectionException;
 
 /**
  * Class ModelNameEnum
@@ -32,21 +27,13 @@ class ModelNameEnum extends EnumBase
 
     /**
      * @return array
-     * @throws EE_Error
-     * @throws ReflectionException
      */
     protected function getValues(): array
     {
         return [
-            'DATETIME' => [
-                'value' => EEM_Datetime::instance()->item_name(),
-            ],
-            'TICKET'   => [
-                'value' => EEM_Ticket::instance()->item_name(),
-            ],
-            'PRICE'    => [
-                'value' => EEM_Price::instance()->item_name(),
-            ],
+            'DATETIME' => ['value' => 'Datetime'],
+            'TICKET'   => ['value' => 'Ticket'],
+            'PRICE'    => ['value' => 'Price'],
         ];
     }
 }

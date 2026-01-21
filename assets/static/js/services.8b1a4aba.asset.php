@@ -1,1 +1,0 @@
-<?php return array('dependencies' => array('eventespresso-config', 'eventespresso-constants', 'eventespresso-data', 'eventespresso-hooks', 'eventespresso-registry', 'eventespresso-storage', 'eventespresso-utils', 'ramda', 'react'), 'version' => 'c130ac88447878c8d47b8cd824ee225f');

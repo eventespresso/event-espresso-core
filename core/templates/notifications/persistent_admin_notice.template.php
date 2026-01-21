@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\entities\notifications\PersistentAdminNotice;
 use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 defined('EVENT_ESPRESSO_VERSION') || exit;
@@ -9,35 +10,41 @@ defined('EVENT_ESPRESSO_VERSION') || exit;
  * @var string $persistent_admin_notice_type
  * @var string $persistent_admin_notice_css
  * @var bool   $is_dismissible
+ * @var bool   $espresso_page
  */
 
 if (strpos($persistent_admin_notice_message, '<p>') === false) {
     $persistent_admin_notice_message = '<p>' . $persistent_admin_notice_message . '</p>';
 }
 
-$notice_class = "espresso-notices notice ee-nag-notice ee-status-outline";
+$notice_class = "espresso-notices ee-nag-notice ee-status-outline";
 $notice_class .= " ee-status-outline--$persistent_admin_notice_type";
-$notice_class .= " ee-status-bg--$persistent_admin_notice_type";
-$notice_class .= " $persistent_admin_notice_css";
+$notice_class .= " ee-status-bg--$persistent_admin_notice_type notice";
 
 switch($persistent_admin_notice_type) {
-    case 'success':
+    case PersistentAdminNotice::TYPE_SUCCESS:
         $dashicon = 'dashicons dashicons-yes-alt dashicons--bigger';
+        $notice_class .= ! $espresso_page ? " notice-success" : '';
         break;
-    case 'attention':
-    case 'warning':
+    case PersistentAdminNotice::TYPE_ATTENTION:
+    case PersistentAdminNotice::TYPE_WARNING:
         $dashicon = 'dashicons dashicons-warning dashicons--bigger';
+        $notice_class .= ! $espresso_page ? " notice-warning" : '';
         break;
-    case 'error':
+    case PersistentAdminNotice::TYPE_ERROR:
         $dashicon = 'dashicons dashicons-dismiss dashicons--bigger';
+        $notice_class .= ! $espresso_page ? " notice-error" : '';
         break;
-    case 'info':
+    case PersistentAdminNotice::TYPE_INFO:
     default:
         $dashicon = 'dashicons dashicons-info dashicons--bigger';
+        $notice_class .= ! $espresso_page ? " notice-info" : '';
         break;
 }
 
-$button_class = 'button button--caution button--outline button--small';
+$notice_class .= $persistent_admin_notice_css ? " $persistent_admin_notice_css" : '';
+
+$button_class = 'button button--caution button--ghost button--small';
 $button_class .= ' dismiss-ee-nag-notice-btn dismiss-ee-nag-notice hide-if-no-js';
 
 $dismiss_button = $is_dismissible

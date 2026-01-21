@@ -457,8 +457,8 @@ class BillingForm extends EE_Billing_Attendee_Info_Form
     public function enqueue_js(): void
     {
         // Setup default values
-        $client_id_key   = Domain::META_KEY_CLIENT_ID;
-        $merchant_id     = false;
+        $client_id_key = Domain::META_KEY_CLIENT_ID;
+        $merchant_id   = false;
         // Override the above if third party integration
         if (EED_PayPalCommerce::isThirdParty($this->_pm_instance)) {
             $client_id_key = Domain::META_KEY_PARTNER_CLIENT_ID;
@@ -479,14 +479,13 @@ class BillingForm extends EE_Billing_Attendee_Info_Form
         $enabled_funding = $this->_pm_instance->get_extra_meta(
             Domain::META_KEY_FUNDING_OPTIONS,
             true,
-            Domain::DEFAULT_FUNDING_OPTIONS
+            Domain::FUNDING_OPTIONS
         );
+        if (! $enabled_funding || ! is_array($enabled_funding)) {
+            $enabled_funding = [];
+        }
         // Any funding method not enabled should be disabled.
         $disabled_funding = array_diff(Domain::FUNDING_OPTIONS, $enabled_funding);
-        // Any funding options enabled?
-        if (count($enabled_funding) > 0) {
-            $url_params['enable-funding'] = implode(',', $enabled_funding);
-        }
         // Any funding options disabled?
         if (count($disabled_funding) > 0) {
             $url_params['disable-funding'] = implode(',', $disabled_funding);

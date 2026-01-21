@@ -6,6 +6,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Releases
 
+### 5.0.52
+
+#### Fixed
+ - [Do Not Translate Model Names (#2044)](https://github.com/eventespresso/cafe/pull/2044)
+ - [Fix Persistent Admin Notice Registration When Force Updating Previously Dismissed Notices (#1988)](https://github.com/eventespresso/cafe/pull/1988)
+ - [Fix loading of Gutenberg block Event Attendees (#1929)](https://github.com/eventespresso/cafe/pull/1929)
+ - [Fix Floating Editor Menu (#861)](https://github.com/eventespresso/cafe/pull/861)
+
+#### Changed
+ - [PPC. Default pay options to all allowed (#2053)](https://github.com/eventespresso/cafe/pull/2053)
+ - [Replace React vendor for storage hooks (Barista#1442) (#2061)](https://github.com/eventespresso/cafe/pull/2061)
+ - [Fix Event Attendees Block (Barista#1333) (#2063)](https://github.com/eventespresso/cafe/pull/2063)
+
+
+
 ### 5.0.51
 
 #### Added
@@ -17,12 +32,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
-
-
-
-
 ### 5.0.50
-
 
 #### Fixed
  - [Fix dynamic shortcodes not parsing correctly (#2028)](https://github.com/eventespresso/cafe/pull/2028)
@@ -33,11 +43,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 
-
-
-
 ### 5.0.49
-
 
 #### Fixed
  - [Fix events rest endpoint (#2021)](https://github.com/eventespresso/cafe/pull/2021)
@@ -45,9 +51,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 #### Changed
  - [Add Update URI: to all none WP.org hosted plugins. (#2018)](https://github.com/eventespresso/cafe/pull/2018)
-
-
-
 
 
 
@@ -65,9 +68,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - [Skip Session Save Path Filesystem Checks for open_basedir Violations (#2005)](https://github.com/eventespresso/cafe/pull/2005)
  - [Relax Restrictions Generator Action Type (#2008)](https://github.com/eventespresso/cafe/pull/2008)
  - [Allow for dynamic shortcode parameters within the message system (#2012)](https://github.com/eventespresso/cafe/pull/2012)
-
-
-
 
 
 

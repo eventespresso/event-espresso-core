@@ -24,15 +24,31 @@ use Exception;
  */
 class PersistentAdminNotice implements RequiresCapCheckInterface
 {
+    public const TYPE_INFO      = 'info';
+
+    public const TYPE_SUCCESS   = 'success';
+
+    public const TYPE_ATTENTION = 'attention';
+
+    public const TYPE_WARNING   = 'warning';
+
+    public const TYPE_ERROR     = 'error';
+
     protected string $name = '';
 
     protected string $message = '';
 
     protected string $extra_css = '';
 
-    protected string $type = 'info';
+    protected string $type = PersistentAdminNotice::TYPE_INFO;
 
-    private array $allowed_types = ['info', 'success', 'attention', 'warning', 'error'];
+    private array $allowed_types = [
+        PersistentAdminNotice::TYPE_INFO,
+        PersistentAdminNotice::TYPE_SUCCESS,
+        PersistentAdminNotice::TYPE_ATTENTION,
+        PersistentAdminNotice::TYPE_WARNING,
+        PersistentAdminNotice::TYPE_ERROR,
+    ];
 
     protected bool $force_update = false;
 
@@ -79,7 +95,7 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
         string $capability = 'manage_options',
         string $cap_context = 'view persistent admin notice',
         bool $dismissed = false,
-        string $type = 'info',
+        string $type = PersistentAdminNotice::TYPE_INFO,
         string $extra_css = ''
     ) {
         $this->setName($name);
@@ -138,7 +154,7 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
 
     public function getType(): string
     {
-        return $this->type ?: 'info';
+        return $this->type ?: PersistentAdminNotice::TYPE_INFO;
     }
 
 
@@ -178,6 +194,12 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
     public function getForceUpdate(): bool
     {
         return $this->force_update;
+    }
+
+
+    public function dontForceUpdate(): void
+    {
+        $this->setForceUpdate(false);
     }
 
 
@@ -303,18 +325,20 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
         if ($persistent_admin_notice_collection->has($this->name)) {
             /** @var PersistentAdminNotice $existing */
             $existing = $persistent_admin_notice_collection->get($this->name);
-            // we don't need to add it again (we can't actually)
-            // but if it has already been dismissed, and we are overriding with a forced update
+            // already exists so we can't add it again... but if it has already been dismissed,
+            // and we are overriding with a forced update, then replace the old with the new
             if ($existing->getDismissed() && $this->getForceUpdate()) {
-                // then toggle the notice's dismissed state to true
-                // so that it gets displayed again
-                $existing->setDismissed(false);
-                // and make sure the message is set
-                $existing->setMessage($this->message);
+                $persistent_admin_notice_collection->remove($existing);
+                $persistent_admin_notice_collection->add($this);
+                // purge the old notice so it's not saved and make sure the new one is saved
+                $this->setPurge(false);
+                $existing->setPurge(true);
             }
         } else {
             $persistent_admin_notice_collection->add($this, $this->name);
         }
+        // always turn off force update so that notices can be dismissed
+        $this->dontForceUpdate();
         $this->registered = true;
     }
 

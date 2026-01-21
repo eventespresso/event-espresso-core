@@ -4621,13 +4621,35 @@ body.espresso-admin #contextual-help-wrap strong {
     padding-block: var(--ee-padding-default);
 }
 
-.espresso-admin div.mce-container.mce-panel.mce-floatpanel.mce-menu {
+.espresso-admin div.mce-container.mce-panel.mce-floatpanel.mce-menu,
+.espresso-admin div.mce-container.mce-panel.mce-floatpanel.mce-popover {
     background-color: var(--ee-color-white);
     border: 2px solid var(--ee-status-color-blue) !important;
     box-shadow: 0 3px 6px -1px hsla(0, 0%, 0%, .75), 0 0 20px -2px hsla(0, 0%, 0%, .15);
-    min-width: calc(360px + var(--ee-size-extreme) + var(--ee-margin-micro));
+    position: fixed;
     text-align: start;
     z-index: 4000;
+}
+
+.espresso-admin div.mce-container.mce-panel.mce-floatpanel.mce-menu {
+    min-width: calc(360px + var(--ee-size-extreme) + var(--ee-margin-micro));
+}
+
+
+.espresso-admin div.mce-container.mce-panel.mce-floatpanel.mce-popover:has(.mce-colorbutton-grid) {
+    min-height: 18rem;
+    min-width: 19.625rem;
+
+    .mce-colorbutton-grid {
+        margin: .5rem;
+
+        td.mce-grid-cell div {
+            border: none;
+            height: 2rem;
+            margin: .5rem;
+            width: 2rem;
+        }
+    }
 }
 
 .espresso-admin div.mce-container.mce-panel.mce-floatpanel.mce-menu > div {
@@ -5050,15 +5072,15 @@ body.espresso-admin #contextual-help-wrap strong {
     color: var(--ee-color-white);
 }
 
-.espresso-admin.wp-core-ui .button.button--accent:focus {
-    background-color: var(--ee-btn-accent-focus);
-    border-color: var(--ee-btn-accent-focus);
-    color: var(--ee-color-white);
-}
-
 .espresso-admin.wp-core-ui .button.button--accent:hover {
     background-color: var(--ee-btn-accent-hover);
     border-color: var(--ee-btn-accent-hover);
+    color: var(--ee-color-white);
+}
+
+.espresso-admin.wp-core-ui .button.button--accent:focus {
+    background-color: var(--ee-btn-accent-focus);
+    border-color: var(--ee-btn-accent-focus);
     color: var(--ee-color-white);
 }
 
@@ -5068,14 +5090,14 @@ body.espresso-admin #contextual-help-wrap strong {
     color: var(--ee-btn-accent);
 }
 
-.espresso-admin.wp-core-ui .button.button--accent.button--outline:focus {
-    border-color: var(--ee-btn-accent-focus);
-    color: var(--ee-btn-accent);
-}
-
 .espresso-admin.wp-core-ui .button.button--accent.button--outline:hover {
     background-color: var(--ee-btn-accent);
     color: var(--ee-color-white);
+}
+
+.espresso-admin.wp-core-ui .button.button--accent.button--outline:focus {
+    border-color: var(--ee-btn-accent-focus);
+    color: var(--ee-btn-accent);
 }
 
 
@@ -5085,15 +5107,15 @@ body.espresso-admin #contextual-help-wrap strong {
     color: var(--ee-color-white);
 }
 
-.espresso-admin.wp-core-ui .button.button--caution:focus {
-    background-color: var(--ee-btn-caution-focus);
-    border-color: var(--ee-btn-caution-focus);
-    color: var(--ee-color-white);
-}
-
 .espresso-admin.wp-core-ui .button.button--caution:hover {
     background-color: var(--ee-btn-caution-hover);
     border-color: var(--ee-btn-caution-hover);
+    color: var(--ee-color-white);
+}
+
+.espresso-admin.wp-core-ui .button.button--caution:focus {
+    background-color: var(--ee-btn-caution-focus);
+    border-color: var(--ee-btn-caution-focus);
     color: var(--ee-color-white);
 }
 
@@ -5106,20 +5128,20 @@ body.espresso-admin #contextual-help-wrap strong {
     color: var(--ee-btn-caution);
 }
 
-.espresso-admin.wp-core-ui .deletemeta:focus,
-.espresso-admin.wp-core-ui .submitbox .submitdelete:focus,
-.espresso-admin.wp-core-ui a#remove-post-thumbnail:focus,
-.espresso-admin.wp-core-ui .button.button--caution.button--outline:focus {
-    border-color: var(--ee-btn-caution-focus);
-    color: var(--ee-btn-caution);
-}
-
 .espresso-admin.wp-core-ui .deletemeta:hover,
 .espresso-admin.wp-core-ui .submitbox .submitdelete:hover,
 .espresso-admin.wp-core-ui a#remove-post-thumbnail:hover,
 .espresso-admin.wp-core-ui .button.button--caution.button--outline:hover {
     background-color: var(--ee-btn-caution);
     color: var(--ee-color-white);
+}
+
+.espresso-admin.wp-core-ui .deletemeta:focus,
+.espresso-admin.wp-core-ui .submitbox .submitdelete:focus,
+.espresso-admin.wp-core-ui a#remove-post-thumbnail:focus,
+.espresso-admin.wp-core-ui .button.button--caution.button--outline:focus {
+    border-color: var(--ee-btn-caution-focus);
+    color: var(--ee-btn-caution);
 }
 
 
@@ -5129,15 +5151,7 @@ body.espresso-admin #contextual-help-wrap strong {
     background-color: transparent;
     border-color: transparent;
     box-shadow: none;
-    color: var(--ee-font-color);
-}
-.espresso-admin.wp-core-ui .button.button--ghost:hover {
-    background-color: var(--ee-btn-secondary);
-    border-color: var(--ee-btn-secondary);
-}
-.espresso-admin.wp-core-ui .button.button--ghost:focus {
-    background-color: var(--ee-btn-secondary-focus);
-    border-color: var(--ee-btn-secondary-focus);
+    color: currentColor;
 }
 
 .ee-close-modal {
@@ -5830,9 +5844,9 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin.wp-core-ui .dashicons:before {
     align-items: center;
     display: inline-flex;
-    font-size: var(--ee-font-size-2xl);
-    height: var(--ee-font-size-2xl);
-    width: var(--ee-font-size-2xl);
+    font-size: var(--ee-font-size-xl);
+    height: var(--ee-font-size-xl);
+    width: var(--ee-font-size-xl);
 }
 
 .espresso-admin.wp-core-ui .dashicons.dashicons--tiny,
@@ -5857,18 +5871,18 @@ body.espresso-admin #contextual-help-wrap strong {
 .espresso-admin.wp-core-ui .dashicons.dashicons--big:before,
 .espresso-admin.wp-core-ui .button--big:not(.button--icon-only) .dashicons,
 .espresso-admin.wp-core-ui .button--big:not(.button--icon-only) .dashicons:before {
-    font-size: var(--ee-font-size-4xl);
-    height: var(--ee-font-size-4xl);
-    width: var(--ee-font-size-4xl);
+    font-size: var(--ee-font-size-3xl);
+    height: var(--ee-font-size-3xl);
+    width: var(--ee-font-size-3xl);
 }
 
 .espresso-admin.wp-core-ui .dashicons.dashicons--bigger,
 .espresso-admin.wp-core-ui .dashicons.dashicons--bigger:before,
 .espresso-admin.wp-core-ui .button--big:not(.button--icon-only) .dashicons,
 .espresso-admin.wp-core-ui .button--big:not(.button--icon-only) .dashicons:before {
-    font-size: var(--ee-font-size-7xl);
-    height: var(--ee-font-size-7xl);
-    width: var(--ee-font-size-7xl);
+    font-size: var(--ee-font-size-5xl);
+    height: var(--ee-font-size-5xl);
+    width: var(--ee-font-size-5xl);
 }
 
 .espresso-admin.wp-core-ui .dashicons.dashicons--huge,

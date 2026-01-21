@@ -252,7 +252,11 @@ final class EE_Admin implements InterminableInterface
                 EE_ADMIN_URL
             )
         );
-        if ($page === 'pricing' || strpos($page, 'espresso') !== false) {
+        if (
+            $page === 'pricing'
+            || strpos($page, 'espresso') !== false
+            || $this->request->currentPageIs('plugins.php')
+        ) {
             $this->persistent_admin_notice_manager->loadAdminNotices();
         }
         $this->maybeSetDatetimeWarningNotice();

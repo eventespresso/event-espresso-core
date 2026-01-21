@@ -27,7 +27,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
 ?>
 <div id="ee-batch-message-send-form" style="display:none;">
 
-    <button class="batch-message-cancel ee-close-modal button button--ghost button--icon-only"
+    <button class="batch-message-cancel ee-close-modal button button--secondary button--ghost button--icon-only"
             aria-label="<?php esc_html_e('close', 'event_espresso'); ?>"
     >
         <span class="dashicons dashicons-no"></span>

@@ -18,7 +18,7 @@ class CoreBlocksAssetManager extends BlockAssetManager
 {
     const DOMAIN = 'blocks';
 
-    const ASSET_HANDLE_EDITOR_BLOCKS = Domain::ASSET_NAMESPACE . '-core-' . CoreBlocksAssetManager::DOMAIN;
+    const ASSET_HANDLE_EDITOR_BLOCKS = Domain::ASSET_NAMESPACE . '-' . CoreBlocksAssetManager::DOMAIN;
     const ASSET_HANDLE_CORE_BLOCKS = '';
 
 

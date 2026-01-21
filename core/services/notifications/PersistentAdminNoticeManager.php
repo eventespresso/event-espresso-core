@@ -146,7 +146,7 @@ class PersistentAdminNoticeManager
                         (string) $details['capability'],
                         (string) $details['cap_context'],
                         (bool) $details['dismissed'],
-                        (string) ($details['type'] ?? 'info'),
+                        (string) ($details['type'] ?? PersistentAdminNotice::TYPE_INFO),
                         (string) ($details['extra_css'] ?? '')
                     );
                     // new format for nag notices
@@ -200,6 +200,8 @@ class PersistentAdminNoticeManager
     {
         $this->notice_collection = $this->getPersistentAdminNoticeCollection();
         if ($this->notice_collection->hasObjects()) {
+            $page = $this->request->getRequestParam('page', '');
+            $espresso_page = $page === 'pricing' || strpos($page, 'espresso') !== false;
             $enqueue_assets = false;
             // and display notices
             foreach ($this->notice_collection as $persistent_admin_notice) {
@@ -220,7 +222,7 @@ class PersistentAdminNoticeManager
                 if ($persistent_admin_notice->getMessage() === '') {
                     continue;
                 }
-                $this->displayPersistentAdminNotice($persistent_admin_notice);
+                $this->displayPersistentAdminNotice($persistent_admin_notice, $espresso_page);
                 $enqueue_assets = true;
             }
             if ($enqueue_assets) {
@@ -273,8 +275,9 @@ class PersistentAdminNoticeManager
      * displayPersistentAdminNoticeHtml
      *
      * @param PersistentAdminNotice $persistent_admin_notice
+     * @param bool                  $espresso_page used in template
      */
-    protected function displayPersistentAdminNotice(PersistentAdminNotice $persistent_admin_notice)
+    protected function displayPersistentAdminNotice(PersistentAdminNotice $persistent_admin_notice, bool $espresso_page)
     {
         // used in template
         $persistent_admin_notice_name    = $persistent_admin_notice->getName();
@@ -318,6 +321,8 @@ class PersistentAdminNoticeManager
                 return;
             }
             $persistent_admin_notice->setDismissed(true);
+            // also toggle force update to false so it is NOT displayed again
+            $persistent_admin_notice->dontForceUpdate();
             $persistent_admin_notice->setPurge($purge);
             $this->saveNotices();
         }

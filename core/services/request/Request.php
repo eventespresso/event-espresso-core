@@ -544,6 +544,8 @@ class Request implements InterminableInterface, RequestInterface, ReservedInstan
     public function currentPageIs($uri_segment)
     {
         $request_path = $this->requestPath();
+        $request_path = explode('?', $request_path);
+        $request_path = reset($request_path) ?: '';
         $current_page = explode('/', $request_path);
         return end($current_page) === $uri_segment;
     }

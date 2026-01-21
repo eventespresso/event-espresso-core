@@ -165,7 +165,7 @@ class SettingsForm extends EE_Payment_Method_Form
                 'html_id'         => "eep_checkout_funding_options_$pm_slug",
                 'html_class'      => "eep-checkout-funding-options-$pm_slug",
                 'html_label_text' => esc_html__('Enable PayPal funding options:', 'event_espresso'),
-                'default'         => ['venmo', 'paylater'],
+                'default'         => Domain::FUNDING_OPTIONS,
             ]
         );
         return $form_parameters;
