@@ -11,6 +11,7 @@ use EE_Hidden_Input;
 use EE_Question_Group;
 use EE_Registration;
 use EE_SPCO_Reg_Step_Attendee_Information;
+use EE_Ticket;
 use EEM_Event_Question_Group;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use ReflectionException;
@@ -56,9 +57,11 @@ class AttendeeRegForm extends EE_Form_Section_Proper
                 'layout_strategy' => new EE_Fieldset_Section_Layout(
                     [
                         'legend_class' => 'spco-attendee-lgnd',
-                        'legend_text'  => sprintf(
-                            esc_html_x('Attendee %d', 'Attendee ID', 'event_espresso'),
-                            AttendeeRegForm::$attendee_nmbr
+                        'legend_text'  => apply_filters(
+                            'FHEE__EventEspresso_core_domain_services_registration_form_v1_subsections_AttendeeRegForm__construct__legend_text',
+                            $this->generateLegendText($registration),
+                            AttendeeRegForm::$attendee_nmbr,
+                            $registration
                         ),
                     ]
                 ),
@@ -75,6 +78,28 @@ class AttendeeRegForm extends EE_Form_Section_Proper
     public function hasQuestions(): bool
     {
         return $this->has_questions;
+    }
+
+
+    /**
+     * Generates the legend text for the attendee registration form.
+     * Includes the ticket name if available, otherwise falls back to attendee number only.
+     *
+     * @param EE_Registration $registration
+     * @return string
+     * @since 5.0.53
+     */
+    private function generateLegendText(EE_Registration $registration): string
+    {
+        $legend_text = sprintf(
+            esc_html_x('Attendee %d', 'Attendee ID', 'event_espresso'),
+            AttendeeRegForm::$attendee_nmbr
+        );
+        $ticket = $registration->ticket();
+        if ($ticket instanceof EE_Ticket && $ticket->name()) {
+            $legend_text .= ' (' . esc_html($ticket->name()) . ')';
+        }
+        return $legend_text;
     }
 
 

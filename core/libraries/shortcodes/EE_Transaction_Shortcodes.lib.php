@@ -102,7 +102,8 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes
                     '<strong>',
                     '</strong>'
                 )
-                . '</li>',
+                . '</li>'
+                . '</ul>',
             '[INVOICE_LINK]'                    => esc_html__(
                 'This is a full html link to the invoice. Add download=true to link directly to download.',
                 'event_espresso'
@@ -182,7 +183,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes
                     'A dynamic shortcode for adjusting how total owing gets shown. The acceptable attributes on the shortcode are:',
                     'event_espresso'
                 )
-                . '<p></ul>'
+                . '<ul>'
                 . '<li><strong>still_owing</strong>:'
                 . esc_html__(
                     'If the transaction is not paid in full, then whatever is set for this attribute is shown (otherwise its just the amount owing). The default is:',
@@ -200,7 +201,7 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes
                     'If the transaction is paid in full, then you can indicate how this gets displayed.  Note, that it defaults to just be the total owing.',
                     'event_espresso'
                 )
-                . '</li></ul></p>',
+                . '</li></ul>',
             '[TXN_TOTAL_TICKETS]'               => esc_html__(
                 'The total number of all tickets purchased in a transaction',
                 'event_espresso'
@@ -237,6 +238,42 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes
                 'This will output the value of the payment transaction id for the last payment made on the transaction. Note, if a specific payment was included for message generation, that will be used when parsing the shortcode.',
                 'event_espresso'
             ),
+            '[PRINT_BUTTON_*]'                  => esc_html__(
+                'This will return html for a Download PDF button which triggers the browser built in print function.',
+                'event_espresso'
+            )
+            . '<ul>'
+            . '<li>'
+            . sprintf(
+                esc_html__(
+                    '%stitle:%s This can be used to set the title value of elemet (default is "Print").',
+                    'event_espresso'
+                ),
+                '<strong>',
+                '</strong>'
+            )
+            . '</li>'
+            . '<li>'
+            . sprintf(
+                esc_html__(
+                    '%salt:%s This can be used to set the alt tag on the element (default uses the title value from above)',
+                    'event_espresso'
+                ),
+                '<strong>',
+                '</strong>'
+            )
+            . '</li>'
+            . '<li>'
+            . sprintf(
+                esc_html__(
+                    '%stext:%s This should be a text string that is used for the generated link text (The default is "Click to print")',
+                    'event_espresso'
+                ),
+                '<strong>',
+                '</strong>'
+            )
+            . '</li>'
+            . '</ul>',
         ];
     }
 
@@ -417,6 +454,9 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes
         }
         if (strpos($shortcode, '[PAYMENT_DUE_DATE_*') !== false) {
             return $this->_get_payment_due_date($shortcode, $transaction);
+        }
+        if (strpos($shortcode, '[PRINT_BUTTON_*') !== false) {
+            return $this->getPrintButton($shortcode);
         }
         return '';
     }
@@ -817,5 +857,60 @@ class EE_Transaction_Shortcodes extends EE_Shortcodes
             );
         }
         return $prefix_text . $date_due;
+    }
+
+
+    /**
+     * This method output a button to call the browsers own print function using Javascript.
+     *
+     * @since {$VID}
+     *
+     * @param string         $shortcode The shortcode being parsed.
+     * 
+     * @return string        Generated html
+     */
+    private function getPrintButton($shortcode)
+    {
+
+        // check we are parsing the correct shortcode
+        $shortcode = trim(
+            str_replace(
+                ['[PRINT_BUTTON_*', ']'], // find
+                '',  // replace
+                $shortcode
+            )
+        );
+        // make sure the required wp helper function is present
+        // require the shortcode file if necessary
+        if (! function_exists('shortcode_parse_atts')) {
+            require_once(ABSPATH . WPINC . '/shortcodes.php');
+        }
+
+        // get any attributes that may be present and set the defaults.
+        $attrs = shortcode_parse_atts($shortcode);
+
+        $title = ! empty($attrs['title'])
+            ? $attrs['title']
+            : 'Print';
+
+        $alt = ! empty($attrs['alt'])
+            ? $attrs['alt']
+            : $title;
+
+        $text = ! empty($attrs['text'])
+            ? $attrs['text']
+            : esc_html__('Click to print', 'event_espresso');
+
+        // Return the print button
+        return "
+                <a class='ee-print-btn' 
+                   title='{$title}'  
+                   alt='{$alt}'  
+                   onclick='window.print();'  
+                   target='_blank'  
+                   style='cursor:pointer;'
+                > 
+                   {$text}
+                </a>";
     }
 }

@@ -1,7 +1,5 @@
 <?php
 
-use EventEspresso\core\services\loaders\LoaderFactory;
-
 /**
  *
  * EE_Line_Item_List_Shortcodes
@@ -22,23 +20,27 @@ class EE_Line_Item_List_Shortcodes extends EE_Shortcodes
 {
     protected function _init_props()
     {
-        $this->label = esc_html__('Line Item List Shortcodes', 'event_espresso');
+        $this->label       = esc_html__('Line Item List Shortcodes', 'event_espresso');
         $this->description = esc_html__('All shortcodes specific to line item lists', 'event_espresso');
-        $this->_shortcodes = array(
+        $this->_shortcodes = [
             '[TICKET_LINE_ITEM_LIST]'         => esc_html__('Outputs a list of ticket line items.', 'event_espresso'),
             '[TAX_LINE_ITEM_LIST]'            => esc_html__('Outputs a list of tax line items.', 'event_espresso'),
             '[ADDITIONAL_LINE_ITEM_LIST]'     => esc_html__(
                 'Outputs a list of additional line items (other charges or discounts)',
                 'event_espresso'
             ),
-            '[PRICE_MODIFIER_LINE_ITEM_LIST]' => esc_html__('Outputs a list of price modifier line items', 'event_espresso'),
-        );
+            '[PRICE_MODIFIER_LINE_ITEM_LIST]' => esc_html__(
+                'Outputs a list of price modifier line items',
+                'event_espresso'
+            ),
+        ];
     }
 
 
     /**
      * @param string $shortcode
      * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _parser($shortcode)
     {
@@ -64,11 +66,12 @@ class EE_Line_Item_List_Shortcodes extends EE_Shortcodes
     /**
      * verify incoming data contains what is needed for retrieving and parsing each ticket line item for an event.
      *
-     * @since 4.5.0
-     *
      * @return string parsed ticket line item list.
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since 4.5.0
      */
-    private function _get_ticket_line_item_list()
+    private function _get_ticket_line_item_list(): string
     {
         $this->_validate_list_requirements();
 
@@ -76,19 +79,21 @@ class EE_Line_Item_List_Shortcodes extends EE_Shortcodes
             return '';
         }
 
-        $valid_shortcodes = array('line_item', 'line_item_list', 'ticket');
+        $valid_shortcodes = ['line_item', 'line_item_list', 'ticket'];
 
-        $ticket = $this->_data['data'];
-        $templates = $this->_extra_data['template'];
+        $ticket        = $this->_data['data'];
+        $templates     = $this->_extra_data['template'];
         $addressee_obj = $this->_extra_data['data'];
 
         // made it here so we have an EE_Ticket, so we should have what we need.
         $ticket_line_item = isset($addressee_obj->tickets[ $ticket->ID() ]['line_item'])
-            ? $addressee_obj->tickets[ $ticket->ID() ]['line_item'] : null;
-        $sub_line_items = isset($addressee_obj->tickets[ $ticket->ID() ]['sub_line_items'])
-            ? $addressee_obj->tickets[ $ticket->ID() ]['sub_line_items'] : array();
-
-        $template = count($sub_line_items) < 2 ? $templates['ticket_line_item_no_pms']
+            ? $addressee_obj->tickets[ $ticket->ID() ]['line_item']
+            : null;
+        $sub_line_items   = isset($addressee_obj->tickets[ $ticket->ID() ]['sub_line_items'])
+            ? $addressee_obj->tickets[ $ticket->ID() ]['sub_line_items']
+            : [];
+        $template         = count($sub_line_items) < 2
+            ? $templates['ticket_line_item_no_pms']
             : $templates['ticket_line_item_pms'];
 
         if (empty($ticket_line_item) || empty($sub_line_items)) {
@@ -110,15 +115,11 @@ class EE_Line_Item_List_Shortcodes extends EE_Shortcodes
      *
      * @return string  parsed tax line item list.
      * @throws EE_Error
+     * @throws ReflectionException
      * @since 4.5.0
      */
-    private function _get_tax_line_item_list()
+    private function _get_tax_line_item_list(): string
     {
-        /** @var EE_Admin_Config $admin_config */
-        $admin_config = LoaderFactory::getShared(EE_Admin_Config::class);
-        if ($admin_config->useAdvancedEditor()) {
-            return '';
-        }
         $this->_validate_list_requirements();
 
         if (! $this->_data['data'] instanceof EE_Messages_Addressee) {
@@ -126,12 +127,37 @@ class EE_Line_Item_List_Shortcodes extends EE_Shortcodes
         }
 
         // made it here so we're good to go.
-        $valid_shortcodes = array('line_item');
-        $templates = $this->_data['template'];
+        $valid_shortcodes = ['line_item'];
+        $templates        = $this->_data['template'];
 
         $tax_line_items = $this->_data['data']->tax_line_items;
+        if (! is_array($tax_line_items) || empty($tax_line_items)) {
+            return '';
+        }
+
+        // determine if there are any global taxes that need to be displayed
+        $has_global_taxes = false;
+        $first_tax        = reset($tax_line_items);
+        if ($first_tax instanceof EE_Line_Item) {
+            $grand_total       = EEH_Line_Item::find_transaction_grand_total_for_line_item($first_tax);
+            $ticket_line_items = EEH_Line_Item::get_ticket_line_items($grand_total);
+            foreach ($ticket_line_items as $ticket_line_item) {
+                // toggle $has_global_taxes to true if ticket uses global taxes
+                $has_global_taxes = $has_global_taxes || (
+                        $ticket_line_item instanceof EE_Line_Item && $ticket_line_item->is_taxable()
+                    );
+            }
+        }
+
+        if (! $has_global_taxes) {
+            return '';
+        }
+
         $line_item_list = '';
         foreach ($tax_line_items as $line_item) {
+            if (! $line_item->quantity() || ! $line_item->totalWithTax()) {
+                continue;
+            }
             $line_item_list .= $this->_shortcode_helper->parse_line_item_list_template(
                 $templates['tax_line_item_list'],
                 $line_item,
@@ -143,16 +169,17 @@ class EE_Line_Item_List_Shortcodes extends EE_Shortcodes
         return $line_item_list;
     }
 
+
     /**
      * Verify incoming data contains what is needed for retrieving and parsing each other line item for a transaction.
      *
+     * @return string  parsed other line item list.
+     * @throws EE_Error
      * @since 4.5.0
      *
-     * @return string  parsed other line item list.
      */
-    private function _get_additional_line_item_list()
+    private function _get_additional_line_item_list(): string
     {
-
         $this->_validate_list_requirements();
 
         if (! $this->_data['data'] instanceof EE_Messages_Addressee) {
@@ -160,11 +187,11 @@ class EE_Line_Item_List_Shortcodes extends EE_Shortcodes
         }
 
         // made it here so we're good to go.
-        $valid_shortcodes = array('line_item');
-        $templates = $this->_data['template'];
+        $valid_shortcodes = ['line_item'];
+        $templates        = $this->_data['template'];
 
         $additional_line_items = $this->_data['data']->additional_line_items;
-        $line_item_list = '';
+        $line_item_list        = '';
         foreach ($additional_line_items as $line_item) {
             $line_item_list .= $this->_shortcode_helper->parse_line_item_list_template(
                 $templates['additional_line_item_list'],
@@ -183,11 +210,12 @@ class EE_Line_Item_List_Shortcodes extends EE_Shortcodes
      * Verify incoming data contains what is needed for retrieving and parsing each price modifier line item for a
      * parent ticket line item.
      *
-     * @since 4.5.0
-     *
      * @return string parsed price modifier line item list.
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since 4.5.0
      */
-    private function _get_price_mod_line_item_list()
+    private function _get_price_mod_line_item_list(): string
     {
         $this->_validate_list_requirements();
 
@@ -197,15 +225,16 @@ class EE_Line_Item_List_Shortcodes extends EE_Shortcodes
 
         // made it here so we're good to go.
         $main_line_item = $this->_data['data'];
-        $templates = $this->_extra_data['template'];
-        $addressee_obj = $this->_extra_data['data'];
+        $templates      = $this->_extra_data['template'];
+        $addressee_obj  = $this->_extra_data['data'];
 
-        $valid_shortcodes = array('line_item');
+        $valid_shortcodes = ['line_item'];
 
         $main_line_item_id = $main_line_item->ID();
 
         $price_mod_line_items = ! empty($addressee_obj->line_items_with_children[ $main_line_item_id ]['children'])
-            ? $addressee_obj->line_items_with_children[ $main_line_item_id ]['children'] : array();
+            ? $addressee_obj->line_items_with_children[ $main_line_item_id ]['children']
+            : [];
 
         $line_item_list = '';
 

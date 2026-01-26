@@ -42,6 +42,7 @@ try {
                                 EEH_Template::get_help_tab_link('group_name_info'),
                                 AllowedTags::getAllowedTags()
                             ); ?>
+                            <span class="ee-required-text">*</span>
                         </label>
                     </th>
                     <td>
@@ -50,6 +51,7 @@ try {
                                name="QSG_name"
                                type="text"
                                value="<?php echo esc_attr($question_group->get_f('QSG_name')); ?>"
+                               required
                         >
 
                     </td>
@@ -111,6 +113,7 @@ try {
                                 EEH_Template::get_help_tab_link('group_order_info'),
                                 AllowedTags::getAllowedTags()
                             ); ?>
+                            <span class="ee-required-text">*</span>
                         </label>
                     </th>
                     <td>
@@ -119,6 +122,7 @@ try {
                                name="QSG_order"
                                type="number"
                                value="<?php echo esc_attr($question_group->order()); ?>"
+                               required
                         />
                     </td>
                 </tr>
@@ -128,6 +132,7 @@ try {
                         <label for="QSG_show_group_name">
                             <?php esc_html_e('Show Name', 'event_espresso'); ?>
                             <?php echo EEH_Template::get_help_tab_link('show_group_name_info'); ?>
+                            <span class="ee-required-text">*</span>
                         </label>
                     </th>
                     <td>
@@ -136,7 +141,7 @@ try {
                                 'QSG_show_group_name',
                                 $values,
                                 $question_group->show_group_name(),
-                                '',
+                                'required',
                                 'ee-input-width--tiny'
                             ),
                             AllowedTags::getWithFormTags()
@@ -149,12 +154,13 @@ try {
 
                 <tr>
                     <th>
-                        <label for="QSG_show_group_order">
+                        <label for="QSG_show_group_desc">
                             <?php esc_html_e('Show Description', 'event_espresso'); ?>
                             <?php echo wp_kses(
                                 EEH_Template::get_help_tab_link('show_group_description_info'),
                                 AllowedTags::getAllowedTags()
                             ); ?>
+                            <span class="ee-required-text">*</span>
                         </label>
                     </th>
                     <td>
@@ -163,7 +169,7 @@ try {
                                 'QSG_show_group_desc',
                                 $values,
                                 $question_group->show_group_desc(),
-                                '',
+                                'required',
                                 'ee-input-width--tiny'
                             ),
                             AllowedTags::getWithFormTags()
@@ -172,6 +178,23 @@ try {
                             esc_html_e(' Show Group Description on Registration Page?', 'event_espresso');
                         ?></p>
                         <input type="hidden" name="QSG_system" value="<?php echo esc_attr($question_group->system_group()); ?>">
+                    </td>
+                </tr>
+
+                <tr>
+                    <th></th>
+                    <td>
+                        <span class="important-notice">
+                            <?php
+                            printf(
+                                esc_html__(
+                                    'all fields marked with an asterisk (%1$s) are required',
+                                    'event_espresso'
+                                ),
+                                '<span class="asterisk ee-required-text">*</span>'
+                            )
+                            ?>
+                        </span>
                     </td>
                 </tr>
 

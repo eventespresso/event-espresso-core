@@ -3,7 +3,6 @@
 use EventEspresso\core\domain\entities\notifications\PersistentAdminNotice;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
-use EventEspresso\core\services\container\exceptions\ServiceNotFoundException;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\notifications\PersistentAdminNoticeManager;
 use EventEspresso\core\services\request\RequestInterface;
@@ -1124,11 +1123,6 @@ const ee_settings = {"wp_debug":"' . WP_DEBUG . '"};
      * @param string $pan_name the name, or key of the Persistent Admin Notice to be dismissed
      * @param bool   $purge
      * @param bool   $return
-     * @throws DomainException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
-     * @throws ServiceNotFoundException
-     * @throws InvalidArgumentException
      * @deprecated 4.9.27
      */
     public static function dismiss_persistent_admin_notice(

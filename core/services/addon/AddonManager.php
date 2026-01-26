@@ -95,7 +95,7 @@ class AddonManager
     public function loadAddons()
     {
         try {
-            $this->incompatible_addon_handler->deactivateIncompatibleAddons();
+            $this->incompatible_addon_handler->checkForIncompatibleAddons();
             // legacy add-on API
             do_action('AHEE__EE_System__load_espresso_addons');
             // new add-on API that uses versioning

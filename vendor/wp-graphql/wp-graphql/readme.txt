@@ -2,13 +2,11 @@
 Contributors: jasonbahl, tylerbarnes1, ryankanner, chopinbach, kidunot89, justlevine
 Tags: GraphQL, Headless, REST API, Decoupled, React
 Requires at least: 5.0
-Tested up to: 6.5
+Tested up to: 6.7.1
 Requires PHP: 7.1
-Stable tag: 1.27.2
+Stable tag: 1.32.1
 License: GPL-3
 License URI: https://www.gnu.org/licenses/gpl-3.0.html
-
-=== Short Description ===
 
 WPGraphQL adds a flexible and powerful GraphQL API to WordPress, enabling efficient querying and interaction with your site's data.
 
@@ -16,38 +14,21 @@ WPGraphQL adds a flexible and powerful GraphQL API to WordPress, enabling effici
 
 WPGraphQL is a free, open-source WordPress plugin that provides an extendable GraphQL schema and API for any WordPress site.
 
-Below are some links to help you get started with WPGraphQL
+**Get Started**
 
-- <a href="https://www.wpgraphql.com" target="_blank">WPGraphQL.com</a>
-- <a href="https://wpgraphql.com/docs/quick-start" target="_blank">Quick Start Guide</a>
-- <a href="https://wpgraphql.com/docs/intro-to-graphql" target="_blank">Intro to GraphQL</a>
-- <a href="https://wpgraphql.com/docs/intro-to-wordpress" target="_blank">Intro to WordPress</a>
-- <a href="https://discord.gg/AGVBqqyaUY" target="_blank">Join the WPGraphQL community on Discord</a>
+1. Install WPGraphQL: `wp plugin install wp-graphql --activate`
+2. Try it out: [Live Demo](https://repl.wpgraphql.com)
+3. Read the [Quick Start Guide](https://wpgraphql.com/docs/quick-start).
+4. Join the [Community on Discord](https://discord.gg/AGVBqqyaUY) and [Star the Repo](https://github.com/wp-graphql/wp-graphql)!
 
-<iframe width="560" height="315" src="https://www.youtube.com/embed/TiDD8k-_gzo?si=DIfA4HKRFHfZ2STu" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+**Key Features**
 
-= Build rich JavaScript applications with WordPress and GraphQL =
+- **Flexible API**: Query posts, pages, custom post types, taxonomies, users, and more.
+- **Extendable Schema**: Easily add functionality with WPGraphQL’s API, enabling custom integrations.
+- **Compatible with Modern Frameworks**: Works seamlessly with [Next.js](https://vercel.com/guides/wordpress-with-vercel), [Astro](https://docs.astro.build/en/guides/cms/wordpress/), [SvelteKit](https://www.okupter.com/blog/headless-wordpress-graphql-sveltekit), and more.
+- **Optimized Performance**: Fetch exactly the data you need in a single query. Boost performance with [WPGraphQL Smart Cache](https://github.com/wp-graphql/wp-graphql-smart-cache).
 
-WPGraphQL allows you to separate your CMS from your presentation layer. Content creators can use the CMS they know, while developers can use the frameworks and tools they love.
-
-WPGraphQL works great with:
-
-- [Gatsby](https://gatsbyjs.com)
-- [Apollo Client](https://www.apollographql.com/docs/react/)
-- [NextJS](https://nextjs.org/)
-- ...and more
-
-= Query what you need. Get exactly that. =
-
-With GraphQL, the client makes declarative queries, asking for the exact data needed, and in exactly what was asked for is given in response, nothing more. This allows the client have control over their application, and allows the GraphQL server to perform more efficiently by only fetching the resources requested.
-
-= Fetch many resources in a single request. =
-
-GraphQL queries allow access to multiple root resources, and also smoothly follow references between connected resources. While typical a REST API would require round-trip requests to many endpoints, GraphQL APIs can get all the data your app needs in a single request. Apps using GraphQL can be quick even on slow mobile network connections.
-
-= Powerful Debugging Tools =
-
-WPGraphQL ships with GraphiQL in your WordPress dashboard, allowing you to browse your site's GraphQL Schema and test Queries and Mutations.
+WPGraphQL is becoming a [Canonical Plugin](https://wordpress.org/news/2024/10/wpgraphql/) on WordPress.org, ensuring long-term support and a growing community of users and contributors.
 
 = Upgrading =
 
@@ -65,33 +46,49 @@ You can read more about the details of Semver at semver.org
 
 == Frequently Asked Questions ==
 
-= Can I use WPGraphQL with xx JavaScript Framework? =
+= How is WPGraphQL funded? =
+WPGraphQL is free and open-source. It is supported by contributors, backers, and sponsors, including Automattic, which provides significant support as WPGraphQL becomes a Canonical Plugin.
 
-WPGraphQL turns your WordPress site into a GraphQL API. Any client that can make http requests to the GraphQL endpoint can be used to interact with WPGraphQL.
+Learn more about supporting WPGraphQL on [Open Collective](https://opencollective.com/wp-graphql).
 
-= Where do I get WPGraphQL Swag? =
+= Can I use WPGraphQL with xx JavaScript framework? =
+Yes! WPGraphQL works with any client that can make HTTP requests to the GraphQL endpoint. It integrates seamlessly with frameworks like [Next.js](https://vercel.com/guides/wordpress-with-vercel), [Gatsby](https://gatsbyjs.com), [Astro](https://docs.astro.build/en/guides/cms/wordpress/), and more.
 
-WPGraphQL Swag is available on the Gatsby Swag store.
+= Where can I get support? =
+You can join the WPGraphQL [Discord community](https://discord.gg/AGVBqqyaUY) for support, discussions, and announcements.
 
-= What's the relationship between Gatsby, WP Engine, and WPGraphQL? =
-
-[WP Engine](https://wpengine.com/) is the employer of Jason Bahl, the creator and maintainer of WPGraphQL. He was previously employed by [Gatsby](https://gatsbyjs.com).
-
-You can read more about this [here](https://www.wpgraphql.com/2021/02/07/whats-next-for-wpgraphql/).
-
-Gatsby and WP Engine both believe that a strong GraphQL API for WordPress is a benefit for the web. Neither Gatsby or WP Engine are required to be used with WPGraphQL, however it's important to acknowledge and understand what's possible because of their investments into WPGraphQL and the future of headless WordPress!
+= How does WPGraphQL handle privacy and telemetry? =
+WPGraphQL uses the [Appsero SDK](https://appsero.com/privacy-policy) to collect telemetry data **only after user consent**. This helps improve the plugin while respecting user privacy.
 
 == Privacy Policy ==
 
-WPGraphQL uses [Appsero](https://appsero.com) SDK to collect some telemetry data upon user's confirmation. This helps us to troubleshoot problems faster & make product improvements.
+WPGraphQL uses [Appsero](https://appsero.com) SDK to collect some telemetry data upon user's confirmation. This helps us to troubleshoot problems faster and make product improvements.
 
-Appsero SDK **does not gather any data by default.** The SDK only starts gathering basic telemetry data **when a user allows it via the admin notice**. We collect the data to ensure a great user experience for all our users.
+Appsero SDK **does not gather any data by default.** The SDK starts gathering basic telemetry data **only when a user allows it via the admin notice**.
 
-Integrating Appsero SDK **DOES NOT IMMEDIATELY** start gathering data, **without confirmation from users in any case.**
+Learn more about how [Appsero collects and uses this data](https://appsero.com/privacy-policy/).
 
 Learn more about how [Appsero collects and uses this data](https://appsero.com/privacy-policy/).
 
 == Upgrade Notice ==
+
+= 1.32.0 =
+
+In <a href="https://github.com/wp-graphql/wp-graphql/pull/3293">#3293</a> a bug was fixed in how the `MediaDetails.file` field resolves. The previous behavior was a bug, but might have been used as a feature. If you need the field to behave the same as it did prior to this bugfix, you can [follow the instructions here](https://github.com/wp-graphql/wp-graphql/pull/3293) to override the field's resolver to how it worked before.
+
+= 1.30.0 =
+
+This release includes a new feature to implement a SemVer-compliant update checker, which will prevent auto-updates for major releases that include breaking changes.
+
+It also exposes the `EnqueuedAsset.group` and `EnqueuedScript.location` fields to the schema. Additionally, it adds a WPGraphQL Extensions page to the WordPress admin.
+
+There are no known breaking changes in this release, however, we recommend testing on staging servers to ensure the changes don't negatively impact your projects.
+
+= 1.28.0 =
+
+This release contains an internal refactor for how the Type Registry is generated which should lead to significant performance improvements for most users.
+
+While there are no intentional breaking changes, because this change impacts every user we highly recommend testing this release thoroughly on staging servers to ensure the changes don't negatively impact your projects.
 
 = 1.26.0 =
 
@@ -275,6 +272,129 @@ The `uri` field was non-null on some Types in the Schema but has been changed to
 Composer dependencies are no longer versioned in Github. Recommended install source is WordPress.org or using Composer to get the code from Packagist.org or WPackagist.org.
 
 == Changelog ==
+
+= 1.32.1 =
+
+**Chores / Bugfixes**
+
+- [#3308](https://github.com/wp-graphql/wp-graphql/pull/3308): fix: update term mutation was preventing terms from removing the parentId
+
+
+= 1.32.0 =
+
+**New Features**
+
+- [#3294](https://github.com/wp-graphql/wp-graphql/pull/3294): feat: introduce new fields for getting mediaItem files and filePaths
+
+**Chores / Bugfixes**
+
+- [#3293](https://github.com/wp-graphql/wp-graphql/pull/3293): fix: correct the resolver for the MediaDetails.file field to return the file name
+- [#3299](https://github.com/wp-graphql/wp-graphql/pull/3299): chore: restore excluded PHPCS rules
+- [#3301](https://github.com/wp-graphql/wp-graphql/pull/3301): fix: React backwards-compatibility with WP < 6.6
+- [#3302](https://github.com/wp-graphql/wp-graphql/pull/3302): chore: update NPM dependencies
+- [#3297](https://github.com/wp-graphql/wp-graphql/pull/3297): fix: typo in `Extensions\Registry\get_extensions()` method name
+- [#3303](https://github.com/wp-graphql/wp-graphql/pull/3303): chore: cleanup git cache
+- [#3298](https://github.com/wp-graphql/wp-graphql/pull/3298): chore: submit GF, Rank Math, and Headless Login plugins
+- [#3287](https://github.com/wp-graphql/wp-graphql/pull/3287): chore: fixes the syntax of the readme.txt so that the short description is shown on WordPress.org
+- [#3284](https://github.com/wp-graphql/wp-graphql/pull/3284): fix: Updated docs link for example of hierarchical data
+
+
+- update stable tag
+
+= 1.31.0 =
+
+**New Features**
+
+- [#3278](https://github.com/wp-graphql/wp-graphql/pull/3278): feat: add option to provide custom file path for static schemas when using the `wp graphql generate-static-schema` command
+
+**Chores / Bugfixes**
+
+- [#3284](https://github.com/wp-graphql/wp-graphql/pull/3284): fix: fix: Updated docs link for example of hierarchical data
+- [#3283](https://github.com/wp-graphql/wp-graphql/pull/3283): fix: Error in update checker when WPGraphQL is active as an mu-plugin
+
+
+= 1.30.0 =
+
+**Chores / Bugfixes**
+
+- [#3250](https://github.com/wp-graphql/wp-graphql/pull/3250): fix: receiving post for Incorrect uri
+- [#3268](https://github.com/wp-graphql/wp-graphql/pull/3268): ci: trigger PR workflows on release/* branches
+- [#3267](https://github.com/wp-graphql/wp-graphql/pull/3267): chore: fix bleeding edge/deprecated PHPStan smells [first pass]
+- [#3270](https://github.com/wp-graphql/wp-graphql/pull/3270): build(deps): bump the npm_and_yarn group across 1 directory with 3 updates
+- [#3271](https://github.com/wp-graphql/wp-graphql/pull/3271): fix: default cat should not be added when other categories are added
+
+**New Features**
+
+- [#3251](https://github.com/wp-graphql/wp-graphql/pull/3251): feat: implement SemVer-compliant update checker
+- [#3196](https://github.com/wp-graphql/wp-graphql/pull/3196): feat: expose EnqueuedAsset.group and EnqueuedScript.location to schema
+- [#3188](https://github.com/wp-graphql/wp-graphql/pull/3188): feat: Add WPGraphQL Extensions page to the WordPress admin
+
+= 1.29.3 =
+
+**Chores / Bugfixes**
+
+- [#3245](https://github.com/wp-graphql/wp-graphql/pull/3245): fix: update appsero/client to v2.0.4 to prevent conflicts with WP6.7
+- [#3243](https://github.com/wp-graphql/wp-graphql/pull/3243): chore: fix Composer autoloader for WPGraphQL.php
+- [#3242](https://github.com/wp-graphql/wp-graphql/pull/3242): chore: update Composer dev deps
+- [#3235](https://github.com/wp-graphql/wp-graphql/pull/3235): chore: general updates to README.md and readme.txt
+- [#3234](https://github.com/wp-graphql/wp-graphql/pull/3234): chore: update quick-start.md to provide more clarity around using wpackagist
+
+
+= 1.29.2 =
+
+**Chores / Bugfixes**
+
+- fix: move assets/blueprint.json under .wordpress-org directory
+
+= 1.29.1 =
+
+**Chores / Bugfixes**
+
+- [#3226](https://github.com/wp-graphql/wp-graphql/pull/3226): chore: add blueprint.json so WPGraphQL can be demo'd with a live preview on WordPress.org
+- [#3218](https://github.com/wp-graphql/wp-graphql/pull/3218): docs: update upgrading.md to highlight how breaking change releases will be handled
+- [#3214](https://github.com/wp-graphql/wp-graphql/pull/3214): fix: lazy-resolve Post.sourceUrl and deprecate Post.sourceUrlsBySize
+- [#3224](https://github.com/wp-graphql/wp-graphql/pull/3224): chore(deps-dev): bump symfony/process from 5.4.40 to 5.4.46 in the composer group
+- [#3219](https://github.com/wp-graphql/wp-graphql/pull/3219): test: add tests for querying different sizes of media items
+- [#3229](https://github.com/wp-graphql/wp-graphql/pull/3229): fix: Deprecated null value warning in titleRendered callback
+
+
+= 1.29.0 =
+
+**New Features**
+
+- [#3208](https://github.com/wp-graphql/wp-graphql/pull/3208): feat: expose commenter edge fields
+- [#3207](https://github.com/wp-graphql/wp-graphql/pull/3207): feat: introduce get_graphql_admin_notices and convert AdminNotices class to a singleton
+
+**Chores / Bugfixes**
+
+- [#3213](https://github.com/wp-graphql/wp-graphql/pull/3213): chore(deps): bump the npm_and_yarn group across 1 directory with 4 updates
+- [#3212](https://github.com/wp-graphql/wp-graphql/pull/3212): chore(deps): bump dset from 3.1.3 to 3.1.4 in the npm_and_yarn group across 1 directory
+- [#3211](https://github.com/wp-graphql/wp-graphql/pull/3211): chore: add LABELS.md
+- [#3201](https://github.com/wp-graphql/wp-graphql/pull/3201): fix: ensure connectedTerms returns terms for the specified taxonomy only
+- [#3199](https://github.com/wp-graphql/wp-graphql/pull/3199): chore(deps-dev): bump the npm_and_yarn group across 1 directory with 2 updates
+
+
+= 1.28.1 =
+
+**Chores / Bugfixes**
+
+- [#3189](https://github.com/wp-graphql/wp-graphql/pull/3189): fix: [regression] missing placeholder in $wpdb->prepare() call
+
+= 1.28.0 =
+
+**Upgrade Notice**
+
+This release contains an internal refactor for how the Type Registry is generated which should lead to significant performance improvements for most users. While there is no known breaking changes, because this change impacts every user we highly recommend testing this release thoroughly on staging servers to ensure the changes don't negatively impact your projects.
+
+**New Features**
+
+- [#3172](https://github.com/wp-graphql/wp-graphql/pull/3172): feat: only `eagerlyLoadType` on introspection requests.
+
+**Chores / Bugfixes**
+
+- [#3181](https://github.com/wp-graphql/wp-graphql/pull/3181): ci: replace `docker-compose` commands with `docker compose`
+- [#3182](https://github.com/wp-graphql/wp-graphql/pull/3182): ci: test against WP 6.6
+- [#3183](https://github.com/wp-graphql/wp-graphql/pull/3183): fix: improve performance of SQL query in the user loader
 
 = 1.27.2 =
 

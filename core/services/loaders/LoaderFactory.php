@@ -4,11 +4,7 @@ namespace EventEspresso\core\services\loaders;
 
 use EE_Registry;
 use EventEspresso\core\domain\values\FullyQualifiedName;
-use EventEspresso\core\exceptions\InvalidDataTypeException;
-use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\collections\LooseCollection;
-use EventEspresso\core\services\container\CoffeeShop;
-use InvalidArgumentException;
 
 /**
  * Class LoaderFactory
@@ -74,24 +70,21 @@ class LoaderFactory
 
 
     /**
-     * @param EE_Registry|CoffeeShop   $generator   provided during very first instantiation in
+     * @param EE_Registry|null         $generator   provided during very first instantiation in
      *                                              BootstrapDependencyInjectionContainer::buildLoader()
      *                                              otherwise can be left null
      * @param ClassInterfaceCache|null $class_cache also provided during first instantiation
      * @param ObjectIdentifier|null    $object_identifier
      * @return LoaderInterface
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      */
     public static function getLoader(
-        $generator = null,
-        ClassInterfaceCache $class_cache = null,
-        ObjectIdentifier $object_identifier = null
+        ?EE_Registry $generator = null,
+        ?ClassInterfaceCache $class_cache = null,
+        ?ObjectIdentifier $object_identifier = null
     ): LoaderInterface {
         if (
             ! LoaderFactory::$loader instanceof LoaderInterface
-            && ($generator instanceof EE_Registry || $generator instanceof CoffeeShop)
+            && $generator instanceof EE_Registry
             && $class_cache instanceof ClassInterfaceCache
             && $object_identifier instanceof ObjectIdentifier
         ) {

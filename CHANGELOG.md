@@ -6,6 +6,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Releases
 
+### 5.0.53
+
+#### Added
+ - [Add PRINT_BUTTON_* shortcode (#2085)](https://github.com/eventespresso/cafe/pull/2085)
+
+#### Fixed
+ - [Fix Question Group Identifier On Save (#2046)](https://github.com/eventespresso/cafe/pull/2046)
+ - [Ensure Global Taxes are Displayed on Invoice (#2082)](https://github.com/eventespresso/cafe/pull/2082)
+
+#### Changed
+ - [Append the ticket name to the attendee in SPCO  (#2080)](https://github.com/eventespresso/cafe/pull/2080)
+ - [Upgrade wp-graphql to version v1-32-1 (#2057)](https://github.com/eventespresso/cafe/pull/2057)
+ - [Block Incompatible Add-ons From Reactivating (#1983)](https://github.com/eventespresso/cafe/pull/1983)
+
+
+
+
+
+
 ### 5.0.52
 
 #### Fixed

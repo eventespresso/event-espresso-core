@@ -6,7 +6,7 @@ Tags: Events, Tickets, Event Registration, Ticket Sales, Calendar
 Requires at least: 4.5
 Requires PHP: 7.4
 Tested up to: 6.9
-Stable tag: 5.0.52
+Stable tag: 5.0.53
 License: GPL2
 
 The best events plugin with event registration, free and paid ticket sales, event registration forms, PayPal payments, automatic emails, and more!
@@ -83,6 +83,21 @@ Explore more features and view screenshots [here](https://eventespresso.com/feat
 == Changelog ==
 
 ## Releases
+
+### [5.0.53]
+
+#### Added
+ - Add PRINT_BUTTON_* shortcode
+
+#### Fixed
+ - Fix Question Group Identifier On Save
+
+#### Changed
+ - Append the ticket name to the attendee in SPCO  
+ - Upgrade wp-graphql to version v1-32-1 
+ - Block Incompatible Add-ons From Reactivating
+
+
 
 ### [5.0.52]
 

@@ -4,6 +4,7 @@ namespace WPGraphQL\Registry;
 
 use GraphQL\Error\Error;
 use GraphQL\Type\Definition\Type;
+use WPGraphQL;
 use WPGraphQL\Data\DataSource;
 use WPGraphQL\Mutation\CommentCreate;
 use WPGraphQL\Mutation\CommentDelete;
@@ -53,6 +54,7 @@ use WPGraphQL\Type\Enum\PostObjectsConnectionDateColumnEnum;
 use WPGraphQL\Type\Enum\PostObjectsConnectionOrderbyEnum;
 use WPGraphQL\Type\Enum\PostStatusEnum;
 use WPGraphQL\Type\Enum\RelationEnum;
+use WPGraphQL\Type\Enum\ScriptLoadingGroupLocationEnum;
 use WPGraphQL\Type\Enum\ScriptLoadingStrategyEnum;
 use WPGraphQL\Type\Enum\TaxonomyEnum;
 use WPGraphQL\Type\Enum\TaxonomyIdTypeEnum;
@@ -355,6 +357,7 @@ class TypeRegistry {
 		PostStatusEnum::register_type();
 		RelationEnum::register_type();
 		ScriptLoadingStrategyEnum::register_type();
+		ScriptLoadingGroupLocationEnum::register_type();
 		TaxonomyEnum::register_type();
 		TaxonomyIdTypeEnum::register_type();
 		TermNodeIdTypeEnum::register_type();
@@ -370,9 +373,10 @@ class TypeRegistry {
 		PostObjectsConnectionOrderbyInput::register_type();
 		UsersConnectionOrderbyInput::register_type();
 
-		MenuItemObjectUnion::register_type( $this );
-		PostObjectUnion::register_type( $this );
-		TermObjectUnion::register_type( $this );
+		// Deprecated types.
+		MenuItemObjectUnion::register_type( $this ); /* @phpstan-ignore staticMethod.deprecatedClass */
+		PostObjectUnion::register_type( $this ); /* @phpstan-ignore staticMethod.deprecatedClass */
+		TermObjectUnion::register_type( $this ); /* @phpstan-ignore staticMethod.deprecatedClass */
 
 		/**
 		 * Register core connections
@@ -407,10 +411,10 @@ class TypeRegistry {
 		 *
 		 * @var \WP_Post_Type[] $allowed_post_types
 		 */
-		$allowed_post_types = \WPGraphQL::get_allowed_post_types( 'objects' );
+		$allowed_post_types = WPGraphQL::get_allowed_post_types( 'objects' );
 
 		/** @var \WP_Taxonomy[] $allowed_taxonomies */
-		$allowed_taxonomies = \WPGraphQL::get_allowed_taxonomies( 'objects' );
+		$allowed_taxonomies = WPGraphQL::get_allowed_taxonomies( 'objects' );
 
 		foreach ( $allowed_post_types as $post_type_object ) {
 			PostObject::register_types( $post_type_object );
@@ -714,7 +718,7 @@ class TypeRegistry {
 			return $this->prepare_type( $type_name, $config );
 		};
 
-		if ( is_array( $config ) && isset( $config['eagerlyLoadType'] ) && true === $config['eagerlyLoadType'] && ! isset( $this->eager_type_map[ $this->format_key( $type_name ) ] ) ) {
+		if ( WPGraphQL::is_introspection_query() && is_array( $config ) && isset( $config['eagerlyLoadType'] ) && true === $config['eagerlyLoadType'] && ! isset( $this->eager_type_map[ $this->format_key( $type_name ) ] ) ) {
 			$this->eager_type_map[ $this->format_key( $type_name ) ] = $this->format_key( $type_name );
 		}
 	}

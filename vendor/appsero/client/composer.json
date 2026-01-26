@@ -1,21 +1,45 @@
 {
-    "name": "appsero/client",
-    "description": "Appsero Client",
-    "keywords": ["analytics", "wordpress", "plugin", "theme"],
-    "type": "library",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Tareq Hasan",
-            "email": "tareq@appsero.com"
-        }
-    ],
-    "autoload": {
-        "psr-4": {
-            "Appsero\\": "src/"
-        }
-    },
-    "require": {
-        "php": ">=5.3"
+  "name": "appsero/client",
+  "description": "Appsero Client",
+  "keywords": [
+    "analytics",
+    "wordpress",
+    "plugin",
+    "theme"
+  ],
+  "type": "library",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Tareq Hasan",
+      "email": "tareq@appsero.com"
     }
+  ],
+  "autoload": {
+    "psr-4": {
+      "Appsero\\": "src/"
+    }
+  },
+  "require": {
+    "php": ">=5.6"
+  },
+  "require-dev": {
+    "wp-coding-standards/wpcs": "dev-develop",
+    "dealerdirect/phpcodesniffer-composer-installer": "^0.7.2",
+    "phpcompatibility/phpcompatibility-wp": "dev-master",
+    "phpunit/phpunit": "^8.5.31",
+    "squizlabs/php_codesniffer": "^3.7",
+    "tareq1988/wp-php-cs-fixer": "dev-master"
+  },
+  "scripts": {
+    "phpcs": [
+      "vendor/bin/phpcs -p -s"
+    ],
+    "phpcs:report": [
+      "vendor/bin/phpcs --report-file='phpcs-report.txt'"
+    ],
+    "phpcbf": [
+      "vendor/bin/phpcbf -p"
+    ]
+  }
 }

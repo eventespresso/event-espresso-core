@@ -260,20 +260,20 @@ class RequestParams
 
 
     /**
-     * the supplied key can be a simple string to represent a "top-level" request parameter
+     * The supplied key can be a simple string to represent a "top-level" request parameter
      * or represent a key for a request parameter that is nested deeper within the request parameter array,
      * by using square brackets to surround keys for deeper array elements.
-     * For example :
-     * if the supplied $key was: "first[second][third]"
+     * For example,
+     * if the supplied $key was: "first[second][third]",
      * then this will attempt to drill down into the request parameter array to find a value.
      * Given the following request parameters:
-     *  array(
-     *      'first' => array(
-     *          'second' => array(
+     *  [
+     *      'first' => [
+     *          'second' => [
      *              'third' => 'has a value'
-     *          )
-     *      )
-     *  )
+     *          ]
+     *      ]
+     *  ]
      * would return true if default parameters were set
      *
      * @param string $callback

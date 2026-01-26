@@ -195,9 +195,8 @@ $my_class = EE_Registry::instance()->create('\Vendor\namespace\ClientCode');
 
 ```
 
-For more information, plz see :
-- [Legacy Dependency Injection](legacy-dependency-injection.md)
-- [Dependency Injection and the CoffeeShop DI container](dependency-injection-coffeepot.md)
+For more information, plz see: [Dependency Injection](dependency-injection.md)
+
 
 ### Anatomy of a Command Handler
 

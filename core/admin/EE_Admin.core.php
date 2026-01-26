@@ -9,7 +9,6 @@ use EventEspresso\core\domain\services\registration\RegStatus;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\interfaces\InterminableInterface;
-use EventEspresso\core\services\container\exceptions\ServiceNotFoundException;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\notifications\PersistentAdminNoticeManager;
@@ -178,11 +177,7 @@ final class EE_Admin implements InterminableInterface
      *
      * @return void
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
-     * @throws ServiceNotFoundException
      */
     public function init()
     {

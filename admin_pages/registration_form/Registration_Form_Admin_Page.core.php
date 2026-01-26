@@ -360,7 +360,11 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
         $column_values = [];
         // some initial checks for proper values.
         $QST_ID = $this->request->getRequestParam('QST_ID', 0, DataType::INT);
-        // if QST_admin_only, then no matter what QST_required is we disable.
+        $QSG_ID = $this->request->getRequestParam('QSG_ID', 0, DataType::INT);
+        if ($QSG_ID) {
+            $column_values['QSG_ID'] = $QSG_ID;
+        }
+        // if QST_admin_only, then no matter what QST_required is, we disable.
         $QST_admin_only = $this->request->getRequestParam('QST_admin_only', false, DataType::BOOL);
         if ($QST_admin_only) {
             $this->request->setRequestParam('QST_required', false);
@@ -380,13 +384,35 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
             $this->request->unSetRequestParam('QST_max', true);
         }
         foreach ($model->field_settings() as $fieldName => $settings) {
+            if (! $settings instanceof EE_Model_Field_Base) {
+                continue;
+            }
             switch($fieldName) {
                 case 'QSG_identifier':
-                    // basically if QSG_identifier is empty or not set
-                    if (! $this->request->getRequestParam('QSG_identifier', '', DataType::STRING)) {
-                        $QSG_name                    = $this->request->getRequestParam('QSG_name', '', DataType::STRING);
-                        $column_values[ $fieldName ] = sanitize_title($QSG_name) . '-' . uniqid('', true);
+                    $QSG_identifier = $this->request->getRequestParam('QSG_identifier', '', DataType::STRING);
+                    // use QSG_name if QSG_identifier is empty or not set
+                    if (empty($QSG_identifier)) {
+                        $QSG_identifier = $this->request->getRequestParam(
+                            'QSG_name',
+                            '',
+                            DataType::STRING
+                        );
                     }
+                    if (empty($QSG_identifier)) {
+                        $column_values[ $fieldName ] = null;
+                        break;
+                    }
+                    $QSG_identifier = sanitize_title($QSG_identifier);
+                    $where = ['QSG_identifier' => $QSG_identifier];
+                    if ($QSG_ID) {
+                        $where['QSG_ID'] = ['!=', $QSG_ID];
+                    }
+                    // check if identifier is already used
+                    if ($model->count([$where])) {
+                        // append hash to prevent collisions
+                        $QSG_identifier = "$QSG_identifier-" . uniqid();
+                    }
+                    $column_values[ $fieldName ] = $QSG_identifier;
                     break;
 
                 case 'QST_display_text':
@@ -789,6 +815,7 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
      * @param bool $count
      * @return EE_Soft_Delete_Base_Class[]|int
      * @throws EE_Error
+     * @throws ReflectionException
      */
     public function get_trashed_questions(int $per_page, int $current_page = 1, bool $count = false)
     {

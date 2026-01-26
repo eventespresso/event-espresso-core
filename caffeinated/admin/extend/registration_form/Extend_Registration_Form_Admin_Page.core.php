@@ -4,6 +4,7 @@ use EventEspresso\caffeinated\admin\extend\registration_form\forms\SessionLifesp
 use EventEspresso\caffeinated\admin\extend\registration_form\forms\SessionLifespanFormHandler;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\request\DataType;
 use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 /**
@@ -16,6 +17,12 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
  */
 class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
 {
+
+    private int $QSG_ID;
+
+    private int $QST_ID;
+
+
     /**
      * @param bool $routing indicate whether we want to just load the object and handle routing or just load the object.
      * @throws EE_Error
@@ -29,6 +36,9 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
         define('REGISTRATION_FORM_CAF_TEMPLATE_PATH', REGISTRATION_FORM_CAF_ADMIN . 'templates/');
         define('REGISTRATION_FORM_CAF_TEMPLATE_URL', EE_CORE_CAF_ADMIN_EXTEND_URL . 'registration_form/templates/');
         parent::__construct($routing);
+
+        $this->QSG_ID = $this->request->getRequestParam('QSG_ID', 0, DataType::INT);
+        $this->QST_ID = $this->request->getRequestParam('QST_ID', 0, DataType::INT);
     }
 
 
@@ -49,10 +59,6 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
         parent::_set_page_config();
 
         $this->_admin_base_path = REGISTRATION_FORM_CAF_ADMIN;
-        $qst_id                 = ! empty($this->_req_data['QST_ID']) && ! is_array($this->_req_data['QST_ID'])
-            ? $this->_req_data['QST_ID'] : 0;
-        $qsg_id                 = ! empty($this->_req_data['QSG_ID']) && ! is_array($this->_req_data['QSG_ID'])
-            ? $this->_req_data['QSG_ID'] : 0;
 
         $new_page_routes    = [
             'question_groups'    => [
@@ -77,14 +83,14 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
             'trash_question'     => [
                 'func'       => [$this, '_trash_question'],
                 'capability' => 'ee_delete_question',
-                'obj_id'     => $qst_id,
+                'obj_id'     => $this->QST_ID,
                 'noheader'   => true,
             ],
 
             'restore_question' => [
                 'func'       => [$this, '_trash_or_restore_questions'],
                 'capability' => 'ee_delete_question',
-                'obj_id'     => $qst_id,
+                'obj_id'     => $this->QST_ID,
                 'args'       => ['trash' => false],
                 'noheader'   => true,
             ],
@@ -92,7 +98,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
             'delete_question' => [
                 'func'       => [$this, '_delete_question'],
                 'capability' => 'ee_delete_question',
-                'obj_id'     => $qst_id,
+                'obj_id'     => $this->QST_ID,
                 'noheader'   => true,
             ],
 
@@ -125,7 +131,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
             'edit_question_group' => [
                 'func'       => [$this, '_edit_question_group'],
                 'capability' => 'ee_edit_question_group',
-                'obj_id'     => $qsg_id,
+                'obj_id'     => $this->QSG_ID,
                 'args'       => ['edit'],
             ],
 
@@ -138,7 +144,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
             'delete_question_group' => [
                 'func'       => [$this, '_delete_question_groups'],
                 'capability' => 'ee_delete_question_group',
-                'obj_id'     => $qsg_id,
+                'obj_id'     => $this->QSG_ID,
                 'noheader'   => true,
             ],
 
@@ -146,7 +152,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
                 'func'       => [$this, '_trash_or_restore_question_groups'],
                 'args'       => ['trash' => true],
                 'capability' => 'ee_delete_question_group',
-                'obj_id'     => $qsg_id,
+                'obj_id'     => $this->QSG_ID,
                 'noheader'   => true,
             ],
 
@@ -154,7 +160,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
                 'func'       => [$this, '_trash_or_restore_question_groups'],
                 'args'       => ['trash' => false],
                 'capability' => 'ee_delete_question_group',
-                'obj_id'     => $qsg_id,
+                'obj_id'     => $this->QSG_ID,
                 'noheader'   => true,
             ],
 
@@ -169,7 +175,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
                 'func'       => [$this, '_insert_or_update_question_group'],
                 'args'       => ['new_question_group' => false],
                 'capability' => 'ee_edit_question_group',
-                'obj_id'     => $qsg_id,
+                'obj_id'     => $this->QSG_ID,
                 'noheader'   => true,
             ],
 
@@ -274,10 +280,18 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
                     'icon'       => 'dashicons-edit-large',
                     'order'      => 25,
                     'persistent' => false,
-                    'url'        => isset($this->_req_data['question_group_id']) ? add_query_arg(
-                        ['question_group_id' => $this->_req_data['question_group_id']],
-                        $this->_current_page_view_url
-                    ) : $this->_admin_base_url,
+                    'url'        => $this->request->requestParamIsSet('question_group_id')
+                        ? add_query_arg(
+                            [
+                                'question_group_id' => $this->request->getRequestParam(
+                                    'question_group_id',
+                                    0,
+                                    DataType::INT
+                                ),
+                            ],
+                            $this->_current_page_view_url
+                        )
+                        : $this->_admin_base_url,
                 ],
                 'metaboxes'     => array_merge($this->_default_espresso_metaboxes, ['_publish_post_box']),
                 'help_tabs'     => [
@@ -369,7 +383,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
 
 
     /**
-     * registers and enqueues script for questions
+     * registers and enqueues scripts for questions
      *
      * @return void
      */
@@ -459,18 +473,15 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
     /**
      * @return void
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      */
     protected function _questions_overview_list_table()
     {
         $this->_admin_page_title .= ' ' . $this->get_action_link_or_button(
-            'add_question',
-            'add_question',
-            [],
-            'add-new-h2'
-        );
+                'add_question',
+                'add_question',
+                [],
+                'add-new-h2'
+            );
         parent::_questions_overview_list_table();
     }
 
@@ -479,19 +490,16 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
      * @return void
      * @throws DomainException
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      */
     protected function _question_groups_overview_list_table()
     {
         $this->_search_btn_label = esc_html__('Question Groups', 'event_espresso');
         $this->_admin_page_title .= ' ' . $this->get_action_link_or_button(
-            'add_question_group',
-            'add_question_group',
-            [],
-            'add-new-h2'
-        );
+                'add_question_group',
+                'add_question_group',
+                [],
+                'add-new-h2'
+            );
         $this->display_admin_list_table_page_with_sidebar();
     }
 
@@ -499,9 +507,6 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
     /**
      * @return void
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     protected function _delete_question()
@@ -519,9 +524,6 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
     /**
      * @return void
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     protected function _delete_questions()
@@ -542,36 +544,30 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
      * @param EEM_Soft_Delete_Base $model
      * @return int number of items deleted permanently
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    private function _delete_items(EEM_Soft_Delete_Base $model)
+    private function _delete_items(EEM_Soft_Delete_Base $model): int
     {
-        $success = 0;
-        do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-        if (! empty($this->_req_data['checkbox']) && is_array($this->_req_data['checkbox'])) {
-            // if array has more than one element than success message should be plural
-            $success = count($this->_req_data['checkbox']) > 1 ? 2 : 1;
-            // cycle thru bulk action checkboxes
-            $checkboxes = $this->_req_data['checkbox'];
+        $success    = 0;
+        $checkboxes = $this->request->getRequestParam('checkbox', [], DataType::INT, true);
+        if (! empty($checkboxes)) {
+            // if the array has more than one element, then the success message should be plural
+            $success = count($checkboxes) > 1 ? 2 : 1;
+            // cycle through bulk action checkboxes
             foreach (array_keys($checkboxes) as $ID) {
                 if (! $this->_delete_item($ID, $model)) {
                     $success = 0;
                 }
             }
-        } elseif (! empty($this->_req_data['QSG_ID'])) {
-            $success = $this->_delete_item($this->_req_data['QSG_ID'], $model);
-        } elseif (! empty($this->_req_data['QST_ID'])) {
-            $success = $this->_delete_item($this->_req_data['QST_ID'], $model);
+        } elseif ($this->QSG_ID) {
+            $success = $this->_delete_item($this->QSG_ID, $model);
+        } elseif ($this->QST_ID) {
+            $success = $this->_delete_item($this->QST_ID, $model);
         } else {
             EE_Error::add_error(
-                sprintf(
-                    esc_html__(
-                        "No Questions or Question Groups were selected for deleting. This error usually shows when you've attempted to delete via bulk action but there were no selections.",
-                        "event_espresso"
-                    )
+                esc_html__(
+                    "No Questions or Question Groups were selected for deleting. This error usually shows when you've attempted to delete via bulk action but there were no selections.",
+                    "event_espresso"
                 ),
                 __FILE__,
                 __FUNCTION__,
@@ -587,14 +583,11 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
      *
      * @param int                  $id
      * @param EEM_Soft_Delete_Base $model
-     * @return boolean
+     * @return int
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    protected function _delete_item($id, $model)
+    protected function _delete_item(int $id, EEM_Soft_Delete_Base $model): int
     {
         if ($model instanceof EEM_Question) {
             EEM_Question_Option::instance()->delete_permanently([['QST_ID' => absint($id)]]);
@@ -611,34 +604,29 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
      * @return void
      * @throws DomainException
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    protected function _edit_question_group($type = 'add')
+    protected function _edit_question_group(string $type = 'add')
     {
-        do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-        $ID = isset($this->_req_data['QSG_ID']) && ! empty($this->_req_data['QSG_ID'])
-            ? absint($this->_req_data['QSG_ID'])
-            : false;
-
-        switch ($this->_req_action) {
-            case 'add_question_group':
+        switch ($type) {
+            case 'add':
                 $this->_admin_page_title = esc_html__('Add Question Group', 'event_espresso');
                 break;
-            case 'edit_question_group':
+            case 'edit':
                 $this->_admin_page_title = esc_html__('Edit Question Group', 'event_espresso');
                 break;
             default:
                 $this->_admin_page_title = ucwords(str_replace('_', ' ', $this->_req_action));
         }
         // add ID to title if editing
-        $this->_admin_page_title = $ID ? $this->_admin_page_title . ' # ' . $ID : $this->_admin_page_title;
-        if ($ID) {
+        $this->_admin_page_title = $this->QSG_ID
+            ? $this->_admin_page_title . ' # ' . $this->QSG_ID
+            : $this->_admin_page_title;
+
+        if ($this->QSG_ID) {
             /** @var EE_Question_Group $questionGroup */
-            $questionGroup            = $this->_question_group_model->get_one_by_ID($ID);
-            $additional_hidden_fields = ['QSG_ID' => ['type' => 'hidden', 'value' => $ID]];
+            $questionGroup            = $this->_question_group_model->get_one_by_ID($this->QSG_ID);
+            $additional_hidden_fields = ['QSG_ID' => ['type' => 'hidden', 'value' => $this->QSG_ID]];
             $this->_set_add_edit_form_tags('update_question_group', $additional_hidden_fields);
         } else {
             /** @var EE_Question_Group $questionGroup */
@@ -648,11 +636,11 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
         }
         $this->_template_args['values']         = $this->_yes_no_values;
         $this->_template_args['all_questions']  = $questionGroup->questions_in_and_not_in_group();
-        $this->_template_args['QSG_ID']         = $ID ? $ID : true;
+        $this->_template_args['QSG_ID']         = $this->QSG_ID ?: true;
         $this->_template_args['question_group'] = $questionGroup;
 
         $redirect_URL = add_query_arg(['action' => 'question_groups'], $this->_admin_base_url);
-        $this->_set_publish_post_box_vars('id', $ID, false, $redirect_URL, true);
+        $this->_set_publish_post_box_vars('id', $this->QSG_ID, false, $redirect_URL);
         $this->_template_args['admin_page_content'] = EEH_Template::display_template(
             REGISTRATION_FORM_CAF_TEMPLATE_PATH . 'question_groups_main_meta_box.template.php',
             $this->_template_args,
@@ -667,9 +655,6 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
     /**
      * @return void
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     protected function _delete_question_groups()
@@ -687,28 +672,14 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
     /**
      * @param bool $new_question_group
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    protected function _insert_or_update_question_group($new_question_group = true)
+    protected function _insert_or_update_question_group(bool $new_question_group = true)
     {
-        do_action('AHEE_log', __FILE__, __FUNCTION__, '');
         $set_column_values = $this->_set_column_values_for($this->_question_group_model);
-
-        // make sure identifier is unique
-        $identifier_value = $set_column_values['QSG_identifier'] ?? '';
-        $where_values     = ['QSG_identifier' => $identifier_value];
-        if (! $new_question_group && isset($set_column_values['QSG_ID'])) {
-            $where_values['QSG_ID'] = ['!=', $set_column_values['QSG_ID']];
-        }
-        $identifier_exists = ! empty($identifier_value) && $this->_question_group_model->count([$where_values]) > 0;
-        if ($identifier_exists) {
-            $set_column_values['QSG_identifier'] .= uniqid('id', true);
-        }
-
-        if ($new_question_group) {
+        $QSG_ID            = $set_column_values['QSG_ID'] ?? 0;
+        unset($set_column_values['QSG_ID']);
+        if ($new_question_group && ! $QSG_ID) {
             $QSG_ID  = $this->_question_group_model->insert($set_column_values);
             $success = $QSG_ID ? 1 : 0;
             if ($success === 0) {
@@ -727,8 +698,6 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
                 );
             }
         } else {
-            $QSG_ID = absint($this->_req_data['QSG_ID']);
-            unset($set_column_values['QSG_ID']);
             $success = $this->_question_group_model->update($set_column_values, [['QSG_ID' => $QSG_ID]]);
         }
 
@@ -736,10 +705,12 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
             EEM_Attendee::system_question_phone
         );
         // update the existing related questions
-        // BUT FIRST...  delete the phone question from the Question_Group_Question
-        // if it is being added to this question group (therefore removed from the existing group)
-        if (isset($this->_req_data['questions'], $this->_req_data['questions'][ $phone_question_id ])) {
-            // delete where QST ID = system phone question ID and Question Group ID is NOT this group
+        $question_IDs   = $this->request->getRequestParam('questions', [], DataType::STRING, true);
+        $question_order = $this->request->getRequestParam('question_orders', [], DataType::INT, true);
+        // BUT FIRST... delete the phone question from the Question_Group_Question
+        // if it is being added to this question group (therefore, removed from the existing group)
+        if (isset($question_IDs[ $phone_question_id ])) {
+            // delete intersection where QST ID = system phone question ID and Question Group ID is NOT this group
             EEM_Question_Group_Question::instance()->delete(
                 [
                     [
@@ -757,22 +728,23 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
             $questions[ $phone_question_id ] = EEM_Question::instance()->get_one_by_ID($phone_question_id);
         }
 
-        foreach ($questions as $question_ID => $question) {
+        foreach ($questions as $QST_ID => $question) {
             // first we always check for order.
-            if (! empty($this->_req_data['question_orders'][ $question_ID ])) {
+            if (! empty($question_order[ $QST_ID ])) {
                 // update question order
                 $question_group->update_question_order(
-                    $question_ID,
-                    $this->_req_data['question_orders'][ $question_ID ]
+                    $QST_ID,
+                    $question_order[ $QST_ID ]
                 );
             }
 
             // then we always check if adding or removing.
-            if (isset($this->_req_data['questions'], $this->_req_data['questions'][ $question_ID ])) {
-                $question_group->add_question($question_ID);
+            if (isset($question_IDs[ $QST_ID ])) {
+                $question_group->add_question($QST_ID);
             } else {
-                // not found, remove it (but only if not a system question for the personal group
-                // with the exception of lname system question - we allow removal of it)
+                // not found, remove it,
+                // but only if not a system question for the personal group
+                // (except lname system question - we allow removal of it)
                 if (
                     in_array(
                         $question->system_ID(),
@@ -783,16 +755,16 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
                 ) {
                     continue;
                 } else {
-                    $question_group->remove_question($question_ID);
+                    $question_group->remove_question($QST_ID);
                 }
             }
         }
         // save new related questions
-        if (isset($this->_req_data['questions'])) {
-            foreach ($this->_req_data['questions'] as $QST_ID) {
+        if ($question_IDs) {
+            foreach ($question_IDs as $QST_ID) {
                 $question_group->add_question($QST_ID);
-                if (isset($this->_req_data['question_orders'][ $QST_ID ])) {
-                    $question_group->update_question_order($QST_ID, $this->_req_data['question_orders'][ $QST_ID ]);
+                if (isset($question_order[ $QST_ID ])) {
+                    $question_group->update_question_order($QST_ID, $question_order[ $QST_ID ]);
                 }
             }
         }
@@ -834,8 +806,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
      */
     public function _duplicate_question()
     {
-        $question_ID = (int) $this->_req_data['QST_ID'];
-        $question    = EEM_Question::instance()->get_one_by_ID($question_ID);
+        $question = EEM_Question::instance()->get_one_by_ID($this->QST_ID);
         if ($question instanceof EE_Question) {
             $new_question = $question->duplicate();
             if ($new_question instanceof EE_Question) {
@@ -854,14 +825,14 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
                             'Could not duplicate question with ID %1$d because: %2$s',
                             'event_espresso'
                         ),
-                        $question_ID,
+                        $this->QST_ID,
                         $wpdb->last_error
                     ),
                     __FILE__,
                     __FUNCTION__,
                     __LINE__
                 );
-                $this->_redirect_after_action(false, '', '', ['action' => 'default'], false);
+                $this->_redirect_after_action(false, '', '', ['action' => 'default']);
             }
         } else {
             EE_Error::add_error(
@@ -870,13 +841,13 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
                         'Could not duplicate question with ID %d because it didn\'t exist!',
                         'event_espresso'
                     ),
-                    $question_ID
+                    $this->QST_ID
                 ),
                 __FILE__,
                 __FUNCTION__,
                 __LINE__
             );
-            $this->_redirect_after_action(false, '', '', ['action' => 'default'], false);
+            $this->_redirect_after_action(false, '', '', ['action' => 'default']);
         }
     }
 
@@ -884,8 +855,9 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
     /**
      * @param bool $trash
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    protected function _trash_or_restore_question_groups($trash = true)
+    protected function _trash_or_restore_question_groups(bool $trash = true)
     {
         $this->_trash_or_restore_items($this->_question_group_model, $trash);
     }
@@ -896,10 +868,11 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
      *
      * @return void
      * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function _trash_question()
     {
-        $success    = $this->_question_model->delete_by_ID((int) $this->_req_data['QST_ID']);
+        $success    = $this->_question_model->delete_by_ID($this->QST_ID);
         $query_args = ['action' => 'default', 'status' => 'all'];
         $this->_redirect_after_action($success, $this->_question_model->item_name($success), 'trashed', $query_args);
     }
@@ -908,8 +881,9 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
     /**
      * @param bool $trash
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    protected function _trash_or_restore_questions($trash = true)
+    protected function _trash_or_restore_questions(bool $trash = true)
     {
         $this->_trash_or_restore_items($this->_question_model, $trash);
     }
@@ -922,46 +896,34 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
      * @param EEM_Soft_Delete_Base $model
      * @param boolean              $trash whether to trash or restore
      * @throws EE_Error
+     * @throws ReflectionException
      */
-    private function _trash_or_restore_items(EEM_Soft_Delete_Base $model, $trash = true)
+    private function _trash_or_restore_items(EEM_Soft_Delete_Base $model, bool $trash = true)
     {
-        do_action('AHEE_log', __FILE__, __FUNCTION__, '');
-
         $success = 1;
         // Checkboxes
-        // echo "trash $trash";
-        // var_dump($this->_req_data['checkbox']);die;
-        if (isset($this->_req_data['checkbox'])) {
-            if (! empty($this->_req_data['checkbox']) && is_array($this->_req_data['checkbox'])) {
-                // if array has more than one element than success message should be plural
-                $success = count($this->_req_data['checkbox']) > 1 ? 2 : 1;
-                // cycle thru bulk action checkboxes
-                $checkboxes = $this->_req_data['checkbox'];
-                foreach (array_keys($checkboxes) as $ID) {
-                    if (! $model->delete_or_restore_by_ID($trash, absint($ID))) {
-                        $success = 0;
-                    }
-                }
-            } else {
-                // grab single id and delete
-                $ID = absint($this->_req_data['checkbox']);
-                if (! $model->delete_or_restore_by_ID($trash, $ID)) {
+        $checkboxes = $this->request->getRequestParam('checkbox', [], DataType::INT, true);
+        if (! empty($checkboxes)) {
+            // if array has more than one element than success message should be plural
+            $success = count($checkboxes) > 1 ? 2 : 1;
+            // cycle thru bulk action checkboxes
+            foreach (array_keys($checkboxes) as $ID) {
+                if (! $model->delete_or_restore_by_ID($trash, absint($ID))) {
                     $success = 0;
                 }
             }
         } else {
             // delete via trash link
             // grab single id and delete
-            $ID = absint($this->_req_data[ $model->primary_key_name() ]);
+            $ID = $this->request->getRequestParam($model->primary_key_name(), 0, DataType::INT);
             if (! $model->delete_or_restore_by_ID($trash, $ID)) {
                 $success = 0;
             }
         }
 
 
-        $action = $model instanceof EEM_Question ? 'default' : 'question_groups';// strtolower( $model->item_name(2) );
-        // echo "action :$action";
-        // $action = 'questions' ? 'default' : $action;
+        $action = $model instanceof EEM_Question ? 'default' : 'question_groups';
+
         if ($trash) {
             $action_desc = 'trashed';
             $status      = 'trash';
@@ -981,15 +943,12 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
     /**
      * @param            $per_page
      * @param int        $current_page
-     * @param bool|false $count
+     * @param bool       $count
      * @return EE_Soft_Delete_Base_Class[]|int
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function get_trashed_questions($per_page, $current_page = 1, $count = false)
+    public function get_trashed_questions($per_page, int $current_page = 1, bool $count = false)
     {
         $query_params = $this->get_query_params(EEM_Question::instance(), $per_page, $current_page);
 
@@ -1008,15 +967,12 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
     /**
      * @param            $per_page
      * @param int        $current_page
-     * @param bool|false $count
+     * @param bool       $count
      * @return EE_Soft_Delete_Base_Class[]|int
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function get_question_groups($per_page, $current_page = 1, $count = false)
+    public function get_question_groups($per_page, int $current_page = 1, bool $count = false)
     {
         $questionGroupModel = EEM_Question_Group::instance();
         $query_params       = $this->get_query_params($questionGroupModel, $per_page, $current_page);
@@ -1036,19 +992,17 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
      * @param bool $count
      * @return EE_Soft_Delete_Base_Class[]|int
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function get_trashed_question_groups($per_page, $current_page = 1, $count = false)
+    public function get_trashed_question_groups($per_page, int $current_page = 1, bool $count = false)
     {
+        /** @var EEM_Question_Group $questionGroupModel */
         $questionGroupModel = EEM_Question_Group::instance();
         $query_params       = $this->get_query_params($questionGroupModel, $per_page, $current_page);
         if ($count) {
-            $where                 = isset($query_params[0]) ? [$query_params[0]] : [];
+            $query_params          = isset($query_params[0]) ? [$query_params[0]] : [];
             $query_params['limit'] = null;
-            $results               = $questionGroupModel->count_deleted($where);
+            $results               = $questionGroupModel->count_deleted($query_params);
         } else {
             $results = $questionGroupModel->get_all_deleted($query_params);
         }
@@ -1061,9 +1015,6 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
      *
      * @return void results array
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function update_question_group_order()
@@ -1074,32 +1025,25 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
         $success = esc_html__('Question group order was updated successfully.', 'event_espresso');
 
         // grab our row IDs
-        $row_ids = isset($this->_req_data['row_ids']) && ! empty($this->_req_data['row_ids'])
-            ? explode(',', rtrim($this->_req_data['row_ids'], ','))
-            : [];
-
-        $perpage = ! empty($this->_req_data['perpage'])
-            ? (int) $this->_req_data['perpage']
-            : null;
-        $curpage = ! empty($this->_req_data['curpage'])
-            ? (int) $this->_req_data['curpage']
-            : null;
+        $row_ids = $this->request->getRequestParam('row_ids', [], DataType::INT, true, ',');
+        $perpage = $this->request->getRequestParam('perpage', null, DataType::INT);
+        $curpage = $this->request->getRequestParam('curpage', null, DataType::INT);
 
         if (! empty($row_ids)) {
             // figure out where we start the row_id count at for the current page.
-            $qsgcount = empty($curpage) ? 0 : ($curpage - 1) * $perpage;
+            $qsg_count = empty($curpage) ? 0 : ($curpage - 1) * $perpage;
 
             $row_count = count($row_ids);
             for ($i = 0; $i < $row_count; $i++) {
                 // Update the questions when re-ordering
                 $updated = EEM_Question_Group::instance()->update(
-                    ['QSG_order' => $qsgcount],
+                    ['QSG_order' => $qsg_count],
                     [['QSG_ID' => $row_ids[ $i ]]]
                 );
                 if ($updated === false) {
                     $success = false;
                 }
-                $qsgcount++;
+                $qsg_count++;
             }
         } else {
             $success = false;
@@ -1109,8 +1053,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
             ? esc_html__('An error occurred. The question group order was not updated.', 'event_espresso')
             : false;
 
-        echo wp_json_encode(['return_data' => false, 'success' => $success, 'errors' => $errors]);
-        die();
+        wp_send_json(['return_data' => false, 'success' => $success, 'errors' => $errors]);
     }
 
 
@@ -1121,9 +1064,6 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
     /**
      * @throws DomainException
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      */
     protected function _reg_form_settings()
     {
@@ -1198,9 +1138,6 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
     /**
      * @return void
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      */
     public function copy_attendee_info_settings_form()
     {
@@ -1213,9 +1150,9 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
      *
      * @access protected
      * @return EE_Form_Section_Proper
-     * @throws \EE_Error
+     * @throws EE_Error
      */
-    protected function _copy_attendee_info_settings_form()
+    protected function _copy_attendee_info_settings_form(): EE_Form_Section_Proper
     {
         return new EE_Form_Section_Proper(
             [
@@ -1260,9 +1197,9 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public function update_copy_attendee_info_settings_form(EE_Registration_Config $EE_Registration_Config)
-    {
-        $prev_copy_attendee_info = $EE_Registration_Config->copyAttendeeInfo();
+    public function update_copy_attendee_info_settings_form(
+        EE_Registration_Config $EE_Registration_Config
+    ): EE_Registration_Config {
         try {
             $copy_attendee_info_settings_form = $this->_copy_attendee_info_settings_form();
             // if not displaying a form, then check for form submission
@@ -1305,9 +1242,6 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
     /**
      * @return void
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      */
     public function email_validation_settings_form()
     {
@@ -1320,9 +1254,9 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
      *
      * @access protected
      * @return EE_Form_Section_Proper
-     * @throws \EE_Error
+     * @throws EE_Error
      */
-    protected function _email_validation_settings_form()
+    protected function _email_validation_settings_form(): EE_Form_Section_Proper
     {
         return new EE_Form_Section_Proper(
             [
@@ -1344,7 +1278,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
                             ],
                             [
                                 'html_label_text' => esc_html__('Email Validation Level', 'event_espresso')
-                                                     . EEH_Template::get_help_tab_link('email_validation_info'),
+                                    . EEH_Template::get_help_tab_link('email_validation_info'),
                                 'html_help_text'  => esc_html__(
                                     'These levels range from basic validation ( ie: text@text.text ) to more advanced checks against international email addresses (ie: üñîçøðé@example.com ) with additional MX and A record checks to confirm the domain actually exists. More information on on each level can be found within the help section.',
                                     'event_espresso'
@@ -1373,8 +1307,9 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      */
-    public function update_email_validation_settings_form(EE_Registration_Config $EE_Registration_Config)
-    {
+    public function update_email_validation_settings_form(
+        EE_Registration_Config $EE_Registration_Config
+    ): EE_Registration_Config {
         $prev_email_validation_level = $EE_Registration_Config->email_validation_level;
         try {
             $email_validation_settings_form = $this->_email_validation_settings_form();
@@ -1395,7 +1330,7 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
                             if (
                                 $prev_email_validation_level === 'i18n'
                                 || $prev_email_validation_level
-                                   === 'i18n_dns'
+                                === 'i18n_dns'
                             ) {
                                 // if so, then reset it back to "basic" since that is the only other option that,
                                 // despite offering poor validation, supports i18n email addresses
@@ -1443,8 +1378,10 @@ class Extend_Registration_Form_Admin_Page extends Registration_Form_Admin_Page
      * @param string                 $email_validation_level
      * @return bool
      */
-    private function _verify_pcre_support(EE_Registration_Config $EE_Registration_Config, $email_validation_level)
-    {
+    private function _verify_pcre_support(
+        EE_Registration_Config $EE_Registration_Config,
+        string $email_validation_level
+    ): bool {
         // first check that PCRE is enabled
         if (! defined('PREG_BAD_UTF8_ERROR')) {
             EE_Error::add_error(

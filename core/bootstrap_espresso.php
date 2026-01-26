@@ -1,16 +1,7 @@
 <?php
 
-use EventEspresso\core\exceptions\InvalidClassException;
-use EventEspresso\core\exceptions\InvalidDataTypeException;
-use EventEspresso\core\exceptions\InvalidEntityException;
-use EventEspresso\core\exceptions\InvalidIdentifierException;
-use EventEspresso\core\exceptions\InvalidInterfaceException;
-use EventEspresso\core\services\container\exceptions\ServiceExistsException;
-use EventEspresso\core\services\container\exceptions\ServiceNotFoundException;
-
 /**
- *    espresso_load_error_handling
- *    this function loads EE's class for handling exceptions and errors
+ * this function loads EE's class for handling exceptions and errors
  */
 function espresso_load_error_handling()
 {
@@ -45,8 +36,7 @@ function espresso_load_error_handling()
 
 
 /**
- *    espresso_load_required
- *    given a class name and path, this function will load that file or throw an exception
+ * given a class name and path, this function will load that file or throw an exception
  *
  * @param string $classname
  * @param string $full_path_to_file
@@ -73,15 +63,8 @@ function espresso_load_required(string $classname, string $full_path_to_file)
 
 
 /**
- * @throws InvalidInterfaceException
- * @throws InvalidEntityException
- * @throws InvalidIdentifierException
- * @throws InvalidClassException
- * @throws InvalidDataTypeException
- * @throws ServiceExistsException
- * @throws ServiceNotFoundException
- * @throws OutOfBoundsException
- * @throws Exception
+ * @throws ReflectionException
+ * @throws Throwable
  * @since 4.9.27
  */
 function bootstrap_espresso()

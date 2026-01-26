@@ -646,13 +646,28 @@ try {
 
                 </td>
             </tr>
-            <?php
-            do_action('AHEE__questions_main_meta_box__template__after_table_form_table', $question);
-            ?>
+
+            <?php do_action('AHEE__questions_main_meta_box__template__after_table_form_table', $question); ?>
+
+            <tr>
+                <th></th>
+                <td>
+                    <span class="important-notice">
+                        <?php
+                        printf(
+                            esc_html__(
+                                'all fields marked with an asterisk (%1$s) are required',
+                                'event_espresso'
+                            ),
+                            '<span class="asterisk ee-required-text">*</span>'
+                        )
+                        ?>
+                    </span>
+                </td>
+            </tr>
+
         </tbody>
     </table>
-
-    <div class="clear"></div>
 </div>
 
     <?php

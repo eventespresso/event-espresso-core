@@ -37,6 +37,8 @@ class RequestSanitizer
         string $delimiter = ''
     ) {
         if ($delimiter !== '' && is_string($param)) {
+            // remove delimiter from end of lists like '1,2,3,4,' to prevent extra elements
+            $param    = rtrim($param, $delimiter);
             $param    = explode($delimiter, $param);
             $is_array = is_array($param);
             // unset the delimiter else this function will recurse forever when we loop over the array of results
