@@ -84,6 +84,17 @@ Explore more features and view screenshots [here](https://eventespresso.com/feat
 
 ## Releases
 
+### [5.0.54]
+
+#### Added
+ - Restrict Self Service Registration Cancellations Outside of Ticket Sale Dates.
+ - Allow ticket line items to be passed into Event Scope calculateAndApplyPromotion method.
+
+#### Fixed
+ - PPC. Prevent transaction mixup.
+
+
+
 ### [5.0.53]
 
 #### Added

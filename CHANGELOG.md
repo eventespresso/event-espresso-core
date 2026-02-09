@@ -8,15 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### 5.0.54
 
+#### Added
+ - [Restrict Self Service Registration Cancellations Outside of Ticket Sale Dates. (#2091)](https://github.com/eventespresso/cafe/pull/2091)
+ - [Allow ticket line items to be passed into Event Scope calculateAndApplyPromotion method (#2081)](https://github.com/eventespresso/cafe/pull/2081)
 
 #### Fixed
  - [PPC. Prevent transaction mixup (#2083)](https://github.com/eventespresso/cafe/pull/2083)
-
-#### Changed
- - [Restrict Self Service Registration Cancellations Outside of Ticket Sale Dates. (#2091)](https://github.com/eventespresso/cafe/pull/2091)
-
-
-
 
 
 
@@ -33,9 +30,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
  - [Append the ticket name to the attendee in SPCO  (#2080)](https://github.com/eventespresso/cafe/pull/2080)
  - [Upgrade wp-graphql to version v1-32-1 (#2057)](https://github.com/eventespresso/cafe/pull/2057)
  - [Block Incompatible Add-ons From Reactivating (#1983)](https://github.com/eventespresso/cafe/pull/1983)
-
-
-
 
 
 
