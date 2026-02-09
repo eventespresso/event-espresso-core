@@ -88,10 +88,11 @@ class CreateOrder extends OrdersApi
     /**
      * CreateOrder constructor.
      *
-     * @param PayPalApi      $api
-     * @param EE_Transaction $transaction
-     * @param array          $billing_info
-     * @param FeatureFlags   $feature
+     * @param PayPalApi            $api
+     * @param EE_Transaction       $transaction
+     * @param array                $billing_info
+     * @param FeatureFlags         $feature
+     * @param GatewayDataFormatter $gateway_data_formatter
      */
     public function __construct(
         PayPalApi            $api,
@@ -200,8 +201,8 @@ class CreateOrder extends OrdersApi
             }
         }
 
-        if (strlen($CNT_ISO > 2)) {
-            // uh-oh... did someone save the country name for the ISO?
+        if (strlen($CNT_ISO) > 2) {
+            // uh-oh... did anyone save the country name for the ISO?
             $country = EEM_Country::instance()->getCountryByName(ucwords(strtolower($CNT_ISO)));
             if ($country instanceof EE_Country) {
                 $CNT_ISO = $country->ISO();
@@ -209,7 +210,7 @@ class CreateOrder extends OrdersApi
         }
 
         // If we have and address on the attendee, send it to PayPal.
-        if ($CNT_ISO && strlen($CNT_ISO == 2)) {
+        if ($CNT_ISO && strlen($CNT_ISO) == 2) {
             $parameters['payment_source']['paypal']['address'] = [
                 'address_line_1' => $attendee->address(),
                 'address_line_2' => $attendee->address2(),

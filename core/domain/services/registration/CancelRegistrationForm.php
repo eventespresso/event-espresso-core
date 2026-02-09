@@ -12,6 +12,7 @@ use EE_Table_Layout;
 use EE_Table_Row_Layout;
 use EE_Text_Area_Input;
 use EE_Text_Input;
+use EE_Ticket;
 use EEH_HTML;
 use EEM_Registration;
 use EventEspresso\core\domain\entities\contexts\Context;
@@ -53,6 +54,13 @@ class CancelRegistrationForm extends FormHandler
 	 */
 	public function generate()
 	{
+		$eligible_registrations = $this->getEligibleRegistrations();
+
+		// If no active registrations, show informational message
+		if (empty($eligible_registrations)) {
+			return $this->noEligibleRegistrationsNotice();
+		}
+
 		return new EE_Form_Section_Proper(
 			[
 				'name'            => 'registration_cancellations',
@@ -62,7 +70,7 @@ class CancelRegistrationForm extends FormHandler
 					'header'                  => new EE_Form_Section_HTML(
 						EEH_HTML::h5(__('Please select the registrations to be cancelled', 'event_espresso'))
 					),
-					'registrations'           => $this->registrationsToCancel(),
+					'registrations'           => $this->registrationsToCancel($eligible_registrations),
 					'spacer1'                 => new EE_Form_Section_HTML(EEH_HTML::br()),
 					'reason_for_cancellation' => new EE_Text_Area_Input(
 						[
@@ -101,26 +109,101 @@ class CancelRegistrationForm extends FormHandler
 
 
 	/**
+	 * Gets all registrations eligible for cancellation (not cancelled, not expired).
+	 *
+	 * @since 5.0.54
+	 * @return EE_Registration[]
+	 * @throws EE_Error
+	 * @throws ReflectionException
+	 */
+	private function getEligibleRegistrations(): array
+	{
+		$registrations = [$this->registration];
+
+		if ($this->registration->is_primary_registrant()) {
+			$other_registrations = $this->registration->get_all_other_registrations_in_group(false);
+			$registrations = [$this->registration, ...$other_registrations];
+		}
+
+		// Filter out cancelled and expired registrations
+		return array_filter($registrations, [$this, 'registrationCanBeCancelled']);
+	}
+
+
+	/**
+	 * Determines if a registration can be cancelled.
+	 *
+	 * @since 5.0.54
+	 * @param EE_Registration $registration
+	 * @return bool
+	 * @throws EE_Error
+	 * @throws ReflectionException
+	 */
+	private function registrationCanBeCancelled(EE_Registration $registration): bool
+	{
+		// Already cancelled?
+		if ($registration->status_ID() === RegStatus::CANCELLED) {
+			return false;
+		}
+
+		// Skip registrations with expired tickets
+		$ticket = $registration->ticket();
+		if ($ticket instanceof EE_Ticket && $ticket->is_expired()) {
+			return false;
+		}
+
+		return true;
+	}
+
+
+	/**
+	 * Returns a notice when no registrations are eligible for cancellation.
+	 *
+	 * @since 5.0.54
 	 * @return EE_Form_Section_Proper
 	 * @throws EE_Error
 	 * @throws ReflectionException
 	 */
-	private function registrationsToCancel(): EE_Form_Section_Proper
+	private function noEligibleRegistrationsNotice(): EE_Form_Section_Proper
 	{
-		$subsections = [
-			$this->cancelRegistrationTableRow($this->registration),
-		];
+		return new EE_Form_Section_Proper(
+			[
+				'name'            => 'registration_cancellations',
+				'html_id'         => 'registration-cancellations',
+				'layout_strategy' => new EE_No_Layout(['use_break_tags' => false]),
+				'subsections'     => [
+					'all_cancelled_message' => new EE_Form_Section_HTML(
+						sprintf(
+							esc_html__(
+								'%1$sAll registrations in this group have already been cancelled or are no longer eligible for cancellation.%2$s',
+								'event_espresso'
+							),
+							'<p class="ee-registrations-cancelled-pg ee-attention">',
+							'</p>'
+						)
+					),
+				],
+			]
+		);
+	}
 
-		if ($this->registration->is_primary_registrant()) {
-			$other_registrations = $this->registration->get_all_other_registrations_in_group(false);
-			if ($other_registrations) {
-				foreach ($other_registrations as $registration) {
-					if ($registration instanceof EE_Registration) {
-						$subsections[] = $this->cancelRegistrationTableRow($registration);
-					}
-				}
-			}
+
+	/**
+	 * Builds the registration table with checkboxes for cancellation.
+	 *
+	 * @since 5.0.54
+	 * @param EE_Registration[] $eligible_registrations
+	 * @return EE_Form_Section_Proper
+	 * @throws EE_Error
+	 * @throws ReflectionException
+	 */
+	private function registrationsToCancel(array $eligible_registrations): EE_Form_Section_Proper
+	{
+		$subsections = [];
+		foreach ($eligible_registrations as $registration) {
+			$subsections[] = $this->cancelRegistrationTableRow($registration);
 		}
+
 		return new EE_Form_Section_Proper(
 			[
 				'name'            => 'registrations',
@@ -157,6 +240,8 @@ class CancelRegistrationForm extends FormHandler
 
 
 	/**
+	 * Builds a table row for a registration that can be cancelled.
+	 *
 	 * @param EE_Registration $registration
 	 * @return EE_Form_Section_Proper
 	 * @throws EE_Error
@@ -213,8 +298,14 @@ class CancelRegistrationForm extends FormHandler
 		 * ]
  		 */
 		$success = true;
+		$cancelled_count = 0;
 		foreach ($valid_data['registrations'] as $registrant) {
 			$reg_url_link = $registrant['reg_url_link'];
+
+			if(empty($reg_url_link)) {
+				continue;
+			}
+
 			$registration = EEM_Registration::instance()->get_registration_for_reg_url_link($reg_url_link);
 			if (! $registration instanceof EE_Registration) {
 				return sprintf(
@@ -246,6 +337,9 @@ class CancelRegistrationForm extends FormHandler
 				]
 			);
 			$success = $updated && $success;
+			if ($updated) {
+				$cancelled_count++;
+			}
 		}
 		if (! $success) {
 			return sprintf(
@@ -259,8 +353,10 @@ class CancelRegistrationForm extends FormHandler
 		}
 
 		return sprintf(
-			esc_html__(
-				'%1$sAll registrations have been successfully cancelled.%2$s',
+			_n(
+				'%1$sThe selected registration has been successfully cancelled.%2$s',
+				'%1$sThe selected registrations have been successfully cancelled.%2$s',
+				$cancelled_count,
 				'event_espresso'
 			),
 			'<p class="ee-registrations-cancelled-pg ee-success">',

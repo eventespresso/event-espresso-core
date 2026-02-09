@@ -1,6 +1,7 @@
 <?php
 
 use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\Request;
 use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\PaymentMethods\PayPalCommerce\tools\logging\PayPalLogger;
 
@@ -13,6 +14,16 @@ use EventEspresso\PaymentMethods\PayPalCommerce\tools\logging\PayPalLogger;
  */
 class EEG_PayPalCheckout extends EE_Onsite_Gateway
 {
+    /**
+     * @var $payment EE_Payment|null
+     */
+    protected ?EE_Payment $payment = null;
+
+    /**
+     * @var $payment EE_Transaction|null
+     */
+    protected ?EE_Transaction $transaction = null;
+
     /**
      * Currencies supported by this gateway.
      *
@@ -58,40 +69,50 @@ class EEG_PayPalCheckout extends EE_Onsite_Gateway
     public function do_direct_payment($payment, $billing_info = null)
     {
         $request         = LoaderFactory::getLoader()->getShared(RequestInterface::class);
-        $post_parameters = $request->postParams();
+        $post_parameters = $request instanceof Request ? $request->postParams() : $_POST;
         // Check the payment.
-        $payment = $this->validatePayment($payment, $request);
-        if ($payment->details() === 'error' && $payment->status() === EEM_Payment::status_id_failed) {
-            return $payment;
+        $this->payment = $this->validatePayment($payment, $post_parameters);
+        if ($this->payment->details() === 'error' && $this->payment->status() === EEM_Payment::status_id_failed) {
+            return $this->payment;
         }
-        $transaction    = $payment->transaction();
-        $payment_method = $transaction->payment_method();
-        // Get the order details.
-        $order_id = $request->getRequestParam('pp_order_id');
-        if (! $order_id) {
+        $this->transaction = $this->validateTransaction($this->payment, $post_parameters);
+        if (! $this->transaction instanceof EE_Transaction) {
+            return $this->payment;
+        }
+        $payment_method = $this->transaction->payment_method();
+        if (! $payment_method instanceof EE_Payment_Method) {
+            return $this->payment;
+        }
+        if (empty($post_parameters['pp_order_id'])) {
             return EEG_PayPalCheckout::updatePaymentStatus(
-                $payment,
+                $this->payment,
                 EEM_Payment::status_id_declined,
                 $post_parameters,
                 esc_html__('Can\'t charge the Order. The Order ID is missing.', 'event_espresso')
             );
         }
+        // Get the order details.
+        $order_id = sanitize_text_field($post_parameters['pp_order_id']);
         // Capture the order.
-        $capture_status = EED_PayPalCommerce::captureOrder($transaction, $payment_method, $order_id);
+        $capture_status = EED_PayPalCommerce::captureOrder($this->transaction, $payment_method, $order_id);
         // Check the order status.
-        $order_details  = EED_PayPalCommerce::getOrderDetails($order_id, $transaction, $payment_method);
-        $order_status   = $this->isOrderCompleted($order_details);
+        $order_details = EED_PayPalCommerce::getOrderDetails($order_id, $this->transaction, $payment_method);
+        $order_status  = $this->isOrderCompleted($order_details);
         if (! $order_status['completed']) {
             return EEG_PayPalCheckout::updatePaymentStatus(
-                $payment,
+                $this->payment,
                 EEM_Payment::status_id_declined,
                 $order_details,
                 $order_status['message'] ?? ''
             );
         }
         // Looks like all is good. Mark payment as a success.
-        $this->saveBillingDetails($payment, $transaction, $order_details, $billing_info);
-        return EEG_PayPalCheckout::updatePaymentStatus($payment, EEM_Payment::status_id_approved, $capture_status);
+        $this->saveBillingDetails($order_details, $billing_info, $this->payment);
+        return EEG_PayPalCheckout::updatePaymentStatus(
+            $this->payment,
+            EEM_Payment::status_id_approved,
+            $capture_status
+        );
     }
 
 
@@ -119,7 +140,9 @@ class EEG_PayPalCheckout extends EE_Onsite_Gateway
                 'There was an error with this payment. The status of the Order could not be determined.',
                 'event_espresso'
             );
-        } elseif ($order_details['purchase_units'][0]['payments']['captures'][0]['status'] !== 'COMPLETED') {
+        } elseif (! empty($order_details['purchase_units'][0]['payments']['captures'][0]['status'])
+                  && $order_details['purchase_units'][0]['payments']['captures'][0]['status'] !== 'COMPLETED'
+        ) {
             $conclusion['message'] = esc_html__(
                 'This payment was declined or failed validation. Please check the payment and billing information you provided.',
                 'event_espresso'
@@ -150,14 +173,14 @@ class EEG_PayPalCheckout extends EE_Onsite_Gateway
      */
     public static function updatePaymentStatus(
         EE_Payment $payment,
-        string $status,
-        $response_data,
-        string $update_message = ''
+        string     $status,
+                   $response_data,
+        string     $update_message = ''
     ): EE_Payment {
         $paypal_pm = ! empty($payment->payment_method())
             ? EEM_Payment_Method::instance()->get_one_by_slug($payment->payment_method()->name())
             : null;
-        // Is this a successful payment ?
+        // Is this a successful payment?
         if ($status === EEM_Payment::status_id_approved) {
             $default_message = esc_html__('Successful payment.', 'event_espresso');
             $amount          = $response_data['purchase_units'][0]['payments']['captures'][0]['amount']['value'] ?? 0;
@@ -165,9 +188,9 @@ class EEG_PayPalCheckout extends EE_Onsite_Gateway
             if (! empty($amount)) {
                 $payment->set_amount((float) $amount);
             }
-            $payment->set_txn_id_chq_nmbr(
-                $response_data['purchase_units'][0]['payments']['captures'][0]['id'] ?? $response_data['id']
-            );
+            $txn_id_chq_nmbr = $response_data['purchase_units'][0]['payments']['captures'][0]['id']
+                               ?? (! empty($response_data['id']) ? $response_data['id'] : 0);
+            $payment->set_txn_id_chq_nmbr($txn_id_chq_nmbr);
         } else {
             $default_message = sprintf(
                 esc_html__(
@@ -210,7 +233,7 @@ class EEG_PayPalCheckout extends EE_Onsite_Gateway
             // Do we have a capture status ?
             if (! empty($response_data['purchase_units']['0']['payments']['captures'][0]['status'])) {
                 $new_message .= sprintf(
-                    /* translators: 1: <br/><br/>, 2: payment capture status */
+                /* translators: 1: <br/><br/>, 2: payment capture status */
                     esc_html__('%1$sPayment capture status: %2$s', 'event_espresso'),
                     '<br/><br/>',
                     $response_data['purchase_units']['0']['payments']['captures'][0]['status']
@@ -220,14 +243,15 @@ class EEG_PayPalCheckout extends EE_Onsite_Gateway
                 ! empty($response_data['purchase_units']['0']['payments']['captures'][0]['processor_response'])
                 && is_array($response_data['purchase_units']['0']['payments']['captures'][0]['processor_response'])
             ) {
-                $new_message .= sprintf(
-                    /* translators: 1: <br/><br/> */
+                $new_message        .= sprintf(
+                /* translators: 1: <br/><br/> */
                     esc_html__('%1$sProcessor responded: ', 'event_espresso'),
                     '<br/><br/>'
                 );
-                $processor_response = $response_data['purchase_units']['0']['payments']['captures'][0]['processor_response'];
-                $iteration = 1;
-                $foreach_count = count($processor_response);
+                $processor_response =
+                    $response_data['purchase_units']['0']['payments']['captures'][0]['processor_response'];
+                $iteration          = 1;
+                $foreach_count      = count($processor_response);
                 foreach ($processor_response as $key => $value) {
                     $new_message .= " $key: $value";
                     $new_message .= $iteration < $foreach_count ? ', ' : '.';
@@ -238,9 +262,9 @@ class EEG_PayPalCheckout extends EE_Onsite_Gateway
                 ! empty($response_data['details'][0]['description'])
                 && ! empty($response_data['details'][0]['issue'])
             ) {
-                $iteration = 1;
-                $new_message .= sprintf(
-                    /* translators: 1: <br/><br/> */
+                $iteration     = 1;
+                $new_message   .= sprintf(
+                /* translators: 1: <br/><br/> */
                     esc_html__('%1$sError details: ', 'event_espresso'),
                     '<br/><br/>'
                 );
@@ -259,37 +283,22 @@ class EEG_PayPalCheckout extends EE_Onsite_Gateway
     /**
      * Validate the payment.
      *
-     * @param EE_Payment|null  $payment
-     * @param RequestInterface $request
+     * @param EE_Payment|null $payment
+     * @param array           $post_parameters
      * @return EE_Payment
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function validatePayment(?EE_Payment $payment, RequestInterface $request): EE_Payment
+    public function validatePayment(?EE_Payment $payment, array $post_parameters): EE_Payment
     {
-        $failed_status = $this->_pay_model->failed_status();
         // Check the payment.
         if (! $payment instanceof EE_Payment) {
             $payment       = EE_Payment::new_instance();
             $error_message = esc_html__('Error. No associated payment was found.', 'event_espresso');
             return EEG_PayPalCheckout::updatePaymentStatus(
                 $payment,
-                $failed_status,
-                $request->postParams(),
-                $error_message
-            );
-        }
-        // Check the transaction.
-        $transaction = $payment->transaction();
-        if (! $transaction instanceof EE_Transaction) {
-            $error_message = esc_html__(
-                'Could not process this payment because it has no associated transaction.',
-                'event_espresso'
-            );
-            return EEG_PayPalCheckout::updatePaymentStatus(
-                $payment,
-                $failed_status,
-                $request->postParams(),
+                $this->_pay_model->failed_status(),
+                $post_parameters,
                 $error_message
             );
         }
@@ -298,24 +307,55 @@ class EEG_PayPalCheckout extends EE_Onsite_Gateway
 
 
     /**
-     * Save some transaction details, like billing information.
+     * Validate the transaction.
      *
-     * @param EE_Payment     $payment
-     * @param EE_Transaction $transaction
-     * @param array          $order
-     * @param array          $billing
+     * @param EE_Payment|null $payment
+     * @param array           $post_parameters
+     * @return EE_Transaction|null
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    public function validateTransaction(?EE_Payment $payment, array $post_parameters): ?EE_Transaction
+    {
+        // Check the transaction.
+        $transaction = $payment->transaction();
+        if (! $transaction instanceof EE_Transaction) {
+            return null;
+        }
+        if (! empty($post_parameters['spco_transaction_id'])) {
+            $spco_transaction_id = (int) sanitize_text_field($post_parameters['spco_transaction_id']);
+            if ($transaction->ID() !== $spco_transaction_id) {
+                $error_message = esc_html__(
+                    'Sorry, but this registration transaction was abandoned or got outdated and cannot be processed anymore. This can happen if you have started another registration checkout in a different browser tab or window. Please finish the last checkout or start over.',
+                    'event_espresso'
+                );
+                $this->payment = EEG_PayPalCheckout::updatePaymentStatus(
+                    $payment,
+                    $this->_pay_model->failed_status(),
+                    $post_parameters,
+                    $error_message
+                );
+                return null;
+            }
+        }
+        return $transaction;
+    }
+
+
+    /**
+     * Save transaction details, like billing information.
+     *
+     * @param array      $order
+     * @param array      $billing
+     * @param EE_Payment $payment
      * @return void
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public static function saveBillingDetails(
-        EE_Payment $payment,
-        EE_Transaction $transaction,
-        array $order,
-        array $billing
-    ): void {
-        $primary_reg = $transaction->primary_registration();
-        $att    = $primary_reg instanceof EE_Registration ? $primary_reg->attendee() : null;
+    public function saveBillingDetails(array $order, array $billing, EE_Payment $payment): void
+    {
+        $primary_reg = $this->transaction->primary_registration();
+        $att         = $primary_reg instanceof EE_Registration ? $primary_reg->attendee() : null;
         if (! $att instanceof EE_Attendee) {
             // I guess we are done here then. Just save what we have.
             $payment->set_details($order);
@@ -339,7 +379,7 @@ class EEG_PayPalCheckout extends EE_Onsite_Gateway
             // A card (ACDC) payment ?
             if (! empty($order['payment_source']['card'])) {
                 $payer = $order['payment_source']['card'];
-            // Or maybe a PayPal Express payment ?
+                // Or maybe a PayPal Express payment ?
             } elseif (! empty($order['payment_source']['paypal'])) {
                 $payer = $order['payment_source']['paypal'];
             }
@@ -347,7 +387,7 @@ class EEG_PayPalCheckout extends EE_Onsite_Gateway
                 if (! empty($payer['name'])) {
                     // Yup, payment_source card vs PayPal have different info about the payer. So need to differentiate.
                     if (is_string($payer['name'])) {
-                        $full_name                  = explode(' ', $payer['name']);
+                        $full_name             = explode(' ', $payer['name']);
                         $billing['first_name'] = $full_name[0] ?? $billing['first_name'];
                         $billing['last_name']  = $full_name[1] ?? $billing['last_name'];
                     }
@@ -368,8 +408,9 @@ class EEG_PayPalCheckout extends EE_Onsite_Gateway
             }
         }
         // Update attendee billing info in the transaction details.
-        $payment_method = $transaction->payment_method();
-        $post_meta_name = $payment_method->type_obj() instanceof EE_PMT_Base
+        $payment_method = $this->transaction->payment_method();
+        $post_meta_name = $payment_method instanceof EE_Payment_Method
+                          && $payment_method->type_obj() instanceof EE_PMT_Base
             ? 'billing_info_' . $payment_method->type_obj()->system_name()
             : '';
         update_post_meta($att->ID(), $post_meta_name, $billing);

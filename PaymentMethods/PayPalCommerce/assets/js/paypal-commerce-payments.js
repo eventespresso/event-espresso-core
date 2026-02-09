@@ -1,5 +1,13 @@
 const paypal_payment_methods = {};
 
+/**
+ * @namespace paypal
+ * @type {{
+ *  Buttons: function,
+ *  HostedFields: Object,
+ * }}
+ */
+
 jQuery(document).ready(function ($) {
     // Initialize and run all versions of this payment method (EE Payment Methods Pro add-on allows PM versions).
     for (const slug in eeaPPCommerceParameters.pm_versions) {
@@ -9,18 +17,6 @@ jQuery(document).ready(function ($) {
 
 
     /**
-     * @namespace EeaPayPalCheckout
-     * @type {{
-     *  slug: string,
-     *  localized: array,
-     * }}
-     *
-     * @namespace paypal
-     * @type {{
-     *  paypal: object,
-     *  hostedFields: Object,
-     * }}
-     *
      * @namespace eeaPPCommerceParameters
      * @type {{
      * 	pm_versions: array,
@@ -108,7 +104,6 @@ jQuery(document).ready(function ($) {
             this.pp_order_id = this.pp_order_status = this.thrown_messages = '';
             this.pp_order_nonce = eeaPPCommerceParameters.pp_order_nonce;
             this.button_container_id = '#eep-' + pm_slug + '-payment-buttons';
-            this.payment_method_selector = $('#ee-available-payment-method-inputs');
             this.payment_method_select_lbl = $('#ee-available-payment-method-inputs-' + pm_slug + '-lbl');
             this.payment_method_info_div = $('#spco-payment-method-info-' + pm_slug);
             this.billing_form = $('#pp-' + pm_slug + '-billing-form');
@@ -395,7 +390,7 @@ jQuery(document).ready(function ($) {
         this.createOrder = function (billing_info) {
             console.log('function createOrder()');
             this.spco.do_before_sending_ajax();
-            // Do we already have a complete order ?
+            // Do we already have a complete order?
             if (this.pp_order_id && this.pp_order_status && this.pp_order_status === 'COMPLETED') {
                 this.spco.end_ajax();
                 return this.pp_order_id;
@@ -498,7 +493,7 @@ jQuery(document).ready(function ($) {
 
 
         /**
-         * Complete the payment. Do required last steps to submit this payment.
+         * Complete the payment. Do the required last steps to submit this payment.
          * @function
          */
         this.completePayment = function (response_data, this_pm) {
@@ -514,16 +509,8 @@ jQuery(document).ready(function ($) {
                     this_pm.disableSubmitButtons();
                 }
             });
+            this_pm.clearOrder();
             return response_data;
-        };
-
-
-        /**
-         * Get paypal_order_id.
-         * @function
-         */
-        this.getOrderId = function () {
-            return this.pp_order_id;
         };
 
 

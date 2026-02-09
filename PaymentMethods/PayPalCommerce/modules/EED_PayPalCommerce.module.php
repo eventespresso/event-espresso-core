@@ -134,8 +134,8 @@ class EED_PayPalCommerce extends EED_Module
      * @throws ReflectionException
      */
     public static function createOrder(
-        EE_Transaction $transaction,
-        array $billing_info,
+        EE_Transaction    $transaction,
+        array             $billing_info,
         EE_Payment_Method $paypal_pm
     ): array {
         $create_order_api = EED_PayPalCommerce::getCreateOrderApi($transaction, $billing_info, $paypal_pm);
@@ -167,6 +167,7 @@ class EED_PayPalCommerce extends EED_Module
                 'response' => $order['message'],
             ];
         }
+        $transaction->save();
         return [
             'pp_order_id' => $order['id'],
         ];
@@ -236,8 +237,8 @@ class EED_PayPalCommerce extends EED_Module
      * @throws ReflectionException
      */
     public static function getCreateOrderApi(
-        EE_Transaction $transaction,
-        array $billing_info,
+        EE_Transaction    $transaction,
+        array             $billing_info,
         EE_Payment_Method $paypal_pm
     ): ?CreateOrder {
         $paypal_api = EED_PayPalCommerce::getPayPalApi($paypal_pm);
@@ -259,9 +260,9 @@ class EED_PayPalCommerce extends EED_Module
      * @throws ReflectionException
      */
     public static function getCaptureOrderApi(
-        EE_Transaction $transaction,
+        EE_Transaction    $transaction,
         EE_Payment_Method $paypal_pm,
-        string $order_id
+        string            $order_id
     ): ?CaptureOrder {
         $paypal_api = EED_PayPalCommerce::getPayPalApi($paypal_pm);
         if (! $paypal_api instanceof PayPalApi) {
@@ -282,8 +283,8 @@ class EED_PayPalCommerce extends EED_Module
      * @throws ReflectionException
      */
     public static function getOrderDetailsApi(
-        string $order_id,
-        EE_Transaction $transaction,
+        string            $order_id,
+        EE_Transaction    $transaction,
         EE_Payment_Method $paypal_pm
     ): ?OrderDetails {
         $paypal_api = EED_PayPalCommerce::getPayPalApi($paypal_pm);
@@ -393,7 +394,7 @@ class EED_PayPalCommerce extends EED_Module
     {
         $pp_meta_data = PayPalExtraMetaManager::getAllData($paypal_pm);
         return ! empty($pp_meta_data[ Domain::META_KEY_SELLER_MERCHANT_ID ])
-            && ! empty($pp_meta_data[ Domain::META_KEY_ACCESS_TOKEN ]);
+               && ! empty($pp_meta_data[ Domain::META_KEY_ACCESS_TOKEN ]);
     }
 
 

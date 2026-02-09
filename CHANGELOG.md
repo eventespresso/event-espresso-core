@@ -6,6 +6,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Releases
 
+### 5.0.54
+
+
+#### Fixed
+ - [PPC. Prevent transaction mixup (#2083)](https://github.com/eventespresso/cafe/pull/2083)
+
+#### Changed
+ - [Restrict Self Service Registration Cancellations Outside of Ticket Sale Dates. (#2091)](https://github.com/eventespresso/cafe/pull/2091)
+
+
+
+
+
+
 ### 5.0.53
 
 #### Added
