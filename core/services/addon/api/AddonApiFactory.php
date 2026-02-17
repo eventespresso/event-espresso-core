@@ -49,7 +49,11 @@ class AddonApiFactory
     private static function getSlugFromMainfile(string $main_file): string
     {
         $plugin_basename = plugin_basename($main_file);
-        return substr($plugin_basename, 0, strpos($plugin_basename, '/'));
+        // remove mainfile name from "folder/mainfile" string
+        $folder_name = substr($plugin_basename, 0, strpos($plugin_basename, '/'));
+        // remove version strings from end of folder name in case it was appended (by GitHub)
+        $slug = preg_replace('/-+[\d.]+$/', '', $folder_name);
+        return $slug ?? $folder_name;
     }
 
 

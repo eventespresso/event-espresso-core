@@ -109,6 +109,19 @@ jQuery(document).ready(function($) {
         $('#reg_datetime_id').val(0);
         $('#reg_event_id').val($(this).val());
 	});
+
+    const contacts =  JSON.parse(document.getElementById('ee-contacts-data').textContent);
+    const searchURL = ajaxurl + '?page=espresso_registrations&action=ee_search_contacts&ee_admin_ajax=1';
+    // use array of objects for jQuery UI Autocomplete or AJAX to fetch results?
+    const autocompleteSource = contacts.length ? contacts : searchURL;
+
+    $('#change-reg-contact-autocomplete').autocomplete({
+        source: autocompleteSource,
+        minLength: 2,
+        select: function(event, ui) {
+            $('#change-reg-contact-id').val(ui.item.id);
+        }
+    });
 });
 
 /**

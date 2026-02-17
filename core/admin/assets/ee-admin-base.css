@@ -327,45 +327,45 @@
 }
 
 .tiny-text {
-    font-size: var(--ee-font-size-micro);
-    line-height: var(--ee-font-size-smaller);
-    letter-spacing: 1px;
+    font-size: var(--ee-font-size-micro) !important;
+    line-height: var(--ee-font-size-smaller) !important;
+    letter-spacing: 1px !important;
 }
 
 .smaller-text {
-    font-size: var(--ee-font-size-tiny);
-    line-height: var(--ee-font-size-small);
-    letter-spacing: .05rem;
+    font-size: var(--ee-font-size-tiny) !important;
+    line-height: var(--ee-font-size-small) !important;
+    letter-spacing: .05rem !important;
 }
 
 .small-text {
-    font-size: var(--ee-font-size-small);
-    line-height: var(--ee-font-size-big);
-    letter-spacing: .03125rem;
+    font-size: var(--ee-font-size-small) !important;
+    line-height: var(--ee-font-size-big) !important;
+    letter-spacing: .03125rem !important;
 }
 
 .big-text {
-    font-size: var(--ee-font-size-big);
-    line-height: var(--ee-font-size-xl);
-    letter-spacing: -.5px;
+    font-size: var(--ee-font-size-big) !important;
+    line-height: var(--ee-font-size-xl) !important;
+    letter-spacing: -.5px !important;
 }
 
 .bigger-text {
-    font-size: var(--ee-font-size-xl);
-    line-height: var(--ee-font-size-3xl);
-    letter-spacing: -.75px;
+    font-size: var(--ee-font-size-xl) !important;
+    line-height: var(--ee-font-size-3xl) !important;
+    letter-spacing: -.75px !important;
 }
 
 .huge-text {
-    font-size: var(--ee-font-size-3xl);
-    line-height: var(--ee-font-size-4xl);
-    letter-spacing: -1px;
+    font-size: var(--ee-font-size-3xl) !important;
+    line-height: var(--ee-font-size-4xl) !important;
+    letter-spacing: -1px !important;
 }
 .extreme-text {
-    color: var(--ee-font-color-light);
-    font-size: var(--ee-font-size-4xl);
-    line-height: var(--ee-font-size-4xl);
-    letter-spacing: -2px;
+    color: var(--ee-font-color-light) !important;
+    font-size: var(--ee-font-size-4xl) !important;
+    line-height: var(--ee-font-size-4xl) !important;
+    letter-spacing: -2px !important;
 }
 
 

@@ -70,20 +70,27 @@ function espresso_load_required(string $classname, string $full_path_to_file)
 function bootstrap_espresso()
 {
     require_once __DIR__ . '/espresso_definitions.php';
+
     try {
         espresso_load_error_handling();
-        // include WordPress shims for functions introduced in later versions of WordPress
+        // load polyfills
         espresso_load_required(
             '',
-            EE_CORE . 'wordpress-shims.php'
+            EE_CORE . 'compatibility-php.php'
         );
+        // include WordPress shims for functions introduced in later versions of WordPress
+        // commented out for the time being because there are currently no shims
+        // espresso_load_required(
+        //     '',
+        //     EE_CORE . 'compatibility-wordpress.php'
+        // );
         espresso_load_required(
             '',
-            EE_CORE . 'third-party-compatibility.php'
+            EE_CORE . 'compatibility-third-party.php'
         );
         espresso_load_required(
             'EEH_Base',
-            EE_CORE . 'helpers/EEH_Base.helper.php'
+            EE_HELPERS . 'EEH_Base.helper.php'
         );
         espresso_load_required(
             'EEH_File',
@@ -91,11 +98,11 @@ function bootstrap_espresso()
         );
         espresso_load_required(
             'EEH_File',
-            EE_CORE . 'helpers/EEH_File.helper.php'
+            EE_HELPERS . 'EEH_File.helper.php'
         );
         espresso_load_required(
             'EEH_Array',
-            EE_CORE . 'helpers/EEH_Array.helper.php'
+            EE_HELPERS . 'EEH_Array.helper.php'
         );
         espresso_load_required(
             'EE_Base',

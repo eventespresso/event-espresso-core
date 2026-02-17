@@ -217,15 +217,29 @@ jQuery(document).ready( function($) {
 				},
 
 				highlight: function( element ) {
-					if ( ! $(element ).hasClass('spco-next-step-btn') ) {
-						$( element ).addClass( 'ee-needs-value' ).removeClass( 'ee-has-value' );
+					if ( ! $( element ).hasClass('spco-next-step-btn') ) {
+						if ( element.type === 'radio' || element.type === 'checkbox' ) {
+							this.findByName( element.name )
+								.addClass( 'ee-needs-value' ).removeClass( 'ee-has-value' );
+						} else {
+							$( element ).addClass( 'ee-needs-value' ).removeClass( 'ee-has-value' );
+						}
 					}
 				},
 
 				unhighlight: function( element ) {
-					if ( ! $(element ).hasClass('spco-next-step-btn') ) {
-						if ( $( element ).attr( 'value' ) ) {
-							$( element ).removeClass( 'ee-needs-value' ).addClass( 'ee-has-value' );
+					if ( ! $( element ).hasClass('spco-next-step-btn') ) {
+						if ( element.type === 'radio' || element.type === 'checkbox' ) {
+							const $group = this.findByName( element.name );
+							$group.removeClass( 'ee-needs-value' ).removeClass( 'ee-has-value' );
+							$group.filter( ':checked' ).addClass( 'ee-has-value' );
+						} else {
+							// does the input have a value?
+							if ( !! $( element ).val() ) {
+								$( element ).removeClass( 'ee-needs-value' ).addClass( 'ee-has-value' );
+							} else {
+								$( element ).removeClass( 'ee-needs-value' ).removeClass( 'ee-has-value' );
+							}
 						}
 					}
 				},

@@ -31,6 +31,13 @@ class EEH_Event_Query
     protected static bool $_event_query_show_expired = false;
 
     /**
+     * whether to display ONLY expired events in the event list
+     *
+     * @since 5.0.55
+     */
+    protected static bool $event_query_expired_only = false;
+
+    /**
      * list of params for controlling how the query results are ordered
      */
     protected static array $_event_query_orderby = [];
@@ -96,18 +103,21 @@ class EEH_Event_Query
      * @param bool         $show_expired
      * @param array|string $orderby
      * @param string|null  $sort
+     * @param bool         $expiredOnly
      */
     public static function set_query_params(
         ?string $month = '',
         ?string $category = '',
         bool $show_expired = false,
         $orderby = 'start_date',
-        ?string $sort = 'ASC'
+        ?string $sort = 'ASC',
+        bool $expiredOnly = false
     ) {
         self::$_query_params                        = [];
         EEH_Event_Query::$_event_query_month        = EEH_Event_Query::_display_month($month);
         EEH_Event_Query::$_event_query_category     = EEH_Event_Query::_event_category_slug($category);
         EEH_Event_Query::$_event_query_show_expired = EEH_Event_Query::_show_expired($show_expired);
+        EEH_Event_Query::$event_query_expired_only  = EEH_Event_Query::expiredOnly($expiredOnly);
         EEH_Event_Query::$_event_query_orderby      = EEH_Event_Query::_orderby($orderby);
         EEH_Event_Query::$_event_query_sort         = EEH_Event_Query::_sort($sort);
     }
@@ -143,6 +153,18 @@ class EEH_Event_Query
     {
         // override default expired option if set via filter
         return self::getRequest()->getRequestParam('event_query_show_expired', $show_expired, 'bool');
+    }
+
+
+    /**
+     * @param bool $expiredOnly
+     * @return bool
+     * @since 5.0.55
+     */
+    private static function expiredOnly(bool $expiredOnly = false): bool
+    {
+        // override default expired_only option if set via request parameter
+        return self::getRequest()->getRequestParam('event_query_expired_only', $expiredOnly, DataType::BOOL);
     }
 
 
@@ -256,7 +278,11 @@ class EEH_Event_Query
     {
         if (EEH_Event_Query::apply_query_filters($wp_query)) {
             // Category
-            $SQL = EEH_Event_Query::posts_join_sql_for_show_expired($SQL, EEH_Event_Query::$_event_query_show_expired);
+            $SQL = EEH_Event_Query::posts_join_sql_for_show_expired(
+                $SQL,
+                EEH_Event_Query::$_event_query_show_expired,
+                EEH_Event_Query::$event_query_expired_only
+            );
             $SQL = EEH_Event_Query::posts_join_sql_for_terms($SQL, EEH_Event_Query::$_event_query_category);
             $SQL = EEH_Event_Query::posts_join_for_orderby($SQL, EEH_Event_Query::$_event_query_orderby);
         }
@@ -267,13 +293,19 @@ class EEH_Event_Query
     /**
      * @param string  $SQL
      * @param boolean $show_expired if TRUE, then displayed past events
+     * @param boolean $expiredOnly  if TRUE, then display ONLY expired events
      * @return string
      * @throws EE_Error
      * @throws ReflectionException
+     * @since 5.0.55
      */
-    public static function posts_join_sql_for_show_expired(string $SQL = '', bool $show_expired = false): string
-    {
-        if (! $show_expired) {
+    public static function posts_join_sql_for_show_expired(
+        string $SQL = '',
+        bool $show_expired = false,
+        bool $expiredOnly = false
+    ): string {
+        // If expiredOnly is true OR show_expired is false, we need the datetime table
+        if ($expiredOnly || ! $show_expired) {
             $datetime_table = EEM_Datetime::instance()->table();
             // don't add if this is already in the SQL
             if (strpos($SQL, "INNER JOIN $datetime_table") === false) {
@@ -449,8 +481,12 @@ class EEH_Event_Query
     public static function posts_where(string $SQL, WP_Query $wp_query): string
     {
         if (EEH_Event_Query::apply_query_filters($wp_query)) {
-            // Show Expired ?
-            $SQL .= EEH_Event_Query::posts_where_sql_for_show_expired(EEH_Event_Query::$_event_query_show_expired);
+            // Show Expired ? (skip if expired_only is true to avoid conflicting conditions)
+            if (! EEH_Event_Query::$event_query_expired_only) {
+                $SQL .= EEH_Event_Query::posts_where_sql_for_show_expired(EEH_Event_Query::$_event_query_show_expired);
+            }
+            // Expired Only ?
+            $SQL .= EEH_Event_Query::posts_where_sql_for_expired_only(EEH_Event_Query::$event_query_expired_only);
             // Category
             $SQL .= EEH_Event_Query::posts_where_sql_for_event_category_slug(EEH_Event_Query::$_event_query_category);
             // Start Date
@@ -472,6 +508,21 @@ class EEH_Event_Query
     {
         return ! $show_expired
             ? ' AND ' . EEM_Datetime::instance()->table() . '.DTT_EVT_end > \'' . current_time('mysql', true) . '\' '
+            : '';
+    }
+
+
+    /**
+     * @param boolean $expiredOnly if TRUE, then display ONLY expired events
+     * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since 5.0.55
+     */
+    public static function posts_where_sql_for_expired_only(bool $expiredOnly = false): string
+    {
+        return $expiredOnly
+            ? ' AND ' . EEM_Datetime::instance()->table() . '.DTT_EVT_end < \'' . current_time('mysql', true) . '\' '
             : '';
     }
 

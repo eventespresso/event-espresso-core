@@ -777,3 +777,81 @@
     align-items: center;
 }
 
+
+.espresso-admin.wp-core-ui  #edit-reg-registrant-mbox {
+    .admin-side-mbox-attendee-id {
+        color: var(--ee-font-color);
+        font-size: var(--ee-font-size-tiny);
+        text-transform: uppercase;
+        position: absolute;
+        inset-block-start: .5rem;
+        inset-inline-end: .75rem;
+    }
+
+    .attendee-info-error {
+        font-weight: 600;
+        margin-block-start: var(--ee-margin-micro);
+        margin-block-end: var(--ee-margin-small);
+        padding-block: var(--ee-padding-smaller);
+        padding-inline: var(--ee-padding-default);
+
+        .button {
+            margin-inline-start: auto;
+        }
+    }
+
+    .change-reg-contact-div {
+        background: var(--ee-status-color-pale-blue);
+        margin-block: var(--ee-margin-default);
+        padding-block: var(--ee-padding-smaller);
+        padding-inline: var(--ee-padding-default);
+
+        h4 {
+            margin-block-start: var(--ee-margin-micro);
+            margin-block-end: 0;
+        }
+
+        h5 {
+            margin-block: var(--ee-margin-micro);
+        }
+
+        p {
+            margin-block-end: var(--ee-margin-micro);
+        }
+
+        .reg-contact-autocomplete-wrap {
+            margin-block-start:  var(--ee-margin-big);
+
+            input[type="text"] {
+                margin: 0 !important;
+                max-width: 100% !important;
+                width: 100% !important;
+            }
+        }
+    }
+
+    .dashicons {
+        font-size: var(--ee-font-size-lg) !important;
+
+        &:before {
+            font-size: inherit !important;
+            height: var(--ee-font-size-lg) !important;
+            width: var(--ee-font-size-lg) !important;
+        }
+    }
+
+    .ee-icon {
+        font-size: var(--ee-font-size-big) !important;
+
+        &:before {
+            font-size: inherit !important;
+            height: var(--ee-font-size-big) !important;
+            width: var(--ee-font-size-big) !important;
+        }
+    }
+
+    .view-contact-list {
+        margin-block-start: var(--ee-margin-default);
+        text-align: end;
+    }
+}

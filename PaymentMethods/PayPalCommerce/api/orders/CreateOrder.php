@@ -217,7 +217,7 @@ class CreateOrder extends OrdersApi
                 'admin_area_2'   => $attendee->city(),
                 'admin_area_1'   => $attendee->state_abbrev(),
                 'postal_code'    => $attendee->zip(),
-                'country_code'   => $attendee->country_ID(),
+                'country_code'   => $CNT_ISO,
             ];
         }
 

@@ -19,6 +19,7 @@ use ReflectionException;
  *    [ESPRESSO_EVENTS css_class="my-custom-class"]
  *    [ESPRESSO_EVENTS month="April 2014"]
  *    [ESPRESSO_EVENTS show_expired=true]
+ *    [ESPRESSO_EVENTS expired_only=true]
  *    [ESPRESSO_EVENTS category_slug="free-events"]
  *    [ESPRESSO_EVENTS order_by="start_date,id"]
  *    [ESPRESSO_EVENTS sort="ASC"]
@@ -123,6 +124,7 @@ class EspressoEvents extends EspressoShortcode
                     'limit'         => 10,
                     'css_class'     => '',
                     'show_expired'  => false,
+                    'expired_only'  => false,
                     'month'         => '',
                     'category_slug' => '',
                     'order_by'      => 'start_date',
@@ -152,6 +154,7 @@ class EspressoEvents extends EspressoShortcode
         return array(
             'category_slug' => 'skip_sanitization',
             'show_expired'  => 'skip_sanitization',
+            'expired_only'  => 'skip_sanitization',
             'order_by'      => 'skip_sanitization',
             'month'         => 'skip_sanitization',
             'sort'          => 'skip_sanitization',

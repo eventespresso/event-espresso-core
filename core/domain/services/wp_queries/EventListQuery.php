@@ -24,6 +24,8 @@ class EventListQuery extends WP_Query
 
     private bool $show_expired = false;
 
+    private bool $expired_only = false;
+
     private ?string $month = '';
 
     private ?string $category_slug = '';
@@ -99,7 +101,8 @@ class EventListQuery extends WP_Query
             $this->category_slug,
             $this->show_expired,
             $this->order_by,
-            $this->sort
+            $this->sort,
+            $this->expired_only
         );
     }
 

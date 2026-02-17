@@ -49,8 +49,8 @@ This is just to document the third party libraries in use for EE4 and where to f
 ### jQuery validate
 
 * link: https://github.com/jzaefferer/jquery-validation
-* version in use: 1.17.0
-* last updated: EE4.9.59
+* version in use: 1.22.0
+* last updated: EE5.0.54
 
 ### parseuri
 

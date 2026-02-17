@@ -4240,8 +4240,8 @@ body.espresso-admin #contextual-help-wrap strong {
     .espresso-admin .postbox .inside select.ee-input-width--tiny,
     .espresso-admin .postbox .inside textarea.ee-input-width--tiny,
     .espresso-admin input.ee-input-width--tiny:not(.ee-input-base):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="checkbox"]) {
-        min-width: clamp(3rem, 6.25%, 6rem);
-        max-width: clamp(6rem, 12.5%, 9rem);
+        min-width: clamp(3rem, 6.25%, 6rem) !important;
+        max-width: clamp(6rem, 12.5%, 9rem) !important;
     }
 
     .espresso-admin select.ee-input-width--small,
@@ -4249,8 +4249,8 @@ body.espresso-admin #contextual-help-wrap strong {
     .espresso-admin .postbox .inside select.ee-input-width--small,
     .espresso-admin .postbox .inside textarea.ee-input-width--small,
     .espresso-admin input.ee-input-width--small:not(.ee-input-base):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="checkbox"]) {
-        min-width: clamp(4rem, 12.5%, 8rem);
-        max-width: clamp(8rem, 25%, 16rem);
+        min-width: clamp(4rem, 12.5%, 8rem) !important;
+        max-width: clamp(8rem, 25%, 16rem) !important;
     }
 
     .espresso-admin select.ee-input-width--reg,
@@ -4258,8 +4258,8 @@ body.espresso-admin #contextual-help-wrap strong {
     .espresso-admin .postbox .inside select.ee-input-width--reg,
     .espresso-admin .postbox .inside textarea.ee-input-width--reg,
     .espresso-admin input.ee-input-width--reg:not(.ee-input-base):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="checkbox"]) {
-        min-width: clamp(8rem, 25%, 16rem);
-        max-width: clamp(16rem, 50%, 32rem);
+        min-width: clamp(8rem, 25%, 16rem) !important;
+        max-width: clamp(16rem, 50%, 32rem) !important;
     }
 
 
@@ -4269,8 +4269,8 @@ body.espresso-admin #contextual-help-wrap strong {
     .espresso-admin .postbox .inside textarea.ee-input-width--big,
     .espresso-admin textarea.ee-input-width--big:not(.wp-editor-area):not(.iframe-embed-content),
     .espresso-admin input.ee-input-width--big:not(.ee-input-base):not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="checkbox"]) {
-        min-width: clamp(16rem, calc(50% - var(--ee-size-micro)), 32rem);
-        max-width: clamp(32rem, 64rem, calc(100% - var(--ee-size-micro)));
+        min-width: clamp(16rem, calc(50% - var(--ee-size-micro)), 32rem) !important;
+        max-width: clamp(32rem, 64rem, calc(100% - var(--ee-size-micro))) !important;
     }
 }
 
@@ -6429,6 +6429,10 @@ body.espresso-admin #contextual-help-wrap strong {
         margin-inline: 0;
         min-width: unset;
     }
+}
+
+#admin-side-mbox-primary-registrant-dv {
+    position: relative;
 }
 
 #admin-side-mbox-primary-registrant-dv .ee-admin-attendee-avatar {

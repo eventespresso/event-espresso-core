@@ -197,6 +197,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
 
     protected function _ajax_hooks()
     {
+        add_action('wp_ajax_ee_search_contacts', [$this, 'ajaxSearchContacts']);
     }
 
 
@@ -526,6 +527,16 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 'noheader'   => true,
                 'capability' => 'ee_read_contacts',
             ],
+            'change_reg_contact'                 => [
+                'func'       => [$this, 'changeRegistrationContact'],
+                'noheader'   => true,
+                'capability' => 'ee_edit_contacts',
+            ],
+            'copy_primary_registrant'                 => [
+                'func'       => [$this, 'copyPrimaryRegistrant'],
+                'noheader'   => true,
+                'capability' => 'ee_edit_contacts',
+            ],
         ];
     }
 
@@ -811,6 +822,8 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
         $this->_set_registration_object();
         // styles
         wp_enqueue_style('espresso-ui-theme');
+        wp_enqueue_script('jquery-ui-autocomplete');
+        wp_enqueue_style('jquery-ui-autocomplete');
         // scripts
         $this->_get_reg_custom_questions_form($this->_registration->ID());
         $this->_reg_custom_questions_form->wp_enqueue_scripts();
@@ -2567,55 +2580,250 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
     public function _reg_registrant_side_meta_box()
     {
         /*@var $attendee EE_Attendee */
-        $att_check = $this->_registration->attendee();
-        $attendee  = $att_check instanceof EE_Attendee
-            ? $att_check
+        $attendee = $this->_registration->attendee();
+        $attendee = $attendee instanceof EE_Attendee
+            ? $attendee
             : $this->getAttendeeModel()->create_default_object();
-        // now let's determine if this is not the primary registration.  If it isn't then we set the
-        // primary_registration object for reference BUT ONLY if the Attendee object loaded is not the same as the
-        // primary registration object (that way we know if we need to show create button or not)
-        if (! $this->_registration->is_primary_registrant()) {
-            $primary_registration = $this->_registration->get_primary_registration();
-            $primary_attendee     = $primary_registration instanceof EE_Registration ? $primary_registration->attendee()
-                : null;
-            if (! $primary_attendee instanceof EE_Attendee || $attendee->ID() !== $primary_attendee->ID()) {
-                // in here?  This means the displayed registration is not the primary registrant but ALREADY HAS its own
-                // custom attendee object so let's not worry about the primary reg.
-                $primary_registration = null;
-            }
-        } else {
-            $primary_registration = null;
-        }
-        $this->_template_args['ATT_ID']            = $attendee->ID();
+
+        $ATT_ID = $attendee->ID();
+        $REG_ID = $this->_registration->ID();
+
+        $primary_registration = $this->_registration->get_primary_registration();
+        $valid_primary_reg    = $primary_registration instanceof EE_Registration
+                                && $primary_registration->attendee() instanceof EE_Attendee;
+
+        $this->_template_args['ATT_ID']            = $ATT_ID;
+        $this->_template_args['REG_ID']            = $REG_ID;
         $this->_template_args['fname']             = $attendee->fname();
         $this->_template_args['lname']             = $attendee->lname();
         $this->_template_args['email']             = $attendee->email();
         $this->_template_args['phone']             = $attendee->phone();
         $this->_template_args['formatted_address'] = EEH_Address::format($attendee);
         // edit link
-        $this->_template_args['att_edit_link']  = EE_Admin_Page::add_query_args_and_nonce(
+        $this->_template_args['att_edit_link'] = EE_Admin_Page::add_query_args_and_nonce(
             [
                 'action' => 'edit_attendee',
-                'post'   => $attendee->ID(),
+                'post'   => $ATT_ID,
             ],
             REG_ADMIN_URL
         );
-        $this->_template_args['att_edit_title'] = esc_html__('View details for this contact.', 'event_espresso');
-        $this->_template_args['att_edit_label'] = esc_html__('View/Edit Contact', 'event_espresso');
-        // create link
-        $this->_template_args['create_link']  = $primary_registration instanceof EE_Registration
+
+        $this->_template_args['info_error'] = ! $ATT_ID;
+        $this->_template_args['info_error_link'] = $valid_primary_reg
             ? EE_Admin_Page::add_query_args_and_nonce(
                 [
-                    'action'  => 'duplicate_attendee',
-                    '_REG_ID' => $this->_registration->ID(),
+                    'action'  => 'copy_primary_registrant',
+                    '_REG_ID' => $REG_ID,
                 ],
                 REG_ADMIN_URL
-            ) : '';
-        $this->_template_args['create_label'] = esc_html__('Create Contact', 'event_espresso');
-        $this->_template_args['att_check']    = $att_check;
-        $template_path                        =
-            REG_TEMPLATE_PATH . 'reg_admin_details_side_meta_box_registrant.template.php';
+            )
+            : '';
+
+        $this->_template_args['create_link'] = EE_Admin_Page::add_query_args_and_nonce(
+            [
+                'action'  => 'duplicate_attendee',
+                '_REG_ID' => $REG_ID,
+            ],
+            REG_ADMIN_URL
+        );
+
+        $this->_template_args['contact_list_url'] = EE_Admin_Page::add_query_args_and_nonce(
+            [
+                'action'  => 'contact_list',
+                'return'  => 'view_registration',
+                '_REG_ID' => $REG_ID,
+            ],
+            REG_ADMIN_URL
+        );
+
+        $this->_template_args['change_reg_contact_url'] = EE_Admin_Page::add_query_args_and_nonce(
+            [
+                'action'  => 'change_reg_contact',
+                'return'  => 'view_registration',
+                '_REG_ID' => $REG_ID,
+            ],
+            REG_ADMIN_URL
+        );
+
+        $this->_template_args['user_can_edit_contact'] =
+            EE_Registry::instance()->CAP->current_user_can(
+                'ee_edit_contact',
+                'view_or_edit_contact_button',
+                $ATT_ID
+            );
+
+
+        $contacts = [];
+        $total  = $this->countContacts();
+        $contacts = $this->getContacts();
+        if (count($contacts) < $total) {
+            // too many contacts, so just use AJAX
+            $contacts = [];
+        }
+
+        $this->_template_args['contact_options'] = $contacts;
+
+        $template_path = REG_TEMPLATE_PATH . 'reg_admin_details_side_meta_box_registrant.template.php';
         EEH_Template::display_template($template_path, $this->_template_args);
+    }
+
+
+    /**
+     * simply returns a count of ALL attendee records
+     *
+     * @return int
+     * @since 5.0.55
+     */
+    private function countContacts(): int
+    {
+        global $wpdb;
+        $SQL = "SELECT COUNT(*) FROM {$wpdb->prefix}esp_attendee_meta";
+        return (int) $wpdb->get_var($SQL);
+    }
+
+
+    /**
+     * @return array
+     * @since 5.0.55
+     */
+    private function getContacts(): array
+    {
+        if (! EE_Registry::instance()->CAP->current_user_can('ee_read_contacts', 'ajax_search_contacts')) {
+            return [];
+        }
+        global $wpdb;
+        $results = [];
+        $SQL     = "
+            SELECT ATT_ID AS ID, CONCAT(ATT_fname, ' ', ATT_lname) AS name, ATT_email AS email
+            FROM {$wpdb->prefix}esp_attendee_meta
+            LIMIT 250";
+        $contacts = $wpdb->get_results($SQL);
+        foreach ($contacts as $contact) {
+            $results[] = [
+                'id'    => $contact->ID,
+                'label' => $contact->name . ' (' . $contact->email . ')',
+                'value' => $contact->name,
+            ];
+        }
+        return $results;
+    }
+
+
+    public function ajaxSearchContacts(): void
+    {
+        if (! EE_Registry::instance()->CAP->current_user_can('ee_read_contacts', 'ajax_search_contacts')) {
+            wp_send_json([]);
+        }
+        $results = [];
+        $term    = $this->request->getRequestParam('term', '');
+        if ($term) {
+            global $wpdb;
+            $SQL      = "
+            SELECT ATT_ID AS ID, CONCAT(ATT_fname, ' ', ATT_lname) AS name, ATT_email AS email
+            FROM {$wpdb->prefix}esp_attendee_meta
+            WHERE ATT_fname LIKE %s OR ATT_lname LIKE %s OR ATT_email LIKE %s
+            LIMIT 25";
+            $contacts = $wpdb->get_results(
+                $wpdb->prepare(
+                    $SQL,
+                    '%' . $wpdb->esc_like($term) . '%',
+                    '%' . $wpdb->esc_like($term) . '%',
+                    '%' . $wpdb->esc_like($term) . '%'
+                )
+            );
+            foreach ($contacts as $contact) {
+                $results[] = [
+                    'id'    => $contact->ID,
+                    'label' => $contact->name . ' (' . $contact->email . ')',
+                    'value' => $contact->name,
+                ];
+            }
+        }
+        wp_send_json($results);
+    }
+
+
+    /**
+     * @return void
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since 5.0.55
+     */
+    protected function changeRegistrationContact(): void
+    {
+        $REG_ID = $this->request->getRequestParam('_REG_ID', 0, DataType::INT);
+        if (! $REG_ID) {
+            throw new RuntimeException(
+                esc_html__('Missing or invalid registration ID', 'event_espresso')
+            );
+        }
+        $registration = EEM_Registration::instance()->get_one_by_ID($REG_ID);
+        if (! $registration instanceof EE_Registration) {
+            throw new RuntimeException(
+                esc_html__('Invalid Registration', 'event_espresso')
+            );
+        }
+
+        $ATT_ID = $this->request->getRequestParam('change_reg_contact_id', 0, DataType::INT);
+        if (! $ATT_ID) {
+            throw new RuntimeException(
+                esc_html__('Missing or invalid contact ID', 'event_espresso')
+            );
+        }
+
+        $attendee = EEM_Attendee::instance()->get_one_by_ID($ATT_ID);
+        if (! $attendee instanceof EE_Attendee) {
+            throw new RuntimeException(
+                esc_html__('Invalid Attendee', 'event_espresso')
+            );
+        }
+        $registration->set_attendee_id($attendee->ID());
+        $success = $registration->save();
+        $this->_redirect_after_action(
+            $success,
+            esc_html__('contact information', 'event_espresso'),
+            esc_html__('copied', 'event_espresso'),
+            ['action' => 'view_registration', '_REG_ID' => $REG_ID]
+        );
+    }
+
+
+    /**
+     * @return void
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since 5.0.55
+     */
+    protected function copyPrimaryRegistrant(): void
+    {
+        $REG_ID = $this->request->getRequestParam('_REG_ID', 0, DataType::INT);
+        if (! $REG_ID) {
+            throw new RuntimeException(
+                esc_html__('Missing or invalid registration ID', 'event_espresso')
+            );
+        }
+
+        $registration = EEM_Registration::instance()->get_one_by_ID($REG_ID);
+        if (! $registration instanceof EE_Registration) {
+            throw new RuntimeException(
+                esc_html__('Invalid Registration', 'event_espresso')
+            );
+        }
+        $primary_registration = $registration->get_primary_registration();
+        if (! $primary_registration instanceof EE_Registration) {
+            throw new RuntimeException(
+                esc_html__('Invalid Primary Registration', 'event_espresso')
+            );
+        }
+        $registration->set_attendee_id($primary_registration->attendee_ID());
+        $registration->set_status($primary_registration->status_ID());
+        $success = $registration->save();
+        $this->_redirect_after_action(
+            $success,
+            esc_html__('contact information', 'event_espresso'),
+            esc_html__('copied', 'event_espresso'),
+            ['action' => 'view_registration', '_REG_ID' => $REG_ID]
+        );
     }
 
 

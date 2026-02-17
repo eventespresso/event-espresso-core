@@ -6,6 +6,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Releases
 
+### 5.0.55
+
+#### Added
+ - [Add expired only query param to EEH_Event_Query helper (#2087)](https://github.com/eventespresso/cafe/pull/2087)
+ - [Load Polyfills If WP Version Is Less Than 6.8  (#2098)](https://github.com/eventespresso/cafe/pull/2098)
+ - [Allow registrations to be reassigned to existing or new contacts (#1933)](https://github.com/eventespresso/cafe/pull/1933)
+
+#### Fixed
+ - [Fix SPCO form validation highlight and unhighlight styling (#2102)](https://github.com/eventespresso/cafe/pull/2102)
+ - [Fix incorrect PayPal Commerce variable (#2105)](https://github.com/eventespresso/cafe/pull/2105)
+ - [Remove Version Strings Appended to Add-on Folder Names (#2096)](https://github.com/eventespresso/cafe/pull/2096)
+
+
+
+
+#### Security
+ - [Upgrade jQuery Validation library to v1-22-0 (#2100)](https://github.com/eventespresso/cafe/pull/2100)
+
+
+
 ### 5.0.54
 
 #### Added
