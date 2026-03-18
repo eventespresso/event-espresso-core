@@ -662,6 +662,7 @@ class EED_Messages extends EED_Module
                 isset($extra_details['revisit'], $extra_details['status_updates'])
                 && $extra_details['revisit']
                 && ! $extra_details['status_updates']
+                && empty($extra_details['payment_updates'])
             ) {
                 return false;
             }

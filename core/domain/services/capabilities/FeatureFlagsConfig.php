@@ -49,7 +49,9 @@ class FeatureFlagsConfig extends JsonDataWordpressOption
         );
         $this->removed    = apply_filters(
             'FHEE__EventEspresso_core_domain_services_capabilities_FeatureFlagsConfig_removed',
-            []
+            [
+                FeatureFlag::USE_EDD_PLUGIN_LICENSING,
+            ]
         );
         parent::__construct($json_data_handler, FeatureFlagsConfig::OPTION_NAME, $this->getDefaultFeatureFlagOptions());
     }
@@ -66,7 +68,6 @@ class FeatureFlagsConfig extends JsonDataWordpressOption
             FeatureFlag::USE_ADVANCED_EVENT_EDITOR     => true,
             FeatureFlag::USE_DATETIME_STATUS_CONTROLS  => false,
             FeatureFlag::USE_DEFAULT_TICKET_MANAGER    => true,
-            FeatureFlag::USE_EDD_PLUGIN_LICENSING      => true,
             FeatureFlag::USE_EVENT_DESCRIPTION_RTE     => false,
             FeatureFlag::USE_EVENT_EDITOR_BULK_EDIT    => $this->domain->isCaffeinated()
                                                             && ! $this->domain->isMultiSite(),
@@ -88,11 +89,7 @@ class FeatureFlagsConfig extends JsonDataWordpressOption
      */
     public function getOverrides(): stdClass
     {
-        // allow EDD to be disabled for testing.
-        $overrides[ FeatureFlag::USE_EDD_PLUGIN_LICENSING ] =
-            ! defined('EE_USE_EDD_PLUGIN_LICENSING') || EE_USE_EDD_PLUGIN_LICENSING;
-
-        return (object) $overrides;
+        return (object) [];
     }
 
 

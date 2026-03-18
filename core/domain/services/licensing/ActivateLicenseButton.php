@@ -31,12 +31,13 @@ class ActivateLicenseButton
         $plugin_slug    = $plugin_license->pluginSlug();
         $min_core_ver   = $plugin_license->minCoreVersion();
         $plugin_version = $plugin_license->version();
+        $has_key        = ! empty($license_data->license_key);
         $license_status = $license_data->license ?? '';
 
         // button attributes
         $activate_btn_class   = '';
         $deactivate_btn_class = '';
-        if ($license_status !== 'valid') {
+        if (! $has_key || $license_status !== 'valid') {
             $deactivate_btn_class = ' ee-license-action-btn--hidden';
         } else {
             $activate_btn_class = ' ee-license-action-btn--hidden';

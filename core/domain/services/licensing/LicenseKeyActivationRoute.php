@@ -3,8 +3,6 @@
 namespace EventEspresso\core\domain\services\licensing;
 
 use EE_Network_Config;
-use EventEspresso\core\domain\services\capabilities\FeatureFlag;
-use EventEspresso\core\domain\services\capabilities\FeatureFlags;
 use EventEspresso\core\services\licensing\LicenseManager;
 use EventEspresso\core\services\licensing\PluginLicense;
 use EventEspresso\core\services\loaders\LoaderFactory;
@@ -29,11 +27,7 @@ class LicenseKeyActivationRoute extends Route
 
     public function matchesCurrentRequest(): bool
     {
-        /** @var FeatureFlags $feature */
-        $feature = $this->loader->getShared(FeatureFlags::class);
-        return $this->request->isActivation()
-            && $feature instanceof FeatureFlags
-            && $feature->allowed(FeatureFlag::USE_EDD_PLUGIN_LICENSING);
+        return $this->request->isActivation();
     }
 
 

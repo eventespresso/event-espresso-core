@@ -3,6 +3,7 @@
 namespace EventEspresso\core\domain\services\licensing;
 
 use EE_Text_Input;
+use EventEspresso\core\domain\Domain;
 use EventEspresso\core\libraries\form_sections\strategies\filter\VsprintfFilter;
 use EventEspresso\core\services\licensing\LicenseManager;
 use EventEspresso\core\services\licensing\PluginLicense;
@@ -17,15 +18,18 @@ class LicenseKeyFormInput extends EE_Text_Input
         $license_key    = $plugin_license->licenseKey();
         $plugin_version = $plugin_license->version();
         $license_status = $plugin_license->status();
-        $license_data   = $licence_manager->checkLicense(
-            $license_key,
-            $item_ID,
-            $item_name,
-            $plugin_slug,
-            $plugin_version,
-            $plugin_license->minCoreVersion(),
-            $license_status
-        );
+        // only check the core license via API (with 24-hour cache);
+        // add-ons read from locally stored license data
+        $license_data = $plugin_slug === Domain::LICENSE_PLUGIN_SLUG
+            ? $licence_manager->checkLicense(
+                $license_key,
+                $item_ID,
+                $item_name,
+                $plugin_slug,
+                $plugin_version,
+                $plugin_license->minCoreVersion()
+            )
+            : $licence_manager->getLicenseData($plugin_slug);
 
         $license_expires  = $license_data->expires ?? '';
         $license_status   = $license_data->license ?? $license_status;
@@ -43,7 +47,7 @@ class LicenseKeyFormInput extends EE_Text_Input
 
             if ($license_status === 'valid' && $license_expires !== '') {
                 $help_text = sprintf(
-                /* translators: 1: date  2: divider ( | )  3: number */
+                    /* translators: 1: date  2: divider ( | )  3: number */
                     esc_html__('license valid until: %1$s %2$s activations remaining: %3$s', 'event_espresso'),
                     date('F jS Y', strtotime($license_expires)),
                     '&nbsp; &nbsp; | &nbsp; &nbsp;',

@@ -432,7 +432,9 @@ class DisplayTicketSelector
         $tickets = EEM_Ticket::instance()->get_all($ticket_query_args);
         // remove tickets based on their visibility and the current user's allowed access (crudely based on roles)
         // and filter the returned results
-         $tickets = array_filter($tickets, [$this, 'ticketVisibilityFilter']);
+        $tickets = array_filter($tickets, [$this, 'ticketVisibilityFilter']);
+        // don't set any tickets to be required within the admin
+        $tickets = $this->setTicketsNotRequired($tickets);
         return (array) apply_filters(
             'FHEE__EventEspresso_modules_ticketSelector_DisplayTicketSelector__getTickets',
             $tickets,
@@ -464,6 +466,25 @@ class DisplayTicketSelector
                    && ($this->current_user->isEventManager() || $this->current_user->isSuperAdmin())
                )
                || ($ticket->isAdminUiOnly() && is_admin());
+    }
+
+
+    /**
+     * returns array of tickets all set to not be required
+     *
+     * @param array $tickets
+     * @return array
+     * @since   5.0.56
+     */
+    public function setTicketsNotRequired(array $tickets): array
+    {
+        if (is_admin() && ! (defined('DOING_AJAX') && DOING_AJAX)) {
+            foreach ($tickets as $key => $ticket) {
+                $ticket->set_required(false);
+                $tickets[$key] = $ticket;
+            }
+        }
+        return $tickets;
     }
 
 

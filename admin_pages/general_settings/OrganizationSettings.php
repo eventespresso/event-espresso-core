@@ -343,7 +343,7 @@ class OrganizationSettings extends FormHandler
 
         /** @var Domain $domain */
         $domain = LoaderFactory::getShared(Domain::class);
-        if ($domain->isCaffeinated() && $this->feature->allowed('use_edd_plugin_licensing')) {
+        if ($domain->isCaffeinated()) {
             $subsections = EEH_Array::insert_into_array(
                 $subsections,
                 [

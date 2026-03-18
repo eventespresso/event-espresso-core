@@ -31,7 +31,7 @@ class LicenseManager
         string $plugin_slug,
         string $plugin_version,
         string $min_core_version = ''
-    ): stdCLass {
+    ): stdClass {
         $license_data = $this->license_api->postRequest(
             LicenseAPI::ACTION_ACTIVATE,
             $license_key,
@@ -43,9 +43,7 @@ class LicenseManager
         return $this->updateLicenseData(
             $plugin_slug,
             $license_key,
-            $license_data,
-            $license_data->license ?? '',
-            true
+            $license_data
         );
     }
 
@@ -57,7 +55,7 @@ class LicenseManager
         string $plugin_slug,
         string $plugin_version,
         string $min_core_version = ''
-    ): stdCLass {
+    ): stdClass {
         $license_data = $this->license_api->postRequest(
             LicenseAPI::ACTION_DEACTIVATE,
             $license_key,
@@ -66,16 +64,19 @@ class LicenseManager
             $plugin_version,
             $min_core_version
         );
-        $this->license_key_data->removeLicenseDataForPlugin($plugin_slug);
+        // if $license_data was updated successfully, then save those chagnes
+        if ($license_data->success ?? false) {
+            return $this->updateLicenseData($plugin_slug, $license_key, $license_data);
+        }
         return $license_data;
     }
 
 
-    public function resetLicenseKey(string $plugin_slug): stdCLass
+    public function resetLicenseKey(string $plugin_slug): stdClass
     {
         $license_data              = $this->getLicenseData($plugin_slug);
         $license_data->license_key = '';
-        $this->license_key_data->updateLicenseDataForPlugin($license_data, $plugin_slug, true);
+        $this->updateLicenseData($plugin_slug, '', $license_data, true);
         return $license_data;
     }
 
@@ -87,8 +88,15 @@ class LicenseManager
         string $plugin_slug,
         string $plugin_version,
         string $min_core_version = '',
-        string $license_status = ''
-    ): stdCLass {
+        bool $skip_cache = false
+    ): stdClass {
+        $stored = $this->getLicenseData($plugin_slug);
+        if (! $skip_cache) {
+            $last_checked = $stored->last_checked ?? 0;
+            if ($last_checked && (time() - $last_checked) < DAY_IN_SECONDS) {
+                return $stored;
+            }
+        }
         $license_data = $this->license_api->postRequest(
             LicenseAPI::ACTION_CHECK,
             $license_key,
@@ -97,12 +105,17 @@ class LicenseManager
             $plugin_version,
             $min_core_version
         );
-        return $this->updateLicenseData(
-            $plugin_slug,
-            $license_key,
-            $license_data,
-            $license_status
-        );
+
+        // if $license_data was updated successfully, then save those chagnes
+        if ($license_data->success ?? false) {
+            return $this->updateLicenseData($plugin_slug, $license_key, $license_data);
+        }
+        // uh-oh... the API call failed...
+        // we still need to update the last_checked timestamp
+        // to prevent repeated API calls on every admin request
+        // so let's resave the previously stored data after adding the success flag
+        $stored->success = true;
+        return $this->updateLicenseData($plugin_slug, $license_key, $stored);
     }
 
 
@@ -133,8 +146,7 @@ class LicenseManager
      * @param string   $plugin_slug
      * @param string   $license_key
      * @param stdClass $license_data
-     * @param string   $license_status
-     * @param bool     $force_update    true for license activation requests
+     * @param bool     $force_update
      * @return stdClass
      * @since 5.0.40.p
      */
@@ -142,27 +154,13 @@ class LicenseManager
         string $plugin_slug,
         string $license_key,
         stdClass $license_data,
-        string $license_status = '',
         bool $force_update = false
     ): stdClass {
         if (! isset($license_data->license_key)) {
             $license_data->license_key = $license_key;
         }
-        // if the license key or license status has changed, then update the license data
-        $success = $license_data->success ?? false;
-        if (
-            $success
-            && (
-                $force_update
-                || (
-                    (! empty($license_data->license_key) && $license_data->license_key !== $license_key)
-                    || (! empty($license_data->license) && $license_data->license !== $license_status)
-                )
-            )
-        ) {
-            $this->license_key_data->updateLicenseDataForPlugin($license_data, $plugin_slug);
-        }
-
+        $license_data->last_checked = time();
+        $this->license_key_data->updateLicenseDataForPlugin($license_data, $plugin_slug, $force_update);
         return $license_data;
     }
 }

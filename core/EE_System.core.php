@@ -2,7 +2,6 @@
 
 use EventEspresso\core\domain\Domain;
 use EventEspresso\core\domain\DomainFactory;
-use EventEspresso\core\domain\services\capabilities\FeatureFlag;
 use EventEspresso\core\domain\services\capabilities\FeatureFlags;
 use EventEspresso\core\domain\services\custom_post_types\RegisterCustomPostTypes;
 use EventEspresso\core\domain\services\custom_post_types\RegisterCustomTaxonomies;
@@ -17,6 +16,7 @@ use EventEspresso\core\interfaces\ResettableInterface;
 use EventEspresso\core\services\addon\AddonManager;
 use EventEspresso\core\services\helpers\WordPressHooks;
 use EventEspresso\core\services\i18n\Textdomain;
+use EventEspresso\core\services\licensing\BatchPluginUpdateChecker;
 use EventEspresso\core\services\licensing\PluginLicense;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\request\RequestInterface;
@@ -333,8 +333,19 @@ final class EE_System implements ResettableInterface
             require_once EE_CAFF_PATH . 'brewing_regular.php';
             /** @var EE_Brewing_Regular $brew */
             $brew = $this->loader->getShared(EE_Brewing_Regular::class);
-            if (! $this->feature->allowed(FeatureFlag::USE_EDD_PLUGIN_LICENSING)) {
-                $brew->initializePUE();
+            if (! $this->request->isWordPressHeartbeat()) {
+                $core_license = new PluginLicense(
+                    EVENT_ESPRESSO_MAIN_FILE,
+                    Domain::LICENSE_PLUGIN_ID,
+                    Domain::LICENSE_PLUGIN_NAME,
+                    Domain::LICENSE_PLUGIN_SLUG,
+                    espresso_version()
+                );
+                $core_license->setHooks();
+                $this->loader->share(PluginLicense::class, $core_license);
+                /** @var BatchPluginUpdateChecker $batch_checker */
+                $batch_checker = $this->loader->getShared(BatchPluginUpdateChecker::class);
+                $batch_checker->setHooks();
             }
             add_action(
                 'AHEE__EE_System__load_core_configuration__begin',
@@ -357,20 +368,6 @@ final class EE_System implements ResettableInterface
      */
     public function load_espresso_addons()
     {
-        if (
-            $this->feature->allowed(FeatureFlag::USE_EDD_PLUGIN_LICENSING)
-            && ! $this->request->isWordPressHeartbeat()
-        ) {
-            $core_license = new PluginLicense(
-                EVENT_ESPRESSO_MAIN_FILE,
-                Domain::LICENSE_PLUGIN_ID,
-                Domain::LICENSE_PLUGIN_NAME,
-                Domain::LICENSE_PLUGIN_SLUG,
-                espresso_version()
-            );
-            $core_license->setHooks();
-            $this->loader->share(PluginLicense::class, $core_license);
-        }
         // looking for hooks? they've been moved into the AddonManager to maintain compatibility
         $this->addon_manager->loadAddons();
     }

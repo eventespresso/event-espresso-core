@@ -6,6 +6,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Releases
 
+### 5.0.56
+
+
+#### Fixed
+ - [Make sure messages trigger for SPCO revisits (#2124)](https://github.com/eventespresso/cafe/pull/2124)
+ - [fix extension and services links within core, avoiding redirects. (#2115)](https://github.com/eventespresso/cafe/pull/2115)
+
+#### Changed
+ - [Include Abandoned transactions in the CSV report (#2108)](https://github.com/eventespresso/cafe/pull/2108)
+ - [Set all tickets in the admin Ticket Selector not to be required (#2123)](https://github.com/eventespresso/cafe/pull/2123)
+ - [Only load PluginLicense when using Caf (#2120)](https://github.com/eventespresso/cafe/pull/2120)
+ - [Set the default where conditions to this_model_only for ticket datetimes in messages (#2126)](https://github.com/eventespresso/cafe/pull/2126)
+ - [Reduce the Number of EDD Server Requests (#2132)](https://github.com/eventespresso/cafe/pull/2132)
+
+
+
+
+
+
 ### 5.0.55
 
 #### Added

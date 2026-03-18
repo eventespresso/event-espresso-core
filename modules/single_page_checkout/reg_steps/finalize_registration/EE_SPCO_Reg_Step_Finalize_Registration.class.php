@@ -81,6 +81,8 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step
         $this->checkout->refresh_all_entities(true);
         // ensures that all details and statuses for transaction, registration, and payments are updated
         $txn_update_params = $this->_finalize_transaction();
+        // sync checkout's status tracking to reflect any TXN/REG changes made during finalization
+        $this->checkout->track_transaction_and_registration_status_updates();
         // maybe send messages
         $this->_set_notification_triggers();
         // send messages
@@ -180,12 +182,16 @@ class EE_SPCO_Reg_Step_Finalize_Registration extends EE_SPCO_Reg_Step
             // then toggle this to false for conditions where we know we don't need to
             $deliver_notifications = true;
             if (
-// if SPCO revisit
+                // if SPCO revisit
                 filter_var($this->checkout->revisit, FILTER_VALIDATE_BOOLEAN)
                 // and TXN or REG statuses have NOT changed due to a payment
                 && ! (
                     $this->checkout->transaction->txn_status_updated()
                     || $this->checkout->any_reg_status_updated()
+                    || (
+                        $this->checkout->payment instanceof EE_Payment
+                        && $this->checkout->payment->is_approved()
+                    )
                 )
             ) {
                 $deliver_notifications = false;

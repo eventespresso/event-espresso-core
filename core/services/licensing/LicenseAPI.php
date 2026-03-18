@@ -131,8 +131,22 @@ class LicenseAPI
     private function handleApiErrors($response): array
     {
         // make sure the response came back okay
-        if (is_wp_error($response) || wp_remote_retrieve_response_code($response) !== 200) {
+        if (is_wp_error($response)) {
             EE_Error::add_error($response->get_error_message(), __FILE__, __FUNCTION__, __LINE__);
+            return ['success' => false, 'error' => true];
+        }
+        if (wp_remote_retrieve_response_code($response) !== 200) {
+            $status_code = wp_remote_retrieve_response_code($response);
+            EE_Error::add_error(
+                sprintf(
+                    // translators: %d: HTTP status code
+                    esc_html__('License API request failed with HTTP status %d', 'event_espresso'),
+                    $status_code
+                ),
+                __FILE__,
+                __FUNCTION__,
+                __LINE__
+            );
             return ['success' => false, 'error' => true];
         }
         return $response;

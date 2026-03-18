@@ -95,12 +95,11 @@ class RegistrationsReport extends JobHandlerFile
         // we want to exclude registrations from failed or abandoned transactions
         if (! isset($query_params[0]['Transaction.STS_ID'])) {
             $query_params[0]['OR'] = [
-                // don't include registrations from failed or abandoned transactions...
+                // don't include registrations from failed transactions...
                 'Transaction.STS_ID' => [
                     'NOT IN',
                     [
                         EEM_Transaction::failed_status_code,
-                        EEM_Transaction::abandoned_status_code,
                     ],
                 ],
                 // unless the registration is approved,

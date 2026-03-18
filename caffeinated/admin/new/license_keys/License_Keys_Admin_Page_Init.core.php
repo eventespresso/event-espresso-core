@@ -41,7 +41,7 @@ class License_Keys_Admin_Page_Init extends EE_Admin_Page_Init
                     'menu_type'       => AdminMenuItem::TYPE_MENU_SUB_ITEM,
                     'menu_group'      => 'settings',
                     'menu_order'      => 10,
-                    'show_on_menu'    => $feature->allowed('use_edd_plugin_licensing') && is_main_site()
+                    'show_on_menu'    => is_main_site()
                         ? AdminMenuItem::DISPLAY_BLOG_ONLY
                         : AdminMenuItem::DISPLAY_NONE,
                     'parent_slug'     => 'espresso_events',

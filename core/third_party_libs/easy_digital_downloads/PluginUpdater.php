@@ -12,6 +12,11 @@ use stdClass;
  */
 class PluginUpdater
 {
+    /**
+     * how long the plugin version info is cached before attempting another request
+     */
+    private CONST VERSION_INFO_CACHE_TTL = '+12 hours';
+
     private string $api_url;
 
     private ?array $api_data;
@@ -118,35 +123,14 @@ class PluginUpdater
 
 
     /**
-     * Get repo API data from store.
-     * Save to cache.
+     * Get repo API data from the per-plugin cache.
+     * Cache is populated by BatchPluginUpdateChecker before this runs.
      *
      * @return stdClass|bool
      */
     public function getRepoApiData()
     {
-        $version_info = $this->getCachedVersionInfo();
-
-        if (false === $version_info) {
-            $version_info = $this->apiRequest(
-                'plugin_latest_version',
-                [
-                    'slug' => $this->slug,
-                    'beta' => $this->beta,
-                ]
-            );
-            if (! $version_info) {
-                return false;
-            }
-
-            // This is required for your plugin to support auto-updates in WordPress 5.5.
-            $version_info->plugin = $this->name;
-            $version_info->id     = $this->name;
-
-            $this->setVersionInfoCache($version_info);
-        }
-
-        return $version_info;
+        return $this->getCachedVersionInfo();
     }
 
 
@@ -320,22 +304,15 @@ class PluginUpdater
             ],
         ];
 
-        // Get the transient where we store the api request for this plugin for 24 hours
+        // Get the transient where we store the api request for this plugin for 12 hours
         $edd_api_request_transient = $this->getCachedVersionInfo();
 
-        //If we have no transient-saved value, run the API, set a fresh transient with the API value, and return that value too right now.
+        // cache is populated by BatchPluginUpdateChecker; no individual remote calls
         if (empty($edd_api_request_transient)) {
-            $api_response = $this->apiRequest('plugin_information', $to_send);
-
-            // Expires in 3 hours
-            $this->setVersionInfoCache($api_response);
-
-            if (false !== $api_response) {
-                $data = $api_response;
-            }
-        } else {
-            $data = $edd_api_request_transient;
+            return $data;
         }
+
+        $data = $edd_api_request_transient;
 
         // Convert sections into an associative array, since we're getting an object, but Core expects an array.
         if (isset($data->sections) && ! is_array($data->sections)) {
@@ -622,7 +599,7 @@ class PluginUpdater
         }
 
         $data = [
-            'timeout' => strtotime('+3 hours', time()),
+            'timeout' => strtotime(PluginUpdater::VERSION_INFO_CACHE_TTL, time()),
             'value'   => wp_json_encode($value),
         ];
 

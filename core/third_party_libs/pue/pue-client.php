@@ -1045,16 +1045,6 @@ if (! class_exists('PluginUpdateEngineChecker')):
                     $this->add_persistent_notice($response->extra_notices);
                 }
 
-                // Toggle EDD Licensing feature flag only if 'update_ready' value is correctly.
-                if (isset($response->extra_data)) {
-                    if(isset($response->extra_data->update_ready)){
-                        if($response->extra_data->update_ready === 'espressoUpdate') {
-                            $feature_flags = LoaderFactory::getLoader()->getShared('EventEspresso\core\domain\services\capabilities\FeatureFlagsConfig');
-                            $feature_flags->enableFeatureFlag(FeatureFlag::USE_EDD_PLUGIN_LICENSING);
-                        }
-                    }
-                }
-
                 // This instance is for EE Core, we have a response from PUE so lets check if it contains PUE Plugin data.
                 if (
                     stripos((string) $this->slug, 'event-espresso-core') !== false

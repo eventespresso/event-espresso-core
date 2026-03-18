@@ -126,7 +126,7 @@ class EE_Messages_Preview_incoming_data extends EE_Messages_incoming_data
                 if (! $ticket instanceof EE_Ticket) {
                     continue;
                 }
-                $reldatetime                       = $ticket->datetimes();
+                $reldatetime                       = $ticket->datetimes(['default_where_conditions' => 'this_model_only']);
                 $tkts[ $ticket->ID() ]             = [];
                 $tkts[ $ticket->ID() ]['ticket']   = $ticket;
                 $tkts[ $ticket->ID() ]['dtt_objs'] = $reldatetime;

@@ -74,7 +74,6 @@ class PluginLicense
             return;
         }
         add_action('init', [$this, 'loadPluginUpdater']);
-        add_action('admin_init', [$this, 'refreshPluginLicenseData'], 99);
         add_action(
             'AHEE__EventEspresso_core_services_licensing_PluginLicenseCollection__loadPluginLicenses',
             [$this, 'loadPluginLicense']
@@ -359,8 +358,7 @@ class PluginLicense
                 $this->itemName(),
                 $this->pluginSlug(),
                 $this->version(),
-                $this->minCoreVersion(),
-                $this->status()
+                $this->minCoreVersion()
             );
         }
     }

@@ -924,8 +924,7 @@ class EE_Dependency_Map
                 'EventEspresso\core\domain\services\licensing\LicenseData' => EE_Dependency_Map::load_from_cache,
             ],
             'EventEspresso\core\domain\services\licensing\LicenseData'  => [
-                'EventEspresso\core\domain\Domain'                             => EE_Dependency_Map::load_from_cache,
-                'EventEspresso\core\domain\services\capabilities\FeatureFlags' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\Domain' => EE_Dependency_Map::load_from_cache,
             ],
             'EventEspresso\core\domain\services\licensing\LicenseDataEDD' => [
                 'EventEspresso\core\services\licensing\LicenseKeyData' => EE_Dependency_Map::load_from_cache,
@@ -938,6 +937,10 @@ class EE_Dependency_Map
             ],
             'EventEspresso\core\services\addon\api\AddonRoutes' => [
                 'EventEspresso\core\services\routing\RouteHandler' => EE_Dependency_Map::load_from_cache,
+            ],
+            'EventEspresso\core\services\licensing\BatchPluginUpdateChecker' => [
+                'EventEspresso\core\services\licensing\LicenseAPI'              => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\licensing\PluginLicenseCollection' => EE_Dependency_Map::load_from_cache,
             ],
         ];
     }

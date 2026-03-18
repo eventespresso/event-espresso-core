@@ -354,7 +354,7 @@ abstract class EE_Messages_incoming_data
                 ) {
                     continue;
                 }
-                $relateddatetime = $ticket->datetimes();
+                $relateddatetime = $ticket->datetimes(['default_where_conditions' => 'this_model_only']);
                 $total_ticket_count++;
                 $tickets[ $ticket->ID() ]['ticket']                        = $ticket;
                 $tickets[ $ticket->ID() ]['count']                         = is_array($tickets[ $ticket->ID() ])

@@ -325,9 +325,6 @@ class EE_Admin_Page_Loader
 
         $exclude = ['tickets'];
         $feature = $this->loader->getShared(FeatureFlags::class);
-        if (! $feature->allowed('use_edd_plugin_licensing')) {
-            $exclude[] = 'license_keys';
-        }
         // okay let's setup an "New" pages first (we'll return installed refs later)
         $admin_pages += $this->findAdminPageFolders(EE_CORE_CAF_ADMIN . 'new/*', $exclude);
 

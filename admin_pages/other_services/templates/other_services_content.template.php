@@ -21,12 +21,12 @@
         </p>
         <div class="action-links">
             <a class="ee-add-on-btn ee-add-on-btn--small ee-add-on-btn--buy-now"
-               href="https://eventespresso.com/product/ee4-events-calendar/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=events_calendar_add_on&ap_id=EEspresso"
+               href="https://eventespresso.com/addons/wordpress-calendar-plugin"
                target="_blank"
             ><?php esc_html_e('Buy Now', 'event_espresso'); ?>
             </a>
             <a class="ee-add-on-btn ee-add-on-btn--small ee-add-on-btn"
-               href="https://eventespresso.com/wiki/events-calendar-add-on/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=events_calendar_add_on&ap_id=EEspresso"
+               href="https://support.eventespresso.com/article/630-events-calendar-plus-calendar"
                target="_blank"
             ><?php esc_html_e('View Documentation', 'event_espresso'); ?>
             </a>
@@ -53,12 +53,12 @@
         </p>
         <div class="action-links">
             <a class="ee-add-on-btn ee-add-on-btn--small ee-add-on-btn--buy-now"
-               href="https://eventespresso.com/product/eea-events-table-view-template/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=ee4_events_table_view_template&ap_id=EEspresso"
+               href="https://eventespresso.com/addons/event-table-view-template"
                target="_blank"
             ><?php esc_html_e('Buy Now', 'event_espresso'); ?>
             </a>
             <a class="ee-add-on-btn ee-add-on-btn--small ee-add-on-btn"
-               href="https://eventespresso.com/wiki/events-table-view-template-add-on/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=ee4_events_table_view_template&ap_id=EEspresso"
+               href="https://support.eventespresso.com/article/442-events-table-view-template-add-on"
                target="_blank"
             ><?php esc_html_e('View Documentation', 'event_espresso'); ?>
             </a>
@@ -85,12 +85,12 @@
         </p>
         <div class="action-links">
             <a class="ee-add-on-btn ee-add-on-btn--small ee-add-on-btn--buy-now"
-               href="https://eventespresso.com/product/eea-events-grid-view-template/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=ee4_events_grid_view_template&ap_id=EEspresso"
+               href="https://eventespresso.com/addons/events-grid-view-template"
                target="_blank"
             ><?php esc_html_e('Buy Now', 'event_espresso'); ?>
             </a>
             <a class="ee-add-on-btn ee-add-on-btn--small ee-add-on-btn"
-               href="https://eventespresso.com/wiki/events-grid-view-template-add-on/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=ee4_events_grid_view_template&ap_id=EEspresso"
+               href="https://support.eventespresso.com/article/441-events-grid-view-template-add-on"
                target="_blank"
             ><?php esc_html_e('View Documentation', 'event_espresso'); ?>
             </a>
@@ -120,13 +120,13 @@
         </p>
         <div class="action-links">
             <a class="ee-add-on-btn ee-add-on-btn--small ee-add-on-btn--buy-now"
-               href="https://eventespresso.com/product/eea-promotions/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=promotions_addon_link&ap_id=EEspresso"
+               href="https://eventespresso.com/addons/wordpress-discount-promotion-codes"
                target="_blank"
             >
                 <?php esc_html_e('Buy Now', 'event_espresso'); ?>
             </a>
             <a class="ee-add-on-btn ee-add-on-btn--small ee-add-on-btn"
-               href="https://eventespresso.com/wiki/ee4-promotions-add-on/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=promotions_addon_link&ap_id=EEspresso"
+               href="https://support.eventespresso.com/article/405-promotions-discount-codes-add-on"
                target="_blank"
             ><?php esc_html_e('View Documentation', 'event_espresso'); ?>
             </a>
@@ -153,12 +153,12 @@
         </p>
         <div class="action-links">
             <a class="ee-add-on-btn ee-add-on-btn--small ee-add-on-btn--buy-now"
-               href="https://eventespresso.com/product/eea-multi-event-registration/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=multiple_event_registration_add_on&ap_id=EEspresso"
+               href="https://eventespresso.com/addons/event-cart"
                target="_blank"
             ><?php esc_html_e('Buy Now', 'event_espresso'); ?>
             </a>
             <a class="ee-add-on-btn ee-add-on-btn--small ee-add-on-btn"
-               href="https://eventespresso.com/wiki/ee4-multiple-event-registration-add-on/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=multiple_event_registration_add_on&ap_id=EEspresso"
+               href="https://support.eventespresso.com/article/406-event-cart-multiple-event-registration-add-on"
                target="_blank"
             ><?php esc_html_e('View Documentation', 'event_espresso'); ?>
             </a>
@@ -185,13 +185,13 @@
         </p>
         <div class="action-links">
             <a class="ee-add-on-btn ee-add-on-btn--small ee-add-on-btn--buy-now"
-               href="https://eventespresso.com/product/eea-ticketing/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=ee4_printable_tickets&ap_id=EEspresso"
+               href="https://eventespresso.com/addons/sell-tickets-wordpress-ticketing"
                target="_blank"
             >
                 <?php esc_html_e('Buy Now', 'event_espresso'); ?>
             </a>
             <a class="ee-add-on-btn ee-add-on-btn--small ee-add-on-btn"
-               href="https://eventespresso.com/wiki/ee4-printable-tickets-add-on/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=ee4_printable_tickets&ap_id=EEspresso"
+               href="https://support.eventespresso.com/article/431-printable-tickets-add-on"
                target="_blank"
             >
                 <?php esc_html_e('View Documentation', 'event_espresso'); ?>
@@ -219,13 +219,13 @@
         </p>
         <div class="action-links">
             <a class="ee-add-on-btn ee-add-on-btn--small ee-add-on-btn--buy-now"
-               href="https://eventespresso.com/product/eea-wait-lists/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=waitlist_manager_add_on&ap_id=EEspresso"
+               href="https://eventespresso.com/addons/wait-list-manager"
                target="_blank"
             >
                 <?php esc_html_e('Buy Now', 'event_espresso'); ?>
             </a>
             <a class="ee-add-on-btn ee-add-on-btn--small ee-add-on-btn"
-               href="https://eventespresso.com/wiki/wait-list-manager/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=waitlist_manager_add_on&ap_id=EEspresso"
+               href="https://support.eventespresso.com/article/354-wait-list-manager-add-on"
                target="_blank"
             >
                 <?php esc_html_e('View Documentation', 'event_espresso'); ?>
@@ -253,13 +253,13 @@
         </p>
         <div class="action-links">
             <a class="ee-add-on-btn ee-add-on-btn--small ee-add-on-btn--buy-now"
-               href="https://eventespresso.com/product/eea-attendee-mover/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=attendee_mover_add_on&ap_id=EEspresso"
+               href="https://eventespresso.com/addons/attendee-mover"
                target="_blank"
             >
                 <?php esc_html_e('Buy Now', 'event_espresso'); ?>
             </a>
             <a class="ee-add-on-btn ee-add-on-btn--small ee-add-on-btn"
-               href="https://eventespresso.com/wiki/ee4-attendee-mover/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=attendee_mover_add_on&ap_id=EEspresso"
+               href="https://support.eventespresso.com/article/376-attendee-mover-add-on"
                target="_blank"
             >
                 <?php esc_html_e('View Documentation', 'event_espresso'); ?>
@@ -287,13 +287,13 @@
         </p>
         <div class="action-links">
             <a class="ee-add-on-btn ee-add-on-btn--small ee-add-on-btn--buy-now"
-               href="https://eventespresso.com/product/eea-importer/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=event_espresso_importer_add_on&ap_id=EEspresso"
+               href="https://eventespresso.com/addons/importer"
                target="_blank"
             >
                 <?php esc_html_e('Buy Now', 'event_espresso'); ?>
             </a>
             <a class="ee-add-on-btn ee-add-on-btn--small ee-add-on-btn"
-               href="https://eventespresso.com/wiki/event-espresso-importer-add-on/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=event_espresso_importer_add_on&ap_id=EEspresso"
+               href="https://support.eventespresso.com/article/346-event-espresso-importer-add-on-help-documentation"
                target="_blank"
             >
                 <?php esc_html_e('View Documentation', 'event_espresso'); ?>
@@ -322,13 +322,13 @@
         </p>
         <div class="action-links">
             <a class="ee-add-on-btn ee-add-on-btn--small ee-add-on-btn--buy-now"
-               href="https://eventespresso.com/product/eea-automated-upcoming-event-notifications/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=automated_upcoming_event_notifications_add_on&ap_id=EEspresso"
+               href="https://eventespresso.com/addons/automated-event-notifications-reminders"
                target="_blank"
             >
                 <?php esc_html_e('Buy Now', 'event_espresso'); ?>
             </a>
             <a class="ee-add-on-btn ee-add-on-btn--small ee-add-on-btn"
-               href="https://eventespresso.com/wiki/eea-automated-upcoming-event-notifications/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=automated_upcoming_event_notifications_add_on&ap_id=EEspresso"
+               href="https://support.eventespresso.com/article/345-automated-upcoming-event-notifications-add-on"
                target="_blank"
             >
                 <?php esc_html_e('View Documentation', 'event_espresso'); ?>
@@ -356,13 +356,13 @@
         </p>
         <div class="action-links">
             <a class="ee-add-on-btn ee-add-on-btn--small ee-add-on-btn--buy-now"
-               href="https://eventespresso.com/product/eea-wp-user-integration/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=ee4_wp_user_integration&ap_id=EEspresso"
+               href="https://eventespresso.com/addons/wordpress-user-integration"
                target="_blank"
             >
                 <?php esc_html_e('Buy Now', 'event_espresso'); ?>
             </a>
             <a class="ee-add-on-btn ee-add-on-btn--small ee-add-on-btn"
-               href="https://eventespresso.com/wiki/ee4-wp-user-integration/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=ee4_wp_user_integration&ap_id=EEspresso"
+               href="https://support.eventespresso.com/article/414-wordpress-user-integration"
                target="_blank"
             >
                 <?php esc_html_e('View Documentation', 'event_espresso'); ?>
@@ -392,13 +392,13 @@
         </p>
         <div class="action-links">
             <a class="ee-add-on-btn ee-add-on-btn--small ee-add-on-btn--buy-now"
-               href="https://eventespresso.com/product/eea-mailchimp/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=mailchimp_integration&ap_id=EEspresso"
+               href="https://eventespresso.com/addons/mailchimp-integration"
                target="_blank"
             >
                 <?php esc_html_e('Buy Now', 'event_espresso'); ?>
             </a>
             <a class="ee-add-on-btn ee-add-on-btn--small ee-add-on-btn"
-               href="https://eventespresso.com/wiki/mailchimp-integration/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=mailchimp_integration&ap_id=EEspresso"
+               href="https://support.eventespresso.com/article/581-mailchimp-integration"
                target="_blank"
             >
                 <?php esc_html_e('View Documentation', 'event_espresso'); ?>
@@ -431,13 +431,13 @@
         </p>
         <div class="action-links">
             <a class="ee-add-on-btn ee-add-on-btn--small ee-add-on-btn--buy-now"
-               href="https://eventespresso.com/product/eea-paypal-smart-buttons/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=paypal_smart_buttons_add_on&ap_id=EEspresso"
+               href="https://eventespresso.com/pricing"
                target="_blank"
             >
                 <?php esc_html_e('Buy Now', 'event_espresso'); ?>
             </a>
             <a class="ee-add-on-btn ee-add-on-btn--small ee-add-on-btn"
-               href="https://eventespresso.com/wiki/paypal-express-checkout-smart-payment-buttons-payment-gateway/"
+               href="https://support.eventespresso.com/article/338-paypal-commerce-checkout-payment-gateway"
                target="_blank"
             >
                 <?php esc_html_e('View Documentation', 'event_espresso'); ?>
@@ -468,13 +468,13 @@
         </p>
         <div class="action-links">
             <a class="ee-add-on-btn ee-add-on-btn--small ee-add-on-btn--buy-now"
-               href="https://eventespresso.com/product/eea-stripe-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=stripe_payment_gateway&ap_id=EEspresso"
+               href="https://eventespresso.com/addons/stripe-integration"
                target="_blank"
             >
                 <?php esc_html_e('Buy Now', 'event_espresso'); ?>
             </a>
             <a class="ee-add-on-btn ee-add-on-btn--small ee-add-on-btn"
-               href="https://eventespresso.com/wiki/stripe-payment-gateway/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=stripe_payment_gateway&ap_id=EEspresso"
+               href="https://support.eventespresso.com/article/418-stripe-payment-gateway"
                target="_blank"
             >
                 <?php esc_html_e('View Documentation', 'event_espresso'); ?>
@@ -495,7 +495,7 @@
 
     <p>
         <a class='ee-add-on-card-img'
-           href='https://eventespresso.com/product/premium-support-token/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=support_token&ap_id=EEspresso'
+           href='https://eventespresso.com/products/premium-support-token'
            target='_blank'
         >
             <img alt="<?php esc_html_e('Priority Support', 'event_espresso'); ?>"
@@ -563,7 +563,7 @@
     </p>
     <div class="action-links">
         <a class="ee-add-on-btn ee-add-on-btn--buy-now"
-           href="https://eventespresso.com/product/premium-support-token/?utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=other_services_tab&utm_content=support_token&ap_id=EEspresso"
+           href="https://eventespresso.com/products/premium-support-token"
            target="_blank"
         >
             <?php esc_html_e('Buy Now', 'event_espresso'); ?>

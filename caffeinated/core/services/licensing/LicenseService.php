@@ -35,8 +35,7 @@ class LicenseService
     {
         // PUE Auto Upgrades stuff
         if (
-            ! $this->feature->allowed('use_edd_plugin_licensing')
-            && is_readable(EE_THIRD_PARTY . 'pue/pue-client.php')
+            is_readable(EE_THIRD_PARTY . 'pue/pue-client.php')
         ) { // include the file
             require_once(EE_THIRD_PARTY . 'pue/pue-client.php');
 
@@ -84,10 +83,6 @@ class LicenseService
      */
     public static function isUpdateAvailable(string $basename = ''): bool
     {
-        $feature = LoaderFactory::getShared(FeatureFlags::class);
-        if (! $feature->allowed('use_edd_plugin_licensing')) {
-            return false;
-        }
         $basename = ! empty($basename) ? $basename : EE_PLUGIN_BASENAME;
 
         $update = false;

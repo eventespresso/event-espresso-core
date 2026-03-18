@@ -23,11 +23,6 @@ class AddonLicense
         if (! $addon_name || ! $license_data) {
             return;
         }
-        // also bail if the feature flag is not enabled
-        $feature = LoaderFactory::getShared(FeatureFlags::class);
-        if (! $feature->allowed('use_edd_plugin_licensing')) {
-            return;
-        }
         $main_file_path = $license_data['main_file_path'] ?? '';
         $main_file_slug = AddonLicense::derivePluginSlugFromMainFile($main_file_path);
         // use values from addon IF SET
