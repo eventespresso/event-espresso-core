@@ -6,6 +6,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Releases
 
+### 5.0.57
+
+
+#### Fixed
+ - [Fix Decaf Activation Plugin License Error (#2139)](https://github.com/eventespresso/cafe/pull/2139)
+ - [Fix Decaf Sending License Checks (#2140)](https://github.com/eventespresso/cafe/pull/2140)
+
+
+
+
+
+
+
 ### 5.0.56
 
 

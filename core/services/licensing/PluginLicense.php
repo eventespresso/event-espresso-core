@@ -2,10 +2,8 @@
 
 namespace EventEspresso\core\services\licensing;
 
-use EE_Network_Config;
 use EventEspresso\core\domain\Domain;
 use EventEspresso\core\domain\services\licensing\LicenseKeyFormInput;
-use EventEspresso\core\domain\services\licensing\LicenseStatus;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\third_party_libs\easy_digital_downloads\PluginUpdater;
 use stdClass;
@@ -313,73 +311,5 @@ class PluginLicense
             }
         }
         return $api_params;
-    }
-
-
-    /**
-     * updates the license key and status for this plugin
-     * using the license data previously saved in the database
-     *
-     * @return void
-     * @since 5.0.40.p
-     */
-    public function refreshPluginLicenseData()
-    {
-        $license_data = $this->getLicenseKeyData();
-        $update       = ! isset($license_data->license) || $license_data->license === 'none';
-        $license_key  = $license_data->license_key ?? '';
-        if ($this->isMissingLicenseKey()) {
-            if (! $license_key) {
-                $core_license = $this->license_key_data->getLicenseDataForPlugin(Domain::LICENSE_PLUGIN_SLUG);
-                if ($core_license->license_key && $core_license->license === LicenseStatus::VALID) {
-                    $license_key = $core_license->license_key;
-                    $update      = true;
-                } else {
-                    $network_config = $this->getNetworkConfig();
-                    if (! empty($network_config->core->site_license_key)) {
-                        $license_key = $network_config->core->site_license_key;
-                        $update      = true;
-                    }
-                }
-            }
-            if ($license_key) {
-                $this->setLicenseKey($license_key);
-            }
-        }
-        $license_status = $license_data->license ?? '';
-        if ($license_status && empty($this->status)) {
-            $this->setStatus($license_status);
-        }
-        if ($update && $this->hasLicenseKey()) {
-            $licence_manager = $this->getLicenseManager();
-            $licence_manager->checkLicense(
-                $this->licenseKey(),
-                $this->itemID(),
-                $this->itemName(),
-                $this->pluginSlug(),
-                $this->version(),
-                $this->minCoreVersion()
-            );
-        }
-    }
-
-
-    private function getNetworkConfig(): EE_Network_Config
-    {
-        static $network_config = null;
-        if (! $network_config instanceof EE_Network_Config) {
-            $network_config = LoaderFactory::getShared(EE_Network_Config::class);
-        }
-        return $network_config;
-    }
-
-
-    private function getLicenseManager(): LicenseManager
-    {
-        static $licence_manager = null;
-        if (! $licence_manager instanceof LicenseManager) {
-            $licence_manager = LoaderFactory::getShared(LicenseManager::class);
-        }
-        return $licence_manager;
     }
 }

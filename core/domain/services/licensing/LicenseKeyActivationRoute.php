@@ -3,6 +3,7 @@
 namespace EventEspresso\core\domain\services\licensing;
 
 use EE_Network_Config;
+use EventEspresso\core\domain\DomainFactory;
 use EventEspresso\core\services\licensing\LicenseManager;
 use EventEspresso\core\services\licensing\PluginLicense;
 use EventEspresso\core\services\loaders\LoaderFactory;
@@ -27,7 +28,8 @@ class LicenseKeyActivationRoute extends Route
 
     public function matchesCurrentRequest(): bool
     {
-        return $this->request->isActivation();
+        $domain = DomainFactory::getEventEspressoCoreDomain();
+        return $this->request->isActivation() && $domain->isCaffeinated();
     }
 
 
@@ -36,8 +38,10 @@ class LicenseKeyActivationRoute extends Route
      */
     protected function registerDependencies()
     {
-        $this->core_license   = $this->loader->getShared(PluginLicense::class);
-        $this->network_config = $this->loader->getShared(EE_Network_Config::class);
+        if ($this->loader->isShared(PluginLicense::class)) {
+            $this->core_license   = $this->loader->getShared(PluginLicense::class);
+            $this->network_config = $this->loader->getShared(EE_Network_Config::class);
+        }
     }
 
 

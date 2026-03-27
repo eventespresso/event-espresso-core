@@ -23,15 +23,20 @@ use EventEspresso\core\services\loaders\LoaderFactory;
 class DomainFactory
 {
     /**
+     * @var Domain|null
+     */
+    protected static ?Domain $core_domain = null;
+
+    /**
      * @var DomainInterface[]
      */
     protected static array $domains = [];
 
 
     /**
-     * @param string $domain_fqcn       [required] Fully Qualified Class Name for the Domain class
-     * @param string $main_file         [required] path to the main plugin file
-     * @param string $version           [required] version string for the plugin
+     * @param string $domain_fqcn [required] Fully Qualified Class Name for the Domain class
+     * @param string $main_file   [required] path to the main plugin file
+     * @param string $version     [required] version string for the plugin
      * @return DomainInterface
      * @throws DomainException
      * @throws InvalidArgumentException
@@ -46,13 +51,13 @@ class DomainFactory
 
 
     /**
-     * @param FullyQualifiedName $domain_fqcn   [required] Fully Qualified Class Name for the Domain class
-     * @param array              $arguments     [required] array of arguments to be passed to the Domain class
-     *                                          constructor. Must at least include the following two value objects:
-     *                                          [
-     *                                              EventEspresso\core\domain\values\FilePath $plugin_file
-     *                                              EventEspresso\core\domain\values\Version $version
-     *                                          ]
+     * @param FullyQualifiedName $domain_fqcn [required] Fully Qualified Class Name for the Domain class
+     * @param array              $arguments   [required] array of arguments to be passed to the Domain class
+     *                                        constructor. Must at least include the following two value objects:
+     *                                        [
+     *                                            EventEspresso\core\domain\values\FilePath $plugin_file
+     *                                            EventEspresso\core\domain\values\Version $version
+     *                                        ]
      * @return DomainInterface
      * @throws DomainException
      * @throws InvalidArgumentException
@@ -66,20 +71,22 @@ class DomainFactory
 
 
     /**
-     * @return DomainInterface
+     * @return Domain
      * @throws DomainException
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidFilePathException
      * @throws InvalidInterfaceException
      */
-    public static function getEventEspressoCoreDomain(): DomainInterface
+    public static function getEventEspressoCoreDomain(): Domain
     {
-        $fqcn = 'EventEspresso\core\domain\Domain';
-        if (! isset(DomainFactory::$domains[ $fqcn ])) {
-            DomainFactory::getDomain($fqcn, [EVENT_ESPRESSO_MAIN_FILE, espresso_version()]);
+        if (! DomainFactory::$core_domain instanceof Domain) {
+            DomainFactory::$core_domain = DomainFactory::buildDomain(
+                Domain::class,
+                [EVENT_ESPRESSO_MAIN_FILE, espresso_version()]
+            );
         }
-        return DomainFactory::$domains[ $fqcn ];
+        return DomainFactory::$core_domain;
     }
 
 
@@ -90,33 +97,48 @@ class DomainFactory
      */
     private static function getDomain(string $fqcn, array $arguments): DomainInterface
     {
+        if ($fqcn === Domain::class) {
+            return DomainFactory::getEventEspressoCoreDomain();
+        }
         if (! isset(DomainFactory::$domains[ $fqcn ])) {
-            if (! isset($arguments[0], $arguments[1])) {
-                throw new InvalidArgumentException(
-                    esc_html__(
-                        'You need to pass at least two arguments, representing the addon plugin file and version, in order to generate a Domain class',
-                        'event_espresso'
-                    )
-                );
-            }
-            $filepath = $arguments[0] instanceof FilePath ? $arguments[0] : new FilePath($arguments[0]);
-            $version  = $arguments[1] instanceof Version ? $arguments[1] : Version::fromString($arguments[1]);
-            $domain   = new $fqcn($filepath, $version);
-            if (! $domain instanceof DomainBase || ! $domain instanceof $fqcn) {
-                throw new DomainException(
-                    sprintf(
-                        esc_html__(
-                            'The requested Domain class "%1$s" could not be loaded.',
-                            'event_espresso'
-                        ),
-                        $fqcn
-                    )
-                );
-            }
+            $domain                          = DomainFactory::buildDomain($fqcn, $arguments);
             DomainFactory::$domains[ $fqcn ] = $domain;
-            // we still need to share this with the core loader to facilitate automatic dependency injection
-            LoaderFactory::getLoader()->share($fqcn, $domain, [$filepath, $version, $domain->assetNamespace()]);
         }
         return DomainFactory::$domains[ $fqcn ];
+    }
+
+
+    /**
+     * @param string $fqcn
+     * @param array  $arguments
+     * @return Domain|DomainInterface
+     */
+    private static function buildDomain(string $fqcn, array $arguments): DomainInterface
+    {
+        if (! isset($arguments[0], $arguments[1])) {
+            throw new InvalidArgumentException(
+                esc_html__(
+                    'You need to pass at least two arguments, representing the addon plugin file and version, in order to generate a Domain class',
+                    'event_espresso'
+                )
+            );
+        }
+        $filepath = $arguments[0] instanceof FilePath ? $arguments[0] : new FilePath($arguments[0]);
+        $version  = $arguments[1] instanceof Version ? $arguments[1] : Version::fromString($arguments[1]);
+        $domain   = new $fqcn($filepath, $version);
+        if (! $domain instanceof DomainBase || ! $domain instanceof $fqcn) {
+            throw new DomainException(
+                sprintf(
+                    esc_html__(
+                        'The requested Domain class "%1$s" could not be loaded.',
+                        'event_espresso'
+                    ),
+                    $fqcn
+                )
+            );
+        }
+        // we still need to share this with the core loader to facilitate automatic dependency injection
+        LoaderFactory::getLoader()->share($fqcn, $domain, [$filepath, $version, $domain->assetNamespace()]);
+        return $domain;
     }
 }

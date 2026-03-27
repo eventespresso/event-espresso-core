@@ -50,22 +50,27 @@ class PluginUpsells
      * @param string $plugin_file
      * @throws DomainException
      */
-    public function doPremiumUpsell($plugin_file)
+    public function doPremiumUpsell(string $plugin_file)
     {
-        if ($plugin_file === $this->domain->pluginBasename()) {
-            echo '
+        if ($plugin_file !== $this->domain->pluginBasename()) {
+            return;
+        }
+        echo '
     <tr class="ee-upsell-plugin-list-table active">
         <th scope="row" class="check-column"></th>
         <td class="column-primary">
             <div class="ee-upsell-col" style="padding:10px 0;">
-                <a href="https://eventespresso.com/purchase/?slug=ee4-license-personal&utm_source=wp_admin_plugins_screen&utm_medium=link&utm_campaign=plugins_screen_upgrade_link"">
-                    <button class="button button-secondary" style="background:#008dcb; border:1px solid #008dcb; color:#fff; ">'
+                <a href="https://eventespresso.com/pricing"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    class="button button-secondary"
+                    style="background:hsl(203 100% 40%); border:1px solid hsl(203 100% 40%); color:hsl(0 0% 100%);"
+                >'
                      . esc_html__('Upgrade for Support', 'event_espresso')
-                     . '</button>
-                </a>
+                     . '</a>
             </div>
         </td>
-        <td class="column-description">
+        <td class="column-description" colspan="2">
             <div class="ee-upsell-col plugin-description" style="font-size: .85rem; line-height: 1.2rem; padding:5px 0;">'
                  . sprintf(
                      esc_html__(
@@ -79,7 +84,6 @@ class PluginUpsells
             '</div>
         </td>
     </tr>
-';
-        }
+    ';
     }
 }

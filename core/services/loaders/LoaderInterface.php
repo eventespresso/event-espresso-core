@@ -30,6 +30,18 @@ interface LoaderInterface
 
 
     /**
+     * Returns true if a class matching the supplied FQCN (and arguements) has been previously shared.
+     * This is only required when a shared class can not be automagically instantiated
+     * because its dependencies require specific values that can only be set manually.
+     *
+     * @param FullyQualifiedName|string $fqcn
+     * @param array                     $arguments
+     * @return bool
+     */
+    public function isShared($fqcn, array $arguments = []): bool;
+
+
+    /**
      * Used for getting a shared instance of a class
      *
      * @param FullyQualifiedName|string $fqcn
