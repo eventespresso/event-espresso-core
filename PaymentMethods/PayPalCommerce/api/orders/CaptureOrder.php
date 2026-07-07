@@ -5,6 +5,7 @@ namespace EventEspresso\PaymentMethods\PayPalCommerce\api\orders;
 use EE_Error;
 use EE_Transaction;
 use EventEspresso\PaymentMethods\PayPalCommerce\api\PayPalApi;
+use EventEspresso\PaymentMethods\PayPalCommerce\PayPalCheckout\domain\OrderIssues;
 use EventEspresso\PaymentMethods\PayPalCommerce\tools\currency\CurrencyManager;
 use EventEspresso\PaymentMethods\PayPalCommerce\tools\logging\PayPalLogger;
 use ReflectionException;
@@ -70,12 +71,12 @@ class CaptureOrder extends OrdersApi
     /**
      * Makes sure that we have received an Order back from the API call.
      *
-     * @param $response
+     * @param array $response
      * @return array
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function validateOrder($response): array
+    public function validateOrder(array $response): array
     {
         $message = esc_html__('Validating Order Capture:', 'event_espresso');
         PayPalLogger::errorLog(
@@ -91,14 +92,14 @@ class CaptureOrder extends OrdersApi
         }
         // This also could be a retry capture, so consider this valid, if order already captured.
         if (
-            ! empty($response['message']['details']['issue'])
-            && $response['message']['details']['issue'] === 'ORDER_ALREADY_CAPTURED'
+            ! empty($response['details'][0]['issue'])
+            && $response['details'][0]['issue'] === OrderIssues::ORDER_ALREADY_CAPTURED
         ) {
             // Need to make sure we pass on the order ID.
             if (empty($response['id'])) {
                 $response['id'] = $this->order_id;
             }
-            $response['status'] = 'ORDER_ALREADY_CAPTURED';
+            $response['status'] = OrderIssues::ORDER_ALREADY_CAPTURED;
             return $response;
         }
         // A success capture should return the order ID.

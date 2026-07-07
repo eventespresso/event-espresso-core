@@ -8,11 +8,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### 5.0.57
 
+#### Added
+ - [Copy all event meta when duplicating an event (#2161)](https://github.com/eventespresso/cafe/pull/2161)
+ - [Fix moving waitlist registrations (#2158)](https://github.com/eventespresso/cafe/pull/2158)
+ - [New Entitlement Checker service (#2206)](https://github.com/eventespresso/cafe/pull/2206)
+ - [New/CORE: Admin notice warning users to update core and add-ons together for 5.1 (#2220)](https://github.com/eventespresso/cafe/pull/2220)
+ - [New: Registration date filters for the Registrations list table (#2225)](https://github.com/eventespresso/cafe/pull/2225)
 
 #### Fixed
  - [Fix Decaf Activation Plugin License Error (#2139)](https://github.com/eventespresso/cafe/pull/2139)
  - [Fix Decaf Sending License Checks (#2140)](https://github.com/eventespresso/cafe/pull/2140)
+ - [Fix admin uploaded media url inputs (#2163)](https://github.com/eventespresso/cafe/pull/2163)
+ - [Fix multiple notifications from Mollie IPN (#2159)](https://github.com/eventespresso/cafe/pull/2159)
+ - [Issue 3: missing_order in gateway response / bad payment data (#2168)](https://github.com/eventespresso/cafe/pull/2168)
+ - [Fix Conditional Question Output in Messages (#1815)](https://github.com/eventespresso/cafe/pull/1815)
+ - [Fix moved registrations using the original reg in messages (#2153)](https://github.com/eventespresso/cafe/pull/2153)
+ - [Always use load_textdomain() to load translation files (#2191)](https://github.com/eventespresso/cafe/pull/2191)
+ - [Fix registrations switching to sold out on Payment Options (#2192)](https://github.com/eventespresso/cafe/pull/2192)
+ - [Dont include moved registrations when generating messages after payment (#2200)](https://github.com/eventespresso/cafe/pull/2200)
+ - [Fix/CORE: EDTR i18n strings untranslated on WP 6.5+ (numeric-keyed Jed data) (#2218)](https://github.com/eventespresso/cafe/pull/2218)
+ - [Fix edit_registration questions form save and redirect (regression from #1593) (#2203)](https://github.com/eventespresso/cafe/pull/2203)
+ - [Fix/CORE: license API params — match by item_id and lazy-load license data (#2222)](https://github.com/eventespresso/cafe/pull/2222)
 
+#### Changed
+ - [Allow HTML within question group descriptions (#2143)](https://github.com/eventespresso/cafe/pull/2143)
+ - [Use a forked CUID package (#2141)](https://github.com/eventespresso/cafe/pull/2141)
+ - [Avoid conflict with WooCommmerce hardcoded wp_posts table alias (#2142)](https://github.com/eventespresso/cafe/pull/2142)
+ - [Remove update flag when refreshing plugin data (#2144)](https://github.com/eventespresso/cafe/pull/2144)
+ - [Reinstate Auto Event Notifications Plugin Deployment (#1252)](https://github.com/eventespresso/cafe/pull/1252)
+ - [Bump Minimum PHP Version Required to 8.2 (#2194)](https://github.com/eventespresso/cafe/pull/2194)
+ - [Fix unit tests in the branch DEV (#2212)](https://github.com/eventespresso/cafe/pull/2212)
 
 
 

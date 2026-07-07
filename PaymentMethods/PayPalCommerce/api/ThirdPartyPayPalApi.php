@@ -54,7 +54,7 @@ class ThirdPartyPayPalApi extends PayPalApi
         string $bn_code,
         string $partner_client_id = '',
         string $payer_id = '',
-        bool $sandbox_mode = true
+        bool   $sandbox_mode = true
     ) {
         parent::__construct($sandbox_mode);
         $this->access_token      = $access_token;
@@ -71,10 +71,14 @@ class ThirdPartyPayPalApi extends PayPalApi
      * @param string $endpoint
      * @param string $method
      * @param array  $headers
-     * @return Object|array
+     * @return array
      */
-    public function sendRequest(array $body_parameters, string $endpoint, string $method = 'POST', array $headers = [])
-    {
+    public function sendRequest(
+        array  $body_parameters,
+        string $endpoint,
+        string $method = 'POST',
+        array  $headers = []
+    ): array {
         $request_parameters = $this->getRequestParameters($body_parameters, $method, $headers);
         return $this->request($endpoint, $request_parameters);
     }

@@ -3,11 +3,11 @@
 /**
  * EE_Question_List_Shortcodes
  *
- * this is a child class for the EE_Shortcodes library.  The EE_Question_List_Shortcodes handles all shortcodes for
- * custom questions and answers.
+ * This is a child class for the EE_Shortcodes library.
+ * The EE_Question_List_Shortcodes handles all shortcodes for custom questions and answers.
  *
- * NOTE: if a method doesn't have any phpdoc commenting the details can be found in the comments in EE_Shortcodes
- * parent class.
+ * NOTE: if a method doesn't have any phpdoc comments,
+ * the details can be found in the comments in EE_Shortcodes parent class.
  *
  * @package        Event Espresso
  * @subpackage     libraries/shortcodes/EE_Question_List_Shortcodes.lib.php
@@ -95,14 +95,18 @@ class EE_Question_List_Shortcodes extends EE_Shortcodes
         $template         = empty($template) && isset($this->_extra_data['template']['question_list'])
             ? $this->_extra_data['template']['question_list']
             : $template;
-        $ans_result       = '';
+        $question_list       = '';
         $answers          = ! empty($this->_extra_data['data']->registrations[ $reg_obj->ID() ]['ans_objs'])
             ? $this->_extra_data['data']->registrations[ $reg_obj->ID() ]['ans_objs']
             : [];
         $questions        = ! empty($this->_extra_data['data']->questions)
             ? $this->_extra_data['data']->questions
             : [];
+
         foreach ($answers as $answer) {
+            if (! $answer instanceof EE_Answer) {
+                continue;
+            }
             // first see if the question is in our $questions array.  If not then try to get from answer object
             $question = isset($questions[ $answer->ID() ])
                 ? $questions[ $answer->ID() ]
@@ -110,17 +114,24 @@ class EE_Question_List_Shortcodes extends EE_Shortcodes
             $question = ! $question instanceof EE_Question
                 ? $answer->question()
                 : $question;
-            if ($question instanceof EE_Question and $question->admin_only()) {
+            if (! $question instanceof EE_Question || $question->admin_only()) {
                 continue;
             }
-            $ans_result .= $this->_shortcode_helper->parse_question_list_template(
+            $question_list_item = $this->_shortcode_helper->parse_question_list_template(
                 $template,
                 $answer,
                 $valid_shortcodes,
                 $this->_extra_data
             );
+            $question_list .= apply_filters(
+                'FHEE__EE_Question_List_Shortcodes___get_question_answer_list_for_attendee__question_list_item',
+                $question_list_item,
+                $question,
+                $answer,
+                $template
+            );
         }
 
-        return $ans_result;
+        return $question_list;
     }
 }

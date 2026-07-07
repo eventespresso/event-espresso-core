@@ -1,7 +1,5 @@
 <?php
 
-use EventEspresso\core\services\loaders\LoaderFactory;
-
 /**
  * EE_Question class
  *
@@ -168,7 +166,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
      * Sets whether the question has been deleted
      * we use this boolean instead of actually deleting it
      * because when users delete this question they really want to remove the question from future forms,
-     * BUT keep their old answers which depend on this record actually existing.
+     * BUT keep their old answers, which depend on this record actually existing.
      *
      * @param bool $QST_deleted
      * @throws EE_Error
@@ -315,7 +313,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
 
 
     /**
-     * Gets an array of related EE_Answer  to this EE_Question
+     * Gets an array of related EE_Answer to this EE_Question
      *
      * @return EE_Answer[]
      * @throws EE_Error
@@ -328,7 +326,7 @@ class EE_Question extends EE_Soft_Delete_Base_Class implements EEI_Duplicatable
 
 
     /**
-     * Boolean check for if there are answers on this question in th db
+     * Boolean check for if there are answers on this question in the db
      *
      * @return bool true = has answers, false = no answers.
      * @throws EE_Error

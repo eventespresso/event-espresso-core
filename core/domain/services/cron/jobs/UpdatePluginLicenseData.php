@@ -129,10 +129,8 @@ class UpdatePluginLicenseData extends CronJob
         stdClass $stored_data
     ): string {
         $license_key = $stored_data->license_key ?: $plugin_license->licenseKey();
-        $update      = ! isset($stored_data->license) || $stored_data->license === 'none';
         if (! $license_key) {
             $license_key = $this->getCoreLicenseKey($license_key_data);
-            $update      = $update || $license_key !== '';
             if ($license_key) {
                 $plugin_license->setLicenseKey($license_key);
             }
@@ -141,7 +139,7 @@ class UpdatePluginLicenseData extends CronJob
         if ($license_status && empty($plugin_license->status())) {
             $plugin_license->setStatus($license_status);
         }
-        return $update && $plugin_license->hasLicenseKey() ? $license_key : '';
+        return $plugin_license->hasLicenseKey() ? $license_key : '';
     }
 
 

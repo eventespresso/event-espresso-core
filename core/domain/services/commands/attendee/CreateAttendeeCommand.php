@@ -68,7 +68,6 @@ class CreateAttendeeCommand extends Command implements CommandRequiresCapCheckIn
 
     /**
      * @return CapCheckInterface
-     * @throws InvalidDataTypeException
      */
     public function getCapCheck()
     {

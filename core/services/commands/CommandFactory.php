@@ -2,10 +2,7 @@
 
 namespace EventEspresso\core\services\commands;
 
-use EventEspresso\core\exceptions\InvalidDataTypeException;
-use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\loaders\LoaderInterface;
-use InvalidArgumentException;
 
 /**
  * Class CommandFactory
@@ -16,21 +13,15 @@ use InvalidArgumentException;
  */
 class CommandFactory implements CommandFactoryInterface
 {
-    /**
-     * @var LoaderInterface $loader
-     */
-    private $loader;
+    private LoaderInterface $loader;
 
 
     /**
      * CommandFactory constructor
      *
      * @param LoaderInterface $loader
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     * @throws InvalidArgumentException
      */
-    public function __construct(LoaderInterface $loader = null)
+    public function __construct(LoaderInterface $loader)
     {
         $this->loader = $loader;
     }
@@ -40,11 +31,8 @@ class CommandFactory implements CommandFactoryInterface
      * @param string $command_fqcn
      * @param array  $arguments
      * @return mixed
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      */
-    public function getNew($command_fqcn, $arguments = array())
+    public function getNew(string $command_fqcn, array $arguments = [])
     {
         return $this->loader->getNew($command_fqcn, $arguments);
     }

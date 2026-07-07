@@ -585,7 +585,21 @@ class EventSpacesCalculator
                 //  the number of remaining spaces for the datetime, which is the limit - spaces already taken
                 //  or the maximum ticket quantity
                 $ticket_quantity = min($reg_limit - $spaces_allocated, $ticket_quantity);
-                // adjust the available quantity in our tracking array
+                // adjust the available quantity in our tracking array.
+                // Known latent bug (please read before "fixing"): when a ticket has unlimited
+                // qty() (EE_INF) and its datetime has unlimited reg_limit (EE_INF), the line
+                // above yields $ticket_quantity = min(INF - 0, INF) = INF, so this subtraction
+                // becomes INF - INF, which evaluates to NAN. That NAN is then cached in
+                // $this->ticket_quantities[...] where it lies dormant — the public spaces
+                // totals are unaffected because the at-capacity path (INF >= INF) takes over.
+                // It only became visible under PHP 8.5: coercing NAN to a string now emits an
+                // E_WARNING (RFC: warnings-php-8-5#coercing_nan_to_other_types; INF does not
+                // warn, only NAN). Triage of the full integration suite found exactly one test
+                // that trips it — EEH_Line_Item_Test::test_recalculate_total_including_taxes
+                // _after_ticket_cancellation — via the eager print_r() in
+                // EspressoUnitTestCase::assertArrayContains(), which PHPUnit then promotes to a
+                // test error through phpunit.xml's convertWarningsToExceptions="true".
+                // Proper fix when prioritised: guard with `if ($ticket_quantity !== EE_INF)`.
                 $this->ticket_quantities[ $ticket_identifier ] -= $ticket_quantity;
                 // and increment spaces allocated for this datetime
                 $spaces_allocated += $ticket_quantity;

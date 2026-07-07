@@ -16,14 +16,11 @@ use EventEspresso\core\domain\services\capabilities\CapCheckInterface;
  */
 abstract class Command implements CommandInterface
 {
-    /*
-     * @var CapCheckInterface $cap_check
-     */
-    protected $cap_check;
+    protected ?CapCheckInterface $cap_check = null;
 
 
     /**
-     * @return mixed
+     * @return CapCheckInterface
      */
     public function getCapCheck()
     {

@@ -46,7 +46,7 @@ class OrderDetails extends OrdersApi
 
 
     /**
-     * Create PayPal Order.
+     * Create a PayPal Order.
      *
      * @return array
      * @throws EE_Error
@@ -62,12 +62,12 @@ class OrderDetails extends OrdersApi
     /**
      * Makes sure that we have received the expected Order information back from the API call.
      *
-     * @param $response
+     * @param array $response
      * @return array
      * @throws EE_Error
      * @throws ReflectionException
      */
-    public function validateResponse($response): array
+    public function validateResponse(array $response): array
     {
         PayPalLogger::errorLog(
             esc_html__('Validating Order Information Response:', 'event_espresso'),

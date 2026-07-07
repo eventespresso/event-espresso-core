@@ -899,9 +899,20 @@ abstract class EE_message_type extends EE_Messages_Base
                     $aee['attendee_registration_id'] = $value;
                 }/**/
             }
-            // note the FIRST reg object in this array is the one
-            // we'll use for this attendee as the primary registration for this attendee.
-            $aee['reg_obj']        = reset($this->_data->attendees[ $att_id ]['reg_objs']);
+            // prefer a non-closed registration when there are multiple regs for this attendee
+            // (e.g. after an attendee-mover operation leaves a cancelled old reg alongside the new one).
+            // Falls back to the first reg in the array if none are open.
+            $reg_obj_for_addressee = null;
+            foreach ($this->_data->attendees[ $att_id ]['reg_objs'] as $candidate_reg) {
+                if (
+                    $candidate_reg instanceof EE_Registration
+                    && ! in_array($candidate_reg->status_ID(), EEM_Registration::closed_reg_statuses(), true)
+                ) {
+                    $reg_obj_for_addressee = $candidate_reg;
+                    break;
+                }
+            }
+            $aee['reg_obj']        = $reg_obj_for_addressee ?: reset($this->_data->attendees[ $att_id ]['reg_objs']);
             $aee['attendees']      = $this->_data->attendees;
             $aee['recipient_id']   = $att_id;
             $aee['recipient_type'] = 'Attendee';

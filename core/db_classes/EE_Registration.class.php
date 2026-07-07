@@ -399,7 +399,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function ticket($include_archived = true)
+    public function ticket($include_archived = true): ?EE_Ticket
     {
         return EEM_Ticket::instance()->get_one_by_ID($this->ticket_ID());
     }
@@ -859,7 +859,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function attendee()
+    public function attendee(): ?EE_Attendee
     {
         return EEM_Attendee::instance()->get_one_by_ID($this->attendee_ID());
     }
@@ -890,11 +890,11 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
 
 
     /**
-     *        get Event ID
+     * get Event ID
      */
-    public function event_ID()
+    public function event_ID(): int
     {
-        return $this->get('EVT_ID');
+        return (int) $this->get('EVT_ID');
     }
 
 
@@ -1431,9 +1431,7 @@ class EE_Registration extends EE_Soft_Delete_Base_Class implements EEI_Registrat
      * (because the answer might be an array of answer values, so passing pretty_value=true
      * will convert it into some kind of string)
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
+     * @throws ReflectionException
      */
     public function answer_value_to_question($question, $pretty_value = true)
     {

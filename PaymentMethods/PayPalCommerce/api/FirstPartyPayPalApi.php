@@ -57,10 +57,14 @@ class FirstPartyPayPalApi extends PayPalApi
      * @param string $endpoint
      * @param string $method
      * @param array  $headers
-     * @return Object|array
+     * @return array
      */
-    public function sendRequest(array $body_parameters, string $endpoint, string $method = 'POST', array $headers = [])
-    {
+    public function sendRequest(
+        array  $body_parameters,
+        string $endpoint,
+        string $method = 'POST',
+        array  $headers = []
+    ): array {
         $request_parameters = $this->getRequestParameters($body_parameters, $method, $headers);
         return $this->request($endpoint, $request_parameters);
     }

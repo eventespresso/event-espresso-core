@@ -39,8 +39,12 @@ class JedLocaleData
             if (! empty($translations->headers['Plural-Forms'])) {
                 $locale['']['plural_forms'] = $translations->headers['Plural-Forms'];
             }
-            foreach ($translations->entries as $id => $entry) {
-                $locale[ $id ] = $entry->translations;
+            foreach ($translations->entries as $entry) {
+                $key = $entry->key();
+                if ($key === false) {
+                    continue;
+                }
+                $locale[ $key ] = $entry->translations;
             }
             $locales[ $domain ] = $locale;
         }

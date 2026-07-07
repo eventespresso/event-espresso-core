@@ -774,6 +774,7 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
             EVENT_ESPRESSO_VERSION
         );
         wp_enqueue_style('espresso_reg');
+        wp_enqueue_style('espresso-ui-theme');
         // script
         wp_register_script(
             'espresso_reg',
@@ -2455,33 +2456,41 @@ class Registrations_Admin_Page extends EE_Admin_Page_CPT
                 __FUNCTION__,
                 __LINE__
             );
+            return false;
         }
         $form = $this->_get_reg_custom_questions_form($REG_ID);
         $form->receive_form_submission($this->request->requestParams());
-        $success = false;
-        if ($form->is_valid()) {
-            foreach ($form->subforms() as $question_group_form) {
-                foreach ($question_group_form->inputs() as $question_id => $input) {
-                    $where_conditions    = [
-                        'QST_ID' => $question_id,
-                        'REG_ID' => $REG_ID,
-                    ];
-                    $possibly_new_values = [
-                        'ANS_value' => $input->normalized_value(),
-                    ];
-                    $answer              = EEM_Answer::instance()->get_one([$where_conditions]);
-                    if ($answer instanceof EE_Answer) {
-                        $success = $answer->save($possibly_new_values);
-                    } else {
-                        // insert it then
-                        $cols_n_vals = array_merge($where_conditions, $possibly_new_values);
-                        $answer      = EE_Answer::new_instance($cols_n_vals);
-                        $success     = $answer->save();
-                    }
+        // bail early if the form is invalid so the registration page can re-display with the errors
+        if (! $form->is_valid()) {
+            EE_Error::add_error($form->get_validation_error_string(), __FILE__, __FUNCTION__, __LINE__);
+            return false;
+        }
+        // the form is valid, so assume success unless an actual save failure occurs.
+        // note: EE_Base_Class::save() returns 0 (not false) when a value is unchanged,
+        // so a 0 must NOT be treated as a failure here.
+        $success = true;
+        foreach ($form->subforms() as $question_group_form) {
+            foreach ($question_group_form->inputs() as $question_id => $input) {
+                $where_conditions    = [
+                    'QST_ID' => $question_id,
+                    'REG_ID' => $REG_ID,
+                ];
+                $possibly_new_values = [
+                    'ANS_value' => $input->normalized_value(),
+                ];
+                $answer              = EEM_Answer::instance()->get_one([$where_conditions]);
+                if ($answer instanceof EE_Answer) {
+                    $saved = $answer->save($possibly_new_values);
+                } else {
+                    // insert it then
+                    $cols_n_vals = array_merge($where_conditions, $possibly_new_values);
+                    $answer      = EE_Answer::new_instance($cols_n_vals);
+                    $saved       = $answer->save();
+                }
+                if ($saved === false) {
+                    $success = false;
                 }
             }
-        } else {
-            EE_Error::add_error($form->get_validation_error_string(), __FILE__, __FUNCTION__, __LINE__);
         }
         return $success;
     }

@@ -269,7 +269,7 @@ class PersistentAdminNotice implements RequiresCapCheckInterface
     /**
      * @return CapCheckInterface
      */
-    public function getCapCheck(): ?CapCheckInterface
+    public function getCapCheck()
     {
         if (! $this->cap_check instanceof CapCheckInterface) {
             $this->setCapCheck(new CapCheck($this->capability, $this->cap_context));

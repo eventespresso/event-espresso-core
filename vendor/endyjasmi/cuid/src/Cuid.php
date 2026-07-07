@@ -53,6 +53,16 @@ class Cuid
     }
 
     /**
+     * Get current process id
+     *
+     * @return false|int
+     */
+    protected static function getmypid()
+    {
+        return function_exists('getmypid') ? \getmypid() : mt_rand(0, 0xffff);
+    }
+
+    /**
      * Fingerprint are used for process identification
      * 
      * @param integer $blockSize Block size
@@ -64,7 +74,7 @@ class Cuid
         // Generate process id based hash
         $pid = Cuid::pad(
             base_convert(
-                getmypid(),
+                Cuid::getmypid(),
                 Cuid::DECIMAL,
                 Cuid::BASE36
             ),

@@ -123,7 +123,7 @@ class ResponseInspector
     public function validateParameters($response): bool
     {
         // Validate that response body.
-        if (! $response) {
+        if (! $response || ! is_array($response)) {
             $this->setError([
                 'error'   => 'invalid_body',
                 'message' => esc_html__(

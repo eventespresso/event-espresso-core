@@ -59,17 +59,8 @@ class Textdomain
 
         foreach ($upload_paths as $type => $upload_path) {
             // verify the default language file exists in the plugin directory and sideload if not
-            if ($type === 'default') {
-                if(! EEH_File::exists($upload_path)) {
-                    $this->loadTranslationsForLocaleOnActivation();
-                }
-                // verify that the sideloaded translation file if readable, and if so, load it and return
-                if (
-                    is_readable($upload_path)
-                    && load_plugin_textdomain($this->text_domain, false, dirname(EE_PLUGIN_BASENAME) . '/languages/')
-                ) {
-                    return;
-                }
+            if ($type === 'default' && ! EEH_File::exists($upload_path)) {
+                $this->loadTranslationsForLocaleOnActivation();
             }
             // as soon as we find a readable file, load it and return
             if (is_readable($upload_path) && load_textdomain($this->text_domain, $upload_path, $this->locale)) {

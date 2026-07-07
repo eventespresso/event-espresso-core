@@ -1,3 +1,5 @@
+> This package has been deprecated in favor of [CUID2](https://github.com/paralleldrive/cuid2).
+
 # Cuid for PHP [![Gitter](https://badges.gitter.im/Join Chat.svg)](https://gitter.im/endyjasmi/cuid?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 [![Build Status](https://travis-ci.org/endyjasmi/cuid.svg?branch=master)](https://travis-ci.org/endyjasmi/cuid) [![Coverage Status](https://coveralls.io/repos/endyjasmi/cuid/badge.png?branch=master)](https://coveralls.io/r/endyjasmi/cuid?branch=master) [![SensioLabsInsight](https://insight.sensiolabs.com/projects/49dcc316-3f00-4573-a1c1-91dedffa1829/mini.png)](https://insight.sensiolabs.com/projects/49dcc316-3f00-4573-a1c1-91dedffa1829) [![Latest Stable Version](https://poser.pugx.org/endyjasmi/cuid/v/stable.svg)](https://packagist.org/packages/endyjasmi/cuid) [![Total Downloads](https://poser.pugx.org/endyjasmi/cuid/downloads.svg)](https://packagist.org/packages/endyjasmi/cuid) [![License](https://poser.pugx.org/endyjasmi/cuid/license.svg)](https://packagist.org/packages/endyjasmi/cuid)
 

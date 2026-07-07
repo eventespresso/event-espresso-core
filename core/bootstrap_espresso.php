@@ -1,9 +1,53 @@
 <?php
 
 /**
+ * loads embedded third party WordPress GraphQL plugin
+ */
+function espressoLoadWpGraphQL(): void
+{
+    $espresso_root = dirname(EVENT_ESPRESSO_MAIN_FILE);
+    if (
+        ! function_exists('graphql_init')
+        && is_readable($espresso_root . '/vendor/wp-graphql/wp-graphql/wp-graphql.php')
+    ) {
+        require_once $espresso_root . '/vendor/wp-graphql/wp-graphql/wp-graphql.php';
+    }
+}
+
+
+/**
+ * adds a wp-option to indicate that EE has been activated via the WP admin plugins page
+ */
+function espresso_plugin_activation(): void
+{
+    update_option('ee_espresso_activation', true);
+    update_option('event-espresso-core_allow_tracking', 'no');
+    update_option('event-espresso-core_tracking_notice', 'hide');
+    // Run WP GraphQL activation callback
+    espressoLoadWpGraphQL();
+    graphql_activation_callback();
+}
+register_activation_hook(EVENT_ESPRESSO_MAIN_FILE, 'espresso_plugin_activation');
+
+
+/**
+ * runs on plugin deactivation
+ */
+function espresso_plugin_deactivation(): void
+{
+    // Run WP GraphQL deactivation callback
+    espressoLoadWpGraphQL();
+    graphql_deactivation_callback();
+    delete_option('event-espresso-core_allow_tracking');
+    delete_option('event-espresso-core_tracking_notice');
+}
+register_deactivation_hook(EVENT_ESPRESSO_MAIN_FILE, 'espresso_plugin_deactivation');
+
+
+/**
  * this function loads EE's class for handling exceptions and errors
  */
-function espresso_load_error_handling()
+function espresso_load_error_handling(): void
 {
     static $error_handling_loaded = false;
     if ($error_handling_loaded) {
@@ -42,7 +86,7 @@ function espresso_load_error_handling()
  * @param string $full_path_to_file
  * @throws EE_Error
  */
-function espresso_load_required(string $classname, string $full_path_to_file)
+function espresso_load_required(string $classname, string $full_path_to_file): void
 {
     if (is_readable($full_path_to_file)) {
         require_once $full_path_to_file;
@@ -67,7 +111,7 @@ function espresso_load_required(string $classname, string $full_path_to_file)
  * @throws Throwable
  * @since 4.9.27
  */
-function bootstrap_espresso()
+function bootstrap_espresso(): void
 {
     require_once __DIR__ . '/espresso_definitions.php';
 

@@ -1,5 +1,5 @@
 <?php
-
+use EventEspresso\core\domain\services\registration\RegStatus;
 /**
  *
  * Class EE_Checkout
@@ -286,10 +286,22 @@ class EE_Checkout
         $this->continue_reg = apply_filters('FHEE__EE_Checkout___construct___continue_reg', true);
 
         $this->admin_request = is_admin() && ! EED_Single_Page_Checkout::getRequest()->isAjax();
-        $this->reg_cache_where_params = array(
-            0          => array('REG_deleted' => false),
-            'order_by' => array('REG_count' => 'ASC'),
-        );
+        $this->reg_cache_where_params = $this->defaultRegCacheWhereParams();
+    }
+
+
+    /**
+     * @return array
+     */
+    private function defaultRegCacheWhereParams(): array
+    {
+        return [
+            0 => [
+                'REG_deleted' => false,
+                'STS_ID'      => ['NOT IN', [RegStatus::CANCELLED]],
+            ],
+            'order_by' => ['REG_count' => 'ASC'],
+        ];
     }
 
 
@@ -365,6 +377,8 @@ class EE_Checkout
         $this->admin_request = is_admin() && ! EED_Single_Page_Checkout::getRequest()->isFrontAjax();
         $this->continue_reg = true;
         $this->redirect = false;
+        // reinitialise to ensure stale session objects that pre-date the STS_ID filter always get correct defaults
+        $this->reg_cache_where_params = $this->defaultRegCacheWhereParams();
         // don't reset the cached redirect form if we're about to be asked to display it !!!
         $action = EED_Single_Page_Checkout::getRequest()->getRequestParam('action', 'display_spco_reg_step');
         if ($action !== 'redirect_form') {
@@ -624,9 +638,8 @@ class EE_Checkout
      */
     public function set_reg_step_initiated(EE_SPCO_Reg_Step $reg_step)
     {
-        // call set_reg_step_initiated ???
         if (
-// first time visiting SPCO ?
+            // first time visiting SPCO ?
             ! $this->revisit
             && (
                 // and displaying the reg step form for the first time ?
@@ -635,6 +648,12 @@ class EE_Checkout
                 || $reg_step instanceof EE_SPCO_Reg_Step_Finalize_Registration
             )
         ) {
+            // if the transaction has no reg steps yet (e.g., a waitlist registration moved via the attendee mover),
+            // initialize the array now so the step can be properly tracked
+            if (empty($this->transaction->reg_steps())) {
+                $this->transaction->set_reg_steps($this->initialize_txn_reg_steps_array());
+                $this->transaction->save();
+            }
             // set the start time for this reg step
             if (! $this->transaction->set_reg_step_initiated($reg_step->slug())) {
                 if (WP_DEBUG) {

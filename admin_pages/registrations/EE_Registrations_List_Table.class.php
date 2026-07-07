@@ -292,9 +292,20 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
         $month_filter = EEH_Form_Fields::generate_registration_months_dropdown($cur_date, $reg_status, $cur_category);
         $filters[] = "
         <span class='ee-list-table-filter ee-reg-filter__month'>
-            <label for='month_range' class='ee-reg-filter__label'>" . esc_html__('Month', 'event_espresso') . "</label>
+            <label for='month_range' class='ee-reg-filter__label'>" . esc_html__('Registration Month', 'event_espresso') . "</label>
             $month_filter
         </span>";
+
+        $filters[] = $this->regDateFilter(
+            'reg_start_date',
+            'reg-start',
+            esc_html__('Registration Start', 'event_espresso')
+        );
+        $filters[] = $this->regDateFilter(
+            'reg_end_date',
+            'reg-end',
+            esc_html__('Registration End', 'event_espresso')
+        );
 
         $cat_filter = EEH_Form_Fields::generate_event_category_dropdown($cur_category);
         $filters[] = "
@@ -325,6 +336,38 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
             $filters[] = EEH_Form_Fields::hidden_input($filter_key, $filter_value, "reg_$filter_key");
         }
         return $filters;
+    }
+
+
+    /**
+     * Generates a datepicker text input filter for querying registrations by registration date.
+     * The "mm/dd/yy" placeholder is a datepicker format token, not prose,
+     * so it is deliberately not translatable and matches the dateFormat
+     * set in espresso_registrations_admin.js and parsed by the
+     * registrations list table QueryBuilder.
+     *
+     * @param string $name       request param used for both the input name and id attributes
+     * @param string $css_suffix appended to "ee-reg-filter__" to form the wrapping span css class
+     * @param string $label      escaped label text
+     * @return string
+     * @since 5.0.57
+     */
+    private function regDateFilter(string $name, string $css_suffix, string $label): string
+    {
+        $value = esc_attr($this->request->getRequestParam($name, '', DataType::STRING));
+        return "
+        <span class='ee-list-table-filter ee-reg-filter__{$css_suffix}'>
+            <label for='{$name}' class='ee-reg-filter__label'>{$label}</label>
+            <input
+                type='text'
+                id='{$name}'
+                name='{$name}'
+                class='datepicker'
+                value='{$value}'
+                autocomplete='off'
+                placeholder='mm/dd/yy'
+            />
+        </span>";
     }
 
 

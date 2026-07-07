@@ -768,6 +768,24 @@ class EE_Payment extends EE_Base_Class implements EEI_Payment
 
 
     /**
+     * Returns TRUE if the payment's status has changed from the value it had
+     * when it was loaded from the database. Used to skip redundant transaction
+     * and notification updates when a duplicate IPN arrives and the gateway
+     * returns the payment without modifying its status.
+     *
+     * @return boolean
+     * @throws EE_Error
+     * @since $VID$
+     */
+    public function statusHasChanged(): bool
+    {
+        $original_props  = $this->_props_n_values_provided_in_constructor;
+        $original_status = $original_props['STS_ID'] ?? $this->get_model()->field_settings_for('STS_ID')->get_default_value();
+        return $original_status !== $this->status();
+    }
+
+
+    /**
      * Returns TRUE is this payment was set to approved during this request (or
      * is approved and was created during this request). False otherwise.
      *

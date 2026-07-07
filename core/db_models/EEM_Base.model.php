@@ -1726,7 +1726,7 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
          * @param array    $fields_n_values the updated fields and their new values
          * @param array    $query_params    @see https://github.com/eventespresso/event-espresso-core/tree/master/docs/G--Model-System/model-query-params.md
          */
-        do_action('AHEE__EEM_Base__update__begin', $this, $fields_n_values, $query_params);
+        do_action('AHEE__EEM_Base__update__begin', $this, (array) $fields_n_values, (array) $query_params);
         /**
          * Filters the fields about to be updated given the query parameters. You can provide the
          * $query_params to $this->get_all() to find exactly which records will be updated
@@ -1737,9 +1737,9 @@ abstract class EEM_Base extends EE_Base implements ResettableInterface
          */
         $fields_n_values = (array) apply_filters(
             'FHEE__EEM_Base__update__fields_n_values',
-            $fields_n_values,
+            (array) $fields_n_values,
             $this,
-            $query_params
+            (array) $query_params
         );
         // need to verify that, for any entry we want to update, there are entries in each secondary table.
         // to do that, for each table, verify that it's PK isn't null.

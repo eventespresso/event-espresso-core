@@ -20,12 +20,9 @@ class CommandHandlerManager implements CommandHandlerManagerInterface
     /**
      * @var CommandHandlerInterface[] $command_handlers
      */
-    protected $command_handlers;
+    protected array $command_handlers;
 
-    /**
-     * @type LoaderInterface $loader
-     */
-    private $loader;
+    private LoaderInterface $loader;
 
 
     /**
@@ -71,7 +68,7 @@ class CommandHandlerManager implements CommandHandlerManagerInterface
      * @return void
      * @throws InvalidCommandHandlerException
      */
-    public function addCommandHandler(CommandHandlerInterface $command_handler, $fqcn_for_command = '')
+    public function addCommandHandler(CommandHandlerInterface $command_handler, string $fqcn_for_command = '')
     {
         $command = ! empty($fqcn_for_command)
             ? $fqcn_for_command
@@ -84,14 +81,16 @@ class CommandHandlerManager implements CommandHandlerManagerInterface
 
 
     /**
-     * @param CommandInterface    $command
-     * @param CommandBusInterface $command_bus
-     * @return mixed
+     * @param CommandInterface $command
+     * @param CommandBusInterface|null $command_bus
+     * @return CommandHandlerInterface
      * @throws DomainException
      * @throws CommandHandlerNotFoundException
      */
-    public function getCommandHandler(CommandInterface $command, CommandBusInterface $command_bus = null)
-    {
+    public function getCommandHandler(
+        CommandInterface $command,
+        ?CommandBusInterface $command_bus = null
+    ): CommandHandlerInterface {
         $command_name = get_class($command);
         /*
          * Filters the Fully Qualified Class Name for the Command Handler
@@ -111,7 +110,7 @@ class CommandHandlerManager implements CommandHandlerManagerInterface
             str_replace('Command', 'CommandHandler', $command_name),
             $command
         );
-        $handler = null;
+        $handler         = null;
         // has a command handler already been set for this class ?
         // if not, can we find one via the FQCN ?
         if (isset($this->command_handlers[ $command_name ])) {

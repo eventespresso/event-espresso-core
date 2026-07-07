@@ -10,26 +10,21 @@
  * NOTE: if a method doesn't have any phpdoc commenting the details can be found in the comments in EE_Shortcodes
  * parent class.
  *
- * @package        Event Espresso
- * @subpackage     libraries/shortcodes/EE_Recipient_List_Shortcodes.lib.php
- * @author         Darren Ethier
- *
- * ------------------------------------------------------------------------
+ * @package     Event Espresso
+ * @subpackage  libraries/shortcodes/EE_Recipient_List_Shortcodes.lib.php
+ * @author      Darren Ethier
  */
 class EE_Recipient_List_Shortcodes extends EE_Shortcodes
 {
-    public function __construct()
-    {
-        parent::__construct();
-    }
-
-
     protected function _init_props()
     {
-        $this->label = esc_html__('Recipient List Shortcodes', 'event_espresso');
-        $this->description = esc_html__('All shortcodes specific to registrant recipients list type data.', 'event_espresso');
-        $this->_shortcodes = array(
-            '[RECIPIENT_TICKET_LIST]' => esc_html__(
+        $this->label       = esc_html__('Recipient List Shortcodes', 'event_espresso');
+        $this->description = esc_html__(
+            'All shortcodes specific to registrant recipients list type data.',
+            'event_espresso'
+        );
+        $this->_shortcodes = [
+            '[RECIPIENT_TICKET_LIST]'   => esc_html__(
                 'Will output a list of tickets for the recipient of the email. Note, if the recipient is the Event Author, then this is blank.',
                 'event_espresso'
             ),
@@ -37,10 +32,16 @@ class EE_Recipient_List_Shortcodes extends EE_Shortcodes
                 'Will output a list of datetimes that the person receiving this message has been registered for.',
                 'event_espresso'
             ),
-        );
+        ];
     }
 
 
+    /**
+     * @param $shortcode
+     * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
     protected function _parser($shortcode)
     {
         switch ($shortcode) {
@@ -58,34 +59,60 @@ class EE_Recipient_List_Shortcodes extends EE_Shortcodes
      * figure out what the incoming data is and then return the appropriate parsed value
      *
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    private function _get_recipient_ticket_list()
+    private function _get_recipient_ticket_list(): string
     {
         $this->_validate_list_requirements();
-
         if ($this->_data['data'] instanceof EE_Messages_Addressee) {
             return $this->_get_recipient_ticket_list_parsed($this->_data['data']);
-        } elseif ($this->_extra_data['data'] instanceof EE_Messages_Addressee) {
-            return $this->_get_recipient_ticket_list_parsed($this->_extra_data['data']);
-        } else {
-            return '';
         }
+        if ($this->_extra_data['data'] instanceof EE_Messages_Addressee) {
+            return $this->_get_recipient_ticket_list_parsed($this->_extra_data['data']);
+        }
+        return '';
     }
 
 
-    private function _get_recipient_ticket_list_parsed(EE_Messages_Addressee $data)
+    /**
+     * @param EE_Messages_Addressee $data
+     * @return array|EE_Registration[]
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since 5.0.57
+     */
+    private function getRegistrationsOnAttendee(EE_Messages_Addressee $data): array
     {
-        // first get registrations just for this attendee.
-        $att = $data->att_obj;
-        $registrations_on_attendee = $att instanceof EE_Attendee ? $data->attendees[ $att->ID() ]['reg_objs'] : array();
-        $registrations_on_attendee = empty($registrations_on_attendee) && $data->reg_obj instanceof EE_Registration
-            ? array($data->reg_obj) : $registrations_on_attendee;
-        $tkts = array();
+        $attendee = $data->att_obj;
+        // get registrations just for this attendee.
+        $registrations_on_attendee = $attendee instanceof EE_Attendee
+            ? $data->attendees[ $attendee->ID() ]['reg_objs']
+            : [];
+        return empty($registrations_on_attendee) && $data->reg_obj instanceof EE_Registration
+            ? [ $data->reg_obj ]
+            : $registrations_on_attendee;
+    }
+
+
+    /**
+     * @param EE_Messages_Addressee $data
+     * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    private function _get_recipient_ticket_list_parsed(EE_Messages_Addressee $data): string
+    {
+        $registrations_on_attendee = $this->getRegistrationsOnAttendee($data);
+
+        $template         = '';
+        $tickets          = [];
+        $valid_shortcodes = [];
 
         // if we're coming in from the main content then $this->_data['data'] is instanceof EE_Messages_Addressee.
         // which means we want to get tickets for all events this addressee is a part of.
         if ($this->_data['data'] instanceof EE_Messages_Addressee) {
-            $valid_shortcodes = array(
+            $valid_shortcodes = [
                 'ticket',
                 'event_list',
                 'attendee_list',
@@ -93,18 +120,15 @@ class EE_Recipient_List_Shortcodes extends EE_Shortcodes
                 'registration_details',
                 'attendee',
                 'recipient_details',
-            );
-            $template = $this->_data['template'];
+            ];
 
+            $template = $this->_data['template'];
             // tickets will be tickets for all registrations on this attendee.
             foreach ($registrations_on_attendee as $reg) {
                 if ($reg instanceof EE_Registration) {
-                    $ticket = isset($data->registrations[ $reg->ID() ]) && is_array(
-                        $data->registrations[ $reg->ID() ]
-                    ) && isset($data->registrations[ $reg->ID() ]['tkt_obj']) ? $data->registrations[ $reg->ID(
-                    ) ]['tkt_obj'] : null;
+                    $ticket = $data->registrations[ $reg->ID() ]['tkt_obj'] ?? null;
                     if ($ticket instanceof EE_Ticket) {
-                        $tkts[ $ticket->ID() ] = $ticket;
+                        $tickets[ $ticket->ID() ] = $ticket;
                     }
                 }
             }
@@ -113,27 +137,25 @@ class EE_Recipient_List_Shortcodes extends EE_Shortcodes
         // if coming from the context of the event list parser, then let's return just the tickets for that event.
         $event = $this->_data['data'];
         if ($event instanceof EE_Event) {
-            $valid_shortcodes = array('ticket', 'attendee_list', 'datetime_list', 'attendee', 'recipient_details');
-            $template = is_array($this->_data['template']) && isset($this->_data['template']['ticket_list'])
-                ? $this->_data['template']['ticket_list'] : $this->_extra_data['template']['ticket_list'];
+            $valid_shortcodes = ['ticket', 'attendee_list', 'datetime_list', 'attendee', 'recipient_details'];
+            $template         = is_array($this->_data['template']) && isset($this->_data['template']['ticket_list'])
+                ? $this->_data['template']['ticket_list']
+                : $this->_extra_data['template']['ticket_list'];
             // let's remove any existing [EVENT_LIST] shortcode from the ticket list template so that we don't get recursion.
             $template = str_replace('[EVENT_LIST]', '', $template);
             // data will be tickets for this event for this recipient.
             foreach ($registrations_on_attendee as $reg) {
-                if ($reg instanceof EE_Registration && $reg->event_ID() == $event->ID()) {
-                    $ticket = isset($data->registrations[ $reg->ID() ]) && is_array(
-                        $data->registrations[ $reg->ID() ]
-                    ) && isset($data->registrations[ $reg->ID() ]['tkt_obj']) ? $data->registrations[ $reg->ID(
-                    ) ]['tkt_obj'] : null;
+                if ($reg instanceof EE_Registration && $reg->event_ID() === $event->ID()) {
+                    $ticket = $data->registrations[ $reg->ID() ]['tkt_obj'] ?? null;
                     if ($ticket instanceof EE_Ticket) {
-                        $tkts[ $ticket->ID() ] = $ticket;
+                        $tickets[ $ticket->ID() ] = $ticket;
                     }
                 }
             }
         }
 
         $tkt_parsed = '';
-        foreach ($tkts as $ticket) {
+        foreach ($tickets as $ticket) {
             $tkt_parsed .= $this->_shortcode_helper->parse_ticket_list_template(
                 $template,
                 $ticket,
@@ -149,48 +171,48 @@ class EE_Recipient_List_Shortcodes extends EE_Shortcodes
      * figure out what the incoming data is and then return the appropriate parsed value
      *
      * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
      */
-    private function _get_recipient_datetime_list()
+    private function _get_recipient_datetime_list(): string
     {
         $this->_validate_list_requirements();
 
         if ($this->_data['data'] instanceof EE_Messages_Addressee) {
             return $this->_get_recipient_datetime_list_parsed($this->_data['data']);
-        } elseif ($this->_extra_data['data'] instanceof EE_Messages_Addressee) {
-            return $this->_get_recipient_datetime_list_parsed($this->_extra_data['data']);
-        } else {
-            return '';
         }
+        if ($this->_extra_data['data'] instanceof EE_Messages_Addressee) {
+            return $this->_get_recipient_datetime_list_parsed($this->_extra_data['data']);
+        }
+        return '';
     }
 
 
-    private function _get_recipient_datetime_list_parsed(EE_Messages_Addressee $data)
+    /**
+     * @param EE_Messages_Addressee $data
+     * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    private function _get_recipient_datetime_list_parsed(EE_Messages_Addressee $data): string
     {
-        // first get registrations just for this attendee.
-        $att = $data->att_obj;
-        $registrations_on_attendee = $att instanceof EE_Attendee ? $data->attendees[ $att->ID() ]['reg_objs'] : array();
-        $registrations_on_attendee = empty($registrations_on_attendee) && $data->reg_obj instanceof EE_Registration
-            ? array($data->reg_obj)
-            : $registrations_on_attendee;
-        $valid_shortcodes = array('datetime', 'attendee', 'recipient_details');
-        $template = '';
-        $dtts = array();
+        $registrations_on_attendee = $this->getRegistrationsOnAttendee($data);
+
+        $template         = '';
+        $datetimes        = [];
+        $valid_shortcodes = ['datetime', 'attendee', 'recipient_details'];
 
         // setup valid shortcodes depending on what the status of the $this->_data property is
         if ($this->_data['data'] instanceof EE_Messages_Addressee) {
             $template = $this->_data['template'];
 
-            // dtts will be datetimes for all registrations on this attendee
+            // $datetimes will be datetimes for all registrations on this attendee
             foreach ($registrations_on_attendee as $reg) {
                 if ($reg instanceof EE_Registration) {
-                    $dtt_objs = isset($data->registrations[ $reg->ID() ]) && is_array(
-                        $data->registrations[ $reg->ID() ]
-                    ) && isset($data->registrations[ $reg->ID() ]['dtt_objs']) ? $data->registrations[ $reg->ID(
-                    ) ]['dtt_objs'] : array();
-                    $dtt_objs = (array) $dtt_objs;
-                    foreach ($dtt_objs as $dtt_obj) {
+                    $dtt_objs = $data->registrations[ $reg->ID() ]['dtt_objs'] ?? [];
+                    foreach ((array) $dtt_objs as $dtt_obj) {
                         if ($dtt_obj instanceof EE_Datetime) {
-                            $dtts[ $dtt_obj->ID() ] = $dtt_obj;
+                            $datetimes[ $dtt_obj->ID() ] = $dtt_obj;
                         }
                     }
                 }
@@ -201,24 +223,18 @@ class EE_Recipient_List_Shortcodes extends EE_Shortcodes
         $event = $this->_data['data'];
         if ($event instanceof EE_Event) {
             $template = is_array($this->_data['template']) && isset($this->_data['template']['datetime_list'])
-                ? $this->_data['template']['datetime_list'] : $this->_extra_data['template']['datetime_list'];
+                ? $this->_data['template']['datetime_list']
+                : $this->_extra_data['template']['datetime_list'];
 
             // data will be datetimes for this event for this recipient
             foreach ($registrations_on_attendee as $reg) {
-                if ($reg instanceof EE_Registration && $reg->event_ID() == $event->ID()) {
-                    $ticket = isset($data->registrations[ $reg->ID() ]) && is_array(
-                        $data->registrations[ $reg->ID() ]
-                    ) && isset($data->registrations[ $reg->ID() ]['tkt_obj']) ? $data->registrations[ $reg->ID(
-                    ) ]['tkt_obj'] : null;
+                if ($reg instanceof EE_Registration && $reg->event_ID() === $event->ID()) {
+                    $ticket = $data->registrations[ $reg->ID() ]['tkt_obj'] ?? null;
                     if ($ticket instanceof EE_Ticket) {
-                        $dtt_objs = isset($data->tickets[ $ticket->ID() ]) && is_array(
-                            $data->tickets[ $ticket->ID() ]
-                        ) && isset($data->tickets[ $ticket->ID() ]['dtt_objs']) ? $data->tickets[ $ticket->ID(
-                        ) ]['dtt_objs'] : array();
-                        $dtt_objs = (array) $dtt_objs;
-                        foreach ($dtt_objs as $dtt_obj) {
+                        $dtt_objs = $data->tickets[ $ticket->ID() ]['dtt_objs'] ?? [];
+                        foreach ((array) $dtt_objs as $dtt_obj) {
                             if ($dtt_obj instanceof EE_Datetime) {
-                                $dtts[ $dtt_obj->ID() ] = $dtt_obj;
+                                $datetimes[ $dtt_obj->ID() ] = $dtt_obj;
                             }
                         }
                     }
@@ -227,7 +243,7 @@ class EE_Recipient_List_Shortcodes extends EE_Shortcodes
         }
 
         $dtt_parsed = '';
-        foreach ($dtts as $datetime) {
+        foreach ($datetimes as $datetime) {
             $dtt_parsed .= $this->_shortcode_helper->parse_datetime_list_template(
                 $template,
                 $datetime,

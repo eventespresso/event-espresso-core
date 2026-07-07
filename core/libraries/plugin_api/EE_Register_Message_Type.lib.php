@@ -169,9 +169,7 @@ class EE_Register_Message_Type implements EEI_Plugin_API
             );
             add_filter(
                 'FHEE__EE_messages__get_installed__messagetype_files',
-                ['EE_Register_Message_Type', 'register_messagetype_files'],
-                10,
-                1
+                ['EE_Register_Message_Type', 'register_messagetype_files']
             );
             add_filter(
                 'FHEE__EE_messenger__get_default_message_types__default_types',

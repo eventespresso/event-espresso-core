@@ -17,18 +17,20 @@ interface CommandHandlerManagerInterface
      * attempts to verify that the incoming Command matches the Handler
      *
      * @param CommandHandlerInterface $command_handler
-     * @param string $fqcn_for_command Fully Qualified ClassName for Command
+     * @param string                  $fqcn_for_command Fully Qualified ClassName for Command
      * @return void
      * @throws InvalidCommandHandlerException
      */
-    public function addCommandHandler(CommandHandlerInterface $command_handler, $fqcn_for_command = '');
-
+    public function addCommandHandler(CommandHandlerInterface $command_handler, string $fqcn_for_command = '');
 
 
     /**
-     * @param CommandInterface    $command
-     * @param CommandBusInterface $command_bus
-     * @return mixed
+     * @param CommandInterface $command
+     * @param CommandBusInterface|null $command_bus
+     * @return CommandHandlerInterface
      */
-    public function getCommandHandler(CommandInterface $command, CommandBusInterface $command_bus = null);
+    public function getCommandHandler(
+        CommandInterface $command,
+        ?CommandBusInterface $command_bus = null
+    ): CommandHandlerInterface;
 }

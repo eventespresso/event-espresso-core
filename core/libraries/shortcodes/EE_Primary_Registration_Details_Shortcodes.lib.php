@@ -69,7 +69,7 @@ class EE_Primary_Registration_Details_Shortcodes extends EE_Shortcodes
                 'event_espresso'
             ),
             '[PRIMARY_REGISTRANT_REGISTRATION_DATE]'      => esc_html__(
-                'The date the registration occured for the primary registration.',
+                'The date the registration occurred for the primary registration.',
                 'event_espresso'
             ),
             '[PRIMARY_REGISTRANT_FRONTEND_EDIT_REG_LINK]' => esc_html__(

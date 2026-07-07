@@ -172,26 +172,51 @@
     max-width: 100%;
 }
 
-.espresso-admin .tablenav .ee-event-filter,
 .espresso-admin .tablenav .ee-event-filter > span {
     align-items: center;
     display: flex;
-    flex-flow: row wrap;
+    flex-flow: row nowrap;
     justify-content: flex-start;
-    margin-block: var(--ee-margin-small);
+    margin-inline-end: var(--ee-margin-small);
     max-width: 100%;
 }
-.espresso-admin .tablenav .ee-event-filter {
+
+.espresso-admin .ee-list-table-filters .ee-event-filter {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    grid-template-rows: auto auto;
     margin-block: 0;
+    gap: .5rem;
 }
 
-.espresso-admin .tablenav .actions > span.ee-list-table-filter {
+.espresso-admin .ee-list-table-filters .ee-event-filter .ee-event-selector {
+    grid-column: 1 / -1;
+}
+
+.espresso-admin .ee-list-table-filters .ee-event-filter .ee-event-selector select {
+    width: 100%;
+}
+
+.espresso-admin .ee-hide-upcoming-check,
+.espresso-admin .ee-hide-expired-check {
     align-items: center;
     display: inline-flex;
     flex-flow: row nowrap;
+}
+
+.espresso-admin .ee-hide-upcoming-check label:not(.ee-input-label):not(.screen-reader-text),
+.espresso-admin .ee-hide-expired-check label:not(.ee-input-label):not(.screen-reader-text) {
+    font-size: var(--ee-font-size-tiny);
+}
+
+.espresso-admin .ee-list-table-filters #month_range {
+    min-width: 100%;
+}
+
+.espresso-admin .tablenav .actions > span.ee-list-table-filter {
+    flex-flow: row nowrap;
     flex-grow: .125;
     justify-content: flex-start;
-    margin-block: var(--ee-margin-small);
     max-width: 100%;
     width: fit-content;
 }
@@ -202,15 +227,11 @@
 
 .espresso-admin .tablenav .ee-reg-filter__label {
     margin: 0 !important;
+    padding-left: var(--ee-padding-smaller);
 }
 
 .espresso-admin .tablenav .ee-event-filter .ee-event-filter-main-label {
     width: 100%;
-}
-
-.espresso-admin .tablenav .ee-event-filter > span {
-    flex-wrap: nowrap;
-    margin-inline-end: var(--ee-margin-small);
 }
 
 .espresso-admin .tablenav .ee-event-filter > span:last-child {
@@ -227,12 +248,6 @@
 .espresso-admin .tablenav .ee-event-filter > span .ee-help-btn {
     margin-inline-start: 0;
     margin-inline-end: var(--ee-margin-smaller);
-}
-
-.espresso-admin .tablenav .ee-event-filter > span select {
-    margin-inline: var(--ee-margin-pico);
-    max-width: clamp(24rem, 100%, 20rem);
-    width: 100%;
 }
 
 .espresso-admin .tablenav .ee-event-filter > span input[type="checkbox"] {

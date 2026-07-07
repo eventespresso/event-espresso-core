@@ -12,11 +12,21 @@ namespace EventEspresso\core\domain\services\licensing;
  */
 class LicenseStatus
 {
-    public const ACTIVE  = 'active';
+    public const ACTIVE        = 'active';
 
-    public const DECAF   = 'decaf';
+    public const DECAF         = 'decaf';
 
-    public const EXPIRED = 'expired';
+    public const DISABLED      = 'disabled';
 
-    public const VALID   = 'valid';
+    public const EXPIRED       = 'expired';
+
+    public const INVALID       = 'invalid';
+
+    public const NONE          = 'none';
+
+    public const REVOKED       = 'revoked';
+
+    public const SITE_INACTIVE = 'site_inactive';
+
+    public const VALID         = 'valid';
 }

@@ -146,13 +146,18 @@ final class EE_Front_Controller
     {
         global $wpdb;
         if (strpos($clauses['join'], $wpdb->posts) !== false) {
+            // WooCommerce aliases wp_posts as 'wp_posts_to_exclude_reviews' in comments_clauses
+            // so we match their alias to avoid a column reference error
+            $posts_table = strpos($clauses['join'], 'wp_posts_to_exclude_reviews') !== false
+                ? 'wp_posts_to_exclude_reviews'
+                : $wpdb->posts;
             /** @var EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions $custom_post_types */
             $custom_post_types = LoaderFactory::getLoader()->getShared(
                 'EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions'
             );
             $cpts              = $custom_post_types->getPrivateCustomPostTypes();
             foreach ($cpts as $cpt => $details) {
-                $clauses['where'] .= $wpdb->prepare(" AND $wpdb->posts.post_type != %s", $cpt);
+                $clauses['where'] .= $wpdb->prepare(" AND {$posts_table}.post_type != %s", $cpt);
             }
         }
         return $clauses;

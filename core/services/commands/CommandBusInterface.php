@@ -9,14 +9,11 @@ namespace EventEspresso\core\services\commands;
  */
 interface CommandBusInterface
 {
-    /**
-     * @return CommandHandlerManagerInterface
-     */
-    public function getCommandHandlerManager();
+    public function getCommandHandlerManager(): CommandHandlerManagerInterface;
 
     /**
      * @param CommandInterface $command
      * @return mixed
      */
-    public function execute($command);
+    public function execute(CommandInterface $command);
 }

@@ -6,6 +6,7 @@ use EE_Dependency_Map;
 use EE_Error;
 use EventEspresso\core\domain\services\database\DbStatus;
 use EventEspresso\core\domain\services\service_changes\PaymentMethodDeprecations2025;
+use EventEspresso\core\domain\services\service_changes\Version51ReleaseNotice;
 use EventEspresso\core\services\loaders\LoaderInterface;
 use EventEspresso\core\services\request\RequestInterface;
 use ReflectionException;
@@ -75,6 +76,16 @@ class ServiceChangesManager
             /** @var PaymentMethodDeprecations2025 $pm_deps */
             $pm_deps = $this->loader->getShared(PaymentMethodDeprecations2025::class);
             $pm_deps->setHooks();
+        }
+        if (
+            apply_filters(
+                'FHEE__EventEspresso_core_services_service_changes_ServiceChangesManager__loadServiceChangeNotifications__loadVersion51ReleaseNotice',
+                true
+            )
+        ) {
+            /** @var Version51ReleaseNotice $v51_notice */
+            $v51_notice = $this->loader->getShared(Version51ReleaseNotice::class);
+            $v51_notice->setHooks();
         }
     }
 }

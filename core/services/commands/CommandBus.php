@@ -2,7 +2,6 @@
 
 namespace EventEspresso\core\services\commands;
 
-use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\services\commands\middleware\CommandBusMiddlewareInterface;
 use EventEspresso\core\services\commands\middleware\InvalidCommandBusMiddlewareException;
 
@@ -10,7 +9,7 @@ use EventEspresso\core\services\commands\middleware\InvalidCommandBusMiddlewareE
  * Class CommandBus
  * Routes Command objects to their respective CommandHandlers,
  * which can then utilize services within the core domain to complete the requested command.
- * Normally the CommandBus would be injected into the constructors of classes using it's interface
+ * Normally the CommandBus would be injected into the constructors of classes using its interface
  *      public function __construct( CommandBusInterface $command_bus )
  * and then used something like this:
  *      $result = $this->command_bus->execute(
@@ -33,15 +32,12 @@ use EventEspresso\core\services\commands\middleware\InvalidCommandBusMiddlewareE
  */
 class CommandBus implements CommandBusInterface
 {
-    /**
-     * @type CommandHandlerManagerInterface $command_handler_manager
-     */
-    private $command_handler_manager;
+    private CommandHandlerManagerInterface $command_handler_manager;
 
     /**
      * @type CommandBusMiddlewareInterface[] $command_bus_middleware
      */
-    private $command_bus_middleware;
+    private array $command_bus_middleware;
 
 
     /**
@@ -55,16 +51,11 @@ class CommandBus implements CommandBusInterface
         array $command_bus_middleware = array()
     ) {
         $this->command_handler_manager = $command_handler_manager;
-        $this->command_bus_middleware = is_array($command_bus_middleware)
-            ? $command_bus_middleware
-            : array($command_bus_middleware);
+        $this->command_bus_middleware = $command_bus_middleware;
     }
 
 
-    /**
-     * @return CommandHandlerManagerInterface
-     */
-    public function getCommandHandlerManager()
+    public function getCommandHandlerManager(): CommandHandlerManagerInterface
     {
         return $this->command_handler_manager;
     }
@@ -73,14 +64,10 @@ class CommandBus implements CommandBusInterface
     /**
      * @param CommandInterface $command
      * @return mixed
-     * @throws InvalidDataTypeException
      * @throws InvalidCommandBusMiddlewareException
      */
-    public function execute($command)
+    public function execute(CommandInterface $command)
     {
-        if (! $command instanceof CommandInterface) {
-            throw new InvalidDataTypeException(__METHOD__ . '( $command )', $command, 'CommandInterface');
-        }
         // we're going to add the Command Handler as a callable
         // that will get run at the end of our middleware stack
         // can't pass $this to a Closure, so use a named variable

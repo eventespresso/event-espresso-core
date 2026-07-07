@@ -302,13 +302,19 @@ class PluginLicense
 
     public function addCustomApiParams($api_params, $api_data)
     {
-        if ($api_data['item_name'] === $this->itemName()) {
-            $api_params['event_espresso_core_version'] = EVENT_ESPRESSO_VERSION;
-            $core_license                              =
-                $this->license_key_data->getLicenseDataForPlugin(Domain::LICENSE_PLUGIN_SLUG);
-            if (! empty($core_license->license_key)) {
-                $api_params['event_espresso_core_license'] = $core_license->license_key;
-            }
+        $api_item_name = $api_data['item_name'] ?? '';
+        $api_item_id   = (string) ($api_data['item_id'] ?? '');
+        // require BOTH the item name AND item ID to match this plugin before adding our params,
+        // so a third-party plugin using the same EDD updater filter can't collide on item ID alone
+        if ($api_item_name !== $this->itemName() || $api_item_id !== $this->itemID()) {
+            return $api_params;
+        }
+
+        $api_params['event_espresso_core_version'] = EVENT_ESPRESSO_VERSION;
+        $this->getLicenseKeyData();
+        $core_license = $this->license_key_data->getLicenseDataForPlugin(Domain::LICENSE_PLUGIN_SLUG);
+        if (! empty($core_license->license_key)) {
+            $api_params['event_espresso_core_license'] = $core_license->license_key;
         }
         return $api_params;
     }

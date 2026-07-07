@@ -587,10 +587,9 @@ class EED_Messages extends EED_Module
         // loop through registrations and trigger messages once per status.
         foreach ($all_registrations as $reg) {
             // already triggered?
-            if (in_array($reg->status_ID(), $statuses_sent)) {
+            if (in_array($reg->status_ID(), $statuses_sent) || $reg->wasMoved()) {
                 continue;
             }
-
             $message_type    = EEH_MSG_Template::convert_reg_status_to_message_type($reg->status_ID());
             $mtgs            = array_merge(
                 $mtgs,

@@ -52,11 +52,13 @@ class RegistrationsCsvReportParams
         if ($DTT_ID) {
             $route_details['extra_request']['DTT_ID'] = $DTT_ID;
         }
-        // detect views (status) or searches (s) and set "use_filters" to true
+        // detect filter params like views (status), searches (s), IDs, or reg dates and set "use_filters" to true
         if (
             isset($request_params['_reg_status'])
             || isset($request_params['datetime_id'])
             || isset($request_params['event_id'])
+            || ! empty($request_params['reg_end_date'])
+            || ! empty($request_params['reg_start_date'])
             || isset($request_params['s'])
             || isset($request_params['status'])
             || isset($request_params['ticket_id'])

@@ -101,7 +101,7 @@ try {
                                   class="ee-input-width--reg"
                                   rows="2"
                                   cols="40"
-                        ><?php echo esc_textarea($question_group->get_f('QSG_desc')); ?></textarea>
+                        ><?php echo esc_textarea($question_group->get('QSG_desc')); ?></textarea>
                     </td>
                 </tr>
 

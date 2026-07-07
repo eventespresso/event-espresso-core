@@ -1,37 +1,20 @@
 <?php
 
-// define versions
-define('EVENT_ESPRESSO_VERSION', espresso_version());
-const EE_MIN_WP_VER_REQUIRED     = '5.9';
-const EE_MIN_WP_VER_RECOMMENDED  = '6.8';
-const EE_MIN_PHP_VER_RECOMMENDED = '7.4';
-const EE_SUPPORT_EMAIL           = 'support@eventespresso.com';
-
-// used to be DIRECTORY_SEPARATOR, but that caused issues on windows
-if (! defined('DS')) {
-    define('DS', '/');
-}
-if (! defined('PS')) {
-    define('PS', PATH_SEPARATOR);
-}
-if (! defined('SP')) {
-    define('SP', ' ');
-}
-if (! defined('EENL')) {
-    define('EENL', "\n");
-}
-
 // define the plugin directory and URL
 define('EE_PLUGIN_BASENAME', plugin_basename(EVENT_ESPRESSO_MAIN_FILE));
 define('EE_PLUGIN_DIR_PATH', plugin_dir_path(EVENT_ESPRESSO_MAIN_FILE));
 define('EE_PLUGIN_DIR_URL', plugin_dir_url(EVENT_ESPRESSO_MAIN_FILE));
+
+const EE_MIN_WP_VER_REQUIRED              = '5.9.0';
+const UPCOMING_REQUIRED_PHP_VERSION       = '8.2.0';
+const CHECK_UPCOMING_REQUIRED_PHP_VERSION = true;
+const EE_SUPPORT_EMAIL                    = 'support@eventespresso.com';
 
 // main root folder paths
 const EE_ADMIN_PAGES     = EE_PLUGIN_DIR_PATH . 'admin_pages/';
 const EE_CORE            = EE_PLUGIN_DIR_PATH . 'core/';
 const EE_MODULES         = EE_PLUGIN_DIR_PATH . 'modules/';
 const EE_PUBLIC          = EE_PLUGIN_DIR_PATH . 'public/';
-const EE_SHORTCODES      = EE_PLUGIN_DIR_PATH . 'shortcodes/';
 const EE_WIDGETS         = EE_PLUGIN_DIR_PATH . 'widgets/';
 const EE_PAYMENT_METHODS = EE_PLUGIN_DIR_PATH . 'payment_methods/';
 const EE_CAFF_PATH       = EE_PLUGIN_DIR_PATH . 'caffeinated/';
@@ -48,9 +31,7 @@ const EE_TEMPLATES     = EE_CORE . 'templates/';
 const EE_THIRD_PARTY   = EE_CORE . 'third_party_libs/';
 const EE_GLOBAL_ASSETS = EE_TEMPLATES . 'global_assets/';
 const EE_FORM_SECTIONS = EE_LIBRARIES . 'form_sections/';
-// gateways
-const EE_GATEWAYS     = EE_MODULES . 'gateways/';
-const EE_GATEWAYS_URL = EE_PLUGIN_DIR_URL . 'modules/gateways/';
+
 // asset URL paths
 const EE_TEMPLATES_URL     = EE_PLUGIN_DIR_URL . 'core/templates/';
 const EE_GLOBAL_ASSETS_URL = EE_TEMPLATES_URL . 'global_assets/';
@@ -58,6 +39,7 @@ const EE_IMAGES_URL        = EE_GLOBAL_ASSETS_URL . 'images/';
 const EE_THIRD_PARTY_URL   = EE_PLUGIN_DIR_URL . 'core/third_party_libs/';
 const EE_HELPERS_ASSETS    = EE_PLUGIN_DIR_URL . 'core/helpers/assets/';
 const EE_LIBRARIES_URL     = EE_PLUGIN_DIR_URL . 'core/libraries/';
+
 // define upload paths
 $uploads = wp_upload_dir();
 // define the uploads directory and URL
@@ -66,13 +48,16 @@ define('EVENT_ESPRESSO_UPLOAD_URL', $uploads['baseurl'] . '/espresso/');
 // define the templates directory and URL
 define('EVENT_ESPRESSO_TEMPLATE_DIR', $uploads['basedir'] . '/espresso/templates/');
 define('EVENT_ESPRESSO_TEMPLATE_URL', $uploads['baseurl'] . '/espresso/templates/');
+
 // languages folder/path
-const EE_LANGUAGES_SAFE_LOC = '../' . 'uploads/' . 'espresso/languages/';
+const EE_LANGUAGES_SAFE_LOC = '../uploads/espresso/languages/';
 const EE_LANGUAGES_SAFE_DIR = EVENT_ESPRESSO_UPLOAD_DIR . 'languages/';
+
 // check for DOMPDF fonts in uploads
 if (file_exists(EVENT_ESPRESSO_UPLOAD_DIR . 'fonts/')) {
     define('DOMPDF_FONT_DIR', EVENT_ESPRESSO_UPLOAD_DIR . 'fonts/');
 }
+
 // just a handy constant occasionally needed for finding values representing infinity in the DB
 // you're better to use this than its straight value (currently -1) in case you ever
 // want to change its default value! or find when -1 means infinity
@@ -85,3 +70,34 @@ if (! defined('EE_DEBUG')) {
 if (! defined('MONTH_IN_SECONDS')) {
     define('MONTH_IN_SECONDS', DAY_IN_SECONDS * 30);
 }
+
+// used to be DIRECTORY_SEPARATOR, but that caused issues on Windows
+if (! defined('DS')) {
+    define('DS', '/');
+}
+if (! defined('PS')) {
+    define('PS', PATH_SEPARATOR);
+}
+if (! defined('SP')) {
+    define('SP', ' ');
+}
+if (! defined('EENL')) {
+    define('EENL', "\n");
+}
+
+
+/**
+ * @deprecated 5.0.57   use EE_MIN_PHP_VERSION_REQUIRED instead
+ */
+const EE_MIN_PHP_VER_REQUIRED = '7.4.0';
+
+
+/**
+ * @deprecated 5.0.57   constant is no longer used and there is no replacement
+ */
+const EE_MIN_WP_VER_RECOMMENDED = '6.8';
+
+/**
+ * @deprecated 5.0.57   constant is no longer used and there is no replacement
+ */
+const EE_MIN_PHP_VER_RECOMMENDED = '8.2.0';

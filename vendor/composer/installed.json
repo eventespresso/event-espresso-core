@@ -124,17 +124,17 @@
         },
         {
             "name": "endyjasmi/cuid",
-            "version": "2.1.0",
-            "version_normalized": "2.1.0.0",
+            "version": "2.1.1",
+            "version_normalized": "2.1.1.0",
             "source": {
                 "type": "git",
-                "url": "https://github.com/endyjasmi/cuid.git",
-                "reference": "a425a1071cb07bafc9355e85dd288b5b5d1245f5"
+                "url": "https://github.com/eventespresso/cuid.git",
+                "reference": "3ab7643991696005081f105bad6541829aaa725b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/endyjasmi/cuid/zipball/a425a1071cb07bafc9355e85dd288b5b5d1245f5",
-                "reference": "a425a1071cb07bafc9355e85dd288b5b5d1245f5",
+                "url": "https://api.github.com/repos/eventespresso/cuid/zipball/3ab7643991696005081f105bad6541829aaa725b",
+                "reference": "3ab7643991696005081f105bad6541829aaa725b",
                 "shasum": ""
             },
             "require": {
@@ -145,7 +145,7 @@
                 "satooshi/php-coveralls": "0.*",
                 "squizlabs/php_codesniffer": "1.*"
             },
-            "time": "2020-01-02T02:46:25+00:00",
+            "time": "2026-03-25T17:52:48+00:00",
             "type": "library",
             "installation-source": "dist",
             "autoload": {
@@ -153,7 +153,6 @@
                     "EndyJasmi\\": "src/"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
             "license": [
                 "MIT"
             ],
@@ -166,10 +165,10 @@
             ],
             "description": "Cuid php port",
             "keywords": [
-                "UID",
                 "cuid",
                 "guid",
                 "id",
+                "uid",
                 "uuid"
             ],
             "support": {
@@ -177,7 +176,6 @@
                 "issues": "https://github.com/endyjasmi/cuid/issues",
                 "source": "https://github.com/endyjasmi/cuid"
             },
-            "abandoned": true,
             "install-path": "../endyjasmi/cuid"
         },
         {
@@ -879,6 +877,6 @@
             "install-path": "../wp-graphql/wp-graphql"
         }
     ],
-    "dev": true,
+    "dev": false,
     "dev-package-names": []
 }

@@ -11,9 +11,25 @@ jQuery(document).ready(function($) {
 		$( '.datepicker' ).datepicker({
 			changeMonth: true,
 			changeYear: true,
-			yearRange: "-80:+20"
+			yearRange: "-80:+20",
+			dateFormat: 'mm/dd/yy'
 		});
 	}
+
+	// the registration start/end date filters and the month filter are alternative ways
+	// to specify a registration date window, so clear one when the other is used
+	const $reg_date_range_inputs = $( '#reg_start_date, #reg_end_date' );
+	const $month_range_select = $( '#month_range' );
+	$reg_date_range_inputs.on( 'change', function() {
+		if ( $( this ).val() ) {
+			$month_range_select.val( '' );
+		}
+	});
+	$month_range_select.on( 'change', function() {
+		if ( $( this ).val() ) {
+			$reg_date_range_inputs.val( '' );
+		}
+	});
 
 
 	$('#entries-per-page-slct').change( function() {

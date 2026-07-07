@@ -243,6 +243,12 @@ class IpnHandler
     ): ?EE_Payment {
         if ($payment instanceof EE_Payment) {
             $payment->save();
+            // If the payment status has not changed from what was saved in the DB
+            // (e.g. a duplicate webhook for an already-approved payment), skip the
+            // transaction/notification update to prevent duplicate messages.
+            if (! $payment->statusHasChanged()) {
+                return $payment;
+            }
             $this->payment_processor->updateTransactionBasedOnPayment(
                 $transaction,
                 $payment,

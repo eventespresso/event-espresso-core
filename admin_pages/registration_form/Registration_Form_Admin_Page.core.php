@@ -415,6 +415,10 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
                     $column_values[ $fieldName ] = $QSG_identifier;
                     break;
 
+                case 'QSG_desc':
+                    $column_values[ $fieldName ] = $this->request->getRequestParam('QSG_desc', '', DataType::HTML);
+                    break;
+
                 case 'QST_display_text':
                         $column_values[ $fieldName ] = $this->request->getRequestParam('QST_display_text', '', DataType::HTML);
                     break;

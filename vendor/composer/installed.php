@@ -1,13 +1,13 @@
 <?php return array(
     'root' => array(
         'name' => 'eventespresso/event-espresso-core',
-        'pretty_version' => '1.0.0+no-version-set',
-        'version' => '1.0.0.0',
-        'reference' => null,
+        'pretty_version' => 'dev-MOD/CORE/forking-cuid-lib',
+        'version' => 'dev-MOD/CORE/forking-cuid-lib',
+        'reference' => 'a45b0dc899aa4404aa4dc4bfa76fded3a3db80ca',
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'dev' => true,
+        'dev' => false,
     ),
     'versions' => array(
         'appsero/client' => array(
@@ -29,18 +29,18 @@
             'dev_requirement' => false,
         ),
         'endyjasmi/cuid' => array(
-            'pretty_version' => '2.1.0',
-            'version' => '2.1.0.0',
-            'reference' => 'a425a1071cb07bafc9355e85dd288b5b5d1245f5',
+            'pretty_version' => '2.1.1',
+            'version' => '2.1.1.0',
+            'reference' => '3ab7643991696005081f105bad6541829aaa725b',
             'type' => 'library',
             'install_path' => __DIR__ . '/../endyjasmi/cuid',
             'aliases' => array(),
             'dev_requirement' => false,
         ),
         'eventespresso/event-espresso-core' => array(
-            'pretty_version' => '1.0.0+no-version-set',
-            'version' => '1.0.0.0',
-            'reference' => null,
+            'pretty_version' => 'dev-MOD/CORE/forking-cuid-lib',
+            'version' => 'dev-MOD/CORE/forking-cuid-lib',
+            'reference' => 'a45b0dc899aa4404aa4dc4bfa76fded3a3db80ca',
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

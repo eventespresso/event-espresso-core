@@ -525,6 +525,8 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
         foreach ($registrations as $REG_ID => $registration) {
             if (
                 $registration->status_ID() === RegStatus::APPROVED
+                || $registration->status_ID() === RegStatus::CANCELLED
+                || $registration->status_ID() === RegStatus::DECLINED
                 || apply_filters(
                     'FHEE__EE_SPCO_Reg_Step_Payment_Options__find_registrations_that_lost_their_space__allow_reg_payment',
                     false,
@@ -1853,7 +1855,7 @@ class EE_SPCO_Reg_Step_Payment_Options extends EE_SPCO_Reg_Step
         if (! $this->checkout->revisit) {
             return true;
         }
-        $registrations = $this->checkout->transaction->registrations();
+        $registrations = $this->checkout->transaction->registrations($this->checkout->reg_cache_where_params);
         if (empty($registrations)) {
             return false;
         }

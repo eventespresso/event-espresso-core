@@ -5,7 +5,7 @@ Donate link: [Support Our Work](https://eventespresso.com/pricing/?ee_ver=ee4&ut
 Tags: Events, Tickets, Event Registration, Ticket Sales, Calendar
 Requires at least: 4.5
 Requires PHP: 7.4
-Tested up to: 6.9
+Tested up to: 7.0
 Stable tag: 5.0.57
 License: GPL2
 
@@ -83,6 +83,56 @@ Explore more features and view screenshots [here](https://eventespresso.com/feat
 == Changelog ==
 
 ## Releases
+
+### [5.0.57]
+
+#### Added
+ - Copy all event meta when duplicating an event
+ - Allow waitlist registrations to be moved
+ - Add a new Entitlement Checker service
+ - Add an admin notice warning users to update core and add-ons together for 5.1
+ - Add registration date filters to the Registrations list table
+
+#### Fixed
+ - Fix Decaf activation plugin license error
+ - Stop Decaf from sending license checks
+ - Fix admin uploaded media URL inputs
+ - Fix multiple notifications from Mollie IPN
+ - Fix bad payment data caused by a missing order in the gateway response
+ - Fix conditional question output in messages
+ - Fix moved registrations using the original registration in messages
+ - Always use load_textdomain() to load translation files
+ - Fix registrations switching to sold out on the Payment Options step
+ - Don't include moved registrations when generating messages after payment
+ - Fix untranslated EDTR strings on WordPress 6.5+
+ - Fix saving and redirecting the edit registration questions form
+ - Fix license API parameters to match by item ID and lazy-load license data
+
+#### Changed
+ - Allow HTML within question group descriptions
+ - Use a forked CUID package
+ - Avoid conflict with WooCommerce's hardcoded wp_posts table alias
+ - Remove the update flag when refreshing plugin data
+ - Reinstate Auto Event Notifications plugin deployment
+ - Bump the minimum required PHP version to 8.2
+ - Fix unit tests on the DEV branch
+
+
+
+### [5.0.56]
+
+#### Fixed
+ - Make sure messages trigger for SPCO revisits
+ - Fix extension and services links in core to avoid redirects
+
+#### Changed
+ - Include abandoned transactions in the CSV report
+ - Stop requiring all tickets in the admin Ticket Selector
+ - Only load PluginLicense when running the Caffeinated version
+ - Set the default query conditions for ticket datetimes in messages to this_model_only
+ - Reduce the number of EDD server requests
+
+
 
 ### [5.0.55]
 

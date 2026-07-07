@@ -296,16 +296,19 @@ class EEM_Registration extends EEM_Soft_Delete_Base
      */
     public static function closed_reg_statuses(): array
     {
-        return (array) apply_filters(
-            'FHEE__EEM_Registration__closed_reg_statuses',
-            [
-                RegStatus::CANCELLED,
-                RegStatus::DECLINED,
-                RegStatus::WAIT_LIST,
-            ]
-        );
+        static $closed_reg_statuses = null;
+        if ($closed_reg_statuses === null) {
+            $closed_reg_statuses = (array) apply_filters(
+                'FHEE__EEM_Registration__closed_reg_statuses',
+                [
+                    RegStatus::CANCELLED,
+                    RegStatus::DECLINED,
+                    RegStatus::WAIT_LIST,
+                ]
+            );
+        }
+        return $closed_reg_statuses;
     }
-
 
     /**
      * get list of registration statuses

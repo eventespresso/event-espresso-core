@@ -18,6 +18,7 @@ use EventEspresso\core\services\payment_methods\gateways\GatewayDataFormatter;
 use EventEspresso\core\services\request\sanitizers\RequestSanitizer;
 use EventEspresso\PaymentMethods\PayPalCommerce\api\PayPalApi;
 use EventEspresso\PaymentMethods\PayPalCommerce\domain\Domain;
+use EventEspresso\PaymentMethods\PayPalCommerce\PayPalCheckout\domain\OrderIssues;
 use EventEspresso\PaymentMethods\PayPalCommerce\tools\currency\CurrencyManager;
 use EventEspresso\PaymentMethods\PayPalCommerce\tools\extra_meta\PayPalExtraMetaManager;
 use EventEspresso\PaymentMethods\PayPalCommerce\tools\fees\PartnerPaymentFees;
@@ -127,7 +128,7 @@ class CreateOrder extends OrdersApi
 
 
     /**
-     * Create PayPal Order.
+     * Create a PayPal Order.
      *
      * @return array
      * @throws EE_Error
@@ -191,7 +192,7 @@ class CreateOrder extends OrdersApi
                 ],
             ],
         ];
-        $CNT_ISO     = $attendee->country_ID();
+        $CNT_ISO = $attendee->country_ID();
 
         // No country ID set, maybe just state?
         if (empty($CNT_ISO)) {
@@ -221,7 +222,7 @@ class CreateOrder extends OrdersApi
             ];
         }
 
-        // Do we have the permissions for the fees ?
+        // Do we have the permissions for the fees?
         $scopes = PayPalExtraMetaManager::getPmOption(
             $this->transaction->payment_method(),
             Domain::META_KEY_AUTHORIZED_SCOPES
@@ -332,7 +333,7 @@ class CreateOrder extends OrdersApi
 
 
     /**
-     * Itemize the payment the breakdown list.
+     * Itemize the payment in the breakdown list.
      *
      * @return array
      */
@@ -397,9 +398,12 @@ class CreateOrder extends OrdersApi
 
 
     /**
-     * Check if PayPals response contains 'MISMATCH' errors.
+     * Check if PayPal response contains 'MISMATCH' errors.
      *
+     * @param $response
      * @return bool
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     public function isMismatchError($response): bool
     {
@@ -410,11 +414,11 @@ class CreateOrder extends OrdersApi
         foreach ($response['details'] as $detail) {
             if (! empty($detail['issue'])) {
                 if (
-                    strtoupper($detail['issue']) === 'ITEM_TOTAL_MISMATCH'
-                    || strtoupper($detail['issue']) === 'AMOUNT_MISMATCH'
+                    strtoupper($detail['issue']) === OrderIssues::ITEM_TOTAL_MISMATCH
+                    || strtoupper($detail['issue']) === OrderIssues::AMOUNT_MISMATCH
                 ) {
                     PayPalLogger::errorLog(
-                        esc_html__('Mistmatch Error:', 'event_espresso'),
+                        esc_html__('Mismatch Error:', 'event_espresso'),
                         [$this->request_url, $response],
                         $this->transaction->payment_method(),
                         false,
@@ -432,6 +436,8 @@ class CreateOrder extends OrdersApi
      * Itemize the simplified payment breakdown list.
      *
      * @return array
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function getSimplifiedAmountBreakdown(): array
     {
@@ -451,9 +457,11 @@ class CreateOrder extends OrdersApi
 
 
     /**
-     * Generate single line item for full order.
+     * Generate a single line item for full order.
      *
      * @return array
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     protected function getSimplifiedItems(): array
     {

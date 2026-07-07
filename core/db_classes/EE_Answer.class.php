@@ -14,10 +14,10 @@ class EE_Answer extends EE_Base_Class
      * @param array $props_n_values
      * @return EE_Answer
      */
-    public static function new_instance($props_n_values = array())
+    public static function new_instance($props_n_values = [])
     {
         $has_object = parent::_check_for_object($props_n_values, __CLASS__);
-        return $has_object ? $has_object : new self($props_n_values);
+        return $has_object ?: new self($props_n_values);
     }
 
 
@@ -26,40 +26,31 @@ class EE_Answer extends EE_Base_Class
      * @param array $props_n_values
      * @return EE_Answer
      */
-    public static function new_instance_from_db($props_n_values = array())
+    public static function new_instance_from_db($props_n_values = [])
     {
         return new self($props_n_values, true);
     }
 
 
     /**
-     *    Set Question ID
-     *
-     * @access        public
      * @param int $QST_ID
      */
-    public function set_question($QST_ID = 0)
+    public function set_question(int $QST_ID = 0)
     {
         $this->set('QST_ID', $QST_ID);
     }
 
 
     /**
-     *    Set Registration ID
-     *
-     * @access        public
      * @param int $REG_ID
      */
-    public function set_registration($REG_ID = 0)
+    public function set_registration(int $REG_ID = 0)
     {
         $this->set('REG_ID', $REG_ID);
     }
 
 
     /**
-     *    Set Answer value
-     *
-     * @access        public
      * @param mixed $ANS_value
      */
     public function set_value($ANS_value = '')
@@ -107,12 +98,12 @@ class EE_Answer extends EE_Base_Class
     /**
      * Gets a pretty form of the value (mostly applies to answers that have multiple answers)
      *
-     * @param null $schema
+     * @param string|null $schema
      * @return string
      */
-    public function pretty_value($schema = null)
+    public function pretty_value(?string $schema = null): string
     {
-        return $this->get_pretty('ANS_value', $schema);
+        return (string) $this->get_pretty('ANS_value', $schema);
     }
 
 
@@ -121,9 +112,9 @@ class EE_Answer extends EE_Base_Class
      *
      * @param string $schema
      */
-    public function e_value($schema = null)
+    public function e_value(?string $schema = null)
     {
-        $this->e('ANS_value', $schema);
+        echo $this->pretty_value($schema);
     }
 
 
@@ -148,6 +139,3 @@ class EE_Answer extends EE_Base_Class
         return $this->get_first_related('Registration');
     }
 }
-
-/* End of file EE_Answer.class.php */
-/* Location: /includes/classes/EE_Answer.class.php */

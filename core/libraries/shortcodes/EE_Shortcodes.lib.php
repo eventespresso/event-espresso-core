@@ -178,7 +178,7 @@ abstract class EE_Shortcodes extends EE_Base
 
 
     /**
-     * This is the public method for kicking of the parser included with each child.  It can be overridden by child
+     * This is the public method for kicking off the parser included with each child.  It can be overridden by child
      * classes if necessary (see EE_Questions_Answers for example)
      *
      * @param string       $shortcode  incoming shortcode to be parsed

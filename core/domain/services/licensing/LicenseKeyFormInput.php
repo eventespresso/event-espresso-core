@@ -69,7 +69,7 @@ class LicenseKeyFormInput extends EE_Text_Input
                     'plugin_version'   => $plugin_version,
                     'item_id'          => $item_ID,
                     'item_name'        => $item_name,
-                    'license_status'   => $license_status === 'valid' ? 'valid' : 'invalid',
+                    'license_status'   => $license_status === LicenseStatus::VALID ? 'valid' : 'invalid',
                     'license_expires'  => $license_expires,
                     'activations_left' => $activations_left,
                 ],

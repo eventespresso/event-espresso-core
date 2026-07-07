@@ -4,6 +4,7 @@ namespace EventEspresso\core\services\routing;
 
 use EE_Dependency_Map;
 use EventEspresso\core\domain\entities\routing\specifications\RouteMatchSpecificationInterface;
+use EventEspresso\core\domain\services\capabilities\CapCheckInterface;
 use EventEspresso\core\domain\services\capabilities\PublicCapabilities;
 use EventEspresso\core\domain\services\capabilities\RequiresCapCheckInterface;
 use EventEspresso\core\services\assets\AssetManagerInterface;
@@ -132,6 +133,9 @@ abstract class Route implements RouteInterface, RequiresCapCheckInterface
     }
 
 
+    /**
+     * @return CapCheckInterface
+     */
     public function getCapCheck()
     {
         return new PublicCapabilities('', 'access Event Espresso route');

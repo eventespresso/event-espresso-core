@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\domain\services\admin\registrations\list_table;
 
+use DateTime;
 use EE_Error;
 use EEH_DTT_Helper;
 use EEM_Base;
@@ -23,6 +24,11 @@ use InvalidArgumentException;
  */
 class QueryBuilder
 {
+    /**
+     * date format used by the registration date filter datepicker inputs, ex: 07/06/2026
+     */
+    const REG_DATE_FILTER_FORMAT = 'm/d/Y';
+
     protected RequestInterface $request;
 
     protected EEM_Registration $registration_model;
@@ -107,6 +113,8 @@ class QueryBuilder
         $this->addTicketIdToWhereConditions();
         $this->addRegistrationStatusToWhereConditions();
         $this->addDateToWhereConditions();
+        $this->addRegistrationDateToWhereConditions('reg_start_date', '>=', '00:00:00');
+        $this->addRegistrationDateToWhereConditions('reg_end_date', '<=', '23:59:59');
         $this->addSearchToWhereConditions();
         return apply_filters(
             'FHEE__Registrations_Admin_Page___get_where_conditions_for_registrations_query',
@@ -324,6 +332,53 @@ class QueryBuilder
                 ];
             }
         }
+    }
+
+
+    /**
+     * Adds a registration date filter to the where conditions for the registrations query.
+     * When the request param is set, limits results to registrations whose REG_date
+     * satisfies $operator against the entered date, inclusive of the full day via the
+     * supplied day boundary $time.
+     * Dates that don't match REG_DATE_FILTER_FORMAT are ignored.
+     *
+     * @param string $request_param 'reg_start_date' or 'reg_end_date'
+     * @param string $operator      comparison operator: '>=' or '<='
+     * @param string $time          day boundary time: '00:00:00' or '23:59:59'
+     * @since 5.0.57
+     * @throws EE_Error
+     * @throws InvalidArgumentException
+     * @throws InvalidDataTypeException
+     * @throws InvalidInterfaceException
+     */
+    protected function addRegistrationDateToWhereConditions(
+        string $request_param,
+        string $operator,
+        string $time
+    ) {
+        $reg_date = $this->request->getRequestParam($request_param, '', DataType::STRING);
+        $reg_date = $this->filters[$request_param] ?? $reg_date;
+        $date     = $reg_date
+            ? DateTime::createFromFormat(QueryBuilder::REG_DATE_FILTER_FORMAT, $reg_date)
+            : false;
+        if (! $date instanceof DateTime) {
+            return;
+        }
+        // reject out-of-range dates like 13/45/2026 that createFromFormat() would otherwise roll over
+        $parse_errors = DateTime::getLastErrors();
+        if (is_array($parse_errors) && ($parse_errors['warning_count'] || $parse_errors['error_count'])) {
+            return;
+        }
+        // the "*$request_param" suffix stops this from colliding with other REG_date conditions
+        $this->where_params["REG_date*$request_param"] = [
+            $operator,
+            $this->registration_model->convert_datetime_for_query(
+                'REG_date',
+                $date->format('Y-m-d') . " $time",
+                'Y-m-d H:i:s',
+                EEH_DTT_Helper::get_timezone()
+            ),
+        ];
     }
 
 

@@ -3,6 +3,8 @@
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\Request;
 use EventEspresso\core\services\request\RequestInterface;
+use EventEspresso\PaymentMethods\PayPalCommerce\PayPalCheckout\domain\OrderIssues;
+use EventEspresso\PaymentMethods\PayPalCommerce\PayPalCheckout\domain\OrderStatus;
 use EventEspresso\PaymentMethods\PayPalCommerce\tools\logging\PayPalLogger;
 
 /**
@@ -97,7 +99,7 @@ class EEG_PayPalCheckout extends EE_Onsite_Gateway
         $capture_status = EED_PayPalCommerce::captureOrder($this->transaction, $payment_method, $order_id);
         // Check the order status.
         $order_details = EED_PayPalCommerce::getOrderDetails($order_id, $this->transaction, $payment_method);
-        $order_status  = $this->isOrderCompleted($order_details);
+        $order_status  = $this->isOrderCompleted($order_details, $capture_status);
         if (! $order_status['completed']) {
             return EEG_PayPalCheckout::updatePaymentStatus(
                 $this->payment,
@@ -111,7 +113,7 @@ class EEG_PayPalCheckout extends EE_Onsite_Gateway
         return EEG_PayPalCheckout::updatePaymentStatus(
             $this->payment,
             EEM_Payment::status_id_approved,
-            $capture_status
+            $order_details
         );
     }
 
@@ -119,35 +121,37 @@ class EEG_PayPalCheckout extends EE_Onsite_Gateway
     /**
      * Validate the Order.
      *
-     * @param array|null $order_details
+     * @param array $order
+     * @param array $capture_status
      * @return array ['completed' => {boolean}, 'message' => {string}]
      */
-    public static function isOrderCompleted(?array $order_details): array
+    public static function isOrderCompleted(array $order, array $capture_status = []): array
     {
         $conclusion = [
             'completed' => false,
-            'details'   => $order_details,
+            'details'   => $order,
         ];
-        if (! $order_details) {
-            $conclusion['message'] = esc_html__(
-                'Could not validate this payment. The Order details were empty.',
-                'event_espresso'
-            );
-        } elseif (! empty($order_details['error'])) {
-            $conclusion['message'] = $order_details['message'] ?? $order_details['error'];
-        } elseif (empty($order_details['status'])) {
+        if (! empty($order['error'])) {
+            $conclusion['message'] = $order['message'] ?? $order['error'];
+        } elseif (empty($order['status'])) {
             $conclusion['message'] = esc_html__(
                 'There was an error with this payment. The status of the Order could not be determined.',
                 'event_espresso'
             );
-        } elseif (! empty($order_details['purchase_units'][0]['payments']['captures'][0]['status'])
-                  && $order_details['purchase_units'][0]['payments']['captures'][0]['status'] !== 'COMPLETED'
+        } elseif (! empty($order['purchase_units'][0]['payments']['captures'][0]['status'])
+                  && $order['purchase_units'][0]['payments']['captures'][0]['status'] !== OrderStatus::COMPLETED
         ) {
             $conclusion['message'] = esc_html__(
                 'This payment was declined or failed validation. Please check the payment and billing information you provided.',
                 'event_espresso'
             );
-        } elseif ($order_details['status'] !== 'COMPLETED') {
+        } elseif (
+            $order['status'] !== OrderStatus::COMPLETED
+            // That order status could be 'APPROVED' on an 'ORDER_ALREADY_CAPTURED' event.
+            && (empty($capture_status['details'][0]['issue'])
+                || $capture_status['details'][0]['issue'] !== OrderIssues::ORDER_ALREADY_CAPTURED
+            )
+        ) {
             $conclusion['message'] = esc_html__(
                 'There was an error with this payment. Order was not approved.',
                 'event_espresso'

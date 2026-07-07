@@ -136,7 +136,7 @@ class EE_Event_Shortcodes extends EE_Shortcodes
         }
 
 
-        // If there is no event objecdt by now then get out.
+        // If there is no event object by now then get out.
         if (! $this->_event instanceof EE_Event) {
             return '';
         }
