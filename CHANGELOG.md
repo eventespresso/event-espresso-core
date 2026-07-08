@@ -6,6 +6,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Releases
 
+### 5.0.58
+
+
+#### Fixed
+ - [Fix: remove PHP 8.3-only typed class constants from PayPal Commerce (#2227)](https://github.com/eventespresso/cafe/pull/2227)
+
+
+
+
+
+
+
 ### 5.0.57
 
 #### Added

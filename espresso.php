@@ -3,7 +3,7 @@
   Plugin Name: Event Espresso
   Plugin URI: https://eventespresso.com/pricing/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=wordpress_plugins_page&utm_content=support_link
   Description: Manage events, sell tickets, and receive payments from your WordPress website. Reduce event administration time, cut-out ticketing fees, and own your customer data. | <a href="https://eventespresso.com/add-ons/?utm_source=plugin_activation_screen&utm_medium=link&utm_campaign=plugin_description">Extensions</a> | <a href="https://eventespresso.com/pricing/?utm_source=plugin_activation_screen&utm_medium=link&utm_campaign=plugin_description">Sales</a> | <a href="admin.php?page=espresso_support">Support</a>
-  Version: 5.0.57
+  Version: 5.0.58
   Requires PHP: 7.4
   Author: Event Espresso
   Author URI: https://eventespresso.com/?ee_ver=ee4&utm_source=ee4_plugin_admin&utm_medium=link&utm_campaign=wordpress_plugins_page&utm_content=support_link
@@ -104,7 +104,7 @@ if (function_exists('espresso_version')) {
     espresso_deactivate_plugin(plugin_basename(__FILE__));
 } else {
     define('EVENT_ESPRESSO_MAIN_FILE', __FILE__);
-    define('EVENT_ESPRESSO_VERSION', '5.0.57');
+    define('EVENT_ESPRESSO_VERSION', '5.0.58');
     define('EE_MIN_PHP_VERSION_REQUIRED', '7.4.0');
 
     /**
