@@ -93,6 +93,10 @@ class AddonEddData
             'item_id'   => 383,
             'item_name' => 'Scannable Tickets',
         ],
+        'eea-webhooks'                             => [
+            'item_id'   => 21431,
+            'item_name' => 'Automation / Webhooks',
+        ],
         'eea-utf8-variation'                        => [
             'item_id'   => 0,
             'item_name' => 'Font Pack for DOMPDF',

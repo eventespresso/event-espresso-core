@@ -51,7 +51,7 @@ class PluginUpdater
         $this->api_data                 = $api_data ?? [];
         $this->plugin_file              = $plugin_file;
         $this->name                     = plugin_basename($plugin_file);
-        $this->slug                     = basename($plugin_file, '.php');
+        $this->slug                     = self::derivePluginSlug($plugin_file);
         $this->version                  = $api_data['version'] ?? '';
         $this->wp_override              = isset($api_data['wp_override']) && $api_data['wp_override'];
         $this->beta                     = ! empty($this->api_data['beta']);
@@ -69,6 +69,25 @@ class PluginUpdater
 
         // Set up hooks.
         $this->init();
+    }
+
+
+    /**
+     * Returns the plugin's directory name, which is unique per installed plugin
+     * and is the slug WordPress itself uses to identify a plugin.
+     *
+     * Single file plugins that sit directly in wp-content/plugins have no
+     * directory of their own, so they keep using the file name.
+     *
+     * @param string $plugin_file Path to the plugin's main file.
+     * @return string
+     */
+    public static function derivePluginSlug(string $plugin_file): string
+    {
+        $plugin_directory = dirname(plugin_basename($plugin_file));
+        return $plugin_directory !== '.' && $plugin_directory !== ''
+            ? $plugin_directory
+            : basename($plugin_file, '.php');
     }
 
 

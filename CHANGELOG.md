@@ -6,6 +6,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Releases
 
+### 5.0.59
+
+#### Added
+ - [Webhooks Addon: New/AO/eea-webhooks (#2214)](https://github.com/eventespresso/cafe/pull/2214)
+
+#### Fixed
+ - [Fix add-ons sharing one update cache and offering each others updates (#2235)](https://github.com/eventespresso/cafe/pull/2235)
+
+
+
+
+
+
+
 ### 5.0.58
 
 

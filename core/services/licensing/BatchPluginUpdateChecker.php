@@ -2,6 +2,7 @@
 
 namespace EventEspresso\core\services\licensing;
 
+use EventEspresso\core\third_party_libs\easy_digital_downloads\PluginUpdater;
 use stdClass;
 
 /**
@@ -240,8 +241,9 @@ class BatchPluginUpdateChecker
         }
 
         // override the server's slug with the one PluginUpdater derives from the mainfile,
-        // so that PluginUpdater::pluginsApiFilter() can match on $args->slug === $this->slug
-        $version_info->slug     = basename($plugin_license->mainfile(), '.php');
+        // so that PluginUpdater::pluginsApiFilter() can match on $args->slug === $this->slug.
+        // both sides MUST use the same derivation or every plugin row matches the wrong product
+        $version_info->slug     = PluginUpdater::derivePluginSlug($plugin_license->mainfile());
         $version_info->plugin   = plugin_basename($plugin_license->mainfile());
         return $version_info;
     }
