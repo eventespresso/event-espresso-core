@@ -5,8 +5,8 @@ Donate link: [Support Our Work](https://eventespresso.com/pricing/?ee_ver=ee4&ut
 Tags: Events, Tickets, Event Registration, Ticket Sales, Calendar
 Requires at least: 4.5
 Requires PHP: 7.4
-Tested up to: 7.0
-Stable tag: 5.0.59
+Tested up to: 7.1
+Stable tag: 5.0.60
 License: GPL2
 
 The best events plugin with event registration, free and paid ticket sales, event registration forms, PayPal payments, automatic emails, and more!
@@ -83,6 +83,19 @@ Explore more features and view screenshots [here](https://eventespresso.com/feat
 == Changelog ==
 
 ## Releases
+
+### [5.0.60]
+
+#### Fixed
+ - Fix line-item children cache poisoning in EE_Line_Item::add_child_line_item()
+ - Guard the CPT editor against third-party admin_enqueue_scripts fatals
+ - Apply partial refund/cancel to all selected registrations
+ - Fix saving events that use custom page templates in the GraphQL editor
+
+#### Changed
+ - Add support for per-ticket wait lists
+
+
 
 ### [5.0.59]
 

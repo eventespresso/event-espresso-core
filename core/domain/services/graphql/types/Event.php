@@ -5,6 +5,8 @@ namespace EventEspresso\core\domain\services\graphql\types;
 use EE_Event;
 use EE_Venue;
 use EEM_Event;
+use WP_Post;
+use WP_Theme;
 use EventEspresso\core\services\graphql\fields\GraphQLFieldInterface;
 use EventEspresso\core\services\graphql\types\TypeBase;
 use EventEspresso\core\services\graphql\fields\GraphQLField;
@@ -238,5 +240,40 @@ class Event extends TypeBase
             10,
             6
         );
+
+        /**
+         * Filter "theme_{$post_type}_templates"
+         * Keeps an event's assigned page template valid during editor mutations.
+         *
+         * @link https://developer.wordpress.org/reference/hooks/theme_post_type_templates/
+         */
+        add_filter('theme_espresso_events_templates', [$this, 'includeAssignedPageTemplate'], 10, 3);
+    }
+
+
+    /**
+     * Re-adds the event's assigned page template to the valid list so saving it does
+     * not fail with "Invalid page template".
+     *
+     * @link  https://github.com/eventespresso/cafe/issues/1756
+     * @param array        $post_templates
+     * @param WP_Theme     $theme
+     * @param WP_Post|null $post
+     * @return array
+     */
+    public function includeAssignedPageTemplate(array $post_templates, WP_Theme $theme, ?WP_Post $post): array
+    {
+        if (
+            $post instanceof WP_Post
+            && ! empty($post->page_template)
+            && $post->page_template !== 'default'
+            && ! array_key_exists($post->page_template, $post_templates)
+        ) {
+            $page_templates = $theme->get_page_templates(null, 'page');
+            if (array_key_exists($post->page_template, $page_templates)) {
+                $post_templates[ $post->page_template ] = $page_templates[ $post->page_template ];
+            }
+        }
+        return $post_templates;
     }
 }

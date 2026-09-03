@@ -200,10 +200,13 @@ abstract class TicketSelectorRow
 
     /**
      * setTicketStatusDisplay
+     * The computed status display is filterable via FHEE__ticket_selector_chart_template__ticket_status_display
+     * so that add-ons can replace the qty selector cell (e.g. with a wait list join link) for sold-out tickets.
      *
      * @param int $remaining
      * @throws EE_Error
      * @throws ReflectionException
+     * @see   FHEE__ticket_selector_chart_template__ticket_status_display
      */
     protected function setTicketStatusDisplay($remaining)
     {
@@ -226,6 +229,36 @@ abstract class TicketSelectorRow
             // min qty purchasable is less than tickets available
             $this->ticket_status_display = $this->notEnoughTicketsAvailable();
         }
+        /**
+         * Filters the final computed status display string for a ticket selector row.
+         *
+         * This runs as the LAST step of setTicketStatusDisplay() so consumers see the fully computed value.
+         * It allows add-ons to replace the status cell of a SOLD OUT ticket — for example, with a
+         * "Join the wait list" link — while leaving all other rows untouched.
+         *
+         * Consumer contract:
+         *  - Return $ticket_status_display UNCHANGED for any ticket that is not sold out. A non-empty return value
+         *    causes the renderer to skip rendering the quantity selector (see the post-filter empty() check in
+         *    TicketSelectorRowStandard::getTicketSelectorRowHtml()), so populating it for an available ticket would
+         *    suppress its qty selector and break purchasing.
+         *  - Only a sold-out ($ticket_status_id === EE_Ticket::sold_out) ticket should ever receive a replacement.
+         *
+         * @param string            $ticket_status_display the computed status display HTML (may be empty)
+         * @param EE_Ticket         $ticket                the ticket for this row
+         * @param string            $ticket_status_id      the resolved ticket status (EE_Ticket::sold_out, etc.)
+         * @param int               $remaining             number of remaining spaces for this ticket
+         * @param TicketSelectorRow $row                   the current ticket selector row instance
+         * @return string
+         * @since 5.0.60
+         */
+        $this->ticket_status_display = apply_filters(
+            'FHEE__ticket_selector_chart_template__ticket_status_display',
+            $this->ticket_status_display,
+            $this->ticket,
+            $this->ticket_status_id,
+            $remaining,
+            $this
+        );
     }
 
 

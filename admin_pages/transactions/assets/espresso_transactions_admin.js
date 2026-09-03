@@ -279,7 +279,7 @@ jQuery(document).ready(function ($) {
             check_all = true;
         }
 		let REG_ID;
-        $('input[name="txn_admin_payment[registrations]"]').each(function () {
+        $('input[name="txn_admin_payment[registrations][]"]').each(function () {
             REG_ID = parseInt($(this).val());
             if ($.inArray(REG_ID, reg_payments) > -1 || check_all) {
                 $(this).prop('checked', true);

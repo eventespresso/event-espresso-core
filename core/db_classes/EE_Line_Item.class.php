@@ -1,7 +1,5 @@
 <?php
 
-use EventEspresso\core\exceptions\InvalidDataTypeException;
-use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\calculators\LineItemCalculator;
 use EventEspresso\core\services\loaders\LoaderFactory;
 
@@ -19,28 +17,28 @@ class EE_Line_Item extends EE_Base_Class
     /**
      * for children line items (currently not a normal relation)
      *
-     * @var EE_Line_Item[]
+     * @var EE_Line_Item[]|null
      */
-    protected array $_children = [];
+    protected ?array $children = null;
 
     /**
-     * query params used to obtain children line items above
+     * subset of the children line items obtained via custom queries
      *
      * @var array
      */
-    private array $children_query_params = [];
+    private array $filtered_children = [];
 
     /**
      * for the parent line item
      *
      * @var EE_Line_Item|null
      */
-    protected ?EE_Line_Item $_parent = null;
+    protected ?EE_Line_Item $parent = null;
 
     /**
      * @var LineItemCalculator
      */
-    protected LineItemCalculator $calculator;
+    private LineItemCalculator $calculator;
 
 
     /**
@@ -51,9 +49,6 @@ class EE_Line_Item extends EE_Base_Class
      *                                    date_format and the second value is the time format
      * @return EE_Line_Item
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public static function new_instance(
@@ -77,9 +72,6 @@ class EE_Line_Item extends EE_Base_Class
      *                                    If not set the timezone for the website will be used.
      * @return EE_Line_Item
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public static function new_instance_from_db(array $props_n_values = [], ?string $timezone = ''): EE_Line_Item
@@ -95,9 +87,6 @@ class EE_Line_Item extends EE_Base_Class
      * @param bool   $bydb
      * @param string $timezone
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     protected function __construct($fieldValues = [], $bydb = false, $timezone = '')
@@ -107,6 +96,7 @@ class EE_Line_Item extends EE_Base_Class
         if (! $this->get('LIN_code')) {
             $this->set_code($this->generate_code());
         }
+        $this->addNewChildToParentCache($fieldValues, $bydb);
     }
 
 
@@ -122,9 +112,6 @@ class EE_Line_Item extends EE_Base_Class
      *
      * @return int
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function ID(): int
@@ -138,9 +125,6 @@ class EE_Line_Item extends EE_Base_Class
      *
      * @return int
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function TXN_ID(): int
@@ -154,12 +138,9 @@ class EE_Line_Item extends EE_Base_Class
      *
      * @param int $TXN_ID
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function set_TXN_ID(int $TXN_ID)
+    public function set_TXN_ID(int $TXN_ID): void
     {
         $this->set('TXN_ID', $TXN_ID);
     }
@@ -170,9 +151,6 @@ class EE_Line_Item extends EE_Base_Class
      *
      * @return string
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function name(): string
@@ -190,12 +168,9 @@ class EE_Line_Item extends EE_Base_Class
      *
      * @param string $name
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function set_name(string $name)
+    public function set_name(string $name): void
     {
         $this->set('LIN_name', $name);
     }
@@ -206,9 +181,6 @@ class EE_Line_Item extends EE_Base_Class
      *
      * @return string
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function desc(): string
@@ -222,12 +194,9 @@ class EE_Line_Item extends EE_Base_Class
      *
      * @param string $desc
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function set_desc(string $desc)
+    public function set_desc(string $desc): void
     {
         $this->set('LIN_desc', $desc);
     }
@@ -238,9 +207,6 @@ class EE_Line_Item extends EE_Base_Class
      *
      * @return int
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function quantity(): int
@@ -254,12 +220,9 @@ class EE_Line_Item extends EE_Base_Class
      *
      * @param int $quantity
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function set_quantity(int $quantity)
+    public function set_quantity(int $quantity): void
     {
         $this->set('LIN_quantity', max($quantity, 0));
     }
@@ -296,9 +259,6 @@ class EE_Line_Item extends EE_Base_Class
      *
      * @return int
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function OBJ_ID(): int
@@ -312,12 +272,9 @@ class EE_Line_Item extends EE_Base_Class
      *
      * @param int $item_id
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function set_OBJ_ID(int $item_id)
+    public function set_OBJ_ID(int $item_id): void
     {
         $this->set('OBJ_ID', $item_id);
     }
@@ -328,9 +285,6 @@ class EE_Line_Item extends EE_Base_Class
      *
      * @return string
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function OBJ_type(): string
@@ -344,9 +298,6 @@ class EE_Line_Item extends EE_Base_Class
      *
      * @return string
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function OBJ_type_i18n(): string
@@ -378,12 +329,9 @@ class EE_Line_Item extends EE_Base_Class
      *
      * @param string $OBJ_type
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function set_OBJ_type(string $OBJ_type)
+    public function set_OBJ_type(string $OBJ_type): void
     {
         $this->set('OBJ_type', $OBJ_type);
     }
@@ -394,9 +342,6 @@ class EE_Line_Item extends EE_Base_Class
      *
      * @return float
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function unit_price(): float
@@ -410,12 +355,9 @@ class EE_Line_Item extends EE_Base_Class
      *
      * @param int|float $unit_price
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function set_unit_price($unit_price)
+    public function set_unit_price($unit_price): void
     {
         $this->set('LIN_unit_price', (float) $unit_price);
     }
@@ -426,9 +368,6 @@ class EE_Line_Item extends EE_Base_Class
      *
      * @return bool
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function is_percent(): bool
@@ -468,9 +407,6 @@ class EE_Line_Item extends EE_Base_Class
      *
      * @return float
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function percent(): float
@@ -496,9 +432,6 @@ class EE_Line_Item extends EE_Base_Class
      *
      * @param int|float $percent
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function set_percent($percent)
@@ -512,9 +445,6 @@ class EE_Line_Item extends EE_Base_Class
      *
      * @return float
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function pretaxTotal(): float
@@ -528,9 +458,6 @@ class EE_Line_Item extends EE_Base_Class
      *
      * @param int|float $pretax_total
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function setPretaxTotal($pretax_total)
@@ -598,9 +525,6 @@ class EE_Line_Item extends EE_Base_Class
      *
      * @return int
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function order(): int
@@ -614,9 +538,6 @@ class EE_Line_Item extends EE_Base_Class
      *
      * @param int $order
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function set_order(int $order)
@@ -630,9 +551,6 @@ class EE_Line_Item extends EE_Base_Class
      *
      * @return int
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function parent_ID(): int
@@ -646,9 +564,6 @@ class EE_Line_Item extends EE_Base_Class
      *
      * @param int $parent
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function set_parent_ID(int $parent)
@@ -662,9 +577,6 @@ class EE_Line_Item extends EE_Base_Class
      *
      * @return string
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function type(): string
@@ -678,9 +590,6 @@ class EE_Line_Item extends EE_Base_Class
      *
      * @param string $type
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function set_type(string $type)
@@ -697,19 +606,16 @@ class EE_Line_Item extends EE_Base_Class
      *
      * @return EE_Line_Item|null
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function parent(): ?EE_Line_Item
     {
-        if (! $this->_parent instanceof EE_Line_Item) {
-            $this->_parent = $this->ID()
+        if (! $this->parent instanceof EE_Line_Item) {
+            $this->parent = $this->ID()
                 ? $this->get_model()->get_one_by_ID($this->parent_ID())
-                : $this->_parent;
+                : $this->parent;
         }
-        return $this->_parent;
+        return $this->parent;
     }
 
 
@@ -718,58 +624,188 @@ class EE_Line_Item extends EE_Base_Class
      *
      * @return EE_Line_Item[]
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function children(array $query_params = []): array
     {
-        // check if the query params have changed since the last time we ran this query
-        $new_params = ! empty(EEH_Array::array_diff_recursive($query_params, $this->children_query_params));
-        if (($new_params || empty($this->_children)) && $this->ID()) {
-            $this->children_query_params = $query_params;
-            // ensure where params are an array
-            $query_params[0] = isset($query_params[0]) && is_array($query_params[0]) ? $query_params[0] : [];
-            // add defaults for line item parent and orderby
-            $query_params[0] += ['LIN_parent' => $this->ID()];
-            $query_params    += ['order_by' => ['LIN_order' => 'ASC']];
-            $children = $this->get_model()->get_all($query_params);
-            foreach ($children as $child) {
-                if ($child instanceof EE_Line_Item) {
-                    $this->addLineItemToChildren($child);
-                }
+        $this->ensureChildrenAreLoaded();
+        if (! $this->ID() || empty($query_params)) {
+            return $this->children;
+        }
+        $query_id = md5(json_encode($query_params));
+        // if the query has not already been run...
+        if (! isset($this->filtered_children[ $query_id ])) {
+            $this->filtered_children[ $query_id ] = [];
+            // retrieve requested child line items and add any new ones to local caches
+            $this->loadChildren($query_params, $query_id);
+        }
+        return $this->filtered_children[ $query_id ];
+    }
+
+
+    /**
+     * @param array  $query_params
+     * @param string $query_id
+     * @return void
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since  5.0.60
+     */
+    private function loadChildren(array $query_params = [], string $query_id = ''): void
+    {
+        // can't retrieve children if this line item has not been saved, because we need its ID in order to do so
+        if (! $this->ID()) {
+            return;
+        }
+        // ensure where params are an array
+        $query_params[0] = isset($query_params[0]) && is_array($query_params[0]) ? $query_params[0] : [];
+        // add defaults for line item parent and orderby
+        $query_params[0] += ['LIN_parent' => $this->ID()];
+        $query_params    += ['order_by' => ['LIN_order' => 'ASC']];
+        $children = $this->get_model()->get_all($query_params);
+        foreach ($children as $child) {
+            if ($child instanceof EE_Line_Item) {
+                $this->addLineItemToChildren($child);
+                $this->addToFilteredChildren($child, $query_id);
             }
         }
-        return $this->_children;
     }
 
 
-    private function addLineItemToChildren($child_line_item)
+    /**
+     * @return void
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since  5.0.60
+     */
+    private function ensureChildrenAreLoaded(): void
     {
-        $this->_children[ $child_line_item->code() ] = $child_line_item;
+        if ($this->children === null) {
+            $this->children = [];
+            $this->loadChildren();
+        }
     }
 
 
+    /**
+     * @param EE_Line_Item $child_line_item
+     * @return void
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    private function addLineItemToChildren(EE_Line_Item $child_line_item): void
+    {
+        $this->ensureChildrenAreLoaded();
+        $existing = $this->children[ $child_line_item->code() ] ?? null;
+        // add child line item if:
+        // - it has not been set already
+        // - this line item has not been saved
+        // - existing has no changes
+        if (! $existing instanceof EE_Line_Item || ! $this->ID() || ! $existing->hasChanges()) {
+            $this->children[ $child_line_item->code() ] = $child_line_item;
+        }
+    }
+
+
+    /**
+     * Registers a newly created (not-from-db) line item on its parent's in-memory children cache,
+     * so a saved parent immediately reflects a child added via new_instance(['LIN_parent' => ...]).
+     *
+     * @param array $fieldValues the values passed to the constructor
+     * @param bool  $bydb        whether this line item was instantiated from a db row
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    private function addNewChildToParentCache(array $fieldValues, bool $bydb)
+    {
+        // ensure that any newly created line items are added to the parent's internal children cache
+        if (! $bydb && isset($fieldValues['LIN_parent'])) {
+            $parent_line_item = EEM_Line_Item::instance()->get_one_by_ID(absint($fieldValues['LIN_parent']));
+            if (
+                $parent_line_item instanceof EE_Line_Item
+                && ! $parent_line_item->isAlreadyChildLineItem($this)
+            ) {
+                $parent_line_item->addLineItemToChildren($this);
+                $parent_line_item->resetFilteredChildren();
+            }
+        }
+    }
+
+
+    /**
+     * @param string $code
+     * @return EE_Line_Item|null
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
     private function getChildLineItemFromCache(string $code): ?EE_Line_Item
     {
-        return $this->_children[ $code ] ?? null;
+        $this->ensureChildrenAreLoaded();
+        return $this->children[ $code ] ?? null;
     }
 
 
+    /**
+     * @param EE_Line_Item $child_line_item
+     * @return bool
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    private function isAlreadyChildLineItem(EE_Line_Item $child_line_item): bool
+    {
+        $this->ensureChildrenAreLoaded();
+        return isset($this->children[ $child_line_item->code() ]);
+    }
+
+
+    /**
+     * @param string $code
+     * @return int
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
     private function removeChildLineItemFromCache(string $code): int
     {
-        if (isset($this->_children[ $code ])) {
-            unset($this->_children[ $code ]);
+        $this->ensureChildrenAreLoaded();
+        $this->resetFilteredChildren();
+        if (isset($this->children[ $code ])) {
+            unset($this->children[ $code ]);
             return 1;
         }
         return 0;
     }
 
 
-    private function resetChildren()
+    /**
+     * @param EE_Line_Item $child_line_item
+     * @param string       $query_id
+     * @return void
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since  5.0.60
+     */
+    private function addToFilteredChildren(EE_Line_Item $child_line_item, string $query_id = ''): void
     {
-        $this->_children = [];
+        if ($query_id !== '') {
+            $this->filtered_children[ $query_id ][ $child_line_item->code() ] = $child_line_item;
+        }
+    }
+
+
+    private function resetChildren(): void
+    {
+        $this->children = null;
+        $this->resetFilteredChildren();
+    }
+
+
+    /**
+     * @return void
+     * @since  5.0.60
+     */
+    private function resetFilteredChildren(): void
+    {
+        $this->filtered_children = [];
     }
 
 
@@ -778,9 +814,6 @@ class EE_Line_Item extends EE_Base_Class
      *
      * @return string
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function code(): string
@@ -794,9 +827,6 @@ class EE_Line_Item extends EE_Base_Class
      *
      * @param string $code
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function set_code(string $code)
@@ -810,9 +840,6 @@ class EE_Line_Item extends EE_Base_Class
      *
      * @return bool
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function is_taxable(): bool
@@ -826,9 +853,6 @@ class EE_Line_Item extends EE_Base_Class
      *
      * @param bool $is_taxable
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function set_is_taxable(bool $is_taxable)
@@ -857,9 +881,6 @@ class EE_Line_Item extends EE_Base_Class
      *
      * @return EE_Base_Class|null
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function get_object(): ?EE_Base_Class
@@ -901,9 +922,6 @@ class EE_Line_Item extends EE_Base_Class
      *
      * @return EE_Datetime|null
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function get_ticket_datetime(): ?EE_Datetime
@@ -927,9 +945,6 @@ class EE_Line_Item extends EE_Base_Class
      *
      * @return string
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function ticket_event_name(): string
@@ -948,9 +963,6 @@ class EE_Line_Item extends EE_Base_Class
      *
      * @return EE_Event|null
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function ticket_event(): ?EE_Event
@@ -974,9 +986,6 @@ class EE_Line_Item extends EE_Base_Class
      * @param string $time_format
      * @return string
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function ticket_datetime_start(string $date_format = '', string $time_format = ''): string
@@ -998,18 +1007,18 @@ class EE_Line_Item extends EE_Base_Class
      * @param bool         $set_order
      * @return bool success
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function add_child_line_item(EE_Line_Item $line_item, bool $set_order = true): bool
     {
+        $this->ensureChildrenAreLoaded();
         // should we calculate the LIN_order for this line item ?
         if ($set_order || $line_item->order() === null) {
-            $line_item->set_order(count($this->children()));
+            $line_item->set_order(count($this->children));
         }
         if ($this->ID()) {
+            // force requery for filtered children lists
+            $this->resetFilteredChildren();
             // check for any duplicate line items (with the same code), if so, this replaces it
             $line_item_with_same_code = $this->get_child_line_item($line_item->code());
             if ($line_item_with_same_code instanceof EE_Line_Item && $line_item_with_same_code !== $line_item) {
@@ -1038,9 +1047,6 @@ class EE_Line_Item extends EE_Base_Class
      *
      * @param EE_Line_Item $line_item
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function set_parent(EE_Line_Item $line_item)
@@ -1052,7 +1058,7 @@ class EE_Line_Item extends EE_Base_Class
             $this->set_parent_ID($line_item->ID());
             $this->save();
         } else {
-            $this->_parent = $line_item;
+            $this->parent = $line_item;
             $this->set_parent_ID($line_item->ID());
         }
     }
@@ -1066,9 +1072,6 @@ class EE_Line_Item extends EE_Base_Class
      * @param string $code
      * @return EE_Base_Class|EE_Line_Item|EE_Soft_Delete_Base_Class|NULL
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function get_child_line_item(string $code)
@@ -1118,8 +1121,9 @@ class EE_Line_Item extends EE_Base_Class
      */
     public function delete_children_line_items(): int
     {
+        $this->ensureChildrenAreLoaded();
         $count = 0;
-        foreach ($this->_children as $child_line_item) {
+        foreach ($this->children as $child_line_item) {
             $count += $child_line_item->delete();
         }
         $this->resetChildren();
@@ -1139,29 +1143,38 @@ class EE_Line_Item extends EE_Base_Class
      * @return int count of items deleted (or simply removed from the line item's cache, if not has not been saved to
      *             the DB yet)
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function delete_child_line_item(string $code, bool $stop_search_once_found = true): int
     {
-        $removed = $this->removeChildLineItemFromCache($code);
-        if ($this->ID()) {
-            $items_deleted = 0;
-            if ($this->code() === $code) {
-                $items_deleted += EEH_Line_Item::delete_all_child_items($this);
-                $items_deleted += $this->delete();
-                if ($stop_search_once_found) {
-                    return $items_deleted;
-                }
-            }
-            foreach ($this->children() as $child_line_item) {
-                $items_deleted += $child_line_item->delete_child_line_item($code, $stop_search_once_found);
-            }
-            return $items_deleted;
+        // if unsaved, then just remove from internal cache
+        if (! $this->ID()) {
+            return $this->removeChildLineItemFromCache($code);
         }
-        return $removed;
+        $items_deleted = 0;
+        if ($this->code() === $code) {
+            $items_deleted += EEH_Line_Item::delete_all_child_items($this);
+            // delete() removes self from parent's cache
+            $items_deleted += $this->delete();
+            if ($stop_search_once_found) {
+                return $items_deleted;
+            }
+        }
+        // an unsaved child cached on this (saved) parent has no db row to delete, and cannot remove
+        // itself via the recursion below (an id-less child would search its own children instead), so
+        // remove it directly from this parent's cache. Saved children are left to the recursion, which
+        // deletes their db row before touching the cache.
+        $cached_child = $this->getChildLineItemFromCache($code);
+        if ($cached_child instanceof EE_Line_Item && ! $cached_child->ID()) {
+            $items_deleted += $this->removeChildLineItemFromCache($code);
+            if ($stop_search_once_found) {
+                return $items_deleted;
+            }
+        }
+        foreach ($this->children() as $child_line_item) {
+            $items_deleted += $child_line_item->delete_child_line_item($code, $stop_search_once_found);
+        }
+        return $items_deleted;
     }
 
 
@@ -1172,17 +1185,15 @@ class EE_Line_Item extends EE_Base_Class
      *
      * @return bool
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function delete_if_childless_subtotal(): bool
     {
+        $this->ensureChildrenAreLoaded();
         if (
             $this->type() === EEM_Line_Item::type_sub_total
             && $this->code() !== 'pre-tax-subtotal'
-            && empty($this->_children)
+            && empty($this->children)
         ) {
             if ($this->ID()) {
                 return (bool) $this->delete();
@@ -1198,9 +1209,6 @@ class EE_Line_Item extends EE_Base_Class
      *
      * @return string
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function generate_code(): string
@@ -1213,9 +1221,6 @@ class EE_Line_Item extends EE_Base_Class
     /**
      * @return bool
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function isTax(): bool
@@ -1227,9 +1232,6 @@ class EE_Line_Item extends EE_Base_Class
     /**
      * @return bool
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function isGlobalTax(): bool
@@ -1241,9 +1243,6 @@ class EE_Line_Item extends EE_Base_Class
     /**
      * @return bool
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function isSubTax(): bool
@@ -1257,9 +1256,6 @@ class EE_Line_Item extends EE_Base_Class
      *
      * @return array
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function getSubTaxes(): array
@@ -1276,9 +1272,6 @@ class EE_Line_Item extends EE_Base_Class
      *
      * @return bool
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function hasSubTaxes(): bool
@@ -1306,9 +1299,6 @@ class EE_Line_Item extends EE_Base_Class
     /**
      * @return bool
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function is_tax_sub_total(): bool
@@ -1320,9 +1310,6 @@ class EE_Line_Item extends EE_Base_Class
     /**
      * @return bool
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function is_line_item(): bool
@@ -1334,9 +1321,6 @@ class EE_Line_Item extends EE_Base_Class
     /**
      * @return bool
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function is_sub_line_item(): bool
@@ -1348,9 +1332,6 @@ class EE_Line_Item extends EE_Base_Class
     /**
      * @return bool
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function is_sub_total(): bool
@@ -1364,9 +1345,6 @@ class EE_Line_Item extends EE_Base_Class
      *
      * @return bool
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function is_cancellation(): bool
@@ -1378,9 +1356,6 @@ class EE_Line_Item extends EE_Base_Class
     /**
      * @return bool
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function is_total(): bool
@@ -1392,9 +1367,6 @@ class EE_Line_Item extends EE_Base_Class
     /**
      * @return bool
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function is_cancelled(): bool
@@ -1459,9 +1431,6 @@ class EE_Line_Item extends EE_Base_Class
      * @param bool $update_txn_status
      * @return float
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      * @throws RuntimeException
      */
@@ -1481,9 +1450,6 @@ class EE_Line_Item extends EE_Base_Class
      *
      * @return float
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function recalculate_pre_tax_total(): float
@@ -1502,9 +1468,6 @@ class EE_Line_Item extends EE_Base_Class
      *
      * @return float
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function recalculate_taxes_and_tax_total(): float
@@ -1521,9 +1484,6 @@ class EE_Line_Item extends EE_Base_Class
      *
      * @return float
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function get_total_tax(): float
@@ -1539,9 +1499,6 @@ class EE_Line_Item extends EE_Base_Class
      *
      * @return float
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function get_items_total()
@@ -1595,9 +1552,6 @@ class EE_Line_Item extends EE_Base_Class
      *
      * @return float
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function taxable_total(): float
@@ -1612,9 +1566,6 @@ class EE_Line_Item extends EE_Base_Class
      *
      * @return EE_Transaction|null
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function transaction(): ?EE_Transaction
@@ -1632,12 +1583,9 @@ class EE_Line_Item extends EE_Base_Class
      * @param int|null $txn_id if none is provided, assumes $this->TXN_ID()
      * @return int count of items saved
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function save_this_and_descendants_to_txn(int $txn_id = 0): int
+    public function save_this_and_descendants_to_txn(?int $txn_id = 0): int
     {
         $count = 0;
         if ($txn_id) {
@@ -1660,9 +1608,6 @@ class EE_Line_Item extends EE_Base_Class
      *
      * @return int count of items saved
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function save_this_and_descendants(): int
@@ -1684,9 +1629,6 @@ class EE_Line_Item extends EE_Base_Class
      * returns the cancellation line item if this item was cancelled
      *
      * @return EE_Line_Item[]
-     * @throws InvalidArgumentException
-     * @throws InvalidInterfaceException
-     * @throws InvalidDataTypeException
      * @throws ReflectionException
      * @throws EE_Error
      */
@@ -1701,9 +1643,6 @@ class EE_Line_Item extends EE_Base_Class
      *
      * @return bool|int count of items saved or false on error
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function maybe_save()
@@ -1720,10 +1659,10 @@ class EE_Line_Item extends EE_Base_Class
      *
      * @return void
      */
-    public function clear_related_line_item_cache()
+    public function clear_related_line_item_cache(): void
     {
         $this->resetChildren();
-        $this->_parent   = null;
+        $this->parent = null;
     }
 
 
@@ -1731,9 +1670,6 @@ class EE_Line_Item extends EE_Base_Class
      * @param bool $raw
      * @return int|string
      * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
     public function timestamp(bool $raw = false)
@@ -1750,7 +1686,7 @@ class EE_Line_Item extends EE_Base_Class
      * @throws ReflectionException
      * @since 5.0.25.p
      */
-    private function ensureLineItemsAreSaved()
+    private function ensureLineItemsAreSaved(): void
     {
         if (! $this->ID()) {
             $this->save();
@@ -1762,50 +1698,49 @@ class EE_Line_Item extends EE_Base_Class
     }
 
 
+    public function __get($property)
+    {
+        $deprecated = [
+            '_children' => 'children',
+            '_parent'   => 'parent',
+        ];
+        if (isset($deprecated[ $property ])) {
+            $new_property = $deprecated[ $property ];
+            EE_Error::doing_it_wrong(
+                "EE_Line_Item::$property",
+                sprintf(
+                    /* translators: 1. class property name */
+                    __(
+                        'Property has been deprecated and replaced with the private "%1$s" property.',
+                        'event_espresso'
+                    ),
+                    "EE_Line_Item::$new_property"
+                ),
+                '5.0.60'
+            );
+            return $this->$new_property;
+        }
+        if (WP_DEBUG) {
+            throw new DomainException(
+                sprintf(
+                    /* translators: 1. class property name */
+                    __( 'Undefined property "%1$s" accessed via __get()', 'event_espresso'),
+                    $property
+                )
+            );
+        }
+        error_log(
+            /* translators: 1. class property name 2. debug backtrace summary */
+            sprintf(
+                __( 'Undefined property "%1$s" accessed via __get(): %2$s', 'event_espresso'),
+                $property,
+                wp_debug_backtrace_summary()
+            )
+        );
+        return null;
+    }
 
 
     /************************* DEPRECATED *************************/
-    /**
-     * @param string $type one of the constants on EEM_Line_Item
-     * @return EE_Line_Item[]
-     * @throws EE_Error
-     * @throws ReflectionException
-     * @deprecated 4.6.0
-     */
-    protected function _get_descendants_of_type(string $type): array
-    {
-        EE_Error::doing_it_wrong(
-            'EE_Line_Item::_get_descendants_of_type()',
-            sprintf(
-                esc_html__('Method replaced with %1$s', 'event_espresso'),
-                'EEH_Line_Item::get_descendants_of_type()'
-            ),
-            '4.6.0'
-        );
-        return EEH_Line_Item::get_descendants_of_type($this, $type);
-    }
 
-
-    /**
-     * @param string $type like one of the EEM_Line_Item::type_*
-     * @return EE_Line_Item
-     * @throws EE_Error
-     * @throws InvalidArgumentException
-     * @throws InvalidDataTypeException
-     * @throws InvalidInterfaceException
-     * @throws ReflectionException
-     * @deprecated 4.6.0
-     */
-    public function get_nearest_descendant_of_type(string $type): EE_Line_Item
-    {
-        EE_Error::doing_it_wrong(
-            'EE_Line_Item::get_nearest_descendant_of_type()',
-            sprintf(
-                esc_html__('Method replaced with %1$s', 'event_espresso'),
-                'EEH_Line_Item::get_nearest_descendant_of_type()'
-            ),
-            '4.6.0'
-        );
-        return EEH_Line_Item::get_nearest_descendant_of_type($this, $type);
-    }
 }

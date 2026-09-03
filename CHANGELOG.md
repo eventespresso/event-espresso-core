@@ -6,6 +6,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Releases
 
+### 5.0.60
+
+
+#### Fixed
+ - [Fix line-item children cache poisoning in EE_Line_Item::add_child_line_item() (#2251)](https://github.com/eventespresso/cafe/pull/2251)
+ - [Fix: guard CPT editor against third-party admin_enqueue_scripts fatals (#2252)](https://github.com/eventespresso/cafe/pull/2252)
+ - [Fix: apply partial refund/cancel to all selected registrations (#1943) (#2257)](https://github.com/eventespresso/cafe/pull/2257)
+ - [Fix saving events that use custom page templates (GraphQL editor) (#2254)](https://github.com/eventespresso/cafe/pull/2254)
+
+#### Changed
+ - [Mod/AO/eea-wait-lists: per-ticket wait lists (#2216) (#2217)](https://github.com/eventespresso/cafe/pull/2217)
+
+
+
+
+
+
 ### 5.0.59
 
 #### Added

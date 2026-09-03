@@ -73,7 +73,7 @@ abstract class EE_Base_Class
     protected array $_fields = [];
 
     /**
-     * indicating whether or not this model object is intended to ever be saved
+     * indicating whether this model object is intended to ever be saved
      * For example, we might create model objects intended to only be used for the duration
      * of this request and to be thrown away, and if they were accidentally saved
      * it would be a bug.
@@ -81,7 +81,7 @@ abstract class EE_Base_Class
     protected bool $_allow_persist = true;
 
     /**
-     * indicating whether or not this model object's properties have changed since construction
+     * indicating whether this model object's properties have changed since construction
      */
     protected bool $_has_changes = false;
 
@@ -197,7 +197,7 @@ abstract class EE_Base_Class
 
 
     /**
-     * Gets whether or not this model object is allowed to persist/be saved to the database.
+     * Gets whether this model object is allowed to persist/be saved to the database.
      *
      * @return boolean
      */
@@ -208,7 +208,7 @@ abstract class EE_Base_Class
 
 
     /**
-     * Sets whether or not this model object should be allowed to be saved to the DB.
+     * Sets whether this model object should be allowed to be saved to the DB.
      * Normally once this is set to FALSE you wouldn't set it back to TRUE, unless
      * you got new information that somehow made you change your mind.
      *
@@ -218,6 +218,16 @@ abstract class EE_Base_Class
     public function set_allow_persist($allow_persist)
     {
         return $this->_allow_persist = $allow_persist;
+    }
+
+
+    /**
+     * @return bool
+     * @since  5.0.60
+     */
+    public function hasChanges(): bool
+    {
+        return $this->_has_changes;
     }
 
 
@@ -3281,7 +3291,7 @@ abstract class EE_Base_Class
      * Clear related model objects if they're already in the DB, because otherwise when we
      * UN-serialize this model object we'll need to be careful to add them to the entity map.
      * This means if we have made changes to those related model objects, and want to unserialize
-     * the this model object on a subsequent request, changes to those related model objects will be lost.
+     * this model object on a subsequent request, changes to those related model objects will be lost.
      * Instead, those related model objects should be directly serialized and stored.
      * Eg, the following won't work:
      * $reg = EEM_Registration::instance()->get_one_by_ID( 123 );
@@ -3292,7 +3302,7 @@ abstract class EE_Base_Class
      * //START NEXT REQUEST
      * $reg = get_option( 'my_option' );
      * $reg->attendee()->save();
-     * And would need to be replace with:
+     * And would need to be replaced with:
      * $reg = EEM_Registration::instance()->get_one_by_ID( 123 );
      * $att = $reg->attendee();
      * $att->set( 'ATT_fname', 'Dirk' );

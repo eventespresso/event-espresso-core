@@ -1285,7 +1285,7 @@ class Transactions_Admin_Page extends EE_Admin_Page
                     ) .
                     EEH_HTML::td(
                         '<input type="checkbox" value="' . $registration->ID()
-                        . '" name="txn_admin_payment[registrations]"'
+                        . '" name="txn_admin_payment[registrations][]"'
                         . $checked . $disabled . '>',
                         '',
                         'jst-cntr'

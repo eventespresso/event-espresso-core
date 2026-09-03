@@ -1402,8 +1402,55 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
                     'admin.php'
                 );
             }
-            include_once WP_ADMIN_PATH . 'edit-form-advanced.php';
+            // isolate the reused WP editor template so a fatal in a third-party
+            // admin_enqueue_scripts/admin_print_styles callback can't white-screen the editor
+            try {
+                include_once WP_ADMIN_PATH . 'edit-form-advanced.php';
+            } catch (Throwable $throwable) {
+                $this->handleEditorTemplateFailure($throwable);
+            }
         }
+    }
+
+
+    /**
+     * Logs a fatal thrown while rendering the WP editor template and shows an admin
+     * notice naming its origin, instead of white-screening the editor.
+     *
+     * @param Throwable $throwable
+     * @return void
+     */
+    private function handleEditorTemplateFailure(Throwable $throwable)
+    {
+        error_log(
+            sprintf(
+                'Event Espresso CPT editor: a third-party callback threw while rendering the'
+                . ' WordPress editor template: %1$s in %2$s on line %3$d',
+                $throwable->getMessage(),
+                $throwable->getFile(),
+                $throwable->getLine()
+            )
+        );
+        printf(
+            '<div class="notice notice-error"><p>%1$s</p><p>%2$s</p></div>',
+            esc_html__(
+                'A third-party plugin caused an error while loading the editor, so part of this'
+                . ' page may be missing. Your Event Espresso data is safe.',
+                'event_espresso'
+            ),
+            esc_html(
+                sprintf(
+                    /* translators: 1: file path where the error originated, 2: line number */
+                    __(
+                        'Error origin: %1$s (line %2$d). Please update or deactivate the plugin'
+                        . ' responsible and report this to its author.',
+                        'event_espresso'
+                    ),
+                    $throwable->getFile(),
+                    $throwable->getLine()
+                )
+            )
+        );
     }
 
 
