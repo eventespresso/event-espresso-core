@@ -135,6 +135,9 @@ class EEH_Export
                 $output[] = 'NULL';
                 continue;
             }
+            if (is_string($field_value) && $field_value !== '' && strpos("=+-@\t\r", $field_value[0]) !== false) {
+                $field_value = "'" . $field_value;
+            }
 
             $output[] = $field_value && preg_match("/(?:$delimiter_esc|$enclosure_esc|\s)/", $field_value)
                 ? ($enclosure . str_replace($enclosure, $enclosure . $enclosure, $field_value) . $enclosure)
