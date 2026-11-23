@@ -58,27 +58,30 @@ class EventsArchiveIframe extends Iframe
             )
         );
         $this->addInlineStyles('ticket_selector', EED_Ticket_Selector::accentColorStyles());
+        // Simple mode draws the map in an iframe and needs no scripts; no key, no Google map
+        $advanced_map = EEH_Maps::usesAdvancedMaps();
         $this->addScripts(
             apply_filters(
                 'FHEE__EventEspresso_modules_events_archive_EventsArchiveIframe__display__js',
-                [
-                    'gmap_api' => sprintf(
-                        'https://maps.googleapis.com/maps/api/js?key=%s',
-                        apply_filters(
-                            'FHEE__EEH_Maps__espresso_google_maps_js__api_key',
-                            EE_Registry::instance()->CFG->map_settings->google_map_api_key
-                        )
-                    ),
-                    'ee_gmap'  => EE_HELPERS_ASSETS . 'ee_gmap.js?ver=1.0',
-                ],
+                $advanced_map
+                    ? [
+                        'gmap_api' => sprintf(
+                            'https://maps.googleapis.com/maps/api/js?key=%s',
+                            EEH_Maps::mapsApiKey()
+                        ),
+                        'ee_gmap'  => EE_HELPERS_ASSETS . 'ee_gmap.js?ver=1.0',
+                    ]
+                    : [],
                 $this
             )
         );
-        $this->addLocalizedVars(
-            [
-                'ee_gmap' => EEH_Maps::$gmap_vars,
-            ],
-            'ee_gmap_vars'
-        );
+        if ($advanced_map) {
+            $this->addLocalizedVars(
+                [
+                    'ee_gmap' => EEH_Maps::$gmap_vars,
+                ],
+                'ee_gmap_vars'
+            );
+        }
     }
 }

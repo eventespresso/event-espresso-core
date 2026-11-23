@@ -474,9 +474,9 @@ class EEH_Venue_View extends EEH_Base
             global $post;
             $map_ID = empty($map_ID) && $post->post_type == EspressoPostType::EVENTS ? $post->ID : $map_ID;
             // grab map settings
-            $map_cfg = EE_Registry::instance()->CFG->map_settings;
+            $map_cfg = EE_Config::instance()->map_settings;
             // are maps enabled ?
-            if ($map_cfg->use_google_maps && $venue->enable_for_gmap()) {
+            if ($map_cfg instanceof EE_Map_Config && $map_cfg->use_google_maps && $venue->enable_for_gmap()) {
                 $details_page = is_single();
                 $options      = [];
 
@@ -485,6 +485,8 @@ class EEH_Venue_View extends EEH_Base
                     : $venue->ID();
 
                 $options['location'] = EEH_Address::format($venue, 'inline', false, false);
+
+                $options['place_name'] = $venue->name();
 
                 $options['ee_map_width'] = $details_page
                     ? $map_cfg->event_details_map_width
@@ -544,10 +546,6 @@ class EEH_Venue_View extends EEH_Base
                     ? $gmap['ee_map_align']
                     : $options['ee_map_align'];
 
-                $options['ee_static_url'] = isset($gmap['ee_static_url']) && ! empty($gmap['ee_static_url'])
-                    ? (bool) absint($gmap['ee_static_url'])
-                    : $venue->google_map_link();
-
                 return EEH_Maps::google_map($options);
             }
         }
@@ -583,6 +581,9 @@ class EEH_Venue_View extends EEH_Base
             ],
             $attributes
         );
+        // in Simple mode the map type draws the Embed map at this address, in place of the Static Maps image
+        $attributes['embed_location']   = EEH_Address::format($venue, 'inline', false, false);
+        $attributes['embed_place_name'] = $venue->name();
         return EEH_Maps::google_map_link($attributes);
     }
 

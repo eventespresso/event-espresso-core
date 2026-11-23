@@ -56,6 +56,7 @@ class AllowedTags
         'label'            => true,
         'lang'             => true,
         'leftmargin'       => true,
+        'loading'          => true,
         'marginheight'     => true,
         'marginwidth'      => true,
         'max'              => true,
@@ -69,8 +70,10 @@ class AllowedTags
         'onclick'          => true,
         'opacity'          => true,
         'placeholder'      => true,
+        'popover'          => true,
         'property'         => true,
         'readonly'         => true,
+        'referrerpolicy'   => true,
         'rel'              => true,
         'required'         => true,
         'rows'             => true,
@@ -119,9 +122,29 @@ class AllowedTags
         'ul',
     ];
 
+    /**
+     * The attributes an embed iframe needs. Narrower than $attributes, so embedded content gets no event handlers.
+     *
+     * @var array<string, bool>
+     */
+    private static array $iframe_attributes = [
+        'allow'           => true,
+        'allowfullscreen' => true,
+        'class'           => true,
+        'height'          => true,
+        'loading'         => true,
+        'referrerpolicy'  => true,
+        'src'             => true,
+        'style'           => true,
+        'title'           => true,
+        'width'           => true,
+    ];
+
     private static array $allowed_tags = [];
 
     private static array $allowed_with_embed_tags = [];
+
+    private static array $allowed_with_form_and_embed_tags = [];
 
     private static array $allowed_with_form_tags = [];
 
@@ -151,9 +174,21 @@ class AllowedTags
     {
         $all_tags                             = AllowedTags::getAllowedTags();
         $embed_tags                           = [
-            'iframe' => AllowedTags::$attributes,
+            'iframe' => AllowedTags::$iframe_attributes,
         ];
         AllowedTags::$allowed_with_embed_tags = array_merge_recursive($all_tags, $embed_tags);
+    }
+
+
+    /**
+     * merges the embed iframe into the EE form tags
+     */
+    private static function initializeWithFormAndEmbedTags(): void
+    {
+        AllowedTags::$allowed_with_form_and_embed_tags = array_merge_recursive(
+            AllowedTags::getWithFormTags(),
+            ['iframe' => AllowedTags::$iframe_attributes]
+        );
     }
 
 
@@ -285,6 +320,19 @@ class AllowedTags
             AllowedTags::initializeWithFormTags();
         }
         return AllowedTags::$allowed_with_form_tags;
+    }
+
+
+    /**
+     * @return array[]
+     * @since 5.0.61
+     */
+    public static function getWithFormAndEmbedTags(): array
+    {
+        if (empty(AllowedTags::$allowed_with_form_and_embed_tags)) {
+            AllowedTags::initializeWithFormAndEmbedTags();
+        }
+        return AllowedTags::$allowed_with_form_and_embed_tags;
     }
 
 

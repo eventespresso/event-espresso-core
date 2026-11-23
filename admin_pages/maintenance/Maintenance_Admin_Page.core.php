@@ -753,6 +753,10 @@ class Maintenance_Admin_Page extends EE_Admin_Page
                         "event_espresso"
                     )
                 ),
+                'stage_progress'                   => wp_strip_all_tags(
+                    /* translators: 1: number of records, 2: migration stage name */
+                    __("Migrated %d records successfully during %s", "event_espresso")
+                ),
                 'status_no_more_migration_scripts' => EE_Data_Migration_Manager::status_no_more_migration_scripts,
                 'status_fatal_error'               => EE_Data_Migration_Manager::status_fatal_error,
                 'status_completed'                 => EE_Data_Migration_Manager::status_completed,

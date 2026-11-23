@@ -1861,6 +1861,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
      * The scripts and styles enqueued in here will be loaded on every EE Admin page
      *
      * @return void
+     * @throws WP_Exception
      */
     public function load_global_scripts_styles()
     {
@@ -1890,11 +1891,27 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         );
         StatusChangeNotice::loadAssets();
 
+        // WordPress will add a CSS class to the admin page's HTML body tag like:
+        //  event-espresso_page_espresso_registration_form
+        // but that is not reliable to use for CSS and JS because plugins that white-label things
+        // might change that to something like "my_brand_page_espresso_registration_form".
+        // so the following logic removes "espresso" from the page slug, converts snake_case to kebab-case,
+        // and then creates a generic page body class like: "registration-form-admin-page"
+        $page_class = trim(
+            str_replace(
+                ['espresso', '_'],
+                ['', '-'],
+                $this->page_slug
+            ),
+            '-'
+        );
+        $page_class = ! empty($page_class) ? "$page_class-admin-page" : '';
+
         add_filter(
             'admin_body_class',
-            function ($classes) {
-                if (strpos($classes, 'espresso-admin') === false) {
-                    $classes .= ' espresso-admin';
+            function (string $classes) use ($page_class): string {
+                if ($page_class && ! str_contains($classes, $page_class)) {
+                    $classes .= " $page_class";
                 }
                 return $classes;
             }
@@ -2792,7 +2809,7 @@ abstract class EE_Admin_Page extends EE_Base implements InterminableInterface
         $this->_template_args['add_page_frame'] = $this->_req_action !== 'system_status'
                                                   && $this->_req_action !== 'data_reset'
                                                   && $this->_wp_page_slug !== 'event-espresso_page_espresso_packages'
-                                                  && strpos($post_body_content, 'wp-list-table') === false;
+                                                  && ! str_contains($post_body_content, 'wp-list-table');
 
         $this->_template_args['current_page']                 = $this->_wp_page_slug;
         $this->_template_args['admin_page_wrapper_div_id']    = $this->_cpt_route

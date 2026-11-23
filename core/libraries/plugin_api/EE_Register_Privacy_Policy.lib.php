@@ -55,7 +55,8 @@ class EE_Register_Privacy_Policy implements EEI_Plugin_API
      */
     public static function addPrivacyPolicies(array $privacy_policies): array
     {
-        return array_merge($privacy_policies, ...self::$privacy_policies);
+        // string keys would be treated as named args by PHP 8.1+ when spread
+        return array_merge($privacy_policies, ...array_values(self::$privacy_policies));
     }
 
 

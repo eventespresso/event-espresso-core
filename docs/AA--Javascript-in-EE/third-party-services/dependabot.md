@@ -7,7 +7,7 @@
 
 ### Process
 
-Generally, the javascript unit test coverage (executed on travis) will be sufficient to catch breakage with any package update.  But there are a few cases where updates require a closer look.  So if you see anything in the below packages you'll want to checkout the branch created by dependabot and do your own build on that branch to ensure things work as expected:
+Generally, the javascript unit test coverage will be sufficient to catch breakage with any package update.  But there are a few cases where updates require a closer look.  So if you see anything in the below packages you'll want to checkout the branch created by dependabot and do your own build on that branch to ensure things work as expected:
 
 #### Packages updates requiring a closer look.
 Usually I examine the changelog notes for the package in question and take a closer look if the changelog includes any breaking changes (for packages following semver) or things that might impact EE code.  In some cases, this might not be easy to spot in which case you'll want to check out the branch and run a build to do your own tests.
@@ -51,7 +51,6 @@ Remember that dependabot pulls are based off of master and there is the possibil
 So generally what I do is:
 
 - merge a dependabot pull.
-- open [travis-ci.com pull requests view](https://travis-ci.com/eventespresso/event-espresso-core/pull_requests)
 - As soon as I see builds from dependabot pulls I cancel all of them except the first one.
 - When that first pull successfully passes tests and I've verified its ready for merge, I squash merge, assign it to the latest milestone, and dependabot will take care of deleting the branch.
 -  Rinse and repeat the above steps until all @dependabot pulls are done.

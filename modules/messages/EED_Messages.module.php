@@ -531,16 +531,19 @@ class EED_Messages extends EED_Module
 
     /**
      * @param EE_Transaction $transaction
+     * @param bool           $cancelled_only only include the transaction's cancelled registrations
      * @throws EE_Error
      * @throws InvalidArgumentException
      * @throws InvalidDataTypeException
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public static function cancelled_registration(EE_Transaction $transaction)
+    public static function cancelled_registration(EE_Transaction $transaction, bool $cancelled_only = false)
     {
         self::_load_controller();
-        $data = [$transaction, null];
+        $data = $cancelled_only
+            ? [$transaction, null, RegStatus::CANCELLED]
+            : [$transaction, null];
         self::$_MSG_PROCESSOR->generate_for_all_active_messengers('cancelled_registration', $data);
     }
 

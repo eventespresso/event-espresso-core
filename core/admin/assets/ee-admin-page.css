@@ -4626,7 +4626,7 @@ body.espresso-admin #contextual-help-wrap strong {
     background-color: var(--ee-color-white);
     border: 2px solid var(--ee-status-color-blue) !important;
     box-shadow: 0 3px 6px -1px hsla(0, 0%, 0%, .75), 0 0 20px -2px hsla(0, 0%, 0%, .15);
-    position: fixed;
+    position: absolute;
     text-align: start;
     z-index: 4000;
 }

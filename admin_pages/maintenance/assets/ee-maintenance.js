@@ -94,7 +94,14 @@ var Maintenance_helper = {
 		//update the main title of what we're doing
 		Maintenance_helper.display_content(migration_data.script, '#main-message', 'clear');
 		//update the descriptive text
-		Maintenance_helper.display_content(migration_data.message+'<br>', '#migration-messages', 'prepend');
+		if(typeof(migration_data.stages) !== 'undefined'){
+			Maintenance_helper.update_stage_lines(migration_data.stages);
+			if(migration_data.non_stage_message){
+				Maintenance_helper.display_content(migration_data.non_stage_message+'<br>', '#migration-messages', 'prepend');
+			}
+		}else{
+			Maintenance_helper.display_content(migration_data.message+'<br>', '#migration-messages', 'prepend');
+		}
 		if(migration_data.status === ee_maintenance.status_completed ||
 			migration_data.status === ee_maintenance.status_no_more_migration_scripts){
 			Maintenance_helper.finish( migration_data.records_migrated, migration_data.records_to_migrate );
@@ -103,6 +110,24 @@ var Maintenance_helper = {
 		}else{
 			Maintenance_helper.continue_migration();
 		}
+	},
+	//one line per migration stage (keyed by stage id), updated in place with the cumulative count
+	stage_lines: {},
+	update_stage_lines: function(stages){
+		jQuery.each(stages, function(index, stage){
+			var line = Maintenance_helper.stage_lines[stage.id];
+			if(typeof(line) === 'undefined'){
+				line = jQuery('<div class="ee-migration-stage-progress"></div>');
+				jQuery('#migration-messages').prepend(line);
+				Maintenance_helper.stage_lines[stage.id] = line;
+			}
+			// accepts plain or positional placeholders; function replacers avoid "$" patterns in names
+			line.text(
+				ee_maintenance.stage_progress
+					.replace(/%(1\$)?d/, function(){ return stage.migrated; })
+					.replace(/%(2\$)?s/, function(){ return stage.name; })
+			);
+		});
 	},
 	//handles what to do once we're done the current migration script
 	finish: function( records_migrated, records_to_migrate ){

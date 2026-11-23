@@ -216,10 +216,18 @@ abstract class EntitlementStateResolver
     }
 
 
+    /**
+     * The add-on's cached license verdict, filterable so a deployment can substitute it.
+     */
     protected function cachedLicenseData(): stdClass
     {
         if ($this->memoized_license === null) {
-            $this->memoized_license = $this->licenseData()->getLicenseDataForPlugin($this->licenseSlug());
+            $license                = $this->licenseData()->getLicenseDataForPlugin($this->licenseSlug());
+            $this->memoized_license = (object) apply_filters(
+                'FHEE__' . str_replace('\\', '_', self::class) . '__cachedLicenseData__license',
+                $license,
+                $this->licenseSlug()
+            );
         }
         return $this->memoized_license;
     }

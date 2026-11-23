@@ -16,6 +16,7 @@ use EEM_Registration;
 use EEM_Status;
 use EEM_Ticket;
 use EEM_Transaction;
+use EEM_Attendee;
 use EE_Capabilities;
 use EE_Checkin;
 use EE_Datetime;
@@ -208,11 +209,8 @@ class RegistrationsReport extends JobHandlerFile
                 $this->_change_registration_where_params_to_question_where_params($registration_query_params[0]),
             ];
         }
-        // Make sure it's not a system question
-        $question_query_params[0]['OR*not-system-questions'] = [
-            'QST_system'      => '',
-            'QST_system*null' => ['IS_NULL']
-        ];
+        // Make sure it's not a default system question
+        $question_query_params[0]['OR*not-default-system-questions'] = EEM_Question::notDefaultSystemQuestionConditions();
         if (
             apply_filters(
                 'FHEE__EventEspressoBatchRequest__JobHandlers__RegistrationsReport___get_question_labels__only_include_answered_questions',

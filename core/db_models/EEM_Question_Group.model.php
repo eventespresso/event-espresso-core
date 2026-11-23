@@ -139,4 +139,25 @@ class EEM_Question_Group extends EEM_Soft_Delete_Base
         );
         return $max[0]['max_order'];
     }
+
+
+    /**
+     * Returns the highest QSG_system value in use, trashed groups included so a trashed
+     * system group's value is never reallocated.
+     *
+     * @return int
+     * @throws EE_Error
+     * @since  5.0.61
+     */
+    public function getMaxQuestionGroupSystemID(): int
+    {
+        $max = $this->_get_all_wpdb_results(
+            $this->_alter_query_params_so_deleted_and_undeleted_items_included([]),
+            ARRAY_A,
+            [
+                'max_system' => ["MAX(QSG_system)", "%d"],
+            ]
+        );
+        return (int) ($max[0]['max_system'] ?? 0);
+    }
 }

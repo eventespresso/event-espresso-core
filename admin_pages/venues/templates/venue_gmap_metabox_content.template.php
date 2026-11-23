@@ -11,11 +11,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
 <div class="ee-layout-row ee-layout-row--spaced">
     <?php
-    if (
-        isset(EE_Registry::instance()->CFG->map_settings)
-        && isset(EE_Registry::instance()->CFG->map_settings->use_google_maps)
-        && EE_Registry::instance()->CFG->map_settings->use_google_maps
-    ) { ?>
+    if (EEH_Maps::mapsEnabled()) { ?>
         <label for="enable_for_gmap">
             <?php esc_html_e('Display Google Map for this venue? ', 'event_espresso') ?>
         </label>
@@ -23,11 +19,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
     <?php } ?>
 </div>
 <?php
-if (
-    ! isset(EE_Registry::instance()->CFG->map_settings)
-    || ! isset(EE_Registry::instance()->CFG->map_settings->use_google_maps)
-    || ! EE_Registry::instance()->CFG->map_settings->use_google_maps
-) { ?>
+if (! EEH_Maps::mapsEnabled()) { ?>
     <p class="ee-notice">
         <?php
         printf(

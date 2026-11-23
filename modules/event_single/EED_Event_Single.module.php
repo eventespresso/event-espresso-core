@@ -264,6 +264,9 @@ class EED_Event_Single extends EED_Module
     /**
      * event_details
      *
+     * Filter `FHEE__EED_Event_Single__event_details__inject_details` (bool $inject, WP_Post $post) returning false
+     * skips EE's details insertion for that post; add `__return_false` to skip it for a whole request.
+     *
      * @param    string $content
      * @return    string
      */
@@ -276,6 +279,7 @@ class EED_Event_Single extends EED_Module
             && $post->post_type === EspressoPostType::EVENTS
             && ! EED_Event_Single::$using_get_the_excerpt
             && ! post_password_required()
+            && apply_filters('FHEE__EED_Event_Single__event_details__inject_details', true, $post)
         ) {
             // Set current post ID to prevent showing content twice, but only if headers have definitely been sent.
             // Reason being is that some plugins, like Yoast, need to run through a copy of the loop early
@@ -464,7 +468,7 @@ class EED_Event_Single extends EED_Module
                 );
             }
             wp_enqueue_script($this->theme);
-            if (EE_Registry::instance()->CFG->map_settings->use_google_maps) {
+            if (EEH_Maps::mapsEnabled()) {
                 add_action('wp_enqueue_scripts', array('EEH_Maps', 'espresso_google_map_js'), 11);
             }
         }

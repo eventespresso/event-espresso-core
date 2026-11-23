@@ -122,9 +122,9 @@ class EE_Email_messenger extends EE_messenger
             ],
             'subject'       => [
                 'shortcodes' => [
-                    'organization',
-                    'primary_registration_details',
+                    'event',
                     'event_author',
+                    'organization',
                     'primary_registration_details',
                     'recipient_details',
                 ],

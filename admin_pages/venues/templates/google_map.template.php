@@ -3,10 +3,16 @@
 /**
  * @var string[][] $values
  * @var stdClass   $map_settings
+ * @var string     $map_mode            EE_Map_Config::MAP_MODE_SIMPLE or MAP_MODE_ADVANCED
+ * @var bool       $manages_google_maps false when another plugin supplies the key and locks the mode
  */
 
 use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
+$is_advanced_mode = $map_mode === EE_Map_Config::MAP_MODE_ADVANCED;
+$api_key_link     = $is_advanced_mode
+    ? 'https://console.developers.google.com/flows/enableapi?apiid=maps_backend,geocoding_backend,static_maps_backend&keyType=CLIENT_SIDE&reusekey=true'
+    : 'https://console.cloud.google.com/apis/library/maps-embed-backend.googleapis.com';
 ?>
 
 <div class="padding">
@@ -36,8 +42,33 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                     </p>
                 </td>
             </tr>
-            <?php
-            if (apply_filters('FHEE__google_map__show_api_key_input', true)) { ?>
+            <?php if ($manages_google_maps) { ?>
+                <tr>
+                    <th>
+                        <label for="map_mode">
+                            <?php esc_html_e('Map Mode', 'event_espresso') ?>
+                        </label>
+                    </th>
+                    <td>
+                        <?php echo wp_kses(
+                            EEH_Form_Fields::select_input(
+                                'map_mode',
+                                [
+                                    EE_Map_Config::MAP_MODE_SIMPLE   => esc_html__('Simple', 'event_espresso'),
+                                    EE_Map_Config::MAP_MODE_ADVANCED => esc_html__('Advanced', 'event_espresso'),
+                                ],
+                                $map_mode
+                            ),
+                            AllowedTags::getWithFormTags()
+                        ); ?>
+                        <p class="description">
+                            <?php esc_html_e(
+                                'Simple uses the free Google Maps Embed API. Advanced uses the paid Maps JavaScript, Geocoding and Static Maps APIs and offers the extra navigation and map type controls, which show after you save Advanced.',
+                                'event_espresso'
+                            ); ?>
+                        </p>
+                    </td>
+                </tr>
                 <tr>
                     <th>
                         <label for="ee-google-map-api-key">
@@ -51,15 +82,37 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                                name="google_map_api_key"
                                value="<?php echo esc_attr($map_settings->google_map_api_key); ?>"
                         />
-                        <p class="description">
-                            <?php printf(
-                                esc_html__(
-                                    'An API key is now required to use the Google Maps API: %1$sclick here to get an API key%2$s',
+                        <?php if ($map_settings->use_google_maps && trim($map_settings->google_map_api_key) === '') { ?>
+                            <p class="ee-attention">
+                                <?php esc_html_e(
+                                    'Every Google map needs an API key. Maps do not show on your site until you enter a key.',
                                     'event_espresso'
-                                ),
-                                '<a href="https://console.developers.google.com/flows/enableapi?apiid=maps_backend,geocoding_backend,directions_backend,distance_matrix_backend,elevation_backend,static_maps_backend&keyType=CLIENT_SIDE&reusekey=true" target="_blank" rel="noopener noreferrer">',
-                                '</a>'
-                            );
+                                ); ?>
+                            </p>
+                        <?php } ?>
+                        <p class="description">
+                            <?php
+                            if ($is_advanced_mode) {
+                                printf(
+                                    // translators: %1$s: opening link tag, %2$s: closing link tag
+                                    esc_html__(
+                                        'Advanced mode uses the Maps JavaScript API and the Geocoding API for the venue map, and the Static Maps API for the map image in emails. Google charges for these APIs. Your key must have all three enabled: %1$sclick here to get an API key%2$s',
+                                        'event_espresso'
+                                    ),
+                                    '<a href="' . esc_url($api_key_link) . '" target="_blank" rel="noopener noreferrer">',
+                                    '</a>'
+                                );
+                            } else {
+                                printf(
+                                    // translators: %1$s: opening link tag, %2$s: closing link tag
+                                    esc_html__(
+                                        'Simple mode uses the Maps Embed API for every venue map. Google provides it free of charge. Your key must have the Maps Embed API enabled: %1$sclick here to get an API key%2$s',
+                                        'event_espresso'
+                                    ),
+                                    '<a href="' . esc_url($api_key_link) . '" target="_blank" rel="noopener noreferrer">',
+                                    '</a>'
+                                );
+                            }
                             ?>
                         </p>
                     </td>
@@ -133,6 +186,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                 </td>
             </tr>
 
+            <?php if ($is_advanced_mode) { ?>
             <tr>
                 <th>
                     <label for="event_details_display_nav">
@@ -215,6 +269,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                     </label>
                 </td>
             </tr>
+            <?php } ?>
 
             <tr>
                 <th>
@@ -340,6 +395,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
                     />
                 </td>
             </tr>
+            <?php if ($is_advanced_mode) { ?>
             <tr>
                 <th>
                     <label for="event_list_display_nav">
@@ -425,6 +481,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
 
                 </td>
             </tr>
+            <?php } ?>
 
             <tr>
                 <th>

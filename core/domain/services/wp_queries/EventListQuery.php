@@ -136,6 +136,28 @@ class EventListQuery extends WP_Query
     }
 
 
+    /**
+     * Detaches this query's title, header and css filters so a later list on the same request starts clean.
+     *
+     * @since 5.0.61
+     */
+    public function removeFilters(): void
+    {
+        remove_filter(
+            'FHEE__archive_espresso_events_template__show_header',
+            [$this, 'show_event_list_title']
+        );
+        remove_filter(
+            'FHEE__archive_espresso_events_template__upcoming_events_h1',
+            [$this, 'event_list_title']
+        );
+        remove_filter(
+            'FHEE__content_espresso_events__event_class',
+            [$this, 'event_list_css']
+        );
+    }
+
+
     private function getQueryArgs(array $args): array
     {
         // the current "page" we are viewing

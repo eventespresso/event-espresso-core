@@ -1,6 +1,7 @@
 <?php
 
 use EventEspresso\core\domain\entities\custom_post_types\EspressoPostType;
+use EventEspresso\core\services\notifications\PersistentAdminNoticeManager;
 use EventEspresso\core\services\request\DataType;
 
 /**
@@ -566,11 +567,11 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
         $default_map_settings->use_google_maps    = true;
         $default_map_settings->google_map_api_key = '';
         // for event details pages (reg page)
-        $default_map_settings->event_details_map_width = 585;
+        $default_map_settings->event_details_map_width = EE_Map_Config::DEFAULT_MAP_WIDTH_EVENT_POST;
         // ee_map_width_single
-        $default_map_settings->event_details_map_height = 362;
+        $default_map_settings->event_details_map_height = EE_Map_Config::DEFAULT_MAP_HEIGHT_EVENT_POST;
         // ee_map_height_single
-        $default_map_settings->event_details_map_zoom = 14;
+        $default_map_settings->event_details_map_zoom = EE_Map_Config::DEFAULT_MAP_ZOOM_EVENT_POST;
         // ee_map_zoom_single
         $default_map_settings->event_details_display_nav = true;
         // ee_map_nav_display_single
@@ -582,11 +583,11 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
         // ee_map_align_single
 
         // for event list pages
-        $default_map_settings->event_list_map_width = 300;
+        $default_map_settings->event_list_map_width = EE_Map_Config::DEFAULT_MAP_WIDTH_EVENT_LIST;
         // ee_map_width
-        $default_map_settings->event_list_map_height = 185;
+        $default_map_settings->event_list_map_height = EE_Map_Config::DEFAULT_MAP_HEIGHT_EVENT_LIST;
         // ee_map_height
-        $default_map_settings->event_list_map_zoom = 12;
+        $default_map_settings->event_list_map_zoom = EE_Map_Config::DEFAULT_MAP_ZOOM_EVENT_LIST;
         // ee_map_zoom
         $default_map_settings->event_list_display_nav = false;
         // ee_map_nav_display
@@ -597,14 +598,29 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
         $default_map_settings->event_list_map_align = 'center';
         // ee_map_align
 
-        $this->_template_args['map_settings'] =
-            isset(EE_Registry::instance()->CFG->map_settings)
-            && ! empty(EE_Registry::instance()->CFG->map_settings)
-                ? (object) array_merge(
-                    (array) $default_map_settings,
-                    (array) EE_Registry::instance()->CFG->map_settings
-                )
-                : $default_map_settings;
+        $map_settings = EE_Config::instance()->map_settings;
+        // the (array) cast mangles the protected map_mode key, so the template gets the mode as its own argument
+        $this->_template_args['map_mode'] = $map_settings instanceof EE_Map_Config
+            ? $map_settings->mapMode()
+            : EE_Map_Config::MAP_MODE_SIMPLE;
+        $this->_template_args['map_settings'] = $map_settings instanceof EE_Map_Config
+            ? (object) array_merge(
+                (array) $default_map_settings,
+                (array) $map_settings
+            )
+            : $default_map_settings;
+        /**
+         * FHEE__google_map__show_api_key_input
+         * Return false when another plugin (Event Smart) supplies the Google Maps key and owns the map mode.
+         * The settings page then hides the API key, the map mode and the no-key warning, and EE_Admin creates
+         * no map mode update notice.
+         *
+         * @param bool $manages_google_maps true when the site manages its own key and map mode
+         */
+        $this->_template_args['manages_google_maps'] = (bool) apply_filters(
+            'FHEE__google_map__show_api_key_input',
+            true
+        );
 
         $this->_set_add_edit_form_tags('update_google_map_settings');
         $this->_set_publish_post_box_vars();
@@ -622,12 +638,14 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
      */
     protected function _update_google_map_settings()
     {
-        $map_settings = EE_Registry::instance()->CFG->map_settings;
+        $config       = EE_Config::instance();
+        $map_settings = $config->map_settings;
 
         $settings = [
             'use_google_maps'            => 'int',
             'google_map_api_key'         => 'string',
             'event_details_map_width'    => 'int',
+            'event_details_map_height'   => 'int',
             'event_details_map_zoom'     => 'int',
             'event_details_display_nav'  => 'int',
             'event_details_nav_size'     => 'int',
@@ -645,8 +663,16 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
         foreach ($settings as $setting => $type) {
             $map_settings->{$setting} = $this->request->getRequestParam($setting, $map_settings->{$setting}, $type);
         }
+        // a form without the field (Event Smart) keeps the stored mode
+        if ($this->request->requestParamIsSet('map_mode')) {
+            $map_settings->setMapMode(
+                $this->request->getRequestParam('map_mode', $map_settings->mapMode(), DataType::STRING)
+            );
+            // the update notice asks the admin to choose a mode, so a saved choice retires it
+            PersistentAdminNoticeManager::dismissPersistentAdminNotice(EE_Map_Config::MAP_MODE_NOTICE_NAME);
+        }
 
-        EE_Registry::instance()->CFG->map_settings = apply_filters(
+        $config->map_settings = apply_filters(
             'FHEE__Extend_General_Settings_Admin_Page___update_google_map_settings__CFG_map_settings',
             $map_settings
         );
@@ -654,7 +680,7 @@ class Venues_Admin_Page extends EE_Admin_Page_CPT
         $what    = 'Google Map Settings';
         $success = $this->_update_espresso_configuration(
             $what,
-            EE_Registry::instance()->CFG->map_settings,
+            $config->map_settings,
             __FILE__,
             __FUNCTION__,
             __LINE__

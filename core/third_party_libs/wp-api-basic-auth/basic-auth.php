@@ -24,10 +24,6 @@ function json_basic_auth_handler($user)
     $wp_json_basic_auth_success       = false;
     $wp_json_basic_auth_received_data = false;
 
-    // Don't authenticate twice
-    if (! empty($user)) {
-        return $user;
-    }
     $username = null;
     $password = null;
     //account for issue where some servers remove the PHP auth headers
@@ -52,7 +48,7 @@ function json_basic_auth_handler($user)
         if (empty($header) && isset($_GET['_authorization'])) {
             $header = $_GET['_authorization'];
             //and now remove this special header so it doesn't interfere with other parts of the request
-            unset($_GET['authorization']);
+            unset($_GET['_authorization']);
         }
         //ok if we found the header data ourselves, let's parse it
         if (! empty($header)) {
@@ -68,12 +64,24 @@ function json_basic_auth_handler($user)
         }
     }
 
+    if (isset($username)) {
+        //we have some authorization data, whether or not this plugin ends up using it
+        $wp_json_basic_auth_received_data = true;
+    }
+
+    // Don't authenticate twice. Another 'determine_current_user' callback (e.g. WordPress core's
+    // application password handler, which runs before this one on the same filter) may have
+    // already authenticated the user with the basic auth data found above, so report that the
+    // data was received and that authentication succeeded rather than resetting the globals.
+    if (! empty($user)) {
+        $wp_json_basic_auth_success = $wp_json_basic_auth_received_data;
+        return $user;
+    }
+
     // Check that we're trying to authenticate
     if (! isset($username)) {
         return $user;
     }
-    //we have some authorization data we can try authenticating with
-    $wp_json_basic_auth_received_data = true;
     /**
      * In multi-site, wp_authenticate_spam_check filter is run on authentication. This filter calls
      * get_currentuserinfo which in turn calls the determine_current_user filter. This leads to infinite

@@ -156,8 +156,8 @@ class EspressoLegacyAdmin extends AdminRoute
     {
         add_filter(
             'admin_body_class',
-            function ($classes) {
-                if (strpos($classes, 'espresso-admin') === false) {
+            function (string $classes): string {
+                if (! str_contains($classes, 'espresso-admin')) {
                     $classes .= ' espresso-admin';
                 }
                 return $classes;

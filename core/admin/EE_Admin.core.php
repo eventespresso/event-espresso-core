@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\Domain;
 use EventEspresso\core\domain\entities\custom_post_types\EspressoPostType;
 use EventEspresso\core\domain\entities\custom_post_types\CustomPostTypeDefinitions;
 use EventEspresso\core\domain\entities\notifications\PersistentAdminNotice;
@@ -255,6 +256,7 @@ final class EE_Admin implements InterminableInterface
             $this->persistent_admin_notice_manager->loadAdminNotices();
         }
         $this->maybeSetDatetimeWarningNotice();
+        $this->maybeSetMapModeNotice();
         // at a glance dashboard widget
         add_filter('dashboard_glance_items', [$this, 'dashboard_glance_items']);
         // filter for get_edit_post_link used on comments for custom post types
@@ -308,6 +310,54 @@ final class EE_Admin implements InterminableInterface
                 'datetime_fix_persistent_notice'
             );
         }
+    }
+
+
+    /**
+     * One dismissible notice for a site updated with a saved key and no saved map mode. Those sites keep the paid
+     * Advanced map, so the notice offers the free Simple mode. A new install, a keyless site and Event Smart never
+     * see it.
+     *
+     * @since 5.0.61
+     */
+    public function maybeSetMapModeNotice(): void
+    {
+        $map_settings = EE_Config::instance()->map_settings;
+        if (
+            ! $map_settings instanceof EE_Map_Config
+            || ! $map_settings->use_google_maps
+            || $map_settings->hasSavedMapMode()
+            || ! $map_settings->isAdvancedMode()
+            // another plugin owns the key and the mode (see Venues_Admin_Page::_google_map_settings()).
+            // Event Smart also stops above, because its lock saves a mode; this covers plugins without a lock.
+            || ! apply_filters('FHEE__google_map__show_api_key_input', true)
+        ) {
+            return;
+        }
+        new PersistentAdminNotice(
+            EE_Map_Config::MAP_MODE_NOTICE_NAME,
+            sprintf(
+                // translators: %1$s: the brand name (Event Espresso), %2$s: opening link tag, %3$s: closing link tag
+                esc_html__(
+                    '%1$s venue maps now have two modes. Your site uses Advanced mode, which uses paid Google APIs (Maps JavaScript and Geocoding). Simple mode draws the map with the free Google Maps Embed API. To switch, enable the Maps Embed API on your Google Maps API key, then choose Simple mode on the %2$sGoogle Maps settings page%3$s.',
+                    'event_espresso'
+                ),
+                esc_html(Domain::brandName()),
+                '<a href="' . esc_url(
+                    add_query_arg(
+                        [
+                            'page'   => 'espresso_venues',
+                            'action' => 'google_map_settings',
+                        ],
+                        admin_url('admin.php')
+                    )
+                ) . '">',
+                '</a>'
+            ),
+            false,
+            'manage_options',
+            'google maps embed api notice'
+        );
     }
 
 

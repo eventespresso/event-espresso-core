@@ -62,10 +62,10 @@ class AdminFontSize extends WordPressOption
     public static function adminFontSizeBodyClass($classes): string
     {
         /** @var AdminFontSize $AFS */
-        $AFS       = LoaderFactory::getShared(AdminFontSize::class);
-        $font_size = $AFS->getAdminFontSize();
+        $AFS             = LoaderFactory::getShared(AdminFontSize::class);
+        $font_size       = $AFS->getAdminFontSize();
         $font_size_class = $AFS->css_classes[ $font_size ] ?? $AFS->css_classes[ AdminFontSize::FONT_SIZE_DEFAULT ];
-        if (strpos($classes, $font_size_class) === false) {
+        if (! str_contains($classes, $font_size_class)) {
             $classes .= " $font_size_class";
         }
         return $classes;

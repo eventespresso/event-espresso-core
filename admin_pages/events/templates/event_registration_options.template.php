@@ -32,7 +32,7 @@ use EventEspresso\core\services\request\sanitizers\AllowedTags;
     />
 </p>
 
-<?php echo esc_html($additional_registration_options); ?>
+<?php echo wp_kses($additional_registration_options, AllowedTags::getWithFormTags()); ?>
 
 <p>
     <label><?php esc_html_e('Display Ticket Selector', 'event_espresso'); ?></label>

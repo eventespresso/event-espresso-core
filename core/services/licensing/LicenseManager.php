@@ -127,18 +127,9 @@ class LicenseManager
 
     public function getVersionInfo(): stdClass
     {
-        $products = [];
-        foreach ($this->plugin_license_collection as $plugin_license) {
-            if (! $plugin_license instanceof PluginLicense) {
-                continue;
-            }
-            $products[ $plugin_license->pluginSlug() ] = [
-                'item_id' => $plugin_license->itemId(),
-                'license' => $plugin_license->licenseKey(),
-                'url'     => LicenseAPI::url(),
-            ];
-        }
-        return $this->license_api->getProductVersions($products);
+        return $this->license_api->getProductVersions(
+            $this->plugin_license_collection->productsVersionInfo()
+        );
     }
 
 

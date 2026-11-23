@@ -25,6 +25,8 @@ class EED_Events_Archive extends EED_Module
 
     const EVENT_VENUES_PRIORITY    = 130;
 
+    const TITLE_FILTER_PRIORITY    = 100;
+
 
     public static $espresso_event_list_ID    = 0;
 
@@ -286,7 +288,12 @@ class EED_Events_Archive extends EED_Module
             $config = $this->config();
             // add status banner ?
             if ($config->display_status_banner) {
-                add_filter('the_title', ['EED_Events_Archive', 'the_title'], 100, 2);
+                add_filter(
+                    'the_title',
+                    ['EED_Events_Archive', 'the_title'],
+                    EED_Events_Archive::TITLE_FILTER_PRIORITY,
+                    2
+                );
             }
             // if NOT a custom template
             if (
@@ -322,6 +329,14 @@ class EED_Events_Archive extends EED_Module
             return $excerpt;
         }
         if (apply_filters('FHEE__EED_Events_Archive__get_the_excerpt__theme_uses_get_the_excerpt', false)) {
+            global $post;
+            // keep the_content filters attached for later posts when injection is skipped for this one
+            if (
+                $post instanceof WP_Post
+                && ! apply_filters('FHEE__EED_Events_Archive__event_details__inject_details', true, $post)
+            ) {
+                return $excerpt;
+            }
             EED_Events_Archive::removeEventDetailsFilters(false);
             $excerpt = EED_Events_Archive::event_details($excerpt);
         } else {
@@ -363,6 +378,9 @@ class EED_Events_Archive extends EED_Module
 
 
     /**
+     * Filter `FHEE__EED_Events_Archive__event_details__inject_details` (bool $inject, WP_Post $post) returning false
+     * skips EE's details insertion for that post; add `__return_false` to skip it for a whole request.
+     *
      * @param string $content
      * @return string
      * @throws EE_Error
@@ -381,6 +399,7 @@ class EED_Events_Archive extends EED_Module
                 apply_filters('FHEE__EES_Espresso_Events__process_shortcode__true', false)
                 || ! apply_filters('FHEE__content_espresso_events__template_loaded', false)
             )
+            && apply_filters('FHEE__EED_Events_Archive__event_details__inject_details', true, $post)
         ) {
             // Set current post ID to prevent showing content twice, but only if headers have definitely been sent.
             // Reason being is that some plugins, like Yoast, need to run through a copy of the loop early
@@ -664,7 +683,7 @@ class EED_Events_Archive extends EED_Module
     public static function remove_all_events_archive_filters()
     {
         // remove_filter( 'get_the_excerpt', array( 'EED_Events_Archive', 'get_the_excerpt' ), 1 );
-        remove_filter('the_title', ['EED_Events_Archive', 'the_title'], 1);
+        remove_filter('the_title', ['EED_Events_Archive', 'the_title'], EED_Events_Archive::TITLE_FILTER_PRIORITY);
         remove_filter(
             EED_Events_Archive::getExcerptFilter(),
             ['EED_Events_Archive', 'event_details'],
@@ -722,7 +741,7 @@ class EED_Events_Archive extends EED_Module
         add_filter('FHEE_load_EE_Session', '__return_true');
         add_filter('FHEE__EED_Ticket_Selector__load_tckt_slctr_assets', '__return_true');
         add_action('wp_enqueue_scripts', [$this, 'wp_enqueue_scripts'], 10);
-        if (EE_Registry::instance()->CFG->map_settings->use_google_maps) {
+        if (EEH_Maps::mapsEnabled()) {
             add_action('wp_enqueue_scripts', ['EEH_Maps', 'espresso_google_map_js'], 11);
         }
     }

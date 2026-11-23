@@ -14,13 +14,22 @@ use EventEspresso\core\libraries\form_sections\form_handlers\FormHandler;
 use EventEspresso\core\services\licensing\LicenseAPI;
 use EventEspresso\core\services\licensing\LicenseManager;
 use EventEspresso\core\services\loaders\LoaderFactory;
+use EventEspresso\core\services\request\sanitizers\RequestSanitizer;
 use RuntimeException;
 use stdClass;
 
 class LicenseKeysAdminForm extends FormHandler
 {
-    public function __construct(EE_Registry $registry)
+    private RequestSanitizer $sanitizer;
+
+
+    /**
+     * @param EE_Registry      $registry
+     * @param RequestSanitizer $sanitizer
+     */
+    public function __construct(EE_Registry $registry, RequestSanitizer $sanitizer)
     {
+        $this->sanitizer = $sanitizer;
         parent::__construct(
             LICENSE_KEYS_LABEL,
             LICENSE_KEYS_LABEL,
@@ -143,13 +152,13 @@ class LicenseKeysAdminForm extends FormHandler
         // NOTE! we're not using parent::process() here
         // because the requests are coming in via ajax
         // and the request parameters do not match the form schema
-        $license_action   = $submitted_form_data[ LicenseAPI::REQUEST_PARAM_ACTION ] ?? '';
-        $license_key      = $submitted_form_data[ LicenseAPI::REQUEST_PARAM_LICENSE_KEY ] ?? '';
-        $item_id          = $submitted_form_data[ LicenseAPI::REQUEST_PARAM_ITEM_ID ] ?? 0;
-        $item_name        = $submitted_form_data[ LicenseAPI::REQUEST_PARAM_ITEM_NAME ] ?? '';
-        $plugin_slug      = $submitted_form_data[ LicenseAPI::REQUEST_PARAM_PLUGIN_SLUG ] ?? '';
-        $plugin_version   = $submitted_form_data[ LicenseAPI::REQUEST_PARAM_PLUGIN_VER ] ?? '';
-        $min_core_version = $submitted_form_data[ LicenseAPI::REQUEST_PARAM_MIN_CORE_VER ] ?? '';
+        $license_action   = $this->submittedParam($submitted_form_data, LicenseAPI::REQUEST_PARAM_ACTION);
+        $license_key      = $this->submittedParam($submitted_form_data, LicenseAPI::REQUEST_PARAM_LICENSE_KEY);
+        $item_id          = $this->submittedParam($submitted_form_data, LicenseAPI::REQUEST_PARAM_ITEM_ID);
+        $item_name        = $this->submittedParam($submitted_form_data, LicenseAPI::REQUEST_PARAM_ITEM_NAME);
+        $plugin_slug      = $this->submittedParam($submitted_form_data, LicenseAPI::REQUEST_PARAM_PLUGIN_SLUG);
+        $plugin_version   = $this->submittedParam($submitted_form_data, LicenseAPI::REQUEST_PARAM_PLUGIN_VER);
+        $min_core_version = $this->submittedParam($submitted_form_data, LicenseAPI::REQUEST_PARAM_MIN_CORE_VER);
 
         /** @var LicenseManager $licence_manager */
         $licence_manager = LoaderFactory::getShared(LicenseManager::class);
@@ -202,5 +211,14 @@ class LicenseKeysAdminForm extends FormHandler
         $license_data->statusNotice = LicenseStatusDisplay::statusNotice($license_data->license);
         $license_data->statusClass  = LicenseStatusDisplay::statusClass($license_data->license);
         return $license_data;
+    }
+
+
+    /**
+     * Sanitized string value of a submitted param; non-string values become ''.
+     */
+    private function submittedParam(array $submitted_form_data, string $key): string
+    {
+        return $this->sanitizer->clean($submitted_form_data[ $key ] ?? '');
     }
 }

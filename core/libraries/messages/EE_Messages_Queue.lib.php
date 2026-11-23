@@ -675,6 +675,20 @@ class EE_Messages_Queue
      */
     protected function _do_send(EE_Message $message, EE_messenger $messenger, EE_message_type $message_type)
     {
+        /**
+         * Filters whether this message should be sent now. Fires for every message on every send path (scheduled
+         * and same-request). Returning false defers the message: it is set back to idle and picked up again
+         * on a later queue run.
+         *
+         * @param bool            $do_send      Whether to send the message now. Default true.
+         * @param EE_Message      $message      The message about to be sent.
+         * @param EE_messenger    $messenger    The messenger doing the sending.
+         * @param EE_message_type $message_type The message type being sent.
+         */
+        if (! apply_filters('FHEE__EE_Messages_Queue__do_send', true, $message, $messenger, $message_type)) {
+            $message->set_STS_ID(EEM_Message::status_idle);
+            return false;
+        }
         try {
             if ($messenger->send_message($message, $message_type)) {
                 $message->set_STS_ID(EEM_Message::status_sent);

@@ -618,10 +618,13 @@ class EE_Export
                             (int) $answer_row['Answer.ANS_value']
                         );
                     } else {
-                        $reg_csv_array[ $question_label ] = $this->_prepare_value_from_db_for_display(
-                            EEM_Answer::instance(),
-                            'ANS_value',
-                            $answer_row['Answer.ANS_value']
+                        // registrant-supplied free text: neutralise formula injection
+                        $reg_csv_array[ $question_label ] = EEH_Export::neutralizeCsvInjection(
+                            (string) $this->_prepare_value_from_db_for_display(
+                                EEM_Answer::instance(),
+                                'ANS_value',
+                                $answer_row['Answer.ANS_value']
+                            )
                         );
                     }
                 }

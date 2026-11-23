@@ -4,247 +4,506 @@
     Author     : mnelson4
     Description: Purpose of the stylesheet follows.
 */
+.wp-admin.wp-core-ui.espresso-admin.event-espresso_page_espresso_registration_form {
 
-#question_options .sample{ display:none; }
-
-.question-groups #the-list { cursor: move; }
-
-.espresso-admin .wp-list-table.questions .column-id {}
-.espresso-admin .wp-list-table.questions .column-order,
-.espresso-admin .wp-list-table.questions .column-admin_only,
-.espresso-admin .wp-list-table.questions .column-type,
-.espresso-admin .wp-list-table.questions .column-ajax_sort_handle { text-align: center; }
-.espresso-admin .wp-list-table.questions .column-display_text,
-.espresso-admin .wp-list-table.questions .column-admin_label { width: clamp(6rem, 25%, 16rem); }
-.espresso-admin .wp-list-table.questions .column-type,
-.espresso-admin .wp-list-table.questions .column-required,
-.espresso-admin .wp-list-table.questions .column-values { width: clamp(4rem, 15%, 8rem); }
-
-
-.espresso-admin .wp-list-table.questiongroups .column-id { width:5%; }
-.espresso-admin .wp-list-table.questiongroups .column-order,
-.espresso-admin .wp-list-table.questiongroups .column-ajax_sort_handle { width:5%; text-align: center; }
-.espresso-admin .wp-list-table.questiongroups .column-name,
-.espresso-admin .wp-list-table.questiongroups .column-description { width: clamp(6rem, 35%, 16rem); }
-.espresso-admin .wp-list-table.questiongroups .column-show_group_name,
-.espresso-admin .wp-list-table.questiongroups .column-show_group_desc {
-	width: clamp(4rem, 15%, 8rem);
-}
-
-.ee-question-sortable { cursor: move;}
-.ee-question-sortable label { cursor: inherit;}
-
-.question-group-questions .description {
-    color: #777;
-    font-style: normal;
-}
-.question-group-questions .question-list-sortable {
-    padding-left: 0;
-}
-.ee-question-sortable {
-    align-items: center;
-    border: 1px solid hsl(0, 0%, 90%);
-    display: flex;
-    justify-content: space-between;
-    margin: 0;
-    margin-block-end: 1rem;
-    padding: 0;
-    padding-block: .5rem;
-    padding-inline-start: 1rem;
-    padding-inline-end: 0.5rem;
-    position: relative;
-}
-.ee-question-sortable:hover {
-    border-color: #444;
-}
-.ee-question-sortable .question-text h1,
-.ee-question-sortable .question-text h2,
-.ee-question-sortable .question-text h3,
-.ee-question-sortable .question-text h4,
-.ee-question-sortable .question-text h5,
-.ee-question-sortable .question-text p {
-    padding: 0 !important;
-    margin: 0 !important;
-    border: 0 !important;
-}
-
-.ee-question-sortable label {
-    display: flex;
-}
-.ee-question-sortable input[type="checkbox"] {
-    margin-inline-start: 0;
-    margin-inline-end: 1rem;
-}
-.ee-question-sortable a {
-    margin-inline-start: auto;
-}
-
-#insert_question_group_event_form .questions-group-wrap,
-#update_question_group_event_form .questions-group-wrap {
-    align-items: flex-start;
-    flex-flow: row wrap;
-}
-
-#update_question_group_event_form .edit-group > h2,
-#insert_question_group_event_form .edit-group > h2 {
-    margin-block-start: unset;
-}
-
-.espresso-admin .ee-reg-form-questions.form-table thead th,
-.espresso-admin .ee-reg-form-questions.form-table tbody th {
-    width: 100%;
-}
-
-.espresso-admin .ee-reg-form-questions.form-table .ee-help-btn {
-    margin-inline-end: .25rem;
-}
-
-.espresso-admin .form-table #question_options td {
-    padding: 0;
-}
-.espresso-admin .form-table #question_options table.question-options-table {
-	width: 100%;
-}
-
-.espresso-admin .form-table #question_options table.question-options-table th,
-.espresso-admin .form-table #question_options table.question-options-table td {
-    display: flex;
-    padding: 0;
-	width: 100%;
-}
-.espresso-admin .form-table #question_options table.question-options-table th:last-child,
-.espresso-admin .form-table #question_options table.question-options-table td:last-child {
-    min-width: unset;
-    justify-content: flex-end;
-}
-.espresso-admin .form-table #question_options table.question-options-table td input:not([type="radio"]):not([type="submit"]):not([type="button"]):not([type="checkbox"]) {
-    margin-inline-start: .25rem;
-}
-
-
-.espresso-admin .form-table .question-options-table tr {
-    flex-flow: column nowrap;
-}
-
-.espresso-admin .form-table td p.description.ee-system-question {
-    color: var(--ee-status-color-red);
-}
-
-.espresso-admin .ee-admin-page-form #post-body-content .form-table td p.description + p.description {
-    margin-block-start: .25rem;
-}
-
-.espresso-admin .form-table .question-options-table tr {
-    flex-flow: row nowrap;
-}
-
-.espresso-admin .form-table .question-options-table th,
-.espresso-admin .form-table .question-options-table td {
-    flex: 4 1 auto;
-}
-.espresso-admin .form-table .question-options-table th:first-child,
-.espresso-admin .form-table .question-options-table td:first-child {
-    flex: 3 1.25 auto;
-}
-.espresso-admin .form-table .question-options-table th:last-child,
-.espresso-admin .form-table .question-options-table td:last-child {
-    flex: 1 0 6rem;
-}
-
-.espresso-admin .form-table #question_options {
-    --ee-option-actions-width: calc(((var(--ee-button-height) + (var(--ee-margin-nano) * 2)) * 2) + var(--ee-margin-nano));
-    --ee-option-default-width: 5rem;
-    --ee-other-cells-width: calc(100% - var(--ee-option-actions-width) - var(--ee-option-default-width) - var(--ee-margin-micro));
-    --ee-option-value-width: calc(var(--ee-other-cells-width) * .33);
-    --ee-option-desc-width: calc(var(--ee-other-cells-width) * .66);
-    --ee-option-double-wide: calc(var(--ee-other-cells-width) * .99);
-}
-
-.espresso-admin .form-table #question_options table.question-options-table th {
-    align-items: baseline;
-}
-.espresso-admin .form-table #question_options table.question-options-table td select,
-.espresso-admin .form-table #question_options table.question-options-table td input[type="text"] {
-    max-width: 100%;
-}
-.espresso-admin .form-table #question_options table.question-options-table + .ee-admin-button-row {
-    margin-block-start: 0;
-}
-
-@media screen and (min-width:600px) {
-    .espresso-admin .form-table #question_options table.question-options-table td.no-default-label {
-        padding-block: 0.875rem;
-    }
-    .espresso-admin .form-table #question_options table.question-options-table td.no-default-label label {
-        font-weight: 400;
-        margin-block-start: 0;
-        margin-inline-start: auto;
-        text-align: end;
-    }
-    .espresso-admin .form-table #question_options table.question-options-table th.option-value-header,
-    .espresso-admin .form-table #question_options table.question-options-table td.option-value-cell {
-        display: inline-flex;
-        padding-inline-end: .5rem;
-        width: var(--ee-option-value-width);
-    }
-
-    .espresso-admin .form-table #question_options table.question-options-table th.option-desc-header,
-    .espresso-admin .form-table #question_options table.question-options-table td.option-desc-cell {
-        display: inline-flex;
-        padding-inline-end: .5rem;
-        width: var(--ee-option-desc-width);
-    }
-
-    .espresso-admin .form-table #question_options table.question-options-table th.option-default-header,
-    .espresso-admin .form-table #question_options table.question-options-table td.option-default-cell {
-        display: inline-flex;
-        justify-content: center;
-        padding-inline: .5rem;
-        width: var(--ee-option-default-width);
-    }
-    .espresso-admin .form-table #question_options table.question-options-table td.option-default-cell {
-        padding-block: .875rem;
-    }
-
-    .espresso-admin .form-table #question_options table.question-options-table th.option-actions-header,
-    .espresso-admin .form-table #question_options table.question-options-table td.option-actions-cell {
-        display: inline-flex;
-        padding-inline-end: .5rem;
-        width: var(--ee-option-actions-width);
-    }
-    .espresso-admin .form-table #question_options table.question-options-table th:last-child,
-    .espresso-admin .form-table #question_options table.question-options-table td:last-child {
-        padding-inline-end: 0;
-    }
-}
-
-
-@media screen and (min-width: 1920px) {
-    #group-details {
-        width: calc(100% - 25rem);
-    }
-    #group-questions {
-        margin-block-start: unset;
-        margin-inline-start: 1rem;
-        width: 24rem;
-    }
-}
-
-
-@media screen and ( max-width: 1366px ) {
-    .event-espresso_page_espresso_registration_form.espresso-admin #post-body {
-        display: flex;
-        flex-direction: column;
-    }
-    .event-espresso_page_espresso_registration_form.espresso-admin #post-body.columns-2 #postbox-container-1 {
-        float: unset;
-        margin: 0;
-        margin-block-start: 1rem;
+    .ee-admin-container {
+        max-width: 100%;
         width: 100%;
     }
 
-    .event-espresso_page_espresso_registration_form.espresso-admin #post-body.columns-2 #post-body-content,
-    .event-espresso_page_espresso_registration_form.espresso-admin #post-body.columns-2 #postbox-container-1 > div {
-        width: 100%;
+    .ee-invalid-input-notice {
+        display: none;
+    }
+
+    :is(input, select, textarea):user-invalid ~ .ee-invalid-input-notice {
+        display: block;
+    }
+
+    .form-table {
+        td {
+            input[type="radio"],
+            input[type="checkbox"] {
+                margin-block-start: var(--ee-margin-smaller);
+            }
+
+            select,
+            textarea,
+            input:not([type="button"]):not([type="checkbox"]):not([type="radio"]):not([type="submit"]) {
+                &:required:user-valid {
+                    border-color: hsla(140, 90%, 40%);
+                }
+
+                &:required:user-invalid {
+                    border-color: hsla(350, 95%, 65%);
+                }
+            }
+        }
+    }
+
+    .wp-list-table {
+        &.questions {
+            .column-id {}
+            .column-order,
+            .column-admin_only,
+            .column-type,
+            .column-ajax_sort_handle { text-align: center; }
+            .column-display_text,
+            .column-admin_label { width: clamp(6rem, 25%, 16rem); }
+            .column-type,
+            .column-required,
+            .column-values { width: clamp(4rem, 15%, 8rem); }
+        }
+
+
+        &.questiongroups {
+            .column-id { width:5%; }
+            .column-order,
+            .column-ajax_sort_handle { width:5%; text-align: center; }
+            .column-name,
+            .column-description { width: clamp(6rem, 35%, 16rem); }
+            .column-show_group_name,
+            .column-show_group_desc {
+                width: clamp(4rem, 15%, 8rem);
+            }
+
+            #the-list { cursor: move; }
+        }
+
+    }
+
+    /* add/edit question */
+    #insert_question_event_form,
+    #update_question_event_form {
+
+        .ee-reg-form-questions.form-table {
+            display: block;
+
+            thead,
+            tbody,
+            tfoot {
+                display: block;
+
+                tr {
+                    display: flex;
+                    flex-flow: column nowrap;
+                    width: 100%;
+
+                    th, td {
+                        box-sizing: border-box;
+                        display: flex;
+                        flex-flow: column nowrap;
+                        max-width: 100%;
+                        width: 100%;
+
+                        p.description {
+                            max-width: 100%;
+                            width: 100%;
+
+                            &.footnote {
+                                background: hsl(203 95% 75% / 25%);
+                                border-radius: var(--ee-border-radius-full);
+                                color: var(--ee-font-color);
+                                font-size: .875rem;
+                                line-height: .875rem;
+                                margin-inline-start: auto;
+                                padding-block: var(--ee-padding-micro);
+                                padding-inline: var(--ee-padding-small);
+                                width: fit-content;
+
+                                .footnote--indicator {
+                                    background: unset;
+                                    border-radius: unset;
+                                    font-weight: 900;
+                                    margin-inline-end: .5rem;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            th {
+                .ee-help-btn {
+                    margin-inline-end: .25rem;
+                }
+
+                .footnote--indicator {
+                    aspect-ratio: 1 / 1;
+                    background: hsl(203 95% 75% / 25%);
+                    block-size: 1.25rem;
+                    border-radius: var(--ee-border-radius-full);
+                    color: var(--ee-font-color);
+                    display: inline-block;
+                    font-size: .875rem;
+                    font-weight: 900;
+                    inline-size: 1.25rem;
+                    line-height: .875rem;
+                    margin-block-start: -.25rem;
+                    margin-inline-start: .25rem;
+                    padding: 2px 1px 0 2px;
+                    text-align: center;
+                }
+            }
+
+            #text_input_question_options {
+                display:none;
+            }
+
+            #question_options {
+                --ee-option-actions-width: 6.5rem;
+                --ee-option-default-width: 5rem;
+                --ee-other-cells-width: calc(
+                    100% - var(--ee-option-actions-width) - var(--ee-option-default-width) - var(--ee-margin-micro)
+                );
+                --ee-option-value-width: calc(var(--ee-other-cells-width) * .33);
+                --ee-option-desc-width: calc(var(--ee-other-cells-width) * .66);
+
+                td {
+
+                    .question-options-table-wrap {
+                        /* contain: layout isolates the inner table layout from document intrinsic width */
+                        contain: layout;
+                        margin-block-end: .5rem;
+                        max-width: 100%;
+                        overflow-x: scroll;
+                        position: relative;
+                        scrollbar-color: var(--ee-status-color-blue-grey) var(--ee-color-white);
+                        scrollbar-gutter: stable;
+                        scrollbar-width: thin;
+                        width: 100%;
+
+                        table.question-options-table {
+                            display: table;
+                            min-width: 48rem;
+                            width: 100%;
+
+                            thead,
+                            tbody,
+                            tfoot {
+                                display: table-row-group;
+
+                                tr,
+                                tr.question-option:not(.sample) {
+                                    display: table-row;
+
+                                    &.sample {
+                                        display:none;
+                                    }
+
+                                    &.question-option {
+                                        &.ee-options-sortable {
+                                            &:hover {
+                                                cursor: default !important;
+                                            }
+                                            &.ui-sortable-placeholder {
+                                                height: 3rem;
+                                            }
+                                        }
+
+                                        > td {
+                                            padding-block: 0;
+                                        }
+                                    }
+
+                                    th,
+                                    td {
+                                        box-sizing: border-box;
+                                        display: table-cell;
+                                        line-height: 1;
+
+                                        &:last-child {
+                                            padding-inline-end: 0;
+                                            text-align: end;
+                                        }
+
+                                        input[type="text"] {
+                                            max-width: unset;
+                                            min-width: unset;
+                                            width: 100%;
+                                        }
+
+                                        .inline-content {
+                                            display: flex;
+                                            flex-flow: row nowrap;
+                                        }
+
+                                        &.option-value-header,
+                                        &.option-value-cell {
+                                            padding-inline-end: .5rem;
+                                            width: var(--ee-option-value-width);
+                                        }
+
+                                        &.option-desc-header,
+                                        &.option-desc-cell {
+                                            padding-inline-end: .5rem;
+                                            width: var(--ee-option-desc-width);
+                                        }
+
+                                        &.option-default-header,
+                                        &.option-default-cell {
+                                            padding-inline: .5rem;
+                                            text-align: center;
+                                            width: var(--ee-option-default-width);
+                                        }
+
+                                        &.option-actions-header,
+                                        &.option-actions-cell {
+                                            padding-inline: .25rem;
+                                            min-width: var(--ee-option-actions-width);
+                                            width: var(--ee-option-actions-width);
+                                        }
+                                    }
+
+                                    th {
+                                        align-items: baseline;
+                                        padding-block-end: 0;
+
+                                        &.option-default-header {
+                                            padding-inline: .5rem;
+                                            text-align: center;
+                                        }
+
+                                        &:first-child {
+                                            padding-block-start: .5rem;
+                                        }
+                                    }
+                                    td {
+                                        padding-inline: 0;
+
+                                        select,
+                                        input[type="text"] {
+                                            max-width: 100%;
+                                        }
+
+                                        &:first-child {
+                                            input:not([type="button"]):not([type="checkbox"]):not([type="radio"]):not([type="submit"]) {
+                                                margin-inline-start: 0;
+                                            }
+                                        }
+
+                                        &.option-default-cell {
+                                            text-align: center;
+
+                                            input[type="radio"] {
+                                                margin-inline: auto;
+                                            }
+                                        }
+
+                                        &.no-default-label {
+                                            padding-block: 0.875rem;
+
+                                            label {
+                                                font-weight: 400;
+                                                margin-block-start: .25rem;
+                                                margin-inline-start: auto;
+                                                text-align: end;
+                                                justify-content: end;
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+                            & + .ee-admin-button-row {
+                                margin-block-start: 0;
+                            }
+                        }
+
+                        @media screen and (min-width: 1024px) {
+                            /* overflow stays visible on desktop so the ee-aria-tooltip on the row
+                               action buttons isn't clipped; the sortable drag-offset is corrected in
+                               JS instead (see espresso_reg_forms_fix_sortable_offset). */
+                            overflow-x: unset;
+                            scrollbar-color: unset;
+                            scrollbar-gutter: unset;
+                            scrollbar-width: unset;
+                        }
+                    }
+                }
+            }
+
+            .ee-admin-button-row {
+                margin-block-start: var(--ee-margin-smaller);
+                max-width: 100%;
+            }
+        }
+
+
+        @media screen and (min-width: 1600px) {
+            .ee-reg-form-questions.form-table {
+                display: table;
+
+                thead,
+                tbody,
+                tfoot {
+                    display: table-row-group;
+
+                    tr {
+                        display: table-row;
+
+                        th, td {
+                            display: table-cell;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
+    /* add/edit question group */
+    #insert_question_group_event_form,
+    #update_question_group_event_form {
+        .questions-group-wrap {
+            align-items: flex-start;
+            flex-flow: row wrap;
+
+            .edit-group > h2 {
+                margin-block-start: unset;
+            }
+
+            #group-details {
+
+            }
+
+            #group-questions {
+                .question-group-questions {
+                    .question-list-sortable-wrap {
+                        position: relative;
+
+                        .question-list-sortable {
+                            padding-left: 0;
+
+                            .ee-question-sortable {
+                                align-items: center;
+                                border: 1px solid hsl(0, 0%, 90%);
+                                display: flex;
+                                justify-content: space-between;
+                                margin-block-end: 1rem;
+                                margin: 0;
+                                padding-block: .5rem;
+                                padding-inline-end: 0.5rem;
+                                padding-inline-start: 1rem;
+                                padding: 0;
+                                position: relative;
+
+                                &:hover {
+                                    border-color: #444;
+                                }
+
+                                label {
+                                    cursor: inherit;
+                                    display: flex;
+                                    margin-block-start: 0;
+
+                                    input[type="checkbox"] {
+                                        margin-inline-end: 1rem;
+                                    }
+
+                                    .question-text {
+                                        h1,
+                                        h2,
+                                        h3,
+                                        h4,
+                                        h5,
+                                        p {
+                                            padding: 0 !important;
+                                            margin: 0 !important;
+                                            border: 0 !important;
+                                        }
+                                    }
+                                }
+
+                                a {
+                                    margin-inline-start: auto;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            @media screen and (min-width: 1920px) {
+                #group-details {
+                    width: calc(100% - 25rem);
+                }
+                #group-questions {
+                    margin-block-start: unset;
+                    margin-inline-start: 1rem;
+                    width: 24rem;
+                }
+            }
+        }
+    }
+
+    .ui-sortable {
+        position: relative;
+
+        .ui-sortable-handle {
+            cursor: grab;
+
+            &.ui-sortable-helper {
+                backdrop-filter: blur(12px);
+                -webkit-backdrop-filter: blur(12px); /* Safari support */
+                background: hsla(0 0% 100% / 50%) !important;
+                border: 2px solid var(--ee-status-color-light-blue) !important;
+                box-shadow: var(--ee-box-shadow-big) !important;
+                cursor: grabbing !important;
+                padding-inline: .25rem;
+            }
+
+            .sortable-drag-handle {
+                cursor: grab;
+
+                .dashicons-editor-code {
+                    transform: rotate(90deg);
+                }
+            }
+        }
+    }
+
+    @media screen and (min-width: 1600px) {
+        #post-body.columns-2 #post-body-content {
+            .ee-admin-two-column-layout > thead,
+            .ee-admin-two-column-layout > tbody,
+            .ee-admin-two-column-layout > tfoot {
+                > tr {
+                    > th {
+                        max-width: unset;
+                        min-width: unset;
+                        width: 16rem;
+                    }
+
+                    > td {
+                        max-width: unset;
+                        min-width: unset;
+                        width: calc(99% - 16rem);
+                    }
+                }
+            }
+        }
+     }
+
+    @media screen and (width < 1366px ) {
+        #post-body {
+            display: flex;
+            flex-direction: column;
+
+            &.columns-2 {
+                #post-body-content {
+                    width: 100%;
+                }
+                #postbox-container-1 {
+                    float: unset;
+                    margin: 0;
+                    margin-block-start: 1rem;
+                    width: 100%;
+
+                    > div {
+                        width: 100%;
+                    }
+                }
+            }
+        }
     }
 }

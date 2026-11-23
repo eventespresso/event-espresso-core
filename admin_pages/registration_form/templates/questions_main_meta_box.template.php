@@ -61,6 +61,23 @@ try {
     <?php echo wp_kses($info_box, $allowedposttags); ?>
     <table class="ee-reg-form-questions ee-admin-two-column-layout form-table">
         <tbody>
+
+            <tr>
+                <th></th>
+                <td>
+                    <span class="important-notice">
+                        <?php
+                        printf(
+                            esc_html__(
+                                'all fields marked with an asterisk (%1$s) are required',
+                                'event_espresso'
+                            ),
+                            '<span class="asterisk ee-required-text">*</span>'
+                        )
+                        ?>
+                    </span>
+                </td>
+            </tr>
             <?php do_action('AHEE__questions_main_meta_box__template__before_table_form_table', $question); ?>
             <tr>
                 <th>
@@ -69,7 +86,7 @@ try {
                         <?php echo wp_kses(
                             EEH_Template::get_help_tab_link('question_text_info'), AllowedTags::getAllowedTags()
                         ); ?>
-                            <span class="ee-required-text">*</span>
+                            <span class="asterisk ee-required-text">*</span>
                     </label>
                 </th>
                 <td>
@@ -77,9 +94,10 @@ try {
                            id="QST_display_text"
                            name="QST_display_text"
                            type="text"
-                           value="<?php esc_attr_e($question->get_f('QST_display_text')); ?>"
+                           value="<?php esc_attr_e($question->get('QST_display_text')); ?>"
                            required
                     />
+                    <p class="ee-invalid-input-notice"><?php esc_html_e('please enter a value', 'event_espresso') ?></p>
                 </td>
             </tr>
 
@@ -151,16 +169,14 @@ try {
                         esc_attr_e($checked);
                         ?>
                     />
-                    <br>
-                        <?php
-                        if (! empty($QST_system)) { ?>
-                            <p class="description ee-system-question" >
-                                <?php esc_html_e(
-                                    'System question! This field cannot be changed.',
-                                    'event_espresso'
-                                ); ?>
-                            </p>
-                        <?php } ?>
+                    <?php if (! empty($QST_system)) { ?>
+                        <p class="description ee-system-question" >
+                            <?php esc_html_e(
+                                'System question! This field cannot be changed.',
+                                'event_espresso'
+                            ); ?>
+                        </p>
+                    <?php } ?>
                 </td>
             </tr>
 
@@ -234,12 +250,6 @@ try {
                         value="<?php esc_attr_e($question->get_f('QST_max')); ?>"
                         <?php esc_attr_e($disabled_attr); ?>
                     />
-                    <p class="description">
-                        <?php esc_html_e(
-                            'Maximum number of characters allowed when answering this question',
-                            'event_espresso'
-                        ); ?>
-                    </p>
                     <?php if ($QST_system) { ?>
                     <p class="description ee-system-question" >
                         <?php printf(
@@ -251,37 +261,34 @@ try {
                         ); ?>
                     </p>
                     <?php } ?>
+                    <p class="description">
+                        <?php esc_html_e(
+                            'Maximum number of characters allowed when answering this question',
+                            'event_espresso'
+                        ); ?>
+                    </p>
                 </td>
             </tr>
             <tr id="question_options">
                 <th>
-                    <label>
-                        <?php esc_html_e('Answer Options', 'event_espresso') ?>
-                    </label>
+                    <?php esc_html_e('Answer Options', 'event_espresso') ?>
                 </th>
                 <td>
-
+                    <div class="question-options-table-wrap">
                         <table class="question-options-table">
                             <thead>
                                 <tr>
                                     <th class="option-value-header">
-                                        <label>
-                                            <?php esc_html_e('Value', 'event_espresso') ?>
-                                        </label>
+                                        <span><?php esc_html_e('Value', 'event_espresso') ?></span>
                                     </th>
                                     <th class="option-desc-header">
-                                        <label>
-                                        <?php esc_html_e('Description', 'event_espresso') ?>
-                                        </label>
-                                        <span class="tiny-text"><?php esc_html_e(
-                                                '(optional, only shown on registration form)',
-                                                'event_espresso'
-                                            ) ?></span>
+                                        <span class="inline-content">
+                                            <span><?php esc_html_e('Description', 'event_espresso') ?></span>
+                                            <span class="footnote--indicator">†</span>
+                                        </span>
                                     </th>
                                     <th class="option-default-header">
-                                        <label>
-                                            <?php esc_html_e('Default', 'event_espresso') ?>
-                                        </label>
+                                        <span><?php esc_html_e('Default', 'event_espresso') ?></span>
                                     </th>
                                     <th class="option-actions-header">
                                     </th>
@@ -289,7 +296,7 @@ try {
                             </thead>
 
                             <tbody>
-                                <tr class="question-option sample">
+                                <tr class="question-option sample" hidden>
                                     <td class="option-value-cell">
                                         <label class='screen-reader-text' for='question_options-xxcountxx-QSO_value'>
                                             <?php esc_html_e('Value', 'event_espresso') ?>
@@ -298,11 +305,13 @@ try {
                                                id="question_options-xxcountxx-QSO_value"
                                                name="question_options[xxcountxx][QSO_value]"
                                                class="option-value ee-input-width--reg"
+                                               disabled
                                         />
                                         <input type='hidden'
                                                class='QSO_order'
                                                name='question_options[xxcountxx][QSO_order]'
                                                value='0'
+                                               disabled
                                         />
                                     </td>
                                     <td class="option-desc-cell">
@@ -313,6 +322,7 @@ try {
                                                id='question_options-xxcountxx-QSO_desc'
                                                name="question_options[xxcountxx][QSO_desc]"
                                                class="option-desc ee-input-width--big"
+                                               disabled
                                         />
                                     </td>
                                     <td class="option-default-cell">
@@ -324,21 +334,22 @@ try {
                                                id="question_options-xxcountxx-QSO_default"
                                                name="QSO_default"
                                                value="xxcountxx"
+                                               disabled
                                         />
                                     </td>
                                     <td class="option-actions-cell">
                                         <a class="button button--icon-only remove-option remove-item ee-aria-tooltip"
-                                           aria-label="<?php esc_html_e('click to delete this option', 'event_espresso') ?>"
+                                           aria-label="<?php esc_attr_e('click to delete this option', 'event_espresso') ?>"
                                         >
                                             <span class='dashicons clickable dashicons-post-trash'></span>
                                         </a>
                                         <a class="button button--icon-only sortable-drag-handle ee-aria-tooltip"
-                                           aria-label="<?php esc_html_e(
+                                           aria-label="<?php esc_attr_e(
                                                'click and drag to change the order of this option',
                                                'event_espresso'
                                            ) ?>"
                                         >
-                                            <span class='dashicons dashicons-image-flip-vertical '></span>
+                                            <span class='dashicons dashicons-editor-code'></span>
                                         </a>
                                     </td>
                                 </tr>
@@ -364,7 +375,7 @@ try {
                                                        id="question_options-<?php esc_attr_e($count); ?>-QSO_value"
                                                        name="question_options[<?php esc_attr_e($count); ?>][QSO_value]"
                                                        value="<?php esc_attr_e($option->value()); ?>"
-                                                    <?php esc_attr_e($disabled_attr); ?>
+                                                       <?php esc_attr_e($disabled_attr); ?>
                                                 />
                                                 <input type="hidden"
                                                        class="QSO_order"
@@ -410,7 +421,7 @@ try {
                                             <td class="option-actions-cell">
                                             <?php if (! $option->system()) { ?>
                                                 <a class='button button--icon-only remove-option remove-item ee-aria-tooltip'
-                                                   aria-label="<?php esc_html_e(
+                                                   aria-label="<?php esc_attr_e(
                                                        'click to delete this option',
                                                        'event_espresso'
                                                    ) ?>"
@@ -419,33 +430,33 @@ try {
                                                 </a>
                                             <?php } ?>
                                                 <a class='button button--icon-only sortable-drag-handle ee-aria-tooltip'
-                                                   aria-label="<?php esc_html_e(
+                                                   aria-label="<?php esc_attr_e(
                                                        'click and drag to change the order of this option',
                                                        'event_espresso'
                                                    ) ?>"
                                                 >
-                                                    <span class='dashicons dashicons-image-flip-vertical '></span>
+                                                    <span class='dashicons dashicons-editor-code'></span>
                                                 </a>
                                                 <?php
                                                 echo wp_kses(
                                                     EEH_Form_Fields::hidden_input(
-                                                        "question_options[$count][QST_ID])",
+                                                        "question_options[$count][QST_ID]",
                                                         $option->question_ID()
                                                     ),
                                                     AllowedTags::getWithFormTags()
                                                 );
                                                 echo wp_kses(
                                                     EEH_Form_Fields::hidden_input(
-                                                        "question_options[$count][QSO_ID])",
+                                                        "question_options[$count][QSO_ID]",
                                                         $option->ID()
                                                     ),
                                                     AllowedTags::getWithFormTags()
                                                 );
-                                                $count++;
                                                 ?>
                                             </td>
                                         </tr>
                                         <?php
+                                        $count++;
                                     }
                                 } else {
                                     ?>
@@ -490,28 +501,23 @@ try {
                                             />
                                         </td>
                                         <td class="option-actions-cell">
-                                            <?php echo wp_kses(
-                                                EEH_Form_Fields::hidden_input(
-                                                    "question_options_count",
-                                                    $count
-                                                ),
-                                                AllowedTags::getWithFormTags()
-                                            ); ?>
                                         </td>
                                     </tr>
                                     <?php
+                                    $count++;
                                 }
                                 if (
                                     $question->type() === EEM_Question::QST_type_checkbox
                                     || $question->type() === EEM_Question::QST_type_radio
                                 ) :
+                                    // the no default option input uses 999999 in place of an ID to avoid collisions
                                 ?>
-                                <tr class="question-option">
+                                <tr class="question-option no-default-value-row">
                                     <td class="option-value-cell">
                                     </td>
                                     <td class="option-desc-cell no-default-label">
                                         <label for='question_options-999999-QSO_default'>
-                                            <?php esc_html_e('no default value', 'event_espresso') ?>
+                                            <?php esc_html_e('select for no default value', 'event_espresso') ?>
                                         </label>
                                     </td>
                                     <?php $no_default = $hasDefault ? '' : ' checked'; ?>
@@ -529,43 +535,46 @@ try {
                                 <?php endif; ?>
                             </tbody>
                         </table>
-                        <div class="ee-admin-button-row">
-                            <a id='new-question-option' class='button button--secondary'>
-                                <?php esc_html_e('Add Another Answer Option', 'event_espresso'); ?>
-                            </a>
-                            <?php echo wp_kses(
-                                EEH_Form_Fields::hidden_input(
-                                    "question_options_count",
-                                    $count
-                                ),
-                                AllowedTags::getWithFormTags()
-                            ); ?>
-                        </div>
-                        <br/>
-
-                        <p class="description">
+                    </div>
+                    <div class="ee-admin-button-row">
+                        <a id='new-question-option' class='button button--secondary'>
+                            <?php esc_html_e('Add Another Answer Option', 'event_espresso'); ?>
+                        </a>
+                        <?php echo wp_kses(
+                            EEH_Form_Fields::hidden_input(
+                                "question_options_count",
+                                $count
+                            ),
+                            AllowedTags::getWithFormTags()
+                        ); ?>
+                    </div>
+                    <br/>
+                    <p class="description footnote">
+                        <span class="footnote--indicator">†</span><?php esc_html_e('optional, only shown on registration form', 'event_espresso') ?>
+                    </p>
+                    <p class="description">
+                        <?php esc_html_e(
+                            'Answer Options are the choices that you give people to select from for RADIO_BTN, CHECKBOX or DROPDOWN questions. The Value is a simple key that will be saved to the database and the description is optional. Note that values CANNOT contain any HTML, but descriptions can.',
+                            'event_espresso'
+                        ) ?>
+                        <br />
+                        <strong>
                             <?php esc_html_e(
-                                'Answer Options are the choices that you give people to select from for RADIO_BTN, CHECKBOX or DROPDOWN questions. The Value is a simple key that will be saved to the database and the description is optional. Note that values CANNOT contain any HTML, but descriptions can.',
+                                'The Default Answer Option will be automatically selected when the registration form is initially displayed, unless "no default value" is selected.',
                                 'event_espresso'
                             ) ?>
-                            <br />
-                            <strong>
-                                <?php esc_html_e(
-                                    'The Default Answer Option will be automatically selected when the registration form is initially displayed, unless "no default value" is selected.',
-                                    'event_espresso'
-                                ) ?>
-                            </strong>
+                        </strong>
+                    </p>
+                    <?php if ($has_answers) : ?>
+                        <p class="description ee-system-question">
+                            <?php esc_html_e(
+                                'Answer values that are not editable are this way because there are registrations in the database that have answers for this question.  If you need to correct a mistake, or edit an existing option value, then trash the existing one and create a new option with the changes.  This will ensure that the existing registrations that chose the original answer will preserve that answer.',
+                                'event_espresso'
+                            ); ?>
                         </p>
-                        <?php if ($has_answers) : ?>
-                            <p class="description ee-system-question">
-                                <?php esc_html_e(
-                                    'Answer values that are not editable are this way because there are registrations in the database that have answers for this question.  If you need to correct a mistake, or edit an existing option value, then trash the existing one and create a new option with the changes.  This will ensure that the existing registrations that chose the original answer will preserve that answer.',
-                                    'event_espresso'
-                                ); ?>
-                            </p>
-                        <?php endif; ?>
-                    </td>
-                </tr>
+                    <?php endif; ?>
+                </td>
+            </tr>
 
             <tr>
                 <th>
@@ -598,6 +607,7 @@ try {
                         AllowedTags::getWithFormTags()
                     );
                     ?>
+                    <p class="ee-invalid-input-notice"><?php esc_html_e('please enter a value', 'event_espresso') ?></p>
                     <p id="required_toggled_on"
                        class="description<?php esc_attr_e($show_required_class); ?>"
                     >
@@ -648,23 +658,6 @@ try {
             </tr>
 
             <?php do_action('AHEE__questions_main_meta_box__template__after_table_form_table', $question); ?>
-
-            <tr>
-                <th></th>
-                <td>
-                    <span class="important-notice">
-                        <?php
-                        printf(
-                            esc_html__(
-                                'all fields marked with an asterisk (%1$s) are required',
-                                'event_espresso'
-                            ),
-                            '<span class="asterisk ee-required-text">*</span>'
-                        )
-                        ?>
-                    </span>
-                </td>
-            </tr>
 
         </tbody>
     </table>

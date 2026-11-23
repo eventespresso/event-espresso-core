@@ -266,19 +266,27 @@ class PluginLicense
             $this->setLicenseKey($license_key);
         }
 
-        $this->updater = new PluginUpdater(
-            LicenseAPI::url(),
-            $this->mainfile(),
-            [
-                'author'      => LicenseAPI::AUTHOR,
-                'beta'        => $this->isBeta(),
-                'item_id'     => $this->itemID(),
-                'item_name'   => $this->itemName(),
-                'license'     => $this->licenseKey(),
-                'version'     => $this->version(),
-                'wp_override' => $this->isWpOverride(),
-            ]
-        );
+        $this->updater = new PluginUpdater(LicenseAPI::url(), $this->mainfile(), $this->updaterApiData());
+    }
+
+
+    /**
+     * The $api_data that PluginUpdater gets and passes to the edd_sl_plugin_updater_api_params filter.
+     *
+     * @return array
+     * @since  5.0.61
+     */
+    public function updaterApiData(): array
+    {
+        return [
+            'author'      => LicenseAPI::AUTHOR,
+            'beta'        => $this->isBeta(),
+            'item_id'     => $this->itemID(),
+            'item_name'   => $this->itemName(),
+            'license'     => $this->licenseKey(),
+            'version'     => $this->version(),
+            'wp_override' => $this->isWpOverride(),
+        ];
     }
 
 

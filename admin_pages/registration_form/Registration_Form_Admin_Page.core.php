@@ -369,6 +369,10 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
         if ($QST_admin_only) {
             $this->request->setRequestParam('QST_required', false);
         }
+        // read the system question ID from the DB, not the request, so it cannot be forged or omitted
+        $qst_system = $QST_ID
+            ? (string) $this->_question_model->get_var([['QST_ID' => $QST_ID]], 'QST_system')
+            : '';
         // if the question shouldn't have a max length, don't let them set one
         if (
             ! (
@@ -435,16 +439,15 @@ class Registration_Form_Admin_Page extends EE_Admin_Page
                     break;
 
                 case 'QST_admin_only':
-                    $column_values[ $fieldName ] = $QST_admin_only;
+                    // System questions render this checkbox as disabled, so it is never submitted.
+                    // Preserve the existing DB value rather than overwriting with the false default.
+                    if ($qst_system === '') {
+                        $column_values[ $fieldName ] = $QST_admin_only;
+                    }
                     break;
 
                 case 'QST_max':
-                    $qst_system = $this->_question_model->get_var(
-                        [ [ 'QST_ID' => $QST_ID ] ],
-                        'QST_system'
-                    );
-
-                    $max_max = $this->_question_model->absolute_max_for_system_question((string) $qst_system);
+                    $max_max = $this->_question_model->absolute_max_for_system_question($qst_system);
                     $QST_max = $this->request->getRequestParam('QST_max', 0, DataType::INT);
                     if ($QST_max === 0 || $QST_max > $max_max) {
                         $column_values[ $fieldName ] = $max_max;

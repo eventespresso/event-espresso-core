@@ -5,6 +5,7 @@ namespace EventEspresso\core\domain\services\admin\notices\status_change;
 use EEH_Template;
 use EventEspresso\core\services\database\WordPressOption;
 use RuntimeException;
+use WP_Exception;
 use WP_User;
 
 /**
@@ -22,6 +23,10 @@ class StatusChangeNotice extends WordPressOption
     }
 
 
+    /**
+     * @return void
+     * @throws WP_Exception
+     */
     public static function loadAssets()
     {
         wp_enqueue_style(

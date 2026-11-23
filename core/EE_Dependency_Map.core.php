@@ -650,7 +650,8 @@ class EE_Dependency_Map
                 'EventEspresso\core\services\cache\PostRelatedCacheManager' => EE_Dependency_Map::load_from_cache,
             ],
             'EventEspresso\core\domain\entities\shortcodes\EspressoEvents'                                                       => [
-                'EventEspresso\core\services\cache\PostRelatedCacheManager' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\cache\PostRelatedCacheManager'  => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\domain\services\event\EventListRenderer' => EE_Dependency_Map::load_from_cache,
             ],
             'EventEspresso\core\domain\entities\shortcodes\EspressoThankYou'                                                     => [
                 'EventEspresso\core\services\cache\PostRelatedCacheManager' => EE_Dependency_Map::load_from_cache,
@@ -941,6 +942,7 @@ class EE_Dependency_Map
             'EventEspresso\core\services\licensing\BatchPluginUpdateChecker' => [
                 'EventEspresso\core\services\licensing\LicenseAPI'              => EE_Dependency_Map::load_from_cache,
                 'EventEspresso\core\services\licensing\PluginLicenseCollection' => EE_Dependency_Map::load_from_cache,
+                'EventEspresso\core\services\request\Request'                   => EE_Dependency_Map::load_from_cache,
             ],
         ];
     }

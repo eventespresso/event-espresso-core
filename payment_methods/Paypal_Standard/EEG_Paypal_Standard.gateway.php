@@ -237,6 +237,9 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway
         if (! $this->validate_ipn($update_info, $payment)) {
             return $payment;
         }
+        if ($payment instanceof EEI_Payment && ! $this->validateIpnReceiver($update_info, $payment)) {
+            return $payment;
+        }
         // kill request here if this is a refund, we don't support them yet (we'd need to adjust the transaction,
         // registrations, ticket counts, etc)
         if (
@@ -435,6 +438,52 @@ class EEG_Paypal_Standard extends EE_Offsite_Gateway
             ),
             $payment
         );
+        return false;
+    }
+
+
+    /**
+     * Confirms the IPN paid this site's PayPal account in the payment's currency.
+     * The buyer's browser builds the payment form, so a verified IPN alone does not prove either.
+     * A mismatch fails a payment that is not approved yet and never downgrades an approved one.
+     *
+     * @param array $update_info Like $_POST.
+     * @throws EE_Error
+     * @throws ReflectionException
+     */
+    private function validateIpnReceiver(array $update_info, EEI_Payment $payment): bool
+    {
+        $paypal_id = strtolower(trim((string) $this->paypalId()));
+        $receivers = array_map(
+            fn ($receiver) => strtolower(trim((string) $receiver)),
+            [$update_info['business'] ?? '', $update_info['receiver_email'] ?? '', $update_info['receiver_id'] ?? '']
+        );
+        $currency  = $update_info['mc_currency'] ?? '';
+        if ($paypal_id === '' || ! in_array($paypal_id, $receivers, true)) {
+            $error = sprintf(
+                /* translators: 1: receiver fields from the IPN, 2: the configured PayPal ID */
+                esc_html__('IPN rejected: receiver (%1$s) is not the configured PayPal ID (%2$s).', 'event_espresso'),
+                implode(', ', array_filter($receivers)),
+                $paypal_id
+            );
+        } elseif ($currency !== $payment->currency_code()) {
+            $error = sprintf(
+                /* translators: 1: currency code from the IPN, 2: currency code of the payment */
+                esc_html__('IPN rejected: currency (%1$s) is not the payment currency (%2$s).', 'event_espresso'),
+                $currency,
+                $payment->currency_code()
+            );
+        } else {
+            return true;
+        }
+        if ($payment->status() !== EEM_Payment::status_id_approved) {
+            $payment->set_gateway_response(
+                esc_html__('PayPal could not confirm this payment. Please contact the organizer.', 'event_espresso')
+            );
+            $payment->set_details($update_info);
+            $payment->set_status(EEM_Payment::status_id_failed);
+        }
+        $this->log(['message' => $error, 'update_info' => $update_info], $payment);
         return false;
     }
 

@@ -399,7 +399,10 @@ jQuery(document).ready(function ($) {
             const this_pm = this;
             const request_data = new FormData();
             request_data.append('action', 'eeaPPCCreateOrder');
+            // EE loads the visitor's session only for EE AJAX requests; the server checks the session checkout.
+            request_data.append('ee_front_ajax', 1);
             request_data.append('txn_id', this_pm.transaction['TXN_ID']);
+            request_data.append('pp_order_nonce', eeaPPCommerceParameters.pp_order_nonce);
             request_data.append('payment_method', this.slug);
             request_data.append('billing_info', JSON.stringify(billing_info));
             // Do a request to create an Order.

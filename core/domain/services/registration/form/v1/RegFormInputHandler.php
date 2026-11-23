@@ -126,7 +126,9 @@ class RegFormInputHandler
         $answer_cache_id   = $this->checkout_reg_url_link
             ? $form_input . '-' . $reg_url_link
             : $form_input;
-        $registrant_answer = $this->registrant_data->getRegistrantAnswer($reg_url_link, $answer_cache_id);
+        // fall back to the key RegFormQuestionFactory always caches answers under
+        $registrant_answer = $this->registrant_data->getRegistrantAnswer($reg_url_link, $answer_cache_id)
+            ?? $this->registrant_data->getRegistrantAnswer($reg_url_link, $form_input . '-' . $reg_url_link);
         $answer_is_obj     = $registrant_answer instanceof EE_Answer;
         // rename form_inputs if they are EE_Attendee properties
         switch ((string) $form_input) {

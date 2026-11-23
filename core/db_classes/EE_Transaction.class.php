@@ -340,7 +340,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function remaining()
+    public function remaining(): float
     {
         return $this->total() - $this->paid();
     }
@@ -356,7 +356,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function total()
+    public function total(): float
     {
         return (float) $this->get('TXN_total');
     }
@@ -372,7 +372,7 @@ class EE_Transaction extends EE_Base_Class implements EEI_Transaction
      * @throws InvalidInterfaceException
      * @throws ReflectionException
      */
-    public function paid()
+    public function paid(): float
     {
         return (float) $this->get('TXN_paid');
     }

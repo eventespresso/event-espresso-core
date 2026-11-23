@@ -76,6 +76,18 @@ class PaymentProcessorFees
     {
         $this->grace_period = $grace_period;
         $this->license_data = $license_data;
+        $this->gateway_fees = apply_filters(
+            'FHEE___EventEspresso_core_services_payments_PaymentProcessorFees__gateway_fees',
+            $this->gateway_fees,
+            $this->grace_period,
+            $this->license_data
+        );
+        $this->partner_gateways = apply_filters(
+            'FHEE___EventEspresso_core_services_payments_PaymentProcessorFees__partner_gateways',
+            $this->partner_gateways,
+            $this->grace_period,
+            $this->license_data
+        );
     }
 
 

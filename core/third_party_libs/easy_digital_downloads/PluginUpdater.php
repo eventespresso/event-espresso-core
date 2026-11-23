@@ -2,7 +2,9 @@
 
 namespace EventEspresso\core\third_party_libs\easy_digital_downloads;
 
+use EEH_Template;
 use stdClass;
+use WP_List_Table;
 
 /**
  * Allows plugins to use their own update API.
@@ -101,6 +103,7 @@ class PluginUpdater
         add_filter('pre_set_site_transient_update_plugins', [$this, 'checkUpdate']);
         add_filter('plugins_api', [$this, 'pluginsApiFilter'], 10, 3);
         add_action('after_plugin_row', [$this, 'showUpdateNotification'], 10, 2);
+        add_action('after_plugin_row', [$this, 'showCoreRequirementNotice'], 10, 2);
         add_action('admin_init', [$this, 'showChangelog']);
     }
 
@@ -278,6 +281,45 @@ class PluginUpdater
         do_action("in_plugin_update_message-$file", $plugin, $plugin);
 
         echo '</p></div></td></tr>';
+    }
+
+
+    /**
+     * Shows that an update exists but needs a newer Event Espresso core.
+     * The license server sets requires_ee_core when the site's core is below the download's minimum.
+     *
+     * @param string $file
+     * @param array  $plugin
+     * @return void
+     * @since  5.0.61
+     */
+    public function showCoreRequirementNotice(string $file, array $plugin): void
+    {
+        global $wp_list_table;
+        if ($file !== $this->name || ! $wp_list_table instanceof WP_List_Table || ! current_user_can('update_plugins')) {
+            return;
+        }
+        $version_info = $this->getCachedVersionInfo();
+        if (
+            empty($version_info->requires_ee_core)
+            || empty($version_info->stable_version)
+            || version_compare(EVENT_ESPRESSO_VERSION, $version_info->requires_ee_core, '>=')
+            || version_compare($this->version, $version_info->stable_version, '>=')
+        ) {
+            return;
+        }
+        EEH_Template::display_template(
+            __DIR__ . '/core_requirement_notice.template.php',
+            [
+                'colspan'          => $wp_list_table->get_column_count(),
+                'file'             => $file,
+                'is_active'        => in_array($file, $this->getActivePlugins(), true),
+                'plugin_name'      => $plugin['Name'],
+                'requires_ee_core' => $version_info->requires_ee_core,
+                'slug'             => $this->slug,
+                'stable_version'   => $version_info->stable_version,
+            ]
+        );
     }
 
 
@@ -649,7 +691,8 @@ class PluginUpdater
      */
     private function getCacheKey(): string
     {
-        $string = $this->slug . $this->api_data['license'] . $this->beta;
+        // a core update must refetch, as the server gates add-on updates on the core version
+        $string = $this->slug . $this->api_data['license'] . $this->beta . EVENT_ESPRESSO_VERSION;
 
         return 'edd_sl_' . md5(serialize($string));
     }

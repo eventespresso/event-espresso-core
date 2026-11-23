@@ -13,3 +13,4 @@ Below you will find descriptions and examples of new changes that are beginning 
 - [Middleware Request Stack](middleware-request-stack.md)
 - [Command Bus and Hexagonal Architecture](command-bus-hexagonal-architecture.md)
 - [Contexts and Context Checkers.md](contexts-and-context-checkers.md)
+- [Opting a WP_Query out of EE's CPT query filters](cpt-query-filters-opt-out.md)

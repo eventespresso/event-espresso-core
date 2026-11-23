@@ -6,6 +6,59 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Releases
 
+### 5.0.61
+
+#### Added
+ - [New: filter registrations by promotion (#2289)](https://github.com/eventespresso/cafe/pull/2289)
+ - [New: eea-self-serve-cancellations - notify on self-serve cancellation (#2375)](https://github.com/eventespresso/cafe/pull/2375)
+ - [New Add-on - UTM Tracking (#2162)](https://github.com/eventespresso/cafe/pull/2162)
+ - [New: core switches for Elementor integration (inject_details filters, query opt-out) (#2373)](https://github.com/eventespresso/cafe/pull/2373)
+ - [New: generic EventListRenderer service for the event list loop (#2422)](https://github.com/eventespresso/cafe/pull/2422)
+
+#### Fixed
+ - [Webhooks: subsites inherit the main sites license entitlement (#2256)](https://github.com/eventespresso/cafe/pull/2256)
+ - [Fix line-item children cache poisoning in EE_Line_Item::add_child_line_item() (#2251)](https://github.com/eventespresso/cafe/pull/2251)
+ - [Fix: guard CPT editor against third-party admin_enqueue_scripts fatals (#2252)](https://github.com/eventespresso/cafe/pull/2252)
+ - [Fix: apply partial refund/cancel to all selected registrations (#1943) (#2257)](https://github.com/eventespresso/cafe/pull/2257)
+ - [Fix saving events that use custom page templates (GraphQL editor) (#2254)](https://github.com/eventespresso/cafe/pull/2254)
+ - [Fix: Calendar Plus API pagination silently drops the last page (#2261)](https://github.com/eventespresso/cafe/pull/2261)
+ - [Fix: postbox move up/down/toggle tooltips stuck visible in WordPress 7.1 (#2280)](https://github.com/eventespresso/cafe/pull/2280)
+ - [Fixed Datetime and Tickets Modification (Barista#1424) (#2274)](https://github.com/eventespresso/cafe/pull/2274)
+ - [Fixed Disabling Datetimes/Tickets Deletions if They Are Linked Item and Last One (Barista#1488) (#2276)](https://github.com/eventespresso/cafe/pull/2276)
+ - [Fix: guard BotDetector getUserAgent() against older third-party CrawlerDetect (#2260)](https://github.com/eventespresso/cafe/pull/2260)
+ - [Fix: render TinyMCE editor colour picker/menus on-screen when scrolled (#2232)](https://github.com/eventespresso/cafe/pull/2232)
+ - [Fix/CORE: basic auth reporting globals wrong when WP Application Passwords authenticate first (#2226)](https://github.com/eventespresso/cafe/pull/2226)
+ - [Order registration-view questions by QGQ_order (#2302)](https://github.com/eventespresso/cafe/pull/2302)
+ - [Fix: Stray ) in question option hidden input name attributes (#2308)](https://github.com/eventespresso/cafe/pull/2308)
+ - [Fix: Resequence QSO_order after trashing an answer option (#2307)](https://github.com/eventespresso/cafe/pull/2307)
+ - [Fix: Reject registration for trashed/archived tickets (#2310)](https://github.com/eventespresso/cafe/pull/2310)
+ - [Fix/CORE: Decode HTML entities in question display text (#2311)](https://github.com/eventespresso/cafe/pull/2311)
+ - [Fix Registration Upsell Final Price Calculator and Questions Admin UI (#2259)](https://github.com/eventespresso/cafe/pull/2259)
+ - [Fix: license requests sent wrong site URL and no plugin version (#2376)](https://github.com/eventespresso/cafe/pull/2376)
+ - [Fix: Collapse migration progress to one line per stage; fix EE3→EE4 critical page fatal (#2342)](https://github.com/eventespresso/cafe/pull/2342)
+ - [Fix: match the configured reg checkout page in RegistrationCheckoutRequests (#2418)](https://github.com/eventespresso/cafe/pull/2418)
+ - [Fix/CORE: allow Event shortcodes in the email Subject field (#2426)](https://github.com/eventespresso/cafe/pull/2426)
+ - [Fix Question Option Saves and CSS (#2434)](https://github.com/eventespresso/cafe/pull/2434)
+ - [Fix/CORE: render add-on HTML in the decaf Event Registration Options box](https://github.com/eventespresso/cafe/pull/2471)
+
+#### Changed
+ - [Make Price Field Editable in Table View (Barista#1486) (#2278)](https://github.com/eventespresso/cafe/pull/2278)
+ - [Bump DDEV to v1-24-10 (#1484) + Claude Docs (#1493) + Extract Eslint Rules (#1501) (Barista#1514) (#2283)](https://github.com/eventespresso/cafe/pull/2283)
+ - [Add Check to Prevent Users from Deleting Default System Tickets (Barista#1515) (#2286)](https://github.com/eventespresso/cafe/pull/2286)
+ - [Fix Datetime Details Update Issue in TAM Modal (Barista#1516) (#2287)](https://github.com/eventespresso/cafe/pull/2287)
+ - [Update PHP linter PHPCS (#2230)](https://github.com/eventespresso/cafe/pull/2230)
+ - [Update PHPCS rules, remove stale info.json and TravisCI info (#2255)](https://github.com/eventespresso/cafe/pull/2255)
+ - [Mod/CORE: venue maps use the free Google Maps Embed API (#2440)](https://github.com/eventespresso/cafe/pull/2440)
+ - [Send the full get_version data for each batch product (#2477)](https://github.com/eventespresso/cafe/pull/2477)
+
+
+
+#### Security
+ - [Sec/CORE: validate PayPal payments before approval (#2457)](https://github.com/eventespresso/cafe/pull/2457)
+ - [Sec/CORE: capture only the PayPal order the site created (#2474)](https://github.com/eventespresso/cafe/pull/2474)
+
+
+
 ### 5.0.60
 
 

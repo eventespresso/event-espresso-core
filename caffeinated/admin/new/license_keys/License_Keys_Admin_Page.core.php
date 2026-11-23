@@ -6,6 +6,7 @@ use EventEspresso\core\services\licensing\LicenseAPI;
 use EventEspresso\core\services\licensing\LicenseKeyData;
 use EventEspresso\core\services\licensing\LicenseManager;
 use EventEspresso\core\services\licensing\PluginLicenseCollection;
+use EventEspresso\core\services\request\sanitizers\RequestSanitizer;
 
 /**
  * License_Keys_Admin_Page
@@ -148,7 +149,10 @@ class License_Keys_Admin_Page extends EE_Admin_Page
         );
         EE_Dependency_Map::instance()->registerDependencies(
             LicenseKeysAdminForm::class,
-            ['EE_Registry' => EE_Dependency_Map::load_from_cache]
+            [
+                'EE_Registry'           => EE_Dependency_Map::load_from_cache,
+                RequestSanitizer::class => EE_Dependency_Map::load_from_cache,
+            ]
         );
         parent::_before_page_setup();
     }

@@ -105,6 +105,18 @@ class EED_PayPalCommerce extends EED_Module
                 $post_params
             );
         }
+        if (
+            ! wp_verify_nonce(
+                EED_Module::getRequest()->getRequestParam('pp_order_nonce', '', DataType::STRING),
+                Domain::CAPTURE_ORDER_NONCE_NAME
+            )
+        ) {
+            PayPalLogger::errorLogAndExit(
+                esc_html__('Your session has expired. Please reload the page and try again.', 'event_espresso'),
+                $post_params,
+                $paypal_pm
+            );
+        }
         $transaction  = EED_PayPalCommerce::getTransaction();
         $billing_info = $post_params['billing_info'] ?? [];
         if ($billing_info) {
@@ -114,6 +126,23 @@ class EED_PayPalCommerce extends EED_Module
         if (! $transaction) {
             PayPalLogger::errorLogAndExit(
                 esc_html__('Transaction info not found.', 'event_espresso'),
+                $post_params,
+                $paypal_pm
+            );
+        }
+        // Only the transaction of the visitor's own checkout can get a PayPal order.
+        $session  = LoaderFactory::getShared(EE_Session::class);
+        $checkout = $session instanceof EE_Session ? $session->checkout() : null;
+        if (
+            ! $checkout instanceof EE_Checkout
+            || ! $checkout->transaction instanceof EE_Transaction
+            || $checkout->transaction->ID() !== $transaction->ID()
+        ) {
+            PayPalLogger::errorLogAndExit(
+                esc_html__(
+                    'This registration does not match your current checkout. Please reload the page and try again.',
+                    'event_espresso'
+                ),
                 $post_params,
                 $paypal_pm
             );
@@ -168,6 +197,8 @@ class EED_PayPalCommerce extends EED_Module
             ];
         }
         $transaction->save();
+        // The gateway captures only this order: the buyer's browser can create orders with any custom_id or payee.
+        $transaction->update_extra_meta(Domain::META_KEY_ORDER_ID, $order['id']);
         return [
             'pp_order_id' => $order['id'],
         ];

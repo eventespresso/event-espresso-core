@@ -636,6 +636,8 @@ class EE_Data_Migration_Manager implements ResettableInterface
      * @type string $status             one of EE_Data_Migration_Manager::status_*
      * @type string $script             verbose name of the current DMS
      * @type string $message            string describing what was done during this step
+     * @type string $non_stage_message  $message without the per-stage record counts (when $stages is set)
+     * @type array  $stages             per-stage cumulative progress, see stageProgress() on the DMS
      *                                  }
      * @throws EE_Error
      */
@@ -721,6 +723,8 @@ class EE_Data_Migration_Manager implements ResettableInterface
                         'records_migrated'   => $currently_executing_script->count_records_migrated(),
                         'status'             => EE_Data_Migration_Manager::status_continue,
                         'message'            => $currently_executing_script->get_feedback_message(),
+                        'non_stage_message'  => $currently_executing_script->nonStageFeedbackMessage(),
+                        'stages'             => $currently_executing_script->stageProgress(),
                         'script'             => $currently_executing_script->pretty_name(),
                     ];
                     break;
@@ -732,6 +736,8 @@ class EE_Data_Migration_Manager implements ResettableInterface
                         'records_migrated'   => $currently_executing_script->count_records_migrated(),
                         'status'             => EE_Data_Migration_Manager::status_completed,
                         'message'            => $currently_executing_script->get_feedback_message(),
+                        'non_stage_message'  => $currently_executing_script->nonStageFeedbackMessage(),
+                        'stages'             => $currently_executing_script->stageProgress(),
                         'script'             => sprintf(
                             esc_html__("%s Completed", 'event_espresso'),
                             $currently_executing_script->pretty_name()
@@ -842,6 +848,9 @@ class EE_Data_Migration_Manager implements ResettableInterface
         $warnings_etc = @ob_get_contents();
         ob_end_clean();
         $response['message'] .= $warnings_etc;
+        if (isset($response['non_stage_message'])) {
+            $response['non_stage_message'] .= $warnings_etc;
+        }
         return $response;
     }
 

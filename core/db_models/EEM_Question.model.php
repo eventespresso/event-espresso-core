@@ -587,4 +587,21 @@ class EEM_Question extends EEM_Soft_Delete_Base
     {
         return (array) $this->question_types_with_max_length;
     }
+
+
+    /**
+     * Where conditions that exclude the default attendee/address system questions but keep every
+     * other question, including rows whose QST_system is NULL (NOT IN on its own excludes NULL rows).
+     * The conditions must be combined with OR, e.g. `$where['OR'] = EEM_Question::notDefaultSystemQuestionConditions();`
+     *
+     * @param string $relation_prefix Model relation path to the Question model, e.g. 'Question.'.
+     * @since 5.0.61
+     */
+    public static function notDefaultSystemQuestionConditions(string $relation_prefix = ''): array
+    {
+        return [
+            "{$relation_prefix}QST_system"      => ['NOT IN', EEM_Attendee::defaultSystemQuestions()],
+            "{$relation_prefix}QST_system*null" => ['IS_NULL'],
+        ];
+    }
 }

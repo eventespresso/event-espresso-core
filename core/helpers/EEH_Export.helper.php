@@ -146,6 +146,34 @@ class EEH_Export
 
 
     /**
+     * Neutralises spreadsheet formula injection (CWE-1236) in a single CSV field value.
+     *
+     * Spreadsheet applications (Excel, Google Sheets, LibreOffice) treat a cell whose
+     * first character is =, +, -, @, TAB (0x09) or CR (0x0D) as a formula, so free text
+     * that registrants (or a crafted UTM link) control could execute a formula on the
+     * admin's machine when the export is opened. Prefixing the value with a single quote
+     * forces the spreadsheet to treat the cell as literal text.
+     *
+     * Intended for registrant-supplied free text such as question answers, not for
+     * columns core owns (names, phone numbers, headers), which may legitimately start
+     * with "+" or "-". Genuinely numeric values (e.g. "-5", "+10") are returned unchanged.
+     *
+     * @param string $value
+     * @return string
+     * @since 5.0.61
+     */
+    public static function neutralizeCsvInjection(string $value): string
+    {
+        if ($value === '' || is_numeric($value)) {
+            return $value;
+        }
+        return in_array($value[0], ['=', '+', '-', '@', "\t", "\r"], true)
+            ? "'" . $value
+            : $value;
+    }
+
+
+    /**
      * Shortcut for preparing a database result for display
      *
      * @param EEM_Base         $model

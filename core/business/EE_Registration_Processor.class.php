@@ -6,6 +6,7 @@ use EventEspresso\core\domain\services\registration\RegStatus;
 use EventEspresso\core\exceptions\EntityNotFoundException;
 use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\exceptions\InvalidInterfaceException;
+use EventEspresso\core\services\calculators\RegistrationFinalPriceCalculator;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\RequestInterface;
 
@@ -550,6 +551,14 @@ class EE_Registration_Processor extends EE_Processor_Base
      * Updates the registration' final prices based on the current line item tree (taking into account
      * discounts, taxes, and other line items unrelated to tickets.)
      *
+     * Line items that belong to a single registration can be kept out of the proportional distribution
+     * by returning a predicate from FHEE__EE_Registration_Processor__update_registration_final_prices__exclude,
+     * then adding each excluded amount (see ExcludedLineItemTotalCalculator::calculate()) back
+     * onto its registration via FHEE__EE_Registration_Processor__update_registration_final_prices__final_prices,
+     * which receives final prices keyed by REG_ID along with the predicate that was applied.
+     * Callbacks that add excluded amounts back should run before priority 10, where Registration Upsells
+     * treats any amount still unallocated on a transaction with only free tickets as belonging to its upsells.
+     *
      * @param EE_Transaction $transaction
      * @param boolean        $save_regs whether to immediately save registrations in this function or not
      * @return void
@@ -562,17 +571,47 @@ class EE_Registration_Processor extends EE_Processor_Base
      */
     public function update_registration_final_prices(EE_Transaction $transaction, bool $save_regs = true)
     {
-        $reg_final_price_per_ticket_line_item = EEH_Line_Item::calculate_reg_final_prices_per_line_item(
-            $transaction->total_line_item()
+        $total_line_item = $transaction->total_line_item();
+        $exclude         = apply_filters(
+            'FHEE__EE_Registration_Processor__update_registration_final_prices__exclude',
+            null,
+            $transaction,
+            $total_line_item
         );
+        $exclude                              = is_callable($exclude) ? $exclude : null;
+        $reg_final_price_per_ticket_line_item = RegistrationFinalPriceCalculator::calculate(
+            $total_line_item,
+            [],
+            $exclude
+        );
+        $registrations = [];
+        $final_prices  = [];
         foreach ($transaction->registrations() as $registration) {
             /** @var EE_Line_Item $line_item */
             $line_item = EEM_Line_Item::instance()->get_line_item_for_registration($registration);
-            if (isset($reg_final_price_per_ticket_line_item[ $line_item->ID() ])) {
-                $registration->set_final_price($reg_final_price_per_ticket_line_item[ $line_item->ID() ]);
-                if ($save_regs) {
-                    $registration->save();
-                }
+            if (
+                ! $line_item instanceof EE_Line_Item
+                || ! isset($reg_final_price_per_ticket_line_item[ $line_item->ID() ])
+            ) {
+                continue;
+            }
+            $registrations[ $registration->ID() ] = $registration;
+            $final_prices[ $registration->ID() ]  = $reg_final_price_per_ticket_line_item[ $line_item->ID() ];
+        }
+        $final_prices = (array) apply_filters(
+            'FHEE__EE_Registration_Processor__update_registration_final_prices__final_prices',
+            $final_prices,
+            $transaction,
+            $total_line_item,
+            $exclude
+        );
+        foreach ($registrations as $REG_ID => $registration) {
+            if (! isset($final_prices[ $REG_ID ])) {
+                continue;
+            }
+            $registration->set_final_price((float) $final_prices[ $REG_ID ]);
+            if ($save_regs) {
+                $registration->save();
             }
         }
         // and make sure there's no rounding problem

@@ -15,6 +15,7 @@ use EE_Text_Input;
 use EE_Ticket;
 use EEH_HTML;
 use EEM_Registration;
+use EventEspresso\core\domain\Domain;
 use EventEspresso\core\domain\entities\contexts\Context;
 use EventEspresso\core\libraries\form_sections\form_handlers\FormHandler;
 use ReflectionException;
@@ -298,7 +299,7 @@ class CancelRegistrationForm extends FormHandler
 		 * ]
  		 */
 		$success = true;
-		$cancelled_count = 0;
+		$cancelled_registrations = [];
 		foreach ($valid_data['registrations'] as $registrant) {
 			$reg_url_link = $registrant['reg_url_link'];
 
@@ -324,7 +325,7 @@ class CancelRegistrationForm extends FormHandler
 				RegStatus::CANCELLED,
 				false,
 				new Context(
-					'manual_registration_status_change_from_registrant',
+					Domain::CONTEXT_REGISTRATION_STATUS_CHANGE_REGISTRANT,
 					esc_html__('Manually triggered status change from frontend.', 'event_espresso')
 				)
 			);
@@ -338,8 +339,21 @@ class CancelRegistrationForm extends FormHandler
 			);
 			$success = $updated && $success;
 			if ($updated) {
-				$cancelled_count++;
+				$cancelled_registrations[] = $registration;
 			}
+		}
+		if ($cancelled_registrations) {
+			/**
+			 * @param EE_Transaction    $transaction             transaction the cancelled registrations belong to
+			 * @param EE_Registration[] $cancelled_registrations registrations cancelled by the registrant
+			 * @param string            $reason                  reason given for the cancellation
+			 */
+			do_action(
+				'AHEE__EventEspresso_core_domain_services_registration_CancelRegistrationForm__process__registrations_cancelled',
+				$cancelled_registrations[0]->transaction(),
+				$cancelled_registrations,
+				(string) ($valid_data['reason_for_cancellation'] ?? '')
+			);
 		}
 		if (! $success) {
 			return sprintf(
@@ -356,7 +370,7 @@ class CancelRegistrationForm extends FormHandler
 			_n(
 				'%1$sThe selected registration has been successfully cancelled.%2$s',
 				'%1$sThe selected registrations have been successfully cancelled.%2$s',
-				$cancelled_count,
+				count($cancelled_registrations),
 				'event_espresso'
 			),
 			'<p class="ee-registrations-cancelled-pg ee-success">',

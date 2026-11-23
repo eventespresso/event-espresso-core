@@ -2,6 +2,7 @@
 
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\RequestInterface;
+use EventEspresso\PaymentMethods\Manager;
 
 /**
  * EEG_Paypal_Pro
@@ -343,7 +344,7 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway
             } elseif (isset($PayPalResult['L_LONGMESSAGE0'])) {
                 $message = $PayPalResult['L_LONGMESSAGE0'];
             } else {
-                $message = $PayPalResult['ACK'];
+                $message = $PayPalResult['ACK'] ?? '';
             }
             if (empty($PayPalResult['RAWRESPONSE'])) {
                 $payment->set_status($this->_pay_model->failed_status());
@@ -498,13 +499,15 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway
     /**
      * @param $Request
      * @return mixed
+     * @throws EE_Error
+     * @throws ReflectionException
      */
     private function _CURLRequest($Request)
     {
         $EndPointURL = $this->_debug_mode ? 'https://api-3t.sandbox.paypal.com/nvp' : 'https://api-3t.paypal.com/nvp';
         $curl = curl_init();
-        curl_setopt($curl, CURLOPT_VERBOSE, apply_filters('FHEE__EEG_Paypal_Pro__CurlRequest__CURLOPT_VERBOSE', true));
-        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
+        curl_setopt($curl, CURLOPT_VERBOSE, apply_filters('FHEE__EEG_Paypal_Pro__CurlRequest__CURLOPT_VERBOSE', false));
+        curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, Manager::verifySSL());
         curl_setopt($curl, CURLOPT_TIMEOUT, 60);
         curl_setopt($curl, CURLOPT_URL, $EndPointURL);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
@@ -512,6 +515,15 @@ class EEG_Paypal_Pro extends EE_Onsite_Gateway
         curl_setopt($curl, CURLOPT_HTTP_VERSION, CURL_HTTP_VERSION_1_1);
         // execute the curl POST
         $Response = curl_exec($curl);
+        if ($Response === false) {
+            $this->log(
+                [
+                    'message'    => esc_html__('The request to PayPal Pro failed.', 'event_espresso'),
+                    'curl_error' => curl_error($curl),
+                ],
+                null
+            );
+        }
         curl_close($curl);
         return $Response;
     }

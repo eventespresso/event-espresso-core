@@ -4,8 +4,8 @@ namespace EventEspresso\core\domain\entities\shortcodes;
 
 use EE_Error;
 use EED_Events_Archive;
-use EEH_Template;
-use EventEspresso\core\domain\services\wp_queries\EventListQuery;
+use EventEspresso\core\domain\services\event\EventListRenderer;
+use EventEspresso\core\services\cache\PostRelatedCacheManager;
 use EventEspresso\core\services\shortcodes\EspressoShortcode;
 use ReflectionException;
 
@@ -31,6 +31,16 @@ use ReflectionException;
  */
 class EspressoEvents extends EspressoShortcode
 {
+    private EventListRenderer $event_list_renderer;
+
+
+    public function __construct(PostRelatedCacheManager $cache_manager, EventListRenderer $event_list_renderer)
+    {
+        parent::__construct($cache_manager);
+        $this->event_list_renderer = $event_list_renderer;
+    }
+
+
     /**
      * the actual shortcode tag that gets registered with WordPress
      *
@@ -82,29 +92,7 @@ class EspressoEvents extends EspressoShortcode
      */
     public function processShortcode($attributes = array())
     {
-        // grab attributes and merge with defaults
-        $attributes = $this->getAttributes((array) $attributes);
-        // make sure we use the_excerpt()
-        add_filter('FHEE__EES_Espresso_Events__process_shortcode__true', '__return_true');
-        // apply query filters
-        add_filter('FHEE__EEH_Event_Query__apply_query_filters', '__return_true');
-        // run the query
-        global $wp_query;
-        // yes we have to overwrite the main wp query, but it's ok...
-        // we're going to reset it again below, so everything will be Hunky Dory (amazing album)
-        $wp_query = new EventListQuery($attributes);
-        // check what template is loaded and load filters accordingly
-        EED_Events_Archive::instance()->template_include('loop-espresso_events.php');
-        // load our template
-        $event_list = EEH_Template::locate_template('loop-espresso_events.php');
-        // now reset the query and post data
-        wp_reset_query();
-        wp_reset_postdata();
-        EED_Events_Archive::remove_all_events_archive_filters();
-        // remove query filters
-        remove_filter('FHEE__EEH_Event_Query__apply_query_filters', '__return_true');
-        // pull our content from the output buffer and return it
-        return $event_list;
+        return $this->event_list_renderer->render($this->getAttributes((array) $attributes));
     }
 
 

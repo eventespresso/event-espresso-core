@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\CPTs\CptQueryFilters;
 use EventEspresso\core\domain\entities\custom_post_types\EspressoPostType;
 
 /**
@@ -109,7 +110,7 @@ class EE_CPT_Event_Strategy
                 || $wp_query->is_espresso_event_archive
                 || $wp_query->is_espresso_event_taxonomy
             )
-            && $this->isEspressoEvent($wp_query)
+            && $this->modifiesQuery($wp_query)
             && strpos($SQL, "$this->datetime_table.*") === false
         ) {
             // adds something like ", wp_esp_datetime.* " to WP Query SELECT statement
@@ -142,7 +143,7 @@ class EE_CPT_Event_Strategy
                 || $wp_query->is_espresso_event_archive
                 || $wp_query->is_espresso_event_taxonomy
             )
-            && $this->isEspressoEvent($wp_query)
+            && $this->modifiesQuery($wp_query)
         ) {
             if (strpos($SQL, " INNER JOIN $this->datetime_table") === false) {
                 // adds something like:
@@ -186,7 +187,7 @@ class EE_CPT_Event_Strategy
                 $wp_query->is_espresso_event_archive
                 || $wp_query->is_espresso_event_taxonomy
             )
-            && $this->isEspressoEvent($wp_query)
+            && $this->modifiesQuery($wp_query)
             && strpos($SQL, $this->datetime_table) === false
         ) {
             if (
@@ -223,7 +224,7 @@ class EE_CPT_Event_Strategy
                 $wp_query->is_espresso_event_archive
                 || $wp_query->is_espresso_event_taxonomy
             )
-            && $this->isEspressoEvent($wp_query)
+            && $this->modifiesQuery($wp_query)
             && strpos($SQL, 'event_start_date') === false
         ) {
             $SQL = ' event_start_date ASC ';
@@ -247,7 +248,7 @@ class EE_CPT_Event_Strategy
                 || $wp_query->is_espresso_event_archive
                 || $wp_query->is_espresso_event_taxonomy
             )
-            && $this->isEspressoEvent($wp_query)
+            && $this->modifiesQuery($wp_query)
             && strpos($SQL, "$wpdb->posts.ID") === false
         ) {
             // TODO: add event list option for displaying ALL datetimes in event list or only primary datetime (default)
@@ -284,8 +285,12 @@ class EE_CPT_Event_Strategy
     }
 
 
-    private function isEspressoEvent(WP_Query $wp_query): bool
+    /**
+     * Events query that has not opted out via CptQueryFilters::suppressFiltersQueryVarName().
+     */
+    private function modifiesQuery(WP_Query $wp_query): bool
     {
-        return EE_CPT_Strategy::instance()->wpQueryPostType($wp_query) === EspressoPostType::EVENTS;
+        return EE_CPT_Strategy::instance()->wpQueryPostType($wp_query) === EspressoPostType::EVENTS
+            && ! CptQueryFilters::suppressFilters($wp_query);
     }
 }

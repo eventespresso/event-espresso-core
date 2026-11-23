@@ -341,26 +341,26 @@ $generated_i18n_strings = array(
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DateMainMenu.tsx:34
 	__( 'copy datetime', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DeleteDatetime.tsx:15
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/DeleteTicket.tsx:48
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DeleteDatetime.tsx:19
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/DeleteTicket.tsx:50
 	__( 'delete permanently', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DeleteDatetime.tsx:15
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DeleteDatetime.tsx:19
 	__( 'trash datetime', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DeleteDatetime.tsx:18
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DeleteDatetime.tsx:22
 	__( 'Permanently Delete Datetime?', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DeleteDatetime.tsx:18
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DeleteDatetime.tsx:22
 	__( 'Move Datetime to Trash?', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DeleteDatetime.tsx:20
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DeleteDatetime.tsx:24
 	__( 'Are you sure you want to permanently delete this datetime? This action is permanent and can not be undone.', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DeleteDatetime.tsx:23
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DeleteDatetime.tsx:27
 	__( 'Are you sure you want to move this datetime to the trash? You can "untrash" this datetime later if you need to.', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DeleteDatetime.tsx:33
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/actionsMenu/dropdown/DeleteDatetime.tsx:37
 	__( 'delete', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/actions/Actions.tsx:34
@@ -377,17 +377,41 @@ $generated_i18n_strings = array(
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/actions/Actions.tsx:42
 	__( 'trash datetimes', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/delete/Delete.tsx:14
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/delete/useDeleteDialog.tsx:17
+	__( 'Cannot Delete Datetimes', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/delete/useDeleteDialog.tsx:20
+	__( 'Delete Datetimes Permanently', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/delete/useDeleteDialog.tsx:20
+	__( 'Trash Datetimes', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/delete/useDeleteDialog.tsx:31
+	/* translators: %d: number of datetimes that will be skipped */
+	_n_noop( '%d datetime is the only datetime assigned to one or more tickets and cannot be permanently deleted.', '%d datetimes are the only datetimes assigned to one or more tickets and cannot be permanently deleted.', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/delete/useDeleteDialog.tsx:43
+	__( 'None of the selected datetimes can be permanently deleted.', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/delete/useDeleteDialog.tsx:47
 	__( 'Are you sure you want to permanently delete these datetimes? This action can NOT be undone!', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/delete/Delete.tsx:15
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/delete/useDeleteDialog.tsx:48
 	__( 'Are you sure you want to trash these datetimes?', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/delete/Delete.tsx:16
-	__( 'Delete datetimes permanently', 'event_espresso' ),
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/delete/useDeleteDialog.tsx:59
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/delete/useDeleteDialog.tsx:77
+	__( 'Note:', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/delete/Delete.tsx:16
-	__( 'Trash datetimes', 'event_espresso' ),
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/delete/useDeleteDialog.tsx:61
+	__( 'These datetimes cannot be deleted:', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/delete/useDeleteDialog.tsx:62
+	__( 'The following datetimes will be skipped:', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/delete/useDeleteDialog.tsx:80
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/delete/useDeleteDialog.tsx:100
+	__( 'Close', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/bulkEdit/details/EditDetails.tsx:21
 	__( 'Bulk edit date details', 'event_espresso' ),
@@ -415,26 +439,30 @@ $generated_i18n_strings = array(
 	/* translators: click to edit capacity<linebreak>(registration limit)… */
 	__( 'click to edit capacity%s(registration limit)…', 'event_espresso' ),
 
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/DateCard.tsx:21
+	// Reference: packages/edtr-services/src/constants.ts:24
+	__( 'datetime', 'event_espresso' ),
+
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/DateCardSidebar.tsx:31
 	// Reference: packages/ee-components/src/SimpleTicketCard/SimpleTicketCard.tsx:27
 	// Reference: packages/ui-components/src/CalendarDateSwitcher/CalendarDateSwitcher.tsx:34
 	__( 'starts', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/DateCardSidebar.tsx:32
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/DateCardSidebar.tsx:33
+	__( 'started', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/DateCardSidebar.tsx:34
 	// Reference: packages/ee-components/src/SimpleTicketCard/SimpleTicketCard.tsx:34
 	// Reference: packages/ui-components/src/CalendarDateSwitcher/CalendarDateSwitcher.tsx:47
 	__( 'ends', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/DateCardSidebar.tsx:32
-	__( 'started', 'event_espresso' ),
-
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/DateCardSidebar.tsx:32
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/DateCardSidebar.tsx:34
 	__( 'ended', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/DateCardSidebar.tsx:46
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/DateCardSidebar.tsx:48
 	__( 'Edit Event Date', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/DateCardSidebar.tsx:50
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/DateCardSidebar.tsx:52
 	__( 'edit start and end dates', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/DateDetailsPanel.tsx:16
@@ -449,15 +477,15 @@ $generated_i18n_strings = array(
 	__( 'reg list', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/Details.tsx:44
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/Details.tsx:38
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/Details.tsx:37
 	__( 'add description…', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/Details.tsx:45
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/Details.tsx:36
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/Details.tsx:35
 	__( 'Edit description', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/cardView/Details.tsx:46
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/Details.tsx:37
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/Details.tsx:36
 	__( 'click to edit description…', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/config.ts:14
@@ -493,12 +521,12 @@ $generated_i18n_strings = array(
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/config.ts:9
 	__( 'Edit Event Date Details', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/editable/EditableName.tsx:41
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/editable/EditableName.tsx:41
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/editable/EditableName.tsx:36
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/editable/EditableName.tsx:34
 	__( 'click to edit title…', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/editable/EditableName.tsx:42
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/editable/EditableName.tsx:42
+	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/editable/EditableName.tsx:37
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/editable/EditableName.tsx:35
 	__( 'add title…', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/filterBar/ActiveDatesFilters.tsx:17
@@ -552,7 +580,7 @@ $generated_i18n_strings = array(
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:35
 	// Reference: packages/dates/src/components/DateRangePicker/DateRangePickerLegend.tsx:9
-	// Reference: packages/dates/src/components/DateRangePicker/index.tsx:60
+	// Reference: packages/dates/src/components/DateRangePicker/index.tsx:59
 	__( 'start date', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/filterBar/controls/options.ts:36
@@ -618,7 +646,7 @@ $generated_i18n_strings = array(
 	__( 'Regs', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:124
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:123
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:122
 	// Reference: packages/tpc/src/components/table/useHeaderRowGenerator.ts:59
 	__( 'Actions', 'event_espresso' ),
 
@@ -632,7 +660,7 @@ $generated_i18n_strings = array(
 	__( 'Cap', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/datetimes/datesList/tableView/useHeaderRowGenerator.tsx:96
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:100
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:99
 	__( 'Sold', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/registrationForm/ErrorMessage.tsx:33
@@ -764,6 +792,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	__( 'Default tickets', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/defaultTickets/ModalBody.tsx:63
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/TicketCard.tsx:22
 	// Reference: packages/edtr-services/src/constants.ts:26
 	__( 'ticket', 'event_espresso' ),
 
@@ -896,16 +925,16 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/actionsMenu/AssignDatesButton.tsx:37
 	__( 'assign dates', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/DeleteTicket.tsx:19
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/DeleteTicket.tsx:20
 	__( 'Permanently Delete Ticket?', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/DeleteTicket.tsx:19
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/DeleteTicket.tsx:20
 	__( 'Move Ticket to Trash?', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/DeleteTicket.tsx:22
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/DeleteTicket.tsx:23
 	__( 'Are you sure you want to permanently delete this ticket? This action is permanent and can not be undone.', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/DeleteTicket.tsx:48
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/actionsMenu/dropdown/DeleteTicket.tsx:50
 	// Reference: packages/ee-components/src/SimpleTicketCard/actions/Trash.tsx:6
 	__( 'trash ticket', 'event_espresso' ),
 
@@ -931,17 +960,37 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/actions/Actions.tsx:51
 	__( 'edit ticket prices', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/delete/Delete.tsx:14
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/delete/useDeleteDialog.tsx:25
+	__( 'Cannot Delete Tickets', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/delete/useDeleteDialog.tsx:28
+	__( 'Delete Tickets Permanently', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/delete/useDeleteDialog.tsx:28
+	__( 'Trash Tickets', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/delete/useDeleteDialog.tsx:37
+	/* translators: %d: number of tickets with registrations that will be skipped */
+	_n_noop( '%d ticket has existing registrations and cannot be permanently deleted.', '%d tickets have existing registrations and cannot be permanently deleted.', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/delete/useDeleteDialog.tsx:48
+	/* translators: %d: number of tickets that are last-linked to a datetime and will be skipped */
+	_n_noop( '%d ticket is the only ticket assigned to one or more datetimes and cannot be permanently deleted.', '%d tickets are the only tickets assigned to one or more datetimes and cannot be permanently deleted.', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/delete/useDeleteDialog.tsx:62
+	__( 'None of the selected tickets can be permanently deleted.', 'event_espresso' ),
+
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/delete/useDeleteDialog.tsx:66
 	__( 'Are you sure you want to permanently delete these tickets? This action can NOT be undone!', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/delete/Delete.tsx:15
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/delete/useDeleteDialog.tsx:67
 	__( 'Are you sure you want to trash these tickets?', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/delete/Delete.tsx:16
-	__( 'Delete tickets permanently', 'event_espresso' ),
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/delete/useDeleteDialog.tsx:79
+	__( 'These tickets cannot be deleted:', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/delete/Delete.tsx:16
-	__( 'Trash tickets', 'event_espresso' ),
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/delete/useDeleteDialog.tsx:80
+	__( 'The following tickets will be skipped:', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/bulkEdit/details/EditDetails.tsx:21
 	__( 'Bulk edit ticket details', 'event_espresso' ),
@@ -1004,7 +1053,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/edtr-services/src/apollo/mutations/tickets/useUpdateTicketQtyByCapacity.ts:78
 	__( 'Ticket quantity has been adjusted because it cannot be more than the related event date capacity.', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/TicketQuantity.tsx:51
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/cardView/TicketQuantity.tsx:52
 	__( 'edit quantity of tickets available…', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/config.ts:14
@@ -1111,7 +1160,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/TableView.tsx:39
 	__( 'Tickets', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:110
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:109
 	__( 'Reg List', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:53
@@ -1123,10 +1172,10 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:68
 	__( 'Ends', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:80
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:79
 	__( 'Price', 'event_espresso' ),
 
-	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:90
+	// Reference: domains/core/admin/eventEditor/src/ui/tickets/ticketsList/tableView/useHeaderRowGenerator.tsx:89
 	__( 'Qty', 'event_espresso' ),
 
 	// Reference: domains/core/admin/eventEditor/src/ui/venue/VenueDetails.tsx:104
@@ -1222,7 +1271,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	__( 'day in range', 'event_espresso' ),
 
 	// Reference: packages/dates/src/components/DateRangePicker/DateRangePickerLegend.tsx:17
-	// Reference: packages/dates/src/components/DateRangePicker/index.tsx:78
+	// Reference: packages/dates/src/components/DateRangePicker/index.tsx:77
 	__( 'end date', 'event_espresso' ),
 
 	// Reference: packages/dates/src/components/DateTimePicker.tsx:17
@@ -1254,9 +1303,6 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/edtr-services/src/apollo/mutations/useReorderEntities.ts:63
 	__( 'order updated', 'event_espresso' ),
 
-	// Reference: packages/edtr-services/src/constants.ts:24
-	__( 'datetime', 'event_espresso' ),
-
 	// Reference: packages/edtr-services/src/constants.ts:27
 	__( 'price', 'event_espresso' ),
 
@@ -1266,6 +1312,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 
 	// Reference: packages/edtr-services/src/utils/dateAndTime.ts:38
 	// Reference: packages/ui-components/src/EditDateRangeButton/EditDateRangeButton.tsx:39
+	// Reference: packages/ui-components/src/InlineEdit/InlineDateRangeEdit/useEndDateAdjustedNotification.ts:17
 	__( 'End date has been adjusted', 'event_espresso' ),
 
 	// Reference: packages/edtr-services/src/utils/dateAndTime.ts:59
@@ -2162,7 +2209,7 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 	// Reference: packages/ui-components/src/CurrencyDisplay/CurrencyDisplay.tsx:35
 	__( 'free', 'event_espresso' ),
 
-	// Reference: packages/ui-components/src/DateTimeRangePicker/DateTimeRangePicker.tsx:117
+	// Reference: packages/ui-components/src/DateTimeRangePicker/DateTimeRangePicker.tsx:92
 	// Reference: packages/ui-components/src/Popover/PopoverForm/PopoverForm.tsx:44
 	__( 'save', 'event_espresso' ),
 
@@ -2210,6 +2257,15 @@ Please correct the assignments for the highlighted cells.', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/EntityList/filterBar/buttons/ToggleFiltersButton.tsx:23
 	__( 'filters', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/InlineEdit/InlineDateRangeEdit/InlineDateTimeInput/InlineDateTimeInput.tsx:44
+	__( 'click to edit date and time…', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/InlineEdit/InlineDateRangeEdit/InlineDateTimeInput/useInlineDateTimeInput.ts:115
+	__( 'Invalid date:', 'event_espresso' ),
+
+	// Reference: packages/ui-components/src/InlineEdit/InlineDateRangeEdit/InlineDateTimeInput/useInlineDateTimeInput.ts:138
+	__( 'End date and time cannot be before start date and time.', 'event_espresso' ),
 
 	// Reference: packages/ui-components/src/Legend/ToggleLegendButton.tsx:38
 	__( 'legend', 'event_espresso' ),

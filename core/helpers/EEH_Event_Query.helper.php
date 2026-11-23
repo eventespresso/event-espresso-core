@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\CPTs\CptQueryFilters;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\DataType;
 use EventEspresso\core\services\request\RequestInterface;
@@ -64,12 +65,34 @@ class EEH_Event_Query
 
 
     /**
+     * Detaches add_query_filters() and the posts_* filters filter_query_parts() attached.
+     *
+     * @since 5.0.61
+     */
+    public static function remove_query_filters(): void
+    {
+        remove_action('pre_get_posts', ['EEH_Event_Query', 'filter_query_parts']);
+        remove_filter('posts_fields', ['EEH_Event_Query', 'posts_fields']);
+        remove_filter('posts_join', ['EEH_Event_Query', 'posts_join']);
+        remove_filter('posts_where', ['EEH_Event_Query', 'posts_where']);
+        remove_filter('posts_orderby', ['EEH_Event_Query', 'posts_orderby']);
+        remove_filter('posts_clauses_request', ['EEH_Event_Query', 'posts_clauses']);
+    }
+
+
+    /**
+     * A query that opted out via CptQueryFilters::suppressFiltersQueryVarName() returns false before the
+     * post-type match and before the FHEE__EEH_Event_Query__apply_query_filters override runs.
+     *
      * @param WP_Query $WP_Query
      * @return bool
      * @noinspection PhpUnnecessaryBoolCastInspection
      */
     public static function apply_query_filters(WP_Query $WP_Query): bool
     {
+        if (CptQueryFilters::suppressFilters($WP_Query)) {
+            return false;
+        }
         return (
                 isset($WP_Query->query['post_type'])
                 && $WP_Query->query['post_type'] === 'espresso_events'

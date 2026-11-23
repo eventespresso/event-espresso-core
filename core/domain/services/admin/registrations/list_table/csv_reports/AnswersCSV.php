@@ -4,6 +4,7 @@ namespace EventEspresso\core\domain\services\admin\registrations\list_table\csv_
 
 use EE_Error;
 use EEH_Export;
+use EEM_Attendee;
 use EEM_Answer;
 use EEM_Question;
 use EEM_State;
@@ -45,19 +46,18 @@ class AnswersCSV
         ]);
         // now fill out the questions THEY answered
         foreach ($answers as $answer_row) {
-            if ($answer_row['Question.QST_system']) {
+            if (in_array($answer_row['Question.QST_system'], EEM_Attendee::defaultSystemQuestions(), true)) {
                 // it's an answer to a system question. That was already displayed as part of the attendee
                 // fields, so don't write it out again thanks.
                 continue;
             }
-
             $question_label = $answer_row['Question.QST_ID']
                 ? EEH_Export::prepare_value_from_db_for_display(
                     $qst_model,
                     'QST_admin_label',
                     $answer_row['Question.QST_admin_label']
                 )
-                : sprintf(esc_html__('Question $s', 'event_espresso'), $answer_row['Answer.QST_ID']);
+                : sprintf(esc_html__('Question %s', 'event_espresso'), $answer_row['Answer.QST_ID']);
 
             if (! array_key_exists($question_label, $data)) {
                 // We don't need an answer for this specific question in the current dataset
@@ -68,12 +68,15 @@ class AnswersCSV
             $data[ $question_label ] = isset($answer_row['Question.QST_type'])
                                        && $answer_row['Question.QST_type'] === EEM_Question::QST_type_state
                 ? $state_model->get_state_name_by_ID((int) $answer_row['Answer.ANS_value'])
-                // this isn't for html, so don't show html entities
-                : html_entity_decode(
-                    EEH_Export::prepare_value_from_db_for_display(
-                        $answer_model,
-                        'ANS_value',
-                        $answer_row['Answer.ANS_value']
+                // registrant-supplied free text: neutralise formula injection, and since this
+                // isn't for html, don't show html entities
+                : EEH_Export::neutralizeCsvInjection(
+                    html_entity_decode(
+                        EEH_Export::prepare_value_from_db_for_display(
+                            $answer_model,
+                            'ANS_value',
+                            $answer_row['Answer.ANS_value']
+                        )
                     )
                 );
         }

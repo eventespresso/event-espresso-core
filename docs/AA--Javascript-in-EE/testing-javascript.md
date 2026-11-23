@@ -31,14 +31,8 @@ The following scripts are available for running tests from the root folder of th
 
 | Command                       | What it does                                                                                                                                                                                                                                                |
 | ----------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `npm run ci`                  | This is used in travis builds to execute tests. It runs the linter, the build script (to make sure there's no errors with building), and the test-unit command with the coverage flag. You won't typically use this script locally.                         |
 | `npm run test`                | This runs the linter and then the jest unit tests (with no coverage)                                                                                                                                                                                        |
 | `npm run test-php`            | This triggers the phpunit tests to run                                                                                                                                                                                                                      |
 | `npm run test-js`             | This runs _only_ the jest unit tests (with no coverage)                                                                                                                                                                                                     |
 | `npm run test-js:coverage`    | This runs _only_ the jest unit test but includes a coverage report.                                                                                                                                                                                         |
-| `npm run test-js:coverage-ci` | This is another command used by our travis builds.                                                                                                                                                                                                          |
 | `npm run test-js:watch`       | This runs the javascript unit tests in watch mode. So any changes in files will trigger a new test run. This can be useful to keep running in a separate terminal tab when working on js for automatically running tests when you are debugging test fails. |
-
-## Automation
-
-All our tests are automatically run on travis for changes pushed to master or pull requests.

@@ -35,6 +35,23 @@ try {
             <tbody>
 
                 <tr>
+                    <th></th>
+                    <td>
+                        <span class="ee-required-text">
+                            <?php
+                            printf(
+                                esc_html__(
+                                    'all fields marked with an asterisk (%1$s) are required',
+                                    'event_espresso'
+                                ),
+                                '<span class="asterisk ee-required-text">*</span>'
+                            )
+                            ?>
+                        </span>
+                    </td>
+                </tr>
+
+                <tr>
                     <th>
                         <label for="QSG_name">
                             <?php esc_html_e('Group Name', 'event_espresso'); ?>
@@ -42,7 +59,7 @@ try {
                                 EEH_Template::get_help_tab_link('group_name_info'),
                                 AllowedTags::getAllowedTags()
                             ); ?>
-                            <span class="ee-required-text">*</span>
+                            <span class="asterisk ee-required-text">*</span>
                         </label>
                     </th>
                     <td>
@@ -53,7 +70,7 @@ try {
                                value="<?php echo esc_attr($question_group->get_f('QSG_name')); ?>"
                                required
                         >
-
+                        <p class="ee-invalid-input-notice"><?php esc_html_e('please enter a value', 'event_espresso') ?></p>
                     </td>
                 </tr>
 
@@ -113,17 +130,19 @@ try {
                                 EEH_Template::get_help_tab_link('group_order_info'),
                                 AllowedTags::getAllowedTags()
                             ); ?>
-                            <span class="ee-required-text">*</span>
+                            <span class="asterisk ee-required-text">*</span>
                         </label>
                     </th>
                     <td>
                         <input class='ee-input-width--tiny'
                                id="QSG_order"
+                               min="1"
                                name="QSG_order"
                                type="number"
                                value="<?php echo esc_attr($question_group->order()); ?>"
                                required
                         />
+                        <p class="ee-invalid-input-notice"><?php esc_html_e('please enter a value', 'event_espresso') ?></p>
                     </td>
                 </tr>
 
@@ -132,7 +151,7 @@ try {
                         <label for="QSG_show_group_name">
                             <?php esc_html_e('Show Name', 'event_espresso'); ?>
                             <?php echo EEH_Template::get_help_tab_link('show_group_name_info'); ?>
-                            <span class="ee-required-text">*</span>
+                            <span class="asterisk ee-required-text">*</span>
                         </label>
                     </th>
                     <td>
@@ -146,6 +165,7 @@ try {
                             ),
                             AllowedTags::getWithFormTags()
                         ); ?>
+                        <p class="ee-invalid-input-notice"><?php esc_html_e('please enter a value', 'event_espresso') ?></p>
                         <p class="description">
                             <?php esc_html_e('Show Group Name on Registration Page?', 'event_espresso'); ?>
                         </p>
@@ -160,7 +180,7 @@ try {
                                 EEH_Template::get_help_tab_link('show_group_description_info'),
                                 AllowedTags::getAllowedTags()
                             ); ?>
-                            <span class="ee-required-text">*</span>
+                            <span class="asterisk ee-required-text">*</span>
                         </label>
                     </th>
                     <td>
@@ -174,27 +194,11 @@ try {
                             ),
                             AllowedTags::getWithFormTags()
                         ); ?>
+                        <p class="ee-invalid-input-notice"><?php esc_html_e('please enter a value', 'event_espresso') ?></p>
                         <p class="description"><?php
                             esc_html_e(' Show Group Description on Registration Page?', 'event_espresso');
                         ?></p>
                         <input type="hidden" name="QSG_system" value="<?php echo esc_attr($question_group->system_group()); ?>">
-                    </td>
-                </tr>
-
-                <tr>
-                    <th></th>
-                    <td>
-                        <span class="important-notice">
-                            <?php
-                            printf(
-                                esc_html__(
-                                    'all fields marked with an asterisk (%1$s) are required',
-                                    'event_espresso'
-                                ),
-                                '<span class="asterisk ee-required-text">*</span>'
-                            )
-                            ?>
-                        </span>
                     </td>
                 </tr>
 
@@ -212,7 +216,7 @@ try {
                     'event_espresso'
                 ); ?>
             </p>
-            <div>
+            <div class="question-list-sortable-wrap">
                 <ul class="question-list-sortable">
                     <?php
                     foreach ($all_questions as $question_ID => $question) {

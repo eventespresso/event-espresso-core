@@ -11,12 +11,12 @@ jQuery( document ).ready( function ( $ ) {
 		*/
         eeCenter: function(position = 'fixed') {
             position             = typeof position !== 'undefined' && position !== '' ? position : 'fixed';
-            let window_height    = $(window).height(),
-                window_width     = $(window).width(),
-                container_height = this.outerHeight(),
-                container_width  = this.outerWidth(),
-                element_top      = 0,
-                element_left     = 0;
+            const window_height    = $(window).height(),
+                  window_width     = $(window).width(),
+                  container_height = this.outerHeight(),
+                  container_width  = this.outerWidth();
+            let element_top  = 0,
+                element_left = 0;
             //  top
             if(container_height < window_height) {
                 element_top = (( window_height / 2 ) - container_height ) / 2;
@@ -336,9 +336,9 @@ jQuery( document ).ready( function ( $ ) {
 	 */
 	$( '.ee-country-select-js' ).change(
 		function () {
-            let country_select_id = $(this).attr('id'),
-                selected_country = $(this).find("option:selected").text(),
-                state_select_id = '',
+            const country_select_id = $(this).attr('id'),
+                  selected_country = $(this).find("option:selected").text();
+            let state_select_id = '',
                 $state_select = null,
                 selected_state = null,
                 valid_option = false;
@@ -674,7 +674,7 @@ window.console_log_object = function( obj_name, obj, depth ) {
  * @param log_error
  * @return boolean
  */
-function object_exists($object, object_name, log_error = true) {
+window.object_exists = function object_exists($object, object_name, log_error = true) {
     if ($object.length) {
         return true;
     }
@@ -682,4 +682,26 @@ function object_exists($object, object_name, log_error = true) {
 		console_log('ERROR: object not found', object_name, false);
     }
     return false;
-}
+};
+
+
+/**
+ * True only for a non-empty *plain* object (constructor === Object, with own keys).
+ *
+ * General-purpose global util, kept for reuse across EE admin/frontend scripts —
+ * e.g. guarding logic that should only run when a localized data object actually
+ * has entries.
+ *
+ * NOTE by design this returns false for arrays and DOM nodes (their constructor
+ * is not Object). For JSON *arrays* use Array.isArray() + .length instead — see
+ * espresso_registrations_admin.js, where feeding an array/DOM node through this
+ * helper was the original regression.
+ */
+window.eeIsNonEmptyObject = function eeIsNonEmptyObject(object) {
+    return (
+        object !== null &&
+        typeof object === "object" &&
+        object.constructor === Object &&
+        Object.keys(object).length > 0
+    );
+};

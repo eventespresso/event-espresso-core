@@ -1117,6 +1117,15 @@ input.ee-register-button {
 .ee-gmap {
 	max-width: 100%;
 }
+/* Embed API iframe: fills its container at the inline aspect-ratio, never below the Google 200px minimum */
+.ee-gmap-embed {
+	display: block;
+	width: 100%;
+	height: auto;
+	min-width: 200px;
+	min-height: 200px;
+	border: 0;
+}
 .ee-gmap-wrapper .gmnoprint img { max-width:none; }
 
 .ee-form-add-new-state-lnk {

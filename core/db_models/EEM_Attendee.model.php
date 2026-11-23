@@ -105,6 +105,29 @@ class EEM_Attendee extends EEM_CPT_Base
     const system_question_phone         = 'phone';
 
     /**
+     * QST_system values for the built-in attendee/address questions that are
+     * captured directly on EE_Attendee and therefore already displayed/exported
+     * outside of the custom-questions subsystem.
+     *
+     * @var string[]
+     * @since 5.0.61
+     */
+    protected static array $default_system_questions = [
+        self::system_question_fname,
+        self::system_question_lname,
+        self::system_question_email,
+        self::system_question_email_confirm,
+        self::system_question_phone,
+        self::system_question_address,
+        self::system_question_address2,
+        self::system_question_city,
+        self::system_question_state,
+        self::system_question_country,
+        self::system_question_zip,
+    ];
+
+
+    /**
      * Keys are all the EEM_Attendee::system_question_* constants, which are
      * also all the values of QST_system in the questions table, and values
      * are their corresponding Attendee field names
@@ -428,5 +451,20 @@ class EEM_Attendee extends EEM_CPT_Base
             'Registration.REG_ID' => ['in', $ids],
         ];
         return $this->get_all([$_where]);
+    }
+
+
+    /**
+     * Returns the QST_system values of the default attendee/address system questions, which map to
+     * EE_Attendee fields. Add-ons may register other system questions (non-empty QST_system) that are
+     * stored as regular answers; use this list, not EE_Question::is_system_question(), to tell them apart.
+     *
+     * @return array
+     * @see    EEM_Question::notDefaultSystemQuestionConditions()
+     * @since  5.0.61
+     */
+    public static function defaultSystemQuestions(): array
+    {
+        return self::$default_system_questions;
     }
 }

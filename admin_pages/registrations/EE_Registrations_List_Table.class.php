@@ -403,7 +403,12 @@ class EE_Registrations_List_Table extends EE_Admin_List_Table
         if ($this->TKT_ID) {
             $where['TKT_ID'] = $this->TKT_ID;
         }
-        return $where;
+        // allows add-ons to scope the view-tab counts by their own list-table filters
+        return (array) apply_filters(
+            'FHEE__EE_Registrations_List_Table__addWhereParamsForFilters__where',
+            $where,
+            $this->request->requestParams()
+        );
     }
 
 

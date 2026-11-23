@@ -7,15 +7,13 @@ use EE_Error;
 use EventEspresso\core\domain\entities\notifications\PersistentAdminNotice;
 use EventEspresso\core\domain\services\capabilities\CapabilitiesChecker;
 use EventEspresso\core\exceptions\InsufficientPermissionsException;
-use EventEspresso\core\exceptions\InvalidClassException;
-use EventEspresso\core\exceptions\InvalidEntityException;
-use EventEspresso\core\exceptions\InvalidInterfaceException;
 use EventEspresso\core\services\collections\Collection;
 use EventEspresso\core\services\collections\DuplicateCollectionIdentifierException;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\RequestInterface;
+use EventEspresso\core\services\request\sanitizers\AllowedTags;
 use Exception;
-use InvalidArgumentException;
+use WP_Exception;
 
 // phpcs:disable PEAR.Functions.ValidDefaultValue.NotAtEnd
 
@@ -69,7 +67,7 @@ class PersistentAdminNoticeManager
     }
 
 
-    public function loadAdminNotices()
+    public function loadAdminNotices(): void
     {
         // setup up notices at priority 9 because `EE_Admin::display_admin_notices()` runs at priority 10,
         // and we want to retrieve and generate any nag notices at the last possible moment
@@ -81,7 +79,7 @@ class PersistentAdminNoticeManager
     /**
      * @param string $return_url
      */
-    public function setReturnUrl(string $return_url)
+    public function setReturnUrl(string $return_url): void
     {
         $this->return_url = $return_url;
     }
@@ -89,17 +87,14 @@ class PersistentAdminNoticeManager
 
     /**
      * @return Collection
-     * @throws InvalidEntityException
-     * @throws InvalidInterfaceException
      * @throws DomainException
      * @throws DuplicateCollectionIdentifierException
+     * @throws WP_Exception
      */
     protected function getPersistentAdminNoticeCollection(): Collection
     {
         if (! $this->notice_collection instanceof Collection) {
-            $this->notice_collection = new Collection(
-                'EventEspresso\core\domain\entities\notifications\PersistentAdminNotice'
-            );
+            $this->notice_collection = new Collection(PersistentAdminNotice::class);
             $this->retrieveStoredNotices();
             $this->registerNotices();
         }
@@ -111,11 +106,11 @@ class PersistentAdminNoticeManager
      * generates PersistentAdminNotice objects for all non-dismissed notices saved to the db
      *
      * @return void
-     * @throws InvalidEntityException
      * @throws DomainException
      * @throws DuplicateCollectionIdentifierException
+     * @throws WP_Exception
      */
-    protected function retrieveStoredNotices()
+    protected function retrieveStoredNotices(): void
     {
         $persistent_admin_notices = get_option(PersistentAdminNoticeManager::WP_OPTION_KEY, []);
         if (! empty($persistent_admin_notices)) {
@@ -180,7 +175,7 @@ class PersistentAdminNoticeManager
      * so that PersistentAdminNotice objects can be added and/or removed
      * without compromising the actual collection like a filter would
      */
-    protected function registerNotices()
+    protected function registerNotices(): void
     {
         do_action(
             'AHEE__EventEspresso_core_services_notifications_PersistentAdminNoticeManager__registerNotices',
@@ -191,17 +186,15 @@ class PersistentAdminNoticeManager
 
     /**
      * @throws DomainException
-     * @throws InvalidClassException
-     * @throws InvalidInterfaceException
-     * @throws InvalidEntityException
      * @throws DuplicateCollectionIdentifierException
+     * @throws WP_Exception
      */
-    public function displayNotices()
+    public function displayNotices(): void
     {
         $this->notice_collection = $this->getPersistentAdminNoticeCollection();
         if ($this->notice_collection->hasObjects()) {
             $page = $this->request->getRequestParam('page', '');
-            $espresso_page = $page === 'pricing' || strpos($page, 'espresso') !== false;
+            $espresso_page = $page === 'pricing' || str_contains($page, 'espresso');
             $enqueue_assets = false;
             // and display notices
             foreach ($this->notice_collection as $persistent_admin_notice) {
@@ -217,6 +210,10 @@ class PersistentAdminNoticeManager
                 } catch (InsufficientPermissionsException $e) {
                     // user does not have required cap, so skip to next notice
                     // and just eat the exception - nom nom nom nom
+                    // unless we're debugging
+                    if (WP_DEBUG) {
+                        error_log($e->getMessage());
+                    }
                     continue;
                 }
                 if ($persistent_admin_notice->getMessage() === '') {
@@ -236,8 +233,9 @@ class PersistentAdminNoticeManager
      * does what it's named
      *
      * @return void
+     * @throws WP_Exception
      */
-    public function enqueueAssets()
+    public function enqueueAssets(): void
     {
         wp_register_script(
             'espresso_core',
@@ -277,14 +275,54 @@ class PersistentAdminNoticeManager
      * @param PersistentAdminNotice $persistent_admin_notice
      * @param bool                  $espresso_page used in template
      */
-    protected function displayPersistentAdminNotice(PersistentAdminNotice $persistent_admin_notice, bool $espresso_page)
+    protected function displayPersistentAdminNotice(PersistentAdminNotice $persistent_admin_notice, bool $espresso_page): void
     {
         // used in template
         $persistent_admin_notice_name    = $persistent_admin_notice->getName();
         $persistent_admin_notice_message = $persistent_admin_notice->getMessage();
         $persistent_admin_notice_type    = $persistent_admin_notice->getType();
         $persistent_admin_notice_css     = $persistent_admin_notice->extraCss();
-        $is_dismissible                  = $persistent_admin_notice->getForceUpdate() !== true;
+
+
+        if (! str_contains($persistent_admin_notice_message, '<p>')) {
+            $persistent_admin_notice_message = '<p>' . $persistent_admin_notice_message . '</p>';
+        }
+
+        $notice_class = "espresso-notices ee-nag-notice ee-notice--$persistent_admin_notice_type";
+        $notice_class .= " ee-status-outline ee-status-outline--$persistent_admin_notice_type";
+        $notice_class .= " ee-status-bg--$persistent_admin_notice_type";
+
+        switch($persistent_admin_notice_type) {
+            case PersistentAdminNotice::TYPE_SUCCESS:
+                $dashicon = 'dashicons dashicons-yes-alt dashicons--bigger';
+                break;
+            case PersistentAdminNotice::TYPE_ATTENTION:
+            case PersistentAdminNotice::TYPE_WARNING:
+                $dashicon = 'dashicons dashicons-warning dashicons--bigger';
+                break;
+            case PersistentAdminNotice::TYPE_ERROR:
+                $dashicon = 'dashicons dashicons-dismiss dashicons--bigger';
+                break;
+            case PersistentAdminNotice::TYPE_INFO:
+            default:
+                $dashicon = 'dashicons dashicons-info dashicons--bigger';
+                break;
+        }
+
+        $notice_class .= $persistent_admin_notice_css ? " $persistent_admin_notice_css" : '';
+
+        $button_class = 'button button--caution button--ghost button--small';
+        $button_class .= ' dismiss-ee-nag-notice-btn dismiss-ee-nag-notice hide-if-no-js';
+
+        $dismiss_button = $persistent_admin_notice->getForceUpdate() !== true
+            ? '
+        <button class="' . esc_attr($button_class) . '" data-target="' . esc_attr($persistent_admin_notice_name) . '">
+            <span class="dashicons dashicons-dismiss"></span>' . esc_html__('Dismiss', 'event_espresso') . '
+        </button>'
+            : '';
+
+        $allowed_tags = AllowedTags::getWithFullTags();
+
         require EE_TEMPLATES . '/notifications/persistent_admin_notice.template.php';
     }
 
@@ -296,16 +334,11 @@ class PersistentAdminNoticeManager
      * @param bool   $purge    if true, then delete it from the db
      * @param bool   $return   forget all of this AJAX or redirect nonsense, and just return
      * @return void
-     * @throws InvalidEntityException
-     * @throws InvalidInterfaceException
      * @throws DomainException
-     * @throws InvalidArgumentException
-     * @throws InvalidArgumentException
-     * @throws InvalidArgumentException
-     * @throws InvalidArgumentException
      * @throws DuplicateCollectionIdentifierException
+     * @throws WP_Exception
      */
-    public function dismissNotice(string $pan_name = '', bool $purge = false, bool $return = false)
+    public function dismissNotice(string $pan_name = '', bool $purge = false, bool $return = false): void
     {
         $pan_name                = $this->request->getRequestParam('ee_nag_notice', $pan_name);
         $this->notice_collection = $this->getPersistentAdminNoticeCollection();
@@ -318,6 +351,10 @@ class PersistentAdminNoticeManager
                 );
             } catch (InsufficientPermissionsException $e) {
                 // user does not have required cap, so just eat the exception - nom nom nom nom
+                // unless we're debugging
+                if (WP_DEBUG) {
+                    error_log($e->getMessage());
+                }
                 return;
             }
             $persistent_admin_notice->setDismissed(true);
@@ -332,9 +369,7 @@ class PersistentAdminNoticeManager
         if ($this->request->isAjax()) {
             // grab any notices and concatenate into string
             echo wp_json_encode(
-                [
-                    'errors' => implode('<br />', EE_Error::get_notices(false)),
-                ]
+                [ 'errors' => implode('<br />', EE_Error::get_notices(false)) ]
             );
             exit();
         }
@@ -352,11 +387,10 @@ class PersistentAdminNoticeManager
      * saveNotices
      *
      * @throws DomainException
-     * @throws InvalidInterfaceException
-     * @throws InvalidEntityException
      * @throws DuplicateCollectionIdentifierException
+     * @throws WP_Exception
      */
-    public function saveNotices()
+    public function saveNotices(): void
     {
         $this->notice_collection = $this->getPersistentAdminNoticeCollection();
         $new_notices_array = [];
@@ -389,11 +423,10 @@ class PersistentAdminNoticeManager
 
     /**
      * @throws DomainException
-     * @throws InvalidEntityException
-     * @throws InvalidInterfaceException
      * @throws DuplicateCollectionIdentifierException
+     * @throws WP_Exception
      */
-    public function registerAndSaveNotices()
+    public function registerAndSaveNotices(): void
     {
         $this->getPersistentAdminNoticeCollection();
         $this->registerNotices();
@@ -407,17 +440,13 @@ class PersistentAdminNoticeManager
 
     /**
      * @throws DomainException
-     * @throws InvalidEntityException
-     * @throws InvalidInterfaceException
-     * @throws InvalidArgumentException
      * @throws DuplicateCollectionIdentifierException
+     * @throws WP_Exception
      */
-    public static function loadRegisterAndSaveNotices()
+    public static function loadRegisterAndSaveNotices(): void
     {
         /** @var PersistentAdminNoticeManager $persistent_admin_notice_manager */
-        $persistent_admin_notice_manager = LoaderFactory::getLoader()->getShared(
-            'EventEspresso\core\services\notifications\PersistentAdminNoticeManager'
-        );
+        $persistent_admin_notice_manager = LoaderFactory::getLoader()->getShared(PersistentAdminNoticeManager::class);
         // if shutdown has already run, then call registerAndSaveNotices() manually
         if (did_action('shutdown')) {
             $persistent_admin_notice_manager->registerAndSaveNotices();
@@ -425,6 +454,9 @@ class PersistentAdminNoticeManager
     }
 
 
+    /**
+     * @throws WP_Exception
+     */
     public static function hasPersistentAdminNotice(string $notice_name): bool
     {
         /** @var PersistentAdminNoticeManager $persistent_admin_notice_manager */
@@ -434,7 +466,10 @@ class PersistentAdminNoticeManager
     }
 
 
-    public static function dismissPersistentAdminNotice(string $notice_name)
+    /**
+     * @throws WP_Exception
+     */
+    public static function dismissPersistentAdminNotice(string $notice_name): void
     {
         /** @var PersistentAdminNoticeManager $persistent_admin_notice_manager */
         $persistent_admin_notice_manager = LoaderFactory::getLoader()->getShared(PersistentAdminNoticeManager::class);
@@ -442,7 +477,10 @@ class PersistentAdminNoticeManager
     }
 
 
-    public static function deletePersistentAdminNotice(string $notice_name)
+    /**
+     * @throws WP_Exception
+     */
+    public static function deletePersistentAdminNotice(string $notice_name): void
     {
         /** @var PersistentAdminNoticeManager $persistent_admin_notice_manager */
         $persistent_admin_notice_manager = LoaderFactory::getLoader()->getShared(PersistentAdminNoticeManager::class);

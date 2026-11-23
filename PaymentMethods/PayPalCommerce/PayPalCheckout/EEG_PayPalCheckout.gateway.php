@@ -3,8 +3,10 @@
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\Request;
 use EventEspresso\core\services\request\RequestInterface;
+use EventEspresso\PaymentMethods\PayPalCommerce\domain\Domain;
 use EventEspresso\PaymentMethods\PayPalCommerce\PayPalCheckout\domain\OrderIssues;
 use EventEspresso\PaymentMethods\PayPalCommerce\PayPalCheckout\domain\OrderStatus;
+use EventEspresso\PaymentMethods\PayPalCommerce\tools\currency\CurrencyManager;
 use EventEspresso\PaymentMethods\PayPalCommerce\tools\logging\PayPalLogger;
 
 /**
@@ -95,6 +97,25 @@ class EEG_PayPalCheckout extends EE_Onsite_Gateway
         }
         // Get the order details.
         $order_id = sanitize_text_field($post_parameters['pp_order_id']);
+        if ($order_id !== $this->transaction->get_extra_meta(Domain::META_KEY_ORDER_ID, true, '')) {
+            return EEG_PayPalCheckout::updatePaymentStatus(
+                $this->payment,
+                EEM_Payment::status_id_declined,
+                $post_parameters,
+                esc_html__('This PayPal order belongs to another transaction.', 'event_espresso')
+            );
+        }
+        // Check that the order can pay this transaction before any money moves.
+        $order_details  = EED_PayPalCommerce::getOrderDetails($order_id, $this->transaction, $payment_method);
+        $order_mismatch = EEG_PayPalCheckout::orderMismatchMessage($order_details, $this->transaction->ID());
+        if ($order_mismatch) {
+            return EEG_PayPalCheckout::updatePaymentStatus(
+                $this->payment,
+                EEM_Payment::status_id_declined,
+                $order_details,
+                $order_mismatch
+            );
+        }
         // Capture the order.
         $capture_status = EED_PayPalCommerce::captureOrder($this->transaction, $payment_method, $order_id);
         // Check the order status.
@@ -108,12 +129,61 @@ class EEG_PayPalCheckout extends EE_Onsite_Gateway
                 $order_status['message'] ?? ''
             );
         }
+        $reference = EEG_PayPalCheckout::paymentReference($order_details);
+        if (
+            $reference
+            && EEM_Payment::instance()->exists(
+                [['PAY_txn_id_chq_nmbr' => $reference, 'PAY_ID' => ['!=', $this->payment->ID()]]]
+            )
+        ) {
+            return EEG_PayPalCheckout::updatePaymentStatus(
+                $this->payment,
+                EEM_Payment::status_id_declined,
+                $order_details,
+                esc_html__('This PayPal payment is already recorded on another payment.', 'event_espresso')
+            );
+        }
         // Looks like all is good. Mark payment as a success.
         $this->saveBillingDetails($order_details, $billing_info, $this->payment);
         return EEG_PayPalCheckout::updatePaymentStatus(
             $this->payment,
             EEM_Payment::status_id_approved,
             $order_details
+        );
+    }
+
+
+    /**
+     * Returns why the order cannot pay the transaction, or an empty string when it can.
+     *
+     * @param array $order          Order details from the PayPal API.
+     * @param int   $transaction_id The transaction that the payment is for.
+     */
+    public static function orderMismatchMessage(array $order, int $transaction_id): string
+    {
+        if (! empty($order['error'])) {
+            return $order['message'] ?? esc_html__('PayPal could not confirm this order.', 'event_espresso');
+        }
+        $purchase_unit = $order['purchase_units'][0] ?? [];
+        if ((string) ($purchase_unit['custom_id'] ?? '') !== (string) $transaction_id) {
+            return esc_html__('This PayPal order belongs to another transaction.', 'event_espresso');
+        }
+        if (($purchase_unit['amount']['currency_code'] ?? '') !== CurrencyManager::currencyCode()) {
+            return esc_html__('This PayPal order is not in the currency of this registration.', 'event_espresso');
+        }
+        return '';
+    }
+
+
+    /**
+     * The PayPal reference that EE stores on an approved payment: the capture ID, else the order ID.
+     *
+     * @param array $response_data Order details from the PayPal API.
+     */
+    public static function paymentReference(array $response_data): string
+    {
+        return (string) (
+            $response_data['purchase_units'][0]['payments']['captures'][0]['id'] ?? $response_data['id'] ?? ''
         );
     }
 
@@ -192,9 +262,7 @@ class EEG_PayPalCheckout extends EE_Onsite_Gateway
             if (! empty($amount)) {
                 $payment->set_amount((float) $amount);
             }
-            $txn_id_chq_nmbr = $response_data['purchase_units'][0]['payments']['captures'][0]['id']
-                               ?? (! empty($response_data['id']) ? $response_data['id'] : 0);
-            $payment->set_txn_id_chq_nmbr($txn_id_chq_nmbr);
+            $payment->set_txn_id_chq_nmbr(EEG_PayPalCheckout::paymentReference($response_data));
         } else {
             $default_message = sprintf(
                 esc_html__(

@@ -102,6 +102,11 @@ class Domain
     public const META_KEY_FUNDING_OPTIONS = 'funding_options';
 
     /**
+     * Name of the transaction extra meta that holds the ID of the last PayPal order the site created for it.
+     */
+    public const META_KEY_ORDER_ID = 'paypal_order_id';
+
+    /**
      * Name of the PayPal API parameter that holds the auth code.
      */
     public const API_KEY_AUTH_CODE = 'authCode';

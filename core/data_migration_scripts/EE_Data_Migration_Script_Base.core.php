@@ -54,6 +54,13 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
     protected ?string $_feedback_message = '';
 
     /**
+     * Records migrated per stage during the last step; keys are stage pretty names
+     *
+     * @var int[]
+     */
+    protected array $stage_records_migrated = [];
+
+    /**
      * Indicates the script's priority. Like wp's add_action and add_filter, lower numbers
      * correspond to earlier execution
      *
@@ -332,7 +339,8 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
     public function migration_step($num_records_to_migrate_limit)
     {
         // reset the feedback message
-        $this->_feedback_message = '';
+        $this->_feedback_message      = '';
+        $this->stage_records_migrated = [];
         // if we haven't yet done the 1st schema changes, do them now. buffer any output
         $this->_maybe_do_schema_changes(true);
 
@@ -395,7 +403,7 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
 
 
     /**
-     * Updates the feedback message according to what was done during this migration stage.
+     * Records what was done during this migration step, for the feedback message and stageProgress().
      *
      * @param array $records_migrated_per_stage KEYS are pretty names for each stage; values are the count of records
      *                                          migrated from that stage
@@ -403,15 +411,50 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
      */
     private function _update_feedback_message($records_migrated_per_stage)
     {
-        $feedback_message_array = array();
-        foreach ($records_migrated_per_stage as $migration_stage_name => $num_records_migrated) {
+        $this->stage_records_migrated = $records_migrated_per_stage;
+    }
+
+
+    /**
+     * Per-stage feedback lines for the last step, most recent first.
+     *
+     * @return string
+     */
+    private function stageFeedbackMessage(): string
+    {
+        $feedback_message_array = [];
+        foreach ($this->stage_records_migrated as $migration_stage_name => $num_records_migrated) {
             $feedback_message_array[] = sprintf(
+                /* translators: 1: number of records, 2: migration stage name */
                 esc_html__("Migrated %d records successfully during %s", "event_espresso"),
                 $num_records_migrated,
                 $migration_stage_name
             );
         }
-        $this->_feedback_message .= implode("<br>", $feedback_message_array);
+        return implode("<br>", $feedback_message_array);
+    }
+
+
+    /**
+     * Cumulative progress for each stage that ran during the last step, in stage order.
+     *
+     * @return array[] each with keys: id (script class + stage name), name, migrated (cumulative count)
+     * @throws EE_Error
+     */
+    public function stageProgress(): array
+    {
+        $progress = [];
+        foreach ($this->stages() as $stage) {
+            $stage_name = $stage->pretty_name();
+            if (array_key_exists($stage_name, $this->stage_records_migrated)) {
+                $progress[] = [
+                    'id'       => get_class($this) . '__' . $stage_name,
+                    'name'     => $stage_name,
+                    'migrated' => $stage->count_records_migrated(),
+                ];
+            }
+        }
+        return $progress;
     }
 
 
@@ -775,7 +818,18 @@ abstract class EE_Data_Migration_Script_Base extends EE_Data_Migration_Class_Bas
      */
     public function get_feedback_message()
     {
-        return $this->_feedback_message;
+        return $this->_feedback_message . $this->stageFeedbackMessage();
+    }
+
+
+    /**
+     * Feedback message excluding the per-stage record counts (see stageProgress()).
+     *
+     * @return string
+     */
+    public function nonStageFeedbackMessage(): string
+    {
+        return (string) $this->_feedback_message;
     }
 
 

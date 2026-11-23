@@ -73,6 +73,8 @@ jQuery(document).ready(function ($) {
         const item_id = $clickedButton.data('item_id');
         const item_name = $clickedButton.data('item_name');
         const plugin_slug = $clickedButton.data('plugin_slug');
+        // read as a raw string so versions like "1.0" are not coerced to numbers
+        const plugin_ver = $clickedButton.attr('data-plugin_ver');
         const min_core_ver = $clickedButton.data('min_core_ver');
 
         const licenseKey = $licenseInput.val();
@@ -85,6 +87,7 @@ jQuery(document).ready(function ($) {
             item_id: item_id,
             item_name: item_name,
             plugin_slug: plugin_slug,
+            plugin_ver: plugin_ver,
             min_core_ver: min_core_ver,
             noheader: 'true',
             ee_admin_ajax: true

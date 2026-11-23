@@ -946,7 +946,7 @@ class LineItemCalculator
             foreach ($sub_items as $sub_item) {
                 $order++;
                 $sub_item->set_order($order);
-                $sub_item->save();
+                $sub_item->maybe_save();
                 $this->debugLog(
                     ' + + + ' . $order . '. ' . $sub_item->OBJ_type() . ' ' . $sub_item->name()
                     . ' - ' . $sub_item->type() . ' (' . $sub_item->code() . ')',

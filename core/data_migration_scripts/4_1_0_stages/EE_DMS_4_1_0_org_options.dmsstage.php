@@ -218,28 +218,36 @@ class EE_DMS_4_1_0_org_options extends EE_Data_Migration_Script_Stage
                 $c->organization->logo_url = $value;
                 break;
             case 'event_page_id':
-                // also, find that post, and changes the shortcode in it from ESPRESSO_PAYMENTS
-                // to ESPRESSO_THANK_YOU
-                $reg_page_post               = get_post(absint($value));
-                $reg_page_post->post_content = str_replace(
-                    "[ESPRESSO_EVENTS]",
-                    "[ESPRESSO_CHECKOUT]",
-                    $reg_page_post->post_content
-                );
-                wp_update_post($reg_page_post);
-                $c->core->reg_page_id = $value;
+                // also, find that post, and changes the shortcode in it from ESPRESSO_EVENTS
+                // to ESPRESSO_CHECKOUT
+                // page may be unset or deleted; get_post(0) would return the global post
+                $reg_page_id   = absint($value);
+                $reg_page_post = $reg_page_id ? get_post($reg_page_id) : null;
+                if ($reg_page_post instanceof WP_Post) {
+                    $reg_page_post->post_content = str_replace(
+                        "[ESPRESSO_EVENTS]",
+                        "[ESPRESSO_CHECKOUT]",
+                        $reg_page_post->post_content
+                    );
+                    wp_update_post($reg_page_post);
+                }
+                $c->core->reg_page_id = $reg_page_id;
                 break;
             case 'return_url':
                 // also, find that post, and changes the shortcode in it from ESPRESSO_PAYMENTS
                 // to ESPRESSO_THANK_YOU
-                $thank_you_page_post               = get_post(absint($value));
-                $thank_you_page_post->post_content = str_replace(
-                    "[ESPRESSO_PAYMENTS]",
-                    "[ESPRESSO_THANK_YOU]",
-                    $thank_you_page_post->post_content
-                );
-                wp_update_post($thank_you_page_post);
-                $c->core->thank_you_page_id = absint($value);
+                // page may be unset or deleted; get_post(0) would return the global post
+                $thank_you_page_id   = absint($value);
+                $thank_you_page_post = $thank_you_page_id ? get_post($thank_you_page_id) : null;
+                if ($thank_you_page_post instanceof WP_Post) {
+                    $thank_you_page_post->post_content = str_replace(
+                        "[ESPRESSO_PAYMENTS]",
+                        "[ESPRESSO_THANK_YOU]",
+                        $thank_you_page_post->post_content
+                    );
+                    wp_update_post($thank_you_page_post);
+                }
+                $c->core->thank_you_page_id = $thank_you_page_id;
                 break;
             case 'cancel_return':
                 $c->core->cancel_page_id = absint($value);

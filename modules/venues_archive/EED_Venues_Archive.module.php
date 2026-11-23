@@ -129,6 +129,10 @@ class EED_Venues_Archive extends EED_Module
     /**
      *    venue_details
      *
+     * Filter `FHEE__EED_Venues_Archive__venue_details__inject_details` (bool $inject, WP_Post $post) returning false
+     * skips EE's details insertion for that post; add `__return_false` to skip it for a whole request.
+     * The filter can run more than once for the same post, so callbacks must be free of side effects.
+     *
      * @access public
      * @param  string $content
      * @return string
@@ -139,6 +143,7 @@ class EED_Venues_Archive extends EED_Module
         if (
             $post->post_type == EspressoPostType::VENUES
             && ! post_password_required()
+            && apply_filters('FHEE__EED_Venues_Archive__venue_details__inject_details', true, $post)
         ) {
             // since the 'content-espresso_venues-details.php' template might be used directly from within a theme,
             // it uses the_content() for displaying the $post->post_content

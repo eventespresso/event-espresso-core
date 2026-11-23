@@ -70,21 +70,27 @@ class EE_Registration_Custom_Questions_Form extends EE_Form_Section_Proper
             throw new EE_Error(esc_html__('We cannot build the registration custom questions form because there is no registration set on it yet', 'event_espresso'));
         }
         // we want to get all their question groups
+        /**
+         * Filters the model query args used to fetch the registration's question groups.
+         *
+         * @param array $query_args EEM_Question_Group::get_all() query params.
+         */
         $question_groups = EEM_Question_Group::instance()->get_all(
-            [
+            (array) apply_filters(
+                'FHEE__EE_Registration_Custom_Questions_Form__build_form_from_registration__query_args',
                 [
-                    'Event_Question_Group.EVT_ID' => $reg->event_ID(),
-                    'OR' => [
-                        'Question.QST_system*blank' =>  '',
-                        'Question.QST_system*null' => ['IS_NULL']
+                    [
+                        'Event_Question_Group.EVT_ID' => $reg->event_ID(),
+                        // exclude the default attendee/address system questions
+                        'OR' => EEM_Question::notDefaultSystemQuestionConditions('Question.'),
+                        'Event_Question_Group.'
+                        . EEM_Event_Question_Group::instance()->fieldNameForContext(
+                            $reg->is_primary_registrant()
+                        ) => true
                     ],
-                    'Event_Question_Group.'
-                    . EEM_Event_Question_Group::instance()->fieldNameForContext(
-                        $reg->is_primary_registrant()
-                    ) => true
-                ],
-                'order_by' => ['QSG_order' => 'ASC']
-            ]
+                    'order_by' => ['QSG_order' => 'ASC']
+                ]
+            )
         );
         // get each question groups questions
         foreach ($question_groups as $question_group) {
@@ -124,14 +130,13 @@ class EE_Registration_Custom_Questions_Form extends EE_Form_Section_Proper
             )
         );
         $questions = $question_group->questions(
-            array(
-                array(
-                    'OR' => array(
-                        'QST_system*blank' => '',
-                        'QST_system*null' => array( 'IS_NULL' )
-                    )
-                )
-            )
+            [
+                [
+                    // exclude the default attendee/address system questions
+                    'OR' => EEM_Question::notDefaultSystemQuestionConditions(),
+                ],
+                'order_by' => ['Question_Group_Question.QGQ_order' => 'ASC'],
+            ]
         );
         foreach ($questions as $question) {
             $parts_of_subsection[ $question->ID() ] = $question->generate_form_input($registration);

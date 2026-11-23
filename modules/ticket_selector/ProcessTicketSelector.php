@@ -281,6 +281,7 @@ class ProcessTicketSelector
                     $ticket = $this->ticket_model->get_one_by_ID($ticket_id);
                     if (
                         ! $this->isValidTicket($ticket)
+                        || ! $this->ticketNotTrashed($ticket)
                         || ! $this->ticketAvailableForPurchase($ticket, $current_user_is_admin)
                         || $this->ticketMaxQtyAlreadyReached($ticket, $qty)
                         || EE_Error::has_error()
@@ -323,6 +324,34 @@ class ProcessTicketSelector
             sprintf(
                 esc_html__(
                     'A valid ticket could not be retrieved for the event.%sPlease click the back button on your browser and try again.',
+                    'event_espresso'
+                ),
+                '<br/>'
+            ),
+            __FILE__,
+            __FUNCTION__,
+            __LINE__
+        );
+        return false;
+    }
+
+
+    /**
+     * @param EE_Ticket $ticket
+     * @return bool
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @since 5.0.61.p
+     */
+    private function ticketNotTrashed(EE_Ticket $ticket): bool
+    {
+        if (! $ticket->deleted()) {
+            return true;
+        }
+        EE_Error::add_error(
+            sprintf(
+                esc_html__(
+                    'We\'re sorry but that ticket is no longer available.%sPlease click the back button on your browser and try again.',
                     'event_espresso'
                 ),
                 '<br/>'

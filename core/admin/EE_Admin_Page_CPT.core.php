@@ -1370,7 +1370,9 @@ abstract class EE_Admin_Page_CPT extends EE_Admin_Page
     {
         if ($this->admin_config && ! $this->admin_config->useAdvancedEditor()) {
             add_filter('admin_body_class', function ($classes) {
-                $classes .= ' espresso-legacy-editor';
+                if (! str_contains($classes, 'espresso-legacy-editor')) {
+                    $classes .= ' espresso-legacy-editor';
+                }
                 return $classes;
             });
         }

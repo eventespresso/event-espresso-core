@@ -127,6 +127,9 @@ class EED_Venue_Single extends EED_Module
     /**
      *    venue_details
      *
+     * Filter `FHEE__EED_Venue_Single__venue_details__inject_details` (bool $inject, WP_Post $post) returning false
+     * skips EE's details insertion for that post; add `__return_false` to skip it for a whole request.
+     *
      * @access public
      * @param  string $content
      * @return string
@@ -137,6 +140,7 @@ class EED_Venue_Single extends EED_Module
         if (
             $post->post_type == EspressoPostType::VENUES
             && ! post_password_required()
+            && apply_filters('FHEE__EED_Venue_Single__venue_details__inject_details', true, $post)
         ) {
             // since the 'content-espresso_venues-details.php' template might be used directly from within a theme,
             // it uses the_content() for displaying the $post->post_content
@@ -193,7 +197,7 @@ class EED_Venue_Single extends EED_Module
                 );
             }
             wp_enqueue_style($this->theme);
-            if (EE_Registry::instance()->CFG->map_settings->use_google_maps) {
+            if (EEH_Maps::mapsEnabled()) {
                 add_action('wp_enqueue_scripts', array('EEH_Maps', 'espresso_google_map_js'), 11);
             }
         }

@@ -858,7 +858,11 @@ if (! function_exists('espresso_event_content_or_excerpt')) {
     function espresso_event_content_or_excerpt($num_words = 55, $more = null, $echo = true)
     {
         if ($echo) {
-            echo wp_kses(EEH_Event_View::event_content_or_excerpt($num_words, $more), AllowedTags::getWithFormTags());
+            // the content can hold the venue section, whose Simple mode map is an iframe
+            echo wp_kses(
+                EEH_Event_View::event_content_or_excerpt($num_words, $more),
+                AllowedTags::getWithFormAndEmbedTags()
+            );
             return '';
         }
         return EEH_Event_View::event_content_or_excerpt($num_words, $more);

@@ -21,9 +21,10 @@ use EventEspresso\core\services\loaders\LoaderFactory;
  * finalized (like how the EE_Transaction is stored in the session until it is confirmed).
  * Many of their methods (like
  *
- * @package            Event Espresso
- * @subpackage         includes/models/EEM_Line_Item.model.php
- * @author             Mike Nelson
+ * @package     Event Espresso
+ * @subpackage  includes/models/EEM_Line_Item.model.php
+ * @author      Mike Nelson
+ * @method static EEM_Line_Item instance(?string $timezone = '')
  */
 class EEM_Line_Item extends EEM_Base
 {

@@ -2,6 +2,8 @@
 
 namespace EventEspresso\core\services\licensing;
 
+use EventEspresso\core\services\request\DataType;
+use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\core\third_party_libs\easy_digital_downloads\PluginUpdater;
 use stdClass;
 
@@ -21,21 +23,28 @@ class BatchPluginUpdateChecker
 {
     private const FAILED_REQUEST_OPTION = 'ee_batch_update_failed_http';
 
+    private bool $force_checked = false;
+
     private LicenseAPI $license_api;
 
     private PluginLicenseCollection $plugin_license_collection;
+
+    private RequestInterface $request;
 
 
     /**
      * @param LicenseAPI              $license_api
      * @param PluginLicenseCollection $plugin_license_collection
+     * @param RequestInterface        $request
      */
     public function __construct(
         LicenseAPI $license_api,
-        PluginLicenseCollection $plugin_license_collection
+        PluginLicenseCollection $plugin_license_collection,
+        RequestInterface $request
     ) {
         $this->license_api               = $license_api;
         $this->plugin_license_collection = $plugin_license_collection;
+        $this->request                   = $request;
     }
 
 
@@ -60,18 +69,13 @@ class BatchPluginUpdateChecker
      */
     public function checkForUpdates($transient_data)
     {
-        // if all per-plugin caches are still valid, skip the batch request
-        if ($this->allCachesValid()) {
-            return $transient_data;
-        }
-
-        // check for recent failed request backoff
-        if ($this->requestRecentlyFailed()) {
+        // "Check again" on Dashboard > Updates bypasses the caches and the failure backoff
+        if (! $this->isForceCheck() && ($this->allCachesValid() || $this->requestRecentlyFailed())) {
             return $transient_data;
         }
 
         // build the products array from the collection
-        $products = $this->buildProductsArray();
+        $products = $this->plugin_license_collection->productsVersionInfo();
         if (empty($products)) {
             return $transient_data;
         }
@@ -89,6 +93,21 @@ class BatchPluginUpdateChecker
         $this->populatePluginCaches($response);
 
         return $transient_data;
+    }
+
+
+    /**
+     * Whether the update check comes from the "Check again" link of Dashboard > Updates.
+     * True once per page load, as wp_update_plugins() saves the transient twice.
+     */
+    private function isForceCheck(): bool
+    {
+        if ($this->force_checked) {
+            return false;
+        }
+        $this->force_checked = doing_action('load-update-core.php')
+            && $this->request->getRequestParam('force-check', false, DataType::BOOL);
+        return $this->force_checked;
     }
 
 
@@ -144,28 +163,6 @@ class BatchPluginUpdateChecker
     private function logFailedRequest(): void
     {
         update_option(self::FAILED_REQUEST_OPTION, strtotime('+1 hour'));
-    }
-
-
-    /**
-     * Builds the products array from the PluginLicenseCollection.
-     *
-     * @return array Keyed by pluginSlug(), with item_id, license, url values.
-     */
-    private function buildProductsArray(): array
-    {
-        $products = [];
-        foreach ($this->plugin_license_collection as $plugin_license) {
-            if (! $plugin_license instanceof PluginLicense) {
-                continue;
-            }
-            $products[ $plugin_license->pluginSlug() ] = [
-                'item_id' => $plugin_license->itemID(),
-                'license' => $plugin_license->licenseKey(),
-                'url'     => home_url(),
-            ];
-        }
-        return $products;
     }
 
 

@@ -28,6 +28,7 @@ All new classes and files will follow modern day best practices, including names
  * names for classes and interfaces follow StudlyCaps formatting (unless a legacy system requires a different naming convention). Interfaces should include the word "Interface" at the end (see: [PSR Naming Conventions](http://www.php-fig.org/bylaws/psr-naming-conventions/))
  * names for methods and functions follow camelCase formatting (unless a legacy system required a different naming convention)
  * names for variables follow snake_case formatting
+     * EXCEPTION: a variable that mirrors a model/DB field name keeps the field's UPPERCASE form (e.g. `$QST_ID`, `$REG_ID`, `$EVT_ID`), so the variable and the field stay copy-paste interchangeable.
  * classes and interfaces have phpdoc comment blocks that contain:
      * a brief description of their purpose
      * an @package tag to indicate the vendor or plugin that the code belongs to
