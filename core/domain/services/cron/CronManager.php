@@ -4,6 +4,7 @@ namespace EventEspresso\core\domain\services\cron;
 
 use EE_Dependency_Map;
 use EE_Messages_Scheduler;
+use EventEspresso\core\domain\services\cron\jobs\ActivateSubsiteLicenses;
 use EventEspresso\core\domain\services\cron\jobs\ExpiredTransactionCheck;
 use EventEspresso\core\domain\services\cron\jobs\GarbageCollection;
 use EventEspresso\core\domain\services\cron\jobs\UpdatePluginLicenseData;
@@ -16,6 +17,7 @@ class CronManager
     protected LoaderInterface $loader;
 
     private static array $cron_jobs = [
+        ActivateSubsiteLicenses::class,
         // ExpiredTransactionCheck::class,
         // GarbageCollection::class,
         UpdatePluginLicenseData::class,

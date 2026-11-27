@@ -47,6 +47,12 @@ class LicenseKeyData extends WordPressOption
     }
 
 
+    public function loadOption(): array
+    {
+        return (array) get_option($this->getOptionName(), []);
+    }
+
+
     /**
      * Retrieves the license data for a specific plugin.
      *
@@ -59,6 +65,17 @@ class LicenseKeyData extends WordPressOption
         $licenses     = $this->loadOption();
         $license_data = $licenses[ $plugin ] ?? LicenseKeyData::$no_license;
         return (object) $license_data;
+    }
+
+
+    /**
+     * Retrieves the license data the main site of a multisite network stores, keyed by plugin identifier.
+     *
+     * @since 5.0.62
+     */
+    public function mainSiteLicenses(): array
+    {
+        return (array) get_blog_option(get_main_site_id(), LicenseKeyData::OPTION_NAME, []);
     }
 
 
@@ -88,7 +105,7 @@ class LicenseKeyData extends WordPressOption
         // then sort by key and convert back to stdClass
         ksort($licenses[ $plugin ]);
         $licenses[ $plugin ] = (object) $licenses[ $plugin ];
-        return $this->updateOption($licenses, $force_update);
+        return $this->saveLicenses($licenses);
     }
 
 
@@ -101,7 +118,22 @@ class LicenseKeyData extends WordPressOption
     public function removeLicenseDataForPlugin(string $plugin): int
     {
         $licenses = $this->loadOption();
+        if (! isset($licenses[ $plugin ])) {
+            return WordPressOption::UPDATE_NONE;
+        }
         unset($licenses[ $plugin ]);
-        return $this->updateOption($licenses,);
+        return $this->saveLicenses($licenses);
+    }
+
+
+    private function saveLicenses(array $licenses): int
+    {
+        if (update_option($this->getOptionName(), $licenses, true)) {
+            return WordPressOption::UPDATE_SUCCESS;
+        }
+        // WordPress returns false for both unchanged data and a failed write.
+        return maybe_serialize($this->loadOption()) === maybe_serialize($licenses)
+            ? WordPressOption::UPDATE_NONE
+            : WordPressOption::UPDATE_ERROR;
     }
 }

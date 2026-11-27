@@ -6,6 +6,7 @@ use EE_Dependency_Map;
 use EventEspresso\core\domain\services\assets\EspressoLegacyAdminAssetManager;
 use EventEspresso\core\domain\services\assets\JqueryAssetManager;
 use EventEspresso\core\domain\services\assets\LegacyAccountingAssetManager;
+use EventEspresso\core\domain\services\cron\jobs\ActivateSubsiteLicenses;
 use EventEspresso\core\services\assets\AssetManagerInterface;
 use EventEspresso\core\services\service_changes\ServiceChangesManager;
 
@@ -167,6 +168,7 @@ class EspressoLegacyAdmin extends AdminRoute
         $this->loader->getShared(EspressoLegacyAdminAssetManager::class);
         $this->loader->getShared(LegacyAccountingAssetManager::class);
         $this->loader->getShared(ServiceChangesManager::class);
+        ActivateSubsiteLicenses::schedule();
         return true;
     }
 }

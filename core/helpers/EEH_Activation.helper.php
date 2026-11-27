@@ -8,6 +8,7 @@ use EventEspresso\core\exceptions\InvalidDataTypeException;
 use EventEspresso\core\interfaces\ResettableInterface;
 use EventEspresso\core\services\database\TableAnalysis;
 use EventEspresso\core\services\database\TableManager;
+use EventEspresso\core\services\licensing\LicenseManager;
 use EventEspresso\core\services\loaders\LoaderFactory;
 
 /**
@@ -1433,6 +1434,8 @@ LIMIT 0,1",
             'ee_job_parameters_'                         => false,
             'ee_upload_directories_incomplete'           => true,
             'ee_verified_db_collations'                  => true,
+            // wildcard, to include the run lock
+            LicenseManager::SUBSITE_ACTIVATIONS_OPTION   => false,
         ];
         if (is_main_site()) {
             $wp_options_to_delete['ee_network_config'] = true;

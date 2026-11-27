@@ -6,6 +6,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Releases
 
+### 5.0.62
+
+
+#### Fixed
+ - [Activate multisite subsites on the main site license key (#2490)](https://github.com/eventespresso/cafe/pull/2490)
+
+
+
+
+
+
+
 ### 5.0.61
 
 #### Added
