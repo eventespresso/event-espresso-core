@@ -1,6 +1,8 @@
 <?php
 
+use EventEspresso\core\domain\services\calendar\CalendarLinks;
 use EventEspresso\core\domain\services\registration\RegStatus;
+use EventEspresso\core\services\loaders\LoaderFactory;
 
 /**
  * EE_Event_Shortcodes
@@ -37,6 +39,7 @@ class EE_Event_Shortcodes extends EE_Shortcodes
     {
         $this->label = esc_html__('Event Shortcodes', 'event_espresso');
         $this->description = esc_html__('All shortcodes specific to event related data', 'event_espresso');
+        $calendar_links    = LoaderFactory::getShared(CalendarLinks::class);
         $this->_shortcodes = array(
             '[EVENT_ID]'                              => esc_html__(
                 'Will be replaced by the event ID of an event',
@@ -113,6 +116,16 @@ class EE_Event_Shortcodes extends EE_Shortcodes
                 'This parses to the url for the registration list table filtered by registrations for this event.',
                 'event_espresso'
             ),
+            '[EVENT_ADD_TO_CALENDAR_LINKS_*]'         => sprintf(
+                /* translators: 1: opening code tag, 2: closing code tag, 3: comma-separated provider keys */
+                esc_html__(
+                    'Links to add the event to a calendar. Calendar services use the next upcoming datetime (else the primary one); the .ics download contains all of the event\'s dates. The optional %1$sproviders%2$s attribute limits and orders the links, e.g. %1$sproviders="ics,google"%2$s (available: %3$s).',
+                    'event_espresso'
+                ),
+                '<code>',
+                '</code>',
+                $calendar_links instanceof CalendarLinks ? implode(', ', array_keys($calendar_links->providers())) : ''
+            ),
         );
     }
 
@@ -121,6 +134,7 @@ class EE_Event_Shortcodes extends EE_Shortcodes
      * @param string $shortcode
      * @throws EE_Error
      * @throws ReflectionException
+     * @throws WP_Exception
      */
     protected function _parser($shortcode)
     {
@@ -248,6 +262,21 @@ class EE_Event_Shortcodes extends EE_Shortcodes
             }
             // Still here? We just need to return the event_meta value as is.
             return $event_meta;
+        }
+
+        if (strpos($shortcode, '[EVENT_ADD_TO_CALENDAR_LINKS_*') !== false) {
+            // next upcoming datetime, else the primary one
+            $datetime = EEH_Event_View::get_next_upcoming_date_obj($this->_event->ID())
+                ?? $this->_event->primary_datetime();
+            if (! $datetime instanceof EE_Datetime) {
+                return '';
+            }
+            $attrs          = $this->_get_shortcode_attrs($shortcode);
+            $providers      = empty($attrs['providers']) ? [] : array_map('trim', explode(',', $attrs['providers']));
+            $calendar_links = LoaderFactory::getShared(CalendarLinks::class);
+            return $calendar_links instanceof CalendarLinks
+                ? $calendar_links->linksHtml($calendar_links->links($datetime, $providers, $this->_event))
+                : '';
         }
 
         if (strpos($shortcode, '[EVENT_TOTAL_AVAILABLE_SPACES_*') !== false) {

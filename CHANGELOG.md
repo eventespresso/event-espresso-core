@@ -6,6 +6,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Releases
 
+### 5.0.63
+
+#### Added
+ - [New: Add to Calendar links service (core) (#2372)](https://github.com/eventespresso/cafe/pull/2372)
+
+
+
+
+
+
+
+
 ### 5.0.62
 
 

@@ -1,5 +1,8 @@
 <?php
 
+use EventEspresso\core\domain\services\calendar\CalendarLinks;
+use EventEspresso\core\services\loaders\LoaderFactory;
+
 /**
  * EE_Datetime_Shortcodes
  *
@@ -22,6 +25,7 @@ class EE_Datetime_Shortcodes extends EE_Shortcodes
     {
         $this->label = esc_html__('Datetime Shortcodes', 'event_espresso');
         $this->description = esc_html__('All shortcodes specific to datetime related data', 'event_espresso');
+        $calendar_links    = LoaderFactory::getShared(CalendarLinks::class);
         $this->_shortcodes = array(
             '[DATETIME_START]' => esc_html__('The start date and time.', 'event_espresso'),
             '[DATETIME_END]' => esc_html__('The end date and time.', 'event_espresso'),
@@ -34,6 +38,16 @@ class EE_Datetime_Shortcodes extends EE_Shortcodes
                 'The datetime iCal link. The optional "link_text" attribute can be used to set custom text within the link (Default is "Add to iCal Calendar").',
                 'event_espresso'
             ),
+            '[ADD_TO_CALENDAR_LINKS_*]' => sprintf(
+                /* translators: 1: opening code tag, 2: closing code tag, 3: comma-separated provider keys */
+                esc_html__(
+                    'Links to add this datetime to a calendar. The optional %1$sproviders%2$s attribute limits and orders the links, e.g. %1$sproviders="google,outlook"%2$s (available: %3$s).',
+                    'event_espresso'
+                ),
+                '<code>',
+                '</code>',
+                $calendar_links instanceof CalendarLinks ? implode(', ', array_keys($calendar_links->providers())) : ''
+            ),
         );
     }
 
@@ -43,6 +57,7 @@ class EE_Datetime_Shortcodes extends EE_Shortcodes
      * @return string
      * @throws EE_Error
      * @throws ReflectionException
+     * @throws WP_Exception
      */
     protected function _parser($shortcode)
     {
@@ -84,6 +99,15 @@ class EE_Datetime_Shortcodes extends EE_Shortcodes
             $URL = esc_url_raw(str_replace('http://', 'https://', $URL));
 
             return '<a class="ee-ical" href="' . $URL . '">' . $link_text . '</a>';
+        }
+
+        if (strpos($shortcode, '[ADD_TO_CALENDAR_LINKS_*') !== false) {
+            $attrs          = $this->_get_shortcode_attrs($shortcode);
+            $providers      = empty($attrs['providers']) ? [] : array_map('trim', explode(',', $attrs['providers']));
+            $calendar_links = LoaderFactory::getShared(CalendarLinks::class);
+            return $calendar_links instanceof CalendarLinks
+                ? $calendar_links->linksHtml($calendar_links->links($this->_data, $providers))
+                : '';
         }
 
         return '';

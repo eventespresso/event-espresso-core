@@ -1,5 +1,6 @@
 <?php
 
+use EventEspresso\core\domain\services\calendar\CalendarLinks;
 use EventEspresso\core\services\loaders\LoaderFactory;
 use EventEspresso\core\services\request\RequestInterface;
 use EventEspresso\core\services\request\sanitizers\AllowedTags;
@@ -804,6 +805,56 @@ if (! function_exists('espresso_event_date_as_calendar_page')) {
     function espresso_event_date_as_calendar_page($EVT_ID = false)
     {
         EEH_Event_View::event_date_as_calendar_page($EVT_ID);
+    }
+}
+
+
+if (! function_exists('espresso_add_to_calendar_links')) {
+    /**
+     * espresso_add_to_calendar_links
+     * returns an HTML list of "Add to Calendar" links (ICS, Google, Outlook.com, Office 365, Yahoo) for a datetime
+     *
+     * @param int      $DTT_ID    datetime ID; 0 uses the current event's primary datetime
+     * @param string[] $providers provider keys from CalendarLinks::providers(); empty for all
+     * @param bool     $echo
+     * @return string
+     * @throws EE_Error
+     * @throws ReflectionException
+     * @throws WP_Exception
+     */
+    function espresso_add_to_calendar_links($DTT_ID = 0, array $providers = [], bool $echo = true): string
+    {
+        $datetime = $DTT_ID
+            ? EEH_Event_View::get_date_obj((int) $DTT_ID)
+            : EEH_Event_View::get_primary_date_obj();
+        $html     = '';
+        if ($datetime instanceof EE_Datetime) {
+            $calendar_links = LoaderFactory::getShared(CalendarLinks::class);
+            $links          = $calendar_links instanceof CalendarLinks
+                ? $calendar_links->links($datetime, $providers)
+                : [];
+            foreach ($links as $provider => $link) {
+                // external calendars open in a new tab, the .ics downloads in place
+                $target = $provider !== CalendarLinks::PROVIDER_ICS
+                    ? ' target="_blank" rel="noopener noreferrer"'
+                    : '';
+                $html   .= '<li class="ee-add-to-calendar-links__item ee-add-to-calendar-links__item--'
+                    . esc_attr($provider) . '"><a href="' . esc_url($link['url']) . '"' . $target . '>'
+                    . esc_html($link['label']) . '</a></li>';
+            }
+            $html = $html !== '' ? '<ul class="ee-add-to-calendar-links">' . $html . '</ul>' : '';
+        }
+        $html = (string) apply_filters(
+            'FHEE__espresso_add_to_calendar_links__html',
+            $html,
+            $datetime instanceof EE_Datetime ? $datetime : null,
+            $providers
+        );
+        if ($echo) {
+            echo wp_kses($html, AllowedTags::getAllowedTags());
+            return '';
+        }
+        return $html;
     }
 }
 
